@@ -43,7 +43,7 @@ void Sprite::SetPosition(float x, float y) { position = { x, y }; }
 void Sprite::SetScale(float sx, float sy) { scale = { sx, sy }; }
 void Sprite::SetRotation(float angle) { rotation = angle; }
 
-void Sprite::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
+void Sprite::Draw(const glm::mat4& projection) const {
     shader->Use();
     texture->Bind();
     glUniform1i(glGetUniformLocation(shader->GetID(), "tex"), 0);
@@ -70,8 +70,8 @@ void Sprite::Draw(const ColliderRenderer& renderer, const glm::mat4& projection)
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     for (const Collider& col : colliders) {
-        renderer.Draw(col, projection);
-        renderer.DrawCenterHandle(col.position + col.size * 0.5f, projection);
+        //renderer.Draw(col, projection);
+        //renderer.DrawCenterHandle(col.position + col.size * 0.5f, projection);
     }
 }
 

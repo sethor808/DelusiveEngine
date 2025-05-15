@@ -33,36 +33,32 @@ ColliderRenderer::~ColliderRenderer() {
     delete shader;
 }
 
-void ColliderRenderer::Draw(const Collider& collider, const glm::mat4& projection) const{
+void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& projection) const{
     shader->Use();
 
-    GLuint programID = shader->GetID();
-    std::cout << "[Shader] Using program ID: " << programID << "\n";
+    const glm::vec2& pos = collider.transform.position; // Center of collider
+    const glm::vec2& size = collider.transform.scale;
 
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(collider.position, 0.0f));
-    model = glm::scale(model, glm::vec3(collider.size, 1.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0.0f));
+    model = glm::scale(model, glm::vec3(size, 1.0f));
 
-    GLint modelLoc = glGetUniformLocation(programID, "model");
-    GLint projLoc = glGetUniformLocation(programID, "projection");
-    GLint colorLoc = glGetUniformLocation(programID, "color");
+    shader->SetMat4("model", glm::value_ptr(model));
+    shader->SetMat4("projection", glm::value_ptr(projection));
 
-    std::cout << "[Uniforms] model: " << modelLoc
-        << " | projection: " << projLoc
-        << " | color: " << colorLoc << std::endl;
-
-    if (modelLoc >= 0)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    if (projLoc >= 0)
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-    if (colorLoc >= 0)
-        glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f); // RED
+    GLint colorLoc = glGetUniformLocation(shader->GetID(), "color");
+    if (colorLoc != -1)
+        glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f); // Red border
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_LINE_LOOP, 0, 4);
 
+    if (collider.CheckCenterRender()) {
+        DrawCenterHandle(pos, projection); // Same as before
+    }
+
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
-        std::cerr << "OpenGL Error after draw: " << err << std::endl;
+        std::cerr << "[OpenGL] Error after collider draw: " << err << std::endl;
     }
 }
 

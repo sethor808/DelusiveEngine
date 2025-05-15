@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include <vector>
 
+class ColliderRenderer;
+
 class Sprite {
 public:
     Sprite(const char* texturePath);
@@ -15,7 +17,7 @@ public:
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
-    void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
+    void Draw(const glm::mat4& projection) const;
     void SetVelocity(float x, float y);
     void Update(float dt) {
         position += velocity * dt;

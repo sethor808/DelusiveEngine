@@ -3,40 +3,160 @@
   "WorkspaceRootPath": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\EngineUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Sprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderRenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Sprite.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderRenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\AnimatorComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteEditor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\TriggerCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\StatsComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Collider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SolidCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\HitboxCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\HurtboxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\HitboxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\AnimatorComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SolidCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\TriggerCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\HurtboxCollider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\StatsComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\TransformData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\EngineUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -45,34 +165,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderRenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Sprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Sprite.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\ColliderRenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -87,10 +179,6 @@
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Animator.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\TransformData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Animator.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -99,27 +187,11 @@
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteData.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector||{3B902123-F8A7-4915-9F01-361F908088D0}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Collider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|ElysiumEngine\\ElysiumEngine.vcxproj|solutionrelative:ElysiumEngine\\SpriteData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -128,18 +200,18 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 292,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 184,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 18,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\main.cpp",
               "RelativeDocumentMoniker": "ElysiumEngine\\main.cpp",
               "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\main.cpp",
               "RelativeToolTip": "ElysiumEngine\\main.cpp",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAAAHEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADQAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-04-12T01:21:35.359Z",
               "IsPinned": true,
@@ -148,6 +220,227 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "Sprite.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Sprite.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Sprite.cpp",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAEkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-15T10:25:47.852Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Scene.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Scene.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Scene.cpp",
+              "ViewState": "AgIAABcAAAAAAAAAAAAowCcAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-27T14:05:39.948Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ColliderComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.h",
+              "RelativeToolTip": "ElysiumEngine\\ColliderComponent.h",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACgAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T09:06:08.193Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Agent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Agent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.h",
+              "RelativeToolTip": "ElysiumEngine\\Agent.h",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAAEgAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-28T11:17:31.399Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ColliderRenderer.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderRenderer.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h",
+              "RelativeToolTip": "ElysiumEngine\\ColliderRenderer.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-21T09:21:09.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Sprite.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Sprite.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h",
+              "RelativeToolTip": "ElysiumEngine\\Sprite.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-13T23:33:59.498Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Scene.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Scene.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h",
+              "RelativeToolTip": "ElysiumEngine\\Scene.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-27T14:05:31.669Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "StatsComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\StatsComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\StatsComponent.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T08:19:18.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SpriteComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\SpriteComponent.cpp",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAADcAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-04T05:10:16.699Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SpriteComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteComponent.h",
+              "RelativeToolTip": "ElysiumEngine\\SpriteComponent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-04T05:10:09.281Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Component.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Component.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Component.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-04T04:15:10.653Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "HitboxCollider.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\HitboxCollider.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.h",
+              "RelativeToolTip": "ElysiumEngine\\HitboxCollider.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T09:26:10.424Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SolidCollider.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SolidCollider.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.h",
+              "RelativeToolTip": "ElysiumEngine\\SolidCollider.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T09:46:58.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "TriggerCollider.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\TriggerCollider.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.h",
+              "RelativeToolTip": "ElysiumEngine\\TriggerCollider.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T09:45:04.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "HurtboxCollider.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\HurtboxCollider.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.h",
+              "RelativeToolTip": "ElysiumEngine\\HurtboxCollider.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T09:39:31.636Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "StatsComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\StatsComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\StatsComponent.h",
+              "RelativeToolTip": "ElysiumEngine\\StatsComponent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T08:19:10.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "EngineUI.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\EngineUI.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp",
+              "RelativeToolTip": "ElysiumEngine\\EngineUI.cpp",
+              "ViewState": "AgIAACgAAAAAAAAAAAAqwEMAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-28T13:56:23.269Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
               "Title": "EngineUI.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.h",
               "RelativeDocumentMoniker": "ElysiumEngine\\EngineUI.h",
@@ -160,59 +453,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "EngineUI.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\EngineUI.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\EngineUI.cpp",
-              "RelativeToolTip": "ElysiumEngine\\EngineUI.cpp",
-              "ViewState": "AgIAACgAAAAAAAAAAAAAwEMAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-28T13:56:23.269Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Sprite.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Sprite.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.h",
-              "RelativeToolTip": "ElysiumEngine\\Sprite.h",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAAAwAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T23:33:59.498Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Scene.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Scene.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.h",
-              "RelativeToolTip": "ElysiumEngine\\Scene.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-27T14:05:31.669Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Scene.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Scene.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Scene.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Scene.cpp",
-              "ViewState": "AgIAADMAAAAAAAAAAAAAAEYAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-27T14:05:39.948Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 43,
               "Title": "Animator.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.h",
               "RelativeDocumentMoniker": "ElysiumEngine\\Animator.h",
@@ -225,20 +466,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Agent.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Agent.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.h",
-              "RelativeToolTip": "ElysiumEngine\\Agent.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-28T11:17:31.399Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 40,
               "Title": "Shader.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Shader.cpp",
               "RelativeDocumentMoniker": "ElysiumEngine\\Shader.cpp",
@@ -252,25 +480,233 @@
           ]
         },
         {
-          "DockedWidth": 108,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 216,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "PlayerAgent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\PlayerAgent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\PlayerAgent.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-29T15:48:05.232Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 8,
+              "Title": "SpriteData.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteData.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h",
+              "RelativeToolTip": "ElysiumEngine\\SpriteData.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-17T20:44:56.02Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ColliderRenderer.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderRenderer.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp",
+              "RelativeToolTip": "ElysiumEngine\\ColliderRenderer.cpp",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-21T09:20:13.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PlayerAgent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\PlayerAgent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h",
+              "RelativeToolTip": "ElysiumEngine\\PlayerAgent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-29T22:48:23.437Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Agent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Agent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Agent.cpp",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAAIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-28T11:17:41.149Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Component.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Component.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Component.h",
+              "RelativeToolTip": "ElysiumEngine\\Component.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-04T04:15:03.252Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ColliderComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderComponent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\ColliderComponent.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T09:06:18.333Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "AnimatorComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\AnimatorComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.h",
+              "RelativeToolTip": "ElysiumEngine\\AnimatorComponent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-05T08:16:04.486Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "SpriteEditor.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.cpp",
               "RelativeDocumentMoniker": "ElysiumEngine\\SpriteEditor.cpp",
               "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.cpp",
               "RelativeToolTip": "ElysiumEngine\\SpriteEditor.cpp",
-              "ViewState": "AgIAALgAAAAAAAAAAAAwwNIAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-04-18T19:14:44.424Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 19,
+              "Title": "TriggerCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\TriggerCollider.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TriggerCollider.cpp",
+              "RelativeToolTip": "ElysiumEngine\\TriggerCollider.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T09:45:14.197Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Collider.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Collider.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Collider.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-18T19:46:37.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "SolidCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SolidCollider.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SolidCollider.cpp",
+              "RelativeToolTip": "ElysiumEngine\\SolidCollider.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T09:47:06.772Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Collider.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Collider.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h",
+              "RelativeToolTip": "ElysiumEngine\\Collider.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-16T21:40:20.201Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "HurtboxCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\HurtboxCollider.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HurtboxCollider.cpp",
+              "RelativeToolTip": "ElysiumEngine\\HurtboxCollider.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T09:40:06.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "HitboxCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\HitboxCollider.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\HitboxCollider.cpp",
+              "RelativeToolTip": "ElysiumEngine\\HitboxCollider.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T09:25:43.705Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "AnimatorComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\AnimatorComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\AnimatorComponent.cpp",
+              "RelativeToolTip": "ElysiumEngine\\AnimatorComponent.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-05T08:16:13.601Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "TransformData.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\TransformData.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h",
+              "RelativeToolTip": "ElysiumEngine\\TransformData.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-28T11:52:34.539Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
               "Title": "Camera.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Camera.h",
               "RelativeDocumentMoniker": "ElysiumEngine\\Camera.h",
@@ -283,176 +719,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Agent.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Agent.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Agent.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Agent.cpp",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAqwBwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-28T11:17:41.149Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Texture.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Texture.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Texture.cpp",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAwwB8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-16T04:34:41.801Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Renderer.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Renderer.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Renderer.cpp",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-16T05:07:48.757Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ColliderRenderer.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderRenderer.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.cpp",
-              "RelativeToolTip": "ElysiumEngine\\ColliderRenderer.cpp",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAEEAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-21T09:20:13.305Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Sprite.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Sprite.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Sprite.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Sprite.cpp",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAABkAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-16T05:24:22.318Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "PlayerAgent.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\PlayerAgent.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.cpp",
-              "RelativeToolTip": "ElysiumEngine\\PlayerAgent.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-29T15:48:05.232Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "PlayerAgent.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\PlayerAgent.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\PlayerAgent.h",
-              "RelativeToolTip": "ElysiumEngine\\PlayerAgent.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-29T22:48:23.437Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "ColliderRenderer.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\ColliderRenderer.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\ColliderRenderer.h",
-              "RelativeToolTip": "ElysiumEngine\\ColliderRenderer.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABTAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-21T09:21:09.805Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Texture.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Texture.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.h",
-              "RelativeToolTip": "ElysiumEngine\\Texture.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T23:33:33.876Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "SpriteEditor.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteEditor.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.h",
-              "RelativeToolTip": "ElysiumEngine\\SpriteEditor.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-18T19:15:01.918Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "Animator.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Animator.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Animator.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-28T10:38:48.32Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "TransformData.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\TransformData.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\TransformData.h",
-              "RelativeToolTip": "ElysiumEngine\\TransformData.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-28T11:52:34.539Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "SpriteData.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteData.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.cpp",
-              "RelativeToolTip": "ElysiumEngine\\SpriteData.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-17T21:25:20.641Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 34,
               "Title": "Renderer.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.h",
               "RelativeDocumentMoniker": "ElysiumEngine\\Renderer.h",
@@ -465,19 +732,85 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "Collider.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Collider.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.cpp",
-              "RelativeToolTip": "ElysiumEngine\\Collider.cpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAACAAAAABAAAAAAAAAA==",
+              "DocumentIndex": 35,
+              "Title": "Renderer.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Renderer.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Renderer.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Renderer.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-18T19:46:37.494Z"
+              "WhenOpened": "2025-04-16T05:07:48.757Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 39,
+              "Title": "Texture.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Texture.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Texture.cpp",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAwwB8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-16T04:34:41.801Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "Texture.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Texture.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Texture.h",
+              "RelativeToolTip": "ElysiumEngine\\Texture.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-13T23:33:33.876Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "SpriteEditor.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.h",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteEditor.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteEditor.h",
+              "RelativeToolTip": "ElysiumEngine\\SpriteEditor.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-18T19:15:01.918Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Animator.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\Animator.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Animator.cpp",
+              "RelativeToolTip": "ElysiumEngine\\Animator.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-28T10:38:48.32Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "SpriteData.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.cpp",
+              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteData.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.cpp",
+              "RelativeToolTip": "ElysiumEngine\\SpriteData.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-17T21:25:20.641Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
               "Title": "vector",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\include\\vector",
@@ -490,19 +823,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "SpriteData.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\SpriteData.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\SpriteData.h",
-              "RelativeToolTip": "ElysiumEngine\\SpriteData.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-17T20:44:56.02Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 47,
               "Title": "Shader.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Shader.h",
               "RelativeDocumentMoniker": "ElysiumEngine\\Shader.h",
@@ -510,19 +831,8 @@
               "RelativeToolTip": "ElysiumEngine\\Shader.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T23:31:26.094Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "Collider.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h",
-              "RelativeDocumentMoniker": "ElysiumEngine\\Collider.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\Collider.h",
-              "RelativeToolTip": "ElysiumEngine\\Collider.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-16T21:40:20.201Z"
+              "WhenOpened": "2025-04-13T23:31:26.094Z",
+              "EditorCaption": ""
             }
           ]
         }

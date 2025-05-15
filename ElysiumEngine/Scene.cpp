@@ -37,7 +37,7 @@ void Scene::Update(float deltaTime) {
 
 void Scene::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
 	for (auto& agent : agents) {
-		agent->Draw(renderer, projection);
+		agent->Draw(projection);
 	}
 }
 

@@ -49,6 +49,9 @@ int main(int argc, char** argv) {
 
     Sprite sprite("C:/Users/Demon Teddy/Documents/Programs/ElysiumEngine/ElysiumEngine/assets/sprites/star.jpg");
     
+    ColliderRenderer* gRenderer = new ColliderRenderer();
+    ColliderComponent::SetRenderer(gRenderer);  // Called ONCE
+
     const float speed = 0.1f;
     sprite.SetVelocity(0.0f, 0.0f);
     float xVel = 0.0f, yVel = 0.0f;

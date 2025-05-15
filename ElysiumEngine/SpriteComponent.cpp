@@ -3,7 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 
-float quadVertices[] = {
+float vertices[] = {
     // pos       // tex
     -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f,  1.0f, 0.0f,
@@ -25,7 +25,7 @@ SpriteComponent::SpriteComponent(const char* texturePath){
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
@@ -53,7 +53,7 @@ void SpriteComponent::SetRotation(float angle) {
     transform.rotation = { angle };
 }
 
-void SpriteComponent::Draw(const glm::mat4& projection) const {
+void SpriteComponent::Draw(const glm::mat4& projection) {
     shader->Use();
     texture->Bind();
     glUniform1i(glGetUniformLocation(shader->GetID(), "tex"), 0);

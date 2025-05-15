@@ -1,4 +1,6 @@
 #include "Agent.h"
+#include "Component.h"
+#include <limits>
 
 Agent::Agent() {
 

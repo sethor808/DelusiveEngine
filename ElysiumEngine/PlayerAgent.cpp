@@ -14,6 +14,6 @@ void PlayerAgent::Update(float deltaTime) {
 	sprite->SetScale(transform.scale.x, transform.scale.y);
 }
 
-void PlayerAgent::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
-	sprite->Draw(renderer, projection);
+void PlayerAgent::Draw(const glm::mat4& projection) const {
+	sprite->Draw(projection);
 }

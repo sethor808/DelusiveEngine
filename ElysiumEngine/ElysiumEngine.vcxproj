@@ -139,9 +139,14 @@
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AnimatorComponent.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="ColliderRenderer.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="EngineUI.cpp" />
+    <ClCompile Include="HitboxCollider.cpp" />
+    <ClCompile Include="HurtboxCollider.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="include\imgui\backend\imgui_impl_opengl3.cpp" />
     <ClCompile Include="include\imgui\backend\imgui_impl_sdl3.cpp" />
@@ -153,27 +158,40 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SolidCollider.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="SpriteEditor.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteData.cpp" />
+    <ClCompile Include="StatsComponent.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TriggerCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderRenderer.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="EngineUI.h" />
+    <ClInclude Include="HitboxCollider.h" />
+    <ClInclude Include="HurtboxCollider.h" />
     <ClInclude Include="PlayerAgent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SolidCollider.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="SpriteData.h" />
     <ClInclude Include="SpriteEditor.h" />
+    <ClInclude Include="StatsComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformData.h" />
+    <ClInclude Include="TriggerCollider.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

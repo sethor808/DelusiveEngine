@@ -53,6 +53,15 @@
     <Filter Include="engine\agents\Source Files">
       <UniqueIdentifier>{e9d9e0e2-0da7-40f2-87da-8ddf76a8cae5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\components">
+      <UniqueIdentifier>{483e9b4b-1446-4c02-a43a-4836bba412e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\components\Header Files">
+      <UniqueIdentifier>{f64ab706-8c8e-47a6-8008-a8cbe9c5add7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\components\Source Files">
+      <UniqueIdentifier>{3d689567-6e75-453f-9348-d2d03b256040}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -115,6 +124,33 @@
     <ClCompile Include="PlayerAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>engine\components</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatorComponent.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StatsComponent.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderComponent.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HitboxCollider.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HurtboxCollider.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerCollider.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidCollider.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h">
@@ -161,6 +197,33 @@
     </ClInclude>
     <ClInclude Include="PlayerAgent.h">
       <Filter>engine\agents\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>engine\components</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorComponent.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StatsComponent.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderComponent.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HitboxCollider.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HurtboxCollider.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerCollider.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidCollider.h">
+      <Filter>engine\components\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

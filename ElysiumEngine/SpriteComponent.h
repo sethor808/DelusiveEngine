@@ -13,7 +13,7 @@ class SpriteComponent : Component {
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
-    void Draw(const glm::mat4& projection) const;
+    void Draw(const glm::mat4& projection) override;
     void SetVelocity(float x, float y);
     void Update(float) override;
 private:
