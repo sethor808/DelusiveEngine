@@ -225,5 +225,8 @@
     <ClInclude Include="SolidCollider.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ElysiumComponents.h">
+      <Filter>engine\components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
     Scene scene("Test");
     std::vector<std::unique_ptr<Agent>> agents;
     //agents.push_back(std::make_unique<PlayerAgent>("assets/sprites/star.png", "Player1"));
-    scene.AddAgent(std::make_unique<PlayerAgent>("assets/sprites/star.png", "Player1"));
+    scene.AddAgent(std::make_unique<PlayerAgent>("Player1"));
 
     bool running = true;
     SDL_Event e;

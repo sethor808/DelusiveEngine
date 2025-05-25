@@ -18,8 +18,7 @@ float quadVertices[] = {
     -0.5f, -0.5f,  0.0f, 0.0f
 };
 
-Sprite::Sprite(const char* texturePath)
-    : position(0.0f), scale(1.0f), rotation(0.0f) {
+Sprite::Sprite(const char* texturePath){
     stbi_set_flip_vertically_on_load(true);
     shader = new Shader("shaders\\vertex.glsl", "C:\\Users\\Demon Teddy\\Documents\\Programs\\ElysiumEngine\\ElysiumEngine\\shaders\\fragment.glsl");
     texture = new Texture(texturePath);

@@ -176,6 +176,7 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderRenderer.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ElysiumComponents.h" />
     <ClInclude Include="EngineUI.h" />
     <ClInclude Include="HitboxCollider.h" />
     <ClInclude Include="HurtboxCollider.h" />

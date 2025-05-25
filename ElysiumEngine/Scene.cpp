@@ -66,7 +66,7 @@ bool Scene::LoadFromFile(const std::string& path) {
 			size_t count;
 			in >> count;
 			for (size_t i = 0; i < count; ++i) {
-				auto agent = std::make_unique<PlayerAgent>("assets/sprites/star.png", ""); //TODO: Replace with proper pathing later
+				auto agent = std::make_unique<PlayerAgent>(""); //TODO: Replace with proper pathing later
 				agent->LoadFromFile(in);
 				agents.push_back(std::move(agent));
 			}

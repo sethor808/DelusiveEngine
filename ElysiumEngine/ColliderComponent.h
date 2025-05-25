@@ -26,12 +26,12 @@ public:
 	ColliderComponent();
 	virtual ~ColliderComponent() = default;
 
-	virtual ColliderType GetType() const = 0;
+	virtual ColliderType GetColliderType() const = 0;
 	virtual ShapeType GetShapeType() const = 0;
 	virtual bool CheckCenterRender() const { return showCenter; }
 	virtual void ToggleCenterDisplay() { showCenter = !showCenter; };
-
-	void Draw(const glm::mat4& projection) override;
+	
+	void Draw(const glm::mat4& projection) const override;
 
 	static void SetRenderer(ColliderRenderer* r) { renderer = r; }
 

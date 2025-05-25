@@ -60,6 +60,9 @@ public:
 		);
 	}
 
+	const std::vector<std::unique_ptr<Component>>& GetComponents() const;
+
+	void RemoveComponentByPointer(Component* target);
 	void SaveToFile(std::ofstream& out) const;
 	void LoadFromFile(std::ifstream& in);
 

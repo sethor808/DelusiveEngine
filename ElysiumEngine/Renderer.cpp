@@ -17,7 +17,13 @@ void Renderer::Clear() {
 
 void Renderer::OnResize(int width, int height) {
 	glViewport(0, 0, width, height);
-	projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
+	projection = glm::ortho(
+		-width / 2.0f,  // left
+		width / 2.0f,  // right
+		-height / 2.0f, // bottom
+		height / 2.0f, // top
+		-1.0f, 1.0f           // near/far
+	);
 }
 
 void Renderer::Shutdown() {

@@ -4,7 +4,7 @@ int StatsComponent::GetHealth() {
 	return 0;
 }
 
-bool StatsComponent::TakeDamage(int damage) {
+int StatsComponent::TakeDamage(int damage) {
 	currentHealth -= damage;
 	
 	if (currentHealth > maxHealth) {
@@ -25,4 +25,8 @@ void StatsComponent::Heal(int heal) {
 	if (currentHealth > maxHealth) {
 		currentHealth = maxHealth;
 	}
+}
+
+void StatsComponent::Update(float deltaTime) {
+
 }

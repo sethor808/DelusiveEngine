@@ -4,11 +4,16 @@
 
 class SolidCollider : public ColliderComponent {
 public:
-	ColliderType GetType() const override {
+	ColliderType GetColliderType() const override {
 		return ColliderType::Solid;
 	}
 
 	ShapeType GetShapeType() const override;
 
+	void Update(float) override{};
 	void OnCollision(ColliderComponent*) override;
+
+	const char* GetType() const override {
+		return "Solid Collider";
+	}
 };

@@ -38,9 +38,9 @@ private:
     GLuint VAO, VBO;
     Shader* shader;
     Texture* texture;
-    glm::vec2 position, scale;
+    glm::vec2 position = { 0.0f, 0.0f }, scale = { 1.0f, 1.0f };
     glm::vec2 velocity = { 0.0f, 0.0f };
-    float rotation;
+    float rotation = { 0.0f };
     Camera2D camera;
     Collider collider;
 };

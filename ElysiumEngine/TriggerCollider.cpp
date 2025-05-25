@@ -7,7 +7,7 @@ ShapeType TriggerCollider::GetShapeType() const {
 
 void TriggerCollider::OnCollision(ColliderComponent* col) {
 	//TODO: Prevent self hits
-	if (col->GetType() == ColliderType::Solid) {
+	if (col->GetColliderType() == ColliderType::Solid) {
 		std::cout << "[Trigger] occured by solid collider." << std::endl;
 		//Call damage here
 	}

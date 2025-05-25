@@ -4,7 +4,7 @@
 
 class TriggerCollider : public ColliderComponent {
 public:
-	ColliderType GetType() const override {
+	ColliderType GetColliderType() const override {
 		return ColliderType::Trigger;
 	}
 

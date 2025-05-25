@@ -20,7 +20,11 @@ public:
 	~EngineUI();
 	std::vector<std::string> LoadSceneList();
 	void Render(Scene& scene);
-
+	void RenderTopBar(Scene& scene);
+	void RenderSceneEditor(Scene& scene);
+	void RenderAgentEditor(Scene& scene);
+	void RenderAnimatorEditor(Scene& scene);
+	void RenderGameView(Scene& scene);
 private:
 	int selectedAgentIndex = -1;
 	EditorMode currentMode = EditorMode::SceneEditor;

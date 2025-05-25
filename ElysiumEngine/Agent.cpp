@@ -48,3 +48,20 @@ void Agent::LoadFromFile(std::ifstream& in) {
 	
 	// TODO: Load colliders
 }
+
+void Agent::RemoveComponentByPointer(Component* target) {
+	components.erase(
+		std::remove_if(
+			components.begin(),
+			components.end(),
+			[target](const std::unique_ptr<Component>& c) {
+				return c.get() == target;
+			}
+		),
+		components.end()
+	);
+}
+
+const std::vector<std::unique_ptr<Component>>& Agent::GetComponents() const {
+	return components;
+}

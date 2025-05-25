@@ -57,6 +57,7 @@ GLuint Shader::GetID() {
 }
 
 void Shader::Use() const {
+    
     glUseProgram(shaderProgram);
     std::cout << "[Shader] Using program ID: " << shaderProgram << "\n";
 }
