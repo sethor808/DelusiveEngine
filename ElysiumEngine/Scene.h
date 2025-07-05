@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sprite.h"
 #include "Agent.h"
-#include "PlayerAgent.h"
+#include "ElysiumAgents.h"
 
 class Scene {
 public:
@@ -25,14 +25,20 @@ public:
 	void AddAgent(std::unique_ptr<Agent>);
 	std::vector<std::unique_ptr<Agent>>& GetAgents();
 
+	//Camera stuff
+	CameraAgent* GetCamera() const;
+	void SetCamera(CameraAgent*);
+
 	void Update(float deltaTime);
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
+	void HandleMouse(const glm::vec2&, bool);
 
 	bool SaveToFile(const std::string& path) const;
 	bool LoadFromFile(const std::string& path);
 
 private:
 	std::string name;
+	CameraAgent* camera;
 	std::vector<Sprite*> sprites;
 	std::vector<std::unique_ptr<Agent>> agents;
 };

@@ -1,11 +1,16 @@
 #include "Scene.h"
 
-Scene::Scene(std::string _name) {
-	name = _name;
+Scene::Scene(std::string _name)
+	: name(std::move(_name)), camera(nullptr)
+{
+	auto cam = std::make_unique<CameraAgent>();
+	cam->SetName("MainCamera");
+	camera = cam.get();                    // Set raw pointer BEFORE moving
+	//AddAgent(std::move(cam));              // Transfer ownership properly
 }
 
 Scene::~Scene() {
-
+	delete camera;
 }
 
 void Scene::AddSprite(Sprite* sprite) {
@@ -30,6 +35,7 @@ std::vector<std::unique_ptr<Agent>>& Scene::GetAgents() {
 }
 
 void Scene::Update(float deltaTime) {
+	if (camera) camera->Update(deltaTime);
 	for (auto& agent : agents) {
 		agent->Update(deltaTime);
 	}
@@ -38,6 +44,12 @@ void Scene::Update(float deltaTime) {
 void Scene::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
 	for (auto& agent : agents) {
 		agent->Draw(projection);
+	}
+}
+
+void Scene::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
+	for (auto& agent : agents) {
+		agent->HandleMouse(worldMouse, mouseDown);
 	}
 }
 
@@ -74,4 +86,8 @@ bool Scene::LoadFromFile(const std::string& path) {
 	}
 
 	return true;
+}
+
+CameraAgent* Scene::GetCamera() const {
+	return camera;
 }

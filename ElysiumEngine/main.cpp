@@ -66,14 +66,11 @@ int main(int argc, char** argv) {
     //agents.push_back(std::make_unique<PlayerAgent>("assets/sprites/star.png", "Player1"));
     scene.AddAgent(std::make_unique<PlayerAgent>("Player1"));
 
+    float scrollDelta = 0.0f;
     bool running = true;
     SDL_Event e;
     while (running) {
-        /*
-        ImGui::Begin("Sprite Editor");
-        ImGui::Text("Use this to edit collider");
-        ImGui::End();
-        */
+        scrollDelta = 0.0f;
 
         while (SDL_PollEvent(&e)) {
             ImGui_ImplSDL3_ProcessEvent(&e);
@@ -86,11 +83,22 @@ int main(int argc, char** argv) {
 
                 sprite.SetPosition(newWidth / 2.0f, newHeight / 2.0f);
             }
+            else if(e.type == SDL_EVENT_MOUSE_WHEEL){
+                scrollDelta = (float)e.wheel.y;
+            }
             const bool* keys = SDL_GetKeyboardState(0);
             yVel = (keys[SDL_SCANCODE_W]) * speed + (keys[SDL_SCANCODE_S]) * -speed;
             xVel = (keys[SDL_SCANCODE_D]) * speed + (keys[SDL_SCANCODE_A]) * -speed;
-            std::cout << "X vel: " << xVel << " | Y vel: " << yVel << std::endl;
+            //std::cout << "X vel: " << xVel << " | Y vel: " << yVel << std::endl;
             sprite.SetVelocity(xVel, yVel);
+        }
+
+        // Handle camera input
+        CameraAgent* cam = scene.GetCamera();
+        if (cam) {
+            float mx, my;
+            uint32_t mouseState = SDL_GetMouseState(&mx, &my);
+            cam->HandleInput({ mx, my }, mouseState & SDL_BUTTON_MIDDLE, scrollDelta);
         }
 
         uint64_t currentTicks = SDL_GetTicks();
@@ -113,7 +121,9 @@ int main(int argc, char** argv) {
         */
         //editor.DrawUI(sprite);
         scene.Update(deltaTime);
-        scene.Draw(colliderRenderer, Renderer::GetProjection());
+        
+        glm::mat4 projection = cam ? cam->GetViewProjection(800, 600) : Renderer::GetProjection();
+        scene.Draw(colliderRenderer, projection);
 
         sprite.UpdateCollider();
         

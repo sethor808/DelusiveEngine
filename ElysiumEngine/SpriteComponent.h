@@ -10,10 +10,23 @@
 #include <imgui/backend/imgui_impl_sdl3.h>
 #include <imgui/backend/imgui_impl_opengl3.h>
 
+enum class SpriteAction {
+    None, Drag, ResizeTop, ResizeBottom, ResizeLeft, ResizeRight,
+    ResizeTopLeft, ResizeTopRight, ResizeBottomLeft, ResizeBottomRight
+};
+
+struct SpriteInteractionState {
+    SpriteAction currentAction = SpriteAction::None;
+    glm::vec2 dragOffset = {};
+    bool isSelected = false;
+};
+
 class SpriteComponent : public Component {
 public:
     SpriteComponent(const char* texturePath);
     ~SpriteComponent();
+    std::unique_ptr<Component> Clone() const override;
+
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
@@ -21,14 +34,18 @@ public:
     void DrawImGui() override;
     void SetVelocity(float x, float y);
     void Update(float) override;
+    void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) override;
+    void HandleMouse(const glm::vec2&, bool) override;
 
     const char* GetType() const override {
-        return "Sprite";
+        return "SpriteComponent";
     }
 
+    void Serialize(std::ofstream& out) const override;
+    void Deserialize(std::ifstream& in) override;
 private:
-    TransformComponent transform;
     std::string texturePath;
+    SpriteInteractionState interaction;
     GLuint VAO, VBO;
     Shader* shader;
     Texture* texture;

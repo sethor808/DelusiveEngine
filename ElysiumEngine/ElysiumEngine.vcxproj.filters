@@ -82,9 +82,6 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Agent.cpp">
-      <Filter>engine\core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
@@ -114,9 +111,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>engine\render\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
@@ -151,11 +145,20 @@
     <ClCompile Include="SolidCollider.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ElysiumUtils.cpp">
+      <Filter>engine\core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Agent.cpp">
+      <Filter>engine\agents</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>engine\core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraAgent.cpp">
+      <Filter>engine\agents\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Agent.h">
-      <Filter>engine\core\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
@@ -181,9 +184,6 @@
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>engine\render\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColliderRenderer.h">
@@ -227,6 +227,24 @@
     </ClInclude>
     <ClInclude Include="ElysiumComponents.h">
       <Filter>engine\components</Filter>
+    </ClInclude>
+    <ClInclude Include="ElysiumUtils.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorData.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Agent.h">
+      <Filter>engine\agents</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraAgent.h">
+      <Filter>engine\agents\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ElysiumAgents.h">
+      <Filter>engine\agents</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #pragma once
 #include "TransformData.h"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
@@ -13,9 +14,12 @@ class Agent {
 public:
 	Agent();
 	virtual ~Agent();
+	virtual std::unique_ptr<Agent> Clone() const = 0;
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(const glm::mat4& projection) const = 0;
+	void HandleMouse(const glm::vec2&, bool);
+	virtual GLuint RenderAgentToTexture(int width = 128, int height = 128);
 
 	void SetPosition(const glm::vec2& pos);
 	void SetRotation(const float rotation);
@@ -33,6 +37,8 @@ public:
 		components.push_back(std::move(component));
 		return ptr;
 	}
+
+	void AddRawComponent(std::unique_ptr<Component>);
 
 	// Get a component of type T, returns nullptr if not found
 	template<typename T>
@@ -60,11 +66,14 @@ public:
 		);
 	}
 
+	Component* GetComponentByName(const std::string&);
 	const std::vector<std::unique_ptr<Component>>& GetComponents() const;
-
 	void RemoveComponentByPointer(Component* target);
-	void SaveToFile(std::ofstream& out) const;
-	void LoadFromFile(std::ifstream& in);
+
+	void SaveToFile(const std::string&) const;
+	virtual void SaveToFile(std::ofstream& out) const;
+	void LoadFromFile(const std::string&);
+	virtual void LoadFromFile(std::ifstream& in);
 
 	void SetName(const std::string& newName) { name = newName; }
 	const std::string& GetName() const { return name; }

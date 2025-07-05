@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <algorithm>
 
-enum class ColliderAction {
+enum class OldColliderAction {
 	None,
 	Drag,
 	ResizeLeft,

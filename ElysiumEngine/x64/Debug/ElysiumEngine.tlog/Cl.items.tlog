@@ -1,10 +1,12 @@
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\Agent.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\Agent.obj
-C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\Animator.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\Animator.obj
+C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\Animation.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\Animation.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\AnimatorComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\AnimatorComponent.obj
+C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\CameraAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\CameraAgent.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\Collider.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\Collider.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\ColliderComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\ColliderComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\ColliderRenderer.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\ColliderRenderer.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\Component.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\Component.obj
+C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\ElysiumUtils.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\ElysiumUtils.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\EngineUI.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\EngineUI.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\HitboxCollider.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\HitboxCollider.obj
 C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\HurtboxCollider.cpp;C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\x64\Debug\HurtboxCollider.obj

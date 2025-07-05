@@ -1,4 +1,5 @@
 #include "SpriteEditor.h"
+#include "ElysiumUtils.h"
 #include <SDL3/SDL.h>
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
@@ -6,20 +7,6 @@
 #include <glm/gtc/matrix_inverse.hpp> 
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
-
-namespace {
-	glm::vec2 ScreenToWorld2D(int mouseX, int mouseY) {
-		return glm::vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
-	}
-
-	bool IsInsideCircle(const glm::vec2& point, const glm::vec2& center, float radius) {
-		return glm::length(point - center) <= radius;
-	}
-
-	bool IsNearLine(float point, float line, float threshold) {
-		return std::abs(point - line) <= threshold;
-	}
-}
 
 template<typename T>
 const T& Clamp(const T& v, const T& lo, const T& hi) {

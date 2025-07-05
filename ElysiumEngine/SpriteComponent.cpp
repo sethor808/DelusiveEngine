@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
+#include <string>
 
 float vertices[] = {
     // pos       // tex
@@ -25,7 +26,7 @@ SpriteComponent::SpriteComponent(const char* texturePath) {
     //TODO: Clean this up later
     SetPosition(0.0f, 0.0f);
     SetRotation(0.0f);
-    SetScale(64.0f, 64.0f);
+    SetScale(1.0f, 1.0f);
 
     std::cout << "[Sprite Component] position: " << transform.position.x << std::endl;
 
@@ -55,6 +56,16 @@ SpriteComponent::~SpriteComponent() {
     delete texture;
     delete shader;
     //glDeleteTextures(1, &texture);
+}
+
+// In SpriteComponent.cpp
+std::unique_ptr<Component> SpriteComponent::Clone() const {
+    auto sprite = std::make_unique<SpriteComponent>(texturePath.c_str());
+    sprite->SetPosition(transform.position.x, transform.position.y);
+    sprite->SetRotation(transform.rotation);
+    sprite->SetScale(transform.scale.x, transform.scale.y);
+    sprite->SetName(GetName());
+    return sprite;
 }
 
 void SpriteComponent::SetPosition(float x, float y) {
@@ -91,7 +102,9 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
     //glm::mat4 model = transform.GetTransformMatrix();
     glm::mat4 agentTransform = owner->GetTransform().GetTransformMatrix(); // world transform
     glm::mat4 localTransform = transform.GetTransformMatrix();             // local offset
-    glm::mat4 model = agentTransform * localTransform;
+    //glm::mat4 model = agentTransform * localTransform;
+    glm::mat4 model = agentTransform * glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.0f))
+        * glm::scale(glm::mat4(1.0f), glm::vec3(transform.scale, 1.0f));
     glm::mat4 view = glm::mat4(1.0f); // Replace with actual view later
 
     shader->SetMat4("model", glm::value_ptr(model));
@@ -184,4 +197,94 @@ void SpriteComponent::SetVelocity(float x, float y) {
 void SpriteComponent::Update(float deltaTime){
     transform.position += velocity * deltaTime;
     //Probably move camera here
+}
+
+void SpriteComponent::SetLocalTransform(const glm::vec2& pos, const glm::vec2& scale, float rot) {
+    transform.position = pos;
+    transform.scale = scale;
+    transform.rotation = rot;
+}
+
+void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown) {
+    if (!enabled) return;
+
+    glm::vec2 center = owner->GetTransform().position + transform.position;
+    glm::vec2 halfSize = transform.scale * 0.5f;
+
+    glm::vec2 min = center - halfSize;
+    glm::vec2 max = center + halfSize;
+
+    bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
+        worldMouse.y >= min.y && worldMouse.y <= max.y;
+
+    std::cout << "[SpriteComponent] worldMouse: " << worldMouse.x << ", " << worldMouse.y
+        << " | center: " << center.x << ", " << center.y
+        << " | transform.pos: " << transform.position.x << ", " << transform.position.y
+        << " | selected: " << mouseOver << "\n";
+
+    if (!isMouseDown && interaction.currentAction == SpriteAction::None) {
+        interaction.isSelected = mouseOver;
+    }
+
+    if (isMouseDown && interaction.currentAction == SpriteAction::None && mouseOver) {
+        interaction.currentAction = SpriteAction::Drag;
+        interaction.dragOffset = (worldMouse - center) / transform.scale;
+    }
+
+    if (!isMouseDown) {
+        interaction.currentAction = SpriteAction::None;
+    }
+
+    if (interaction.currentAction == SpriteAction::Drag) {
+        glm::vec2 delta = (worldMouse - owner->GetTransform().position) - (interaction.dragOffset * transform.scale);
+        transform.position = delta;
+    }
+}
+
+void SpriteComponent::Serialize(std::ofstream& out) const {
+    out << "name " << this->GetName() << "\n";
+    out << "texture " << texturePath << "\n";
+    out << "enabled " << (enabled ? 1 : 0) << "\n";
+    out << "transform "
+        << transform.position.x << " " << transform.position.y << " "
+        << transform.rotation << " "
+        << transform.scale.x << " " << transform.scale.y << "\n";
+    out << "---\n";
+}
+
+void SpriteComponent::Deserialize(std::ifstream& in) {
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line == "---") break;
+
+        std::istringstream iss(line);
+        std::string token;
+        iss >> token;
+
+        if (token == "name") {
+            std::string tempName;
+            std::getline(iss, tempName);
+            if (!tempName.empty() && tempName[0] == ' ') tempName.erase(0, 1);
+            strncpy_s(name, tempName.c_str(), sizeof(name));
+        }
+        else if (token == "texture") {
+            std::getline(iss, texturePath);
+            if (!texturePath.empty() && texturePath[0] == ' ') texturePath.erase(0, 1);
+            delete texture;
+            texture = new Texture(texturePath.c_str());
+        }
+        else if (token == "enabled") {
+            int state;
+            iss >> state;
+            enabled = (state != 0);
+        }
+        else if (token == "transform") {
+            iss >> transform.position.x >> transform.position.y;
+            iss >> transform.rotation;
+            iss >> transform.scale.x >> transform.scale.y;
+        }
+        else {
+            break;
+        }
+    }
 }

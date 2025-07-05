@@ -5,7 +5,7 @@
 #include <filesystem>
 
 Texture::Texture(const char* path) {
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
     //path = "C:/Users/Demon Teddy/Documents/Programs/ElysiumEngine/ElysiumEngine/assets/sprites/star.jpg";
     int w, h, channels;
     unsigned char* data = stbi_load(path, &w, &h, &channels, 4);
