@@ -1,0 +1,6 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ElysiumEngine.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  EngineUI.cpp
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\EngineUI.cpp(1068,34): warning C4244: 'argument': conversion from 'uint64_t' to 'int', possible loss of data
+  main.cpp
+  Generating Code...
+  DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\bin\x64\Debug\DelusiveEngine.exe

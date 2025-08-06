@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\main.cpp(141,51): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\main.cpp(141,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ElysiumEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\ElysiumEngine\ElysiumEngine\bin\x64\Debug\ElysiumEngine.exe

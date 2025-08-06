@@ -1,0 +1,9 @@
+name DummyPC
+transform 0 0 0 1 1
+components 1
+SpriteComponent
+name New Sprite
+texture assets/sprites\BasicDude\BasicDude1.jpg
+enabled 1
+transform 0 0 0 1 1
+---
