@@ -121,6 +121,7 @@ const TransformComponent& Agent::GetTransform() const {
 }
 
 void Agent::SaveToFile(std::ofstream& out) const {
+	out << "type " << GetType() << "\n";
 	out << "name " << name << "\n";
 	out << "transform "
 		<< transform.position.x << " " << transform.position.y << " "
@@ -132,6 +133,7 @@ void Agent::SaveToFile(std::ofstream& out) const {
 		out << comp->GetType() << "\n";
 		comp->Serialize(out);
 	}
+	out << "------" << "\n";
 }
 
 void Agent::SaveToFile(const std::string& filePath) const {
@@ -147,13 +149,24 @@ void Agent::LoadFromFile(std::ifstream& in) {
 	components.clear();
 
 	while (std::getline(in, line)) {
+		// Trim line start/end if you like; simple check:
+		if (line == "------") {
+			// agent separator -> this agent's block is finished
+			break;
+		}
+		if (line.empty()) {
+			continue;
+		}
+
 		std::istringstream iss(line);
 		std::string token;
 		iss >> token;
 
 		if (token == "name") {
-			std::getline(iss, name);
-			if (!name.empty() && name[0] == ' ') name.erase(0, 1);  // trim space
+			std::string rest;
+			std::getline(iss, rest);
+			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
+			name = rest;
 		}
 		else if (token == "transform") {
 			iss >> transform.position.x >> transform.position.y;
@@ -163,26 +176,40 @@ void Agent::LoadFromFile(std::ifstream& in) {
 		else if (token == "components") {
 			size_t count = 0;
 			iss >> count;
+
 			for (size_t i = 0; i < count; ++i) {
 				std::string typeLine;
 				if (!std::getline(in, typeLine)) break;
+
+				// If the file uses '---' after components or component blocks,
+				// handle empty lines and separators:
+				if (typeLine.empty()) { --i; continue; }
+				if (typeLine == "---") { break; }
 
 				std::istringstream typeStream(typeLine);
 				std::string type;
 				typeStream >> type;
 
 				Component* comp = nullptr;
-				if (type == "SpriteComponent") comp = new SpriteComponent("");
-				else if (type == "SolidCollider") comp = new SolidCollider();
-				else if (type == "TriggerCollider") comp = new TriggerCollider();
-				else if (type == "HurtboxCollider") comp = new HurtboxCollider();
-				else if (type == "HitboxCollider") comp = new HitboxCollider();
-				else if (type == "StatsComponent") comp = new StatsComponent();
+				// Use AddComponent so ID/owner are properly assigned
+				if (type == "SpriteComponent")       comp = AddComponent<SpriteComponent>("");
+				else if (type == "SolidCollider")    comp = AddComponent<SolidCollider>();
+				else if (type == "TriggerCollider")  comp = AddComponent<TriggerCollider>();
+				else if (type == "HurtboxCollider")  comp = AddComponent<HurtboxCollider>();
+				else if (type == "HitboxCollider")   comp = AddComponent<HitboxCollider>();
+				else if (type == "StatsComponent")   comp = AddComponent<StatsComponent>();
+				else if (type == "AnimatorComponent")comp = AddComponent<AnimatorComponent>();
+				else {
+					std::string discard;
+					while (std::getline(in, discard)) {
+						if (discard == "---") break;
+						if (discard.empty()) continue;
+					}
+					continue;
+				}
 
 				if (comp) {
-					comp->SetOwner(this);
 					comp->Deserialize(in);
-					components.push_back(std::unique_ptr<Component>(comp));
 				}
 			}
 		}

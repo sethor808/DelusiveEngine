@@ -109,6 +109,8 @@ void Scene::Update(float deltaTime) {
 	for (auto& agent : agents) {
 		agent->Update(deltaTime);
 	}
+
+	physicsSystem.HandleCollisions(agents);
 }
 
 void Scene::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
@@ -188,17 +190,58 @@ bool Scene::LoadFromFile(const std::string& path) {
 	if (!in.is_open()) return false;
 
 	agents.clear();
+	systems.clear(); // if you save/load systems later
 
 	std::string token;
 	while (in >> token) {
 		if (token == "name") {
-			size_t count;
+			std::string rest;
+			std::getline(in, rest); // read rest of line " New Scene"
+			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
+			this->name = rest;
+		}
+		else if (token == "agents") {
+			size_t count = 0;
 			in >> count;
+			std::string tmp;
+			std::getline(in, tmp); // consume end of line
+
 			for (size_t i = 0; i < count; ++i) {
-				auto agent = std::make_unique<PlayerAgent>(""); //TODO: Replace with proper pathing later
+				// Expect a line like: "type PlayerAgent"
+				std::string typeToken;
+				in >> typeToken;
+				if (typeToken != "type") {
+					// attempt to recover: skip rest of line and try to find "type"
+					std::string skipLine;
+					std::getline(in, skipLine);
+					// try to find next "type"
+					while (in >> typeToken && typeToken != "type") {
+						std::getline(in, skipLine);
+					}
+					if (!in) break;
+				}
+
+				std::string agentType;
+				in >> agentType;
+				std::getline(in, tmp);
+
+				std::unique_ptr<Agent> agent;
+				if (agentType == "PlayerAgent") agent = std::make_unique<PlayerAgent>("");
+				else if (agentType == "CameraAgent") agent = std::make_unique<CameraAgent>("");
+				else if (agentType == "EnemyAgent") agent = std::make_unique<EnemyAgent>("");
+				else if (agentType == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>("");
+				else {
+					agent = std::make_unique<PlayerAgent>("");
+				}
+
+				// Agent::LoadFromFile should read only this agent block (until --- or EOF)
 				agent->LoadFromFile(in);
 				agents.push_back(std::move(agent));
 			}
+		}
+		else {
+			std::string rest;
+			std::getline(in, rest);
 		}
 	}
 

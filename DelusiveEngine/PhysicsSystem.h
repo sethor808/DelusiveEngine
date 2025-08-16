@@ -6,9 +6,7 @@
 
 class PhysicsSystem {
 public:
-	static void HandleCollisions(const std::vector<Agent*>&);
-	
-
+	static void HandleCollisions(const std::vector<std::unique_ptr<Agent>>&);
 private:
 	static bool CheckAABBCollision(ColliderComponent*, ColliderComponent*);
 	static bool CheckBoxBoxCollision(ColliderComponent*, ColliderComponent*);
@@ -17,5 +15,5 @@ private:
 	static bool CheckLineLineCollision(ColliderComponent*, ColliderComponent*);
 	static bool CheckLineCircleCollision(ColliderComponent*, ColliderComponent*);
 	static bool CheckLineBoxCollision(ColliderComponent*, ColliderComponent*);
-	static void ResolveSolidCollision(ColliderComponent*, Agent*);
+	static void ResolveSolidCollision(ColliderComponent*, ColliderComponent*);
 };

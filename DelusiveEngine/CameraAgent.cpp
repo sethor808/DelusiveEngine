@@ -9,6 +9,10 @@ CameraAgent::CameraAgent(const std::string& name) {
 	SetName(name);
 }
 
+std::string CameraAgent::GetType() const{
+	return "CameraAgent";
+}
+
 std::unique_ptr<Agent> CameraAgent::Clone() const {
 	auto cam = std::make_unique<CameraAgent>();
 	cam->SetName(GetName());

@@ -7,22 +7,51 @@ PlayerAgent::PlayerAgent(const std::string& agentName) {
 	velocity = { 0.0f, 0.0f };
 }
 
-void PlayerAgent::Update(float deltaTime) {
-    // Apply acceleration
-    velocity += acceleration * deltaTime;
+std::string PlayerAgent::GetType() const{
+    return "PlayerAgent";
+}
 
-    // Apply and decay impulse
-    velocity += impulse;
-    impulse *= std::pow(0.1f, deltaTime); // Fading effect
-    if (glm::length(impulse) < 0.01f) {
-        impulse = glm::vec2(0.0f);
+
+void PlayerAgent::HandleInput(const PlayerInputState& input) {
+    // Movement logic
+    bool dodgePressed = (input.dodgePressed && !prevInput.dodgePressed);
+
+    if (dodgePressed) {
+        dodgeBufferTimer = 0.15;
+        dodgeDir = input.moveDir;
     }
 
-    // Damping for smoother movement
-    velocity *= damping;
+    prevInput = input;
+}
 
-    // Move the agent
-    transform.position += velocity * deltaTime;
+void PlayerAgent::Update(float deltaTime) {
+    // Input lock countdown
+    if (inputLockTimer > 0.0f) {
+        inputLockTimer -= deltaTime;
+    }
+
+    // Input buffers
+    // TODO: Streamline this to its own code
+    if (!dodging && dodgeBufferTimer > 0.0f && inputLockTimer <= 0.0f)
+    {
+        if (glm::length(dodgeDir) > 0.0f) {
+            StartDodge(glm::normalize(dodgeDir));
+            dodgeBufferTimer = 0.0f; // consume buffer
+        }
+    }
+
+    if (dodging) {
+        HandleDodge(deltaTime);
+    }
+    else {
+        HandleMovement(deltaTime);
+    }
+
+    // If dodging, override with dodge impulse
+    glm::vec2 finalVelocity = velocity + impulse;
+
+    // Move player
+    transform.position += finalVelocity * deltaTime;
 
     // Update all components
     for (auto& comp : components) {
@@ -30,19 +59,50 @@ void PlayerAgent::Update(float deltaTime) {
     }
 }
 
-void PlayerAgent::HandleInput(const PlayerInputState& input) {
-    // Movement logic
-    acceleration = input.moveDir * moveSpeed;
+void PlayerAgent::HandleMovement(float deltaTime) {
+    glm::vec2 targetVel = glm::vec2(0.0f);
 
-    // Attack logic (just a sketch)
-    /*
-    if (input.lightAttackPressed && !lightAttackActive) {
-        StartLightCombo();
+    // Normal WASD movement
+    if (glm::length(prevInput.moveDir) > 0.0f) {
+        glm::vec2 dir = glm::normalize(prevInput.moveDir);
+        velocity = dir * moveSpeed;
     }
-    if (input.dodgePressed && canDodge) {
-        StartDodge();
+
+    //Apply acceleration
+    float accelRate = (glm::length(targetVel) > 0.0f) ? acceleration : deceleration;
+    velocity = glm::mix(velocity, targetVel, accelRate * deltaTime);
+
+    float decayRate = 8.0f; // higher = stops faster
+    impulse *= std::max(0.0f, 1.0f - decayRate * deltaTime);
+    if (glm::length(impulse) < 0.01f) {
+        impulse = glm::vec2(0.0f);
     }
-    */
+}
+
+void PlayerAgent::StartDodge(const glm::vec2& dir) {
+    dodging = true;
+    dodgeTimer = dodgeDuration;
+    impulse = dir * dodgeStrength;
+    inputLockTimer = dodgeDuration;
+}
+
+void PlayerAgent::HandleDodge(float deltaTime) {
+    // Process dodge buffering
+    if (dodgeBufferTimer > 0.0f) {
+        dodgeBufferTimer -= deltaTime;
+    }
+
+    dodgeTimer -= deltaTime;
+    if (dodgeTimer <= 0.0f) {
+        dodging = false;
+        impulse = glm::vec2(0.0f);
+    }
+}
+
+void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
+    impulse = glm::normalize(dir) * strength;
+    //dodging = false;
+    inputLockTimer = 0.1f;
 }
 
 void PlayerAgent::DrawImGui() {

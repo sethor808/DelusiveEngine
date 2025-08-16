@@ -66,6 +66,10 @@ void Renderer::OnResize(int _width, int _height) {
 	GenerateProjection();
 }
 
+float Renderer::GetPixelScale() {
+	return pixelsPerUnit;
+}
+
 void Renderer::Shutdown() {
 
 }

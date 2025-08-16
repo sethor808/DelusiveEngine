@@ -5,6 +5,10 @@ EnemyAgent::EnemyAgent(const std::string& agentName) {
     velocity = { 0.0f, 0.0f };
 }
 
+std::string EnemyAgent::GetType() const{
+    return "EnemyAgent";
+}
+
 std::unique_ptr<Agent> EnemyAgent::Clone() const {
     auto copy = std::make_unique<EnemyAgent>(this->GetName());  // or however the agent is constructed
 

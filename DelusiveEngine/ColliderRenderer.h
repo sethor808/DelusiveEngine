@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "Shader.h"
 #include "ColliderComponent.h"
+#include "Renderer.h"
 
 class ColliderComponent;
 
@@ -23,4 +24,5 @@ public:
 private:
 	GLuint VAO, VBO;
 	Shader* shader;
+	float handleSize = 12.0f;
 };

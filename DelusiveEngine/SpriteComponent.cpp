@@ -67,7 +67,7 @@ std::unique_ptr<Component> SpriteComponent::Clone() const {
     return sprite;
 }
 
-void SpriteComponent::SetTexture(const std::string& path) {
+void SpriteComponent::SetTexturePath(const std::string& path) {
     // Don't reload if it's the same texture
     if (texturePath == path) return;
 
@@ -109,7 +109,7 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
         return;
     }
 
-    std::cout << "[SpriteComponent] Draw called" << std::endl;
+    //std::cout << "[SpriteComponent] Draw called" << std::endl;
 
     shader->Use();
     glActiveTexture(GL_TEXTURE0);
@@ -126,8 +126,10 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
     glm::mat4 agentTransform = owner->GetTransform().GetTransformMatrix(); // world transform
     glm::mat4 localTransform = transform.GetTransformMatrix();             // local offset
     //glm::mat4 model = agentTransform * localTransform;
-    glm::mat4 model = agentTransform * glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.0f))
-        * glm::scale(glm::mat4(1.0f), glm::vec3(transform.scale, 1.0f));
+    glm::mat4 model = agentTransform *
+        glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.0f)) *
+        glm::rotate(glm::mat4(1.0f), transform.rotation, glm::vec3(transform.position, 1.0f)) *
+        glm::scale(glm::mat4(1.0f), glm::vec3(transform.scale, 1.0f));
     glm::mat4 view = glm::mat4(1.0f); // Replace with actual view later
 
     shader->SetMat4("model", glm::value_ptr(model));
@@ -232,6 +234,62 @@ void SpriteComponent::DrawImGui() {
     }
 }
 
+bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
+    bool dirty = false;
+    ImGui::Checkbox("Enabled", &enabled);
+    dirty |= ImGui::IsItemEdited();
+
+    dirty |= ImGui::DragFloat2("Offset", glm::value_ptr(transform.position), 1.0f);
+    dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(transform.scale), 0.01f);
+    dirty |= ImGui::DragFloat("Rotation", &transform.rotation, 0.01f);
+
+    ImGui::Text("Texture: %s", std::filesystem::path(texturePath).filename().string().c_str());
+    if (ImGui::Button("Change Texture")) {
+        ImGui::OpenPopup("TextureBrowser");
+    }
+
+    if (ImGui::BeginPopup("TextureBrowser")) {
+        std::function<void(const std::filesystem::path&)> DrawDirectory;
+        DrawDirectory = [&](const std::filesystem::path& path) {
+            for (const auto& entry : std::filesystem::directory_iterator(path)) {
+                if (entry.is_directory()) {
+                    if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
+                        DrawDirectory(entry.path()); // recursive submenu
+                        ImGui::EndMenu();
+                    }
+                }
+                else if (entry.is_regular_file()) {
+                    std::string ext = entry.path().extension().string();
+                    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+                    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
+                        std::string fullPath = entry.path().string();
+                        std::string filename = entry.path().filename().string();
+                        if (ImGui::Selectable(filename.c_str())) {
+                            SetTexturePath(fullPath);
+                            dirty = true;
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                }
+            }
+        };
+
+        DrawDirectory("assets/sprites");
+
+        ImGui::EndPopup();
+    }
+
+    if (dirty) {
+        mod.enabled = enabled;
+        mod.positionOffset = transform.position;
+        mod.scale = transform.scale;
+        mod.rotation = transform.rotation;
+        mod.texturePath = texturePath;
+    }
+
+    return dirty;
+}
+
 void SpriteComponent::SetVelocity(float x, float y) {
     velocity = { x, y };
 }
@@ -259,10 +317,12 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
     bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
         worldMouse.y >= min.y && worldMouse.y <= max.y;
 
+    /*
     std::cout << "[SpriteComponent] worldMouse: " << worldMouse.x << ", " << worldMouse.y
         << " | center: " << center.x << ", " << center.y
         << " | transform.pos: " << transform.position.x << ", " << transform.position.y
         << " | selected: " << mouseOver << "\n";
+    */
 
     if (!isMouseDown && interaction.currentAction == SpriteAction::None) {
         interaction.isSelected = mouseOver;

@@ -60,7 +60,8 @@ private:
 	void SwitchMode(Scene&, EditorMode);
 	std::string GetPath(std::string);
 	void ClearFramePreviews(Animation& anim);
-	void ApplyOverrides(const std::vector<ComponentMod>&, Agent&);
+	void ApplyOverrides(AnimationFrame&, Agent&);
 	void ResetOverrides();
 	void SetupAnimation(const std::string);
+	void RenderAnimationOverrides(AnimationFrame&, ComponentMod&);
 };

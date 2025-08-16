@@ -67,7 +67,7 @@ ImTextureID EngineUI::GetFramePreviewTexture(AnimationFrame& frame, Agent& baseA
         return (ImTextureID)(intptr_t)frame.previewTexture;
 
     std::unique_ptr<Agent> tempAgent = baseAgent.Clone();
-    ApplyOverrides(frame.componentOverrides, *tempAgent);
+    ApplyOverrides(frame, *tempAgent);
 
     if (frame.previewTexture != 0)
         glDeleteTextures(1, &frame.previewTexture);
@@ -673,7 +673,8 @@ void EngineUI::ClearFramePreviews(Animation& anim) {
     }
 }
 
-void EngineUI::ApplyOverrides(const std::vector<ComponentMod>& overrides, Agent& agent) {
+void EngineUI::ApplyOverrides(AnimationFrame& frame, Agent& agent) {
+    auto overrides = frame.componentOverrides;
     for (const auto& mod : overrides) {
         if (Component* comp = agent.GetComponentByID(mod.componentID)) {
             comp->SetEnabled(mod.enabled);
@@ -685,6 +686,7 @@ void EngineUI::ApplyOverrides(const std::vector<ComponentMod>& overrides, Agent&
             }
         }
     }
+    frame.dirty = true;
 }
 
 void EngineUI::ResetOverrides() {
@@ -725,6 +727,11 @@ void EngineUI::SetupAnimation(const std::string pendingAgentFile) {
     selectedFrame = -1;
     ClearFramePreviews(currentAnimation);
     currentAnimation.data.defaultAgentPath = pendingAgentFile;
+}
+
+void EngineUI::RenderAnimationOverrides(AnimationFrame& frame, ComponentMod& mod) {
+    auto& comp = *baseAgent->GetComponentByID(mod.componentID);
+    frame.dirty = comp.DrawAnimatorImGui(mod);
 }
 
 void EngineUI::RenderAnimatorEditor(Scene& scene) {
@@ -961,7 +968,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
         if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
             auto& branch = currentAnimation.data.branches[selectedBranch];
             if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-                ApplyOverrides(branch.frames[selectedFrame].componentOverrides, *baseAgent);
+                ApplyOverrides(branch.frames[selectedFrame], *baseAgent);
             }
         }
 
@@ -973,7 +980,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                 AnimationFrame& frame = branch.frames[selectedFrame];
 
                 // Apply overrides to baseAgent live
-                ApplyOverrides(frame.componentOverrides, *baseAgent);
+                ApplyOverrides(frame, *baseAgent);
 
                 previewTex = (GLuint)(intptr_t)GetFramePreviewTexture(frame, *baseAgent);
             }
@@ -1086,12 +1093,8 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                     ImGui::EndPopup();
                 }
 
-                ImGui::Checkbox("Enabled", &mod.enabled);
-                frame.dirty |= ImGui::IsItemEdited();
+                RenderAnimationOverrides(frame, mod);
 
-                frame.dirty |= ImGui::DragFloat2("Offset", glm::value_ptr(mod.positionOffset), 1.0f);
-                frame.dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(mod.scale), 0.01f);
-                frame.dirty |= ImGui::DragFloat("Rotation", &mod.rotation, 0.01f);
                 ImGui::Separator();
 
                 ImGui::PopID();

@@ -12,6 +12,11 @@ enum class ColliderType {
 	Trigger
 };
 
+struct Zone {
+	glm::vec2 min, max;
+};
+
+
 enum class ColliderHandleType {
     None,
     Center,
@@ -55,6 +60,7 @@ public:
 	virtual void ToggleCenterDisplay() { showCenter = !showCenter; };
 	
 	void Draw(const glm::mat4& projection) const override;
+	virtual bool DrawAnimatorImGui(ComponentMod&) override;
 	void HandleMouse(const glm::vec2&, bool) override;
 
 	static void SetRenderer(ColliderRenderer* r) { renderer = r; }
@@ -70,4 +76,6 @@ protected:
 	glm::vec2 dragStartMouse;
 	glm::vec2 dragStartPos;
 	glm::vec2 dragStartSize;
+
+	Zone ComputeWorldArea() const;
 };

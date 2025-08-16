@@ -1,18 +1,19 @@
 #include "PhysicsSystem.h"
 #include "DelusiveComponents.h"
 
-void PhysicsSystem::HandleCollisions(const std::vector<Agent*>& agents) {
+void PhysicsSystem::HandleCollisions(const std::vector<std::unique_ptr<Agent>>& agents) {
 	for (size_t i = 0; i < agents.size(); ++i) {
-		auto* agentA = agents[i];
+		auto* agentA = agents[i].get();
 		auto collidersA = agentA->GetComponentsOfType<ColliderComponent>();
 
 		for (auto* colA : collidersA) {
 			for (size_t j = i + 1; j < agents.size(); ++j) {
-				auto* agentB = agents[j];
+				auto* agentB = agents[j].get();
 				auto collidersB = agentB->GetComponentsOfType<ColliderComponent>();
 
 				for (auto* colB : collidersB) {
 					if (colA->GetOwner() == colB->GetOwner()) continue;
+					//printf("A type: %d, B type: %d\n", colA->GetColliderType(), colB->GetColliderType());
 
 					bool isHit =
 						(colA->GetColliderType() == ColliderType::Hitbox && colB->GetColliderType() == ColliderType::Hurtbox)
@@ -21,16 +22,16 @@ void PhysicsSystem::HandleCollisions(const std::vector<Agent*>& agents) {
 						|| (colA->GetColliderType() == ColliderType::Trigger && colB->GetColliderType() == ColliderType::Solid)
 						;
 
-					if (isHit && CheckAABBCollision(colA, colB)) {
+ 					if (isHit && CheckAABBCollision(colA, colB)) {
 						//Notify
 						colA->OnCollision(colB);
 						colB->OnCollision(colA);
 
 						if (colA->GetColliderType() == ColliderType::Solid) {
-							ResolveSolidCollision(colA, agentB);
+							ResolveSolidCollision(colA, colB);
 						}
 						else if (colB->GetColliderType() == ColliderType::Solid) {
-							ResolveSolidCollision(colB, agentA);
+							ResolveSolidCollision(colB, colA);
 						}
 					}
 				}
@@ -39,39 +40,19 @@ void PhysicsSystem::HandleCollisions(const std::vector<Agent*>& agents) {
 	}
 }
 
-void PhysicsSystem::ResolveSolidCollision(ColliderComponent* solid, Agent* other) {
-	TransformComponent& transform = other->transform; //POTENTIALL DANGEROUS!! FIX LATER
-
-	glm::vec2& movablePos = transform.position;
-	glm::vec2 movableSize = transform.scale;
-	glm::vec2 solidMin = solid->GetMin();
-	glm::vec2 solidMax = solid->GetMax();
-
-	glm::vec2 movableMin = movablePos;
-	glm::vec2 movableMax = movablePos + movableSize;
-
-	glm::vec2 overlapMin = glm::max(solidMin, movableMin);
-	glm::vec2 overlapMax = glm::min(solidMax, movableMax);
+void PhysicsSystem::ResolveSolidCollision(ColliderComponent* solid, ColliderComponent* other) {
+	glm::vec2 sMin = solid->GetMin(), sMax = solid->GetMax();
+	glm::vec2 mMin = other->GetMin(), mMax = other->GetMax();
+	glm::vec2 overlapMin = glm::max(sMin, mMin);
+	glm::vec2 overlapMax = glm::min(sMax, mMax);
 	glm::vec2 overlap = overlapMax - overlapMin;
+	if (overlap.x <= 0 || overlap.y <= 0) return;
 
-	if (overlap.x <= 0 || overlap.y <= 0) { return; }
+	glm::vec2 delta = (overlap.x < overlap.y)
+		? glm::vec2((mMin.x < sMin.x) ? -overlap.x : overlap.x, 0.0f)
+		: glm::vec2(0.0f, (mMin.y < sMin.y) ? -overlap.y : overlap.y);
 
-	if (overlap.x < overlap.y) {
-		if (movablePos.x < solidMin.x) {
-			movablePos.x -= overlap.x;
-		}
-		else {
-			movablePos.x += overlap.x;
-		}
-	}
-	else {
-		if(movablePos.y < solidMin.y){
-			movablePos.y -= overlap.y;
-		}
-		else {
-			movablePos.y += overlap.y;
-		}
-	}
+	solid->GetOwner()->transform.position -= delta;
 }
 
 bool PhysicsSystem::CheckAABBCollision(ColliderComponent* a, ColliderComponent* b) {

@@ -1,5 +1,6 @@
 #include "ColliderComponent.h"
 #include <iostream>
+
 ColliderRenderer* ColliderComponent::renderer = nullptr;
 
 template<typename T>
@@ -13,17 +14,89 @@ ColliderComponent::ColliderComponent(){
     this->SetName(newName);
 }
 
+Zone ColliderComponent::ComputeWorldArea() const {
+    const glm::mat4 model =
+        GetOwner()->GetTransform().GetTransformMatrix() *
+        transform.GetTransformMatrix();
+
+    Zone out{ {  std::numeric_limits<float>::infinity(),
+                 std::numeric_limits<float>::infinity() },
+              { -std::numeric_limits<float>::infinity(),
+                -std::numeric_limits<float>::infinity() } };
+
+    switch (shape) {
+    case ShapeType::Box: {
+        // Local corners centered at origin, scaled by full size
+        const glm::vec2 he = 0.5f * transform.scale;
+        const glm::vec2 corners[4] = {
+            {-he.x, -he.y}, { he.x, -he.y},
+            { he.x,  he.y}, {-he.x,  he.y}
+        };
+        for (auto& c : corners) {
+            glm::vec4 w = model * glm::vec4(c, 0.0f, 1.0f);
+            glm::vec2 p(w.x, w.y);
+            out.min = glm::min(out.min, p);
+            out.max = glm::max(out.max, p);
+        }
+        break;
+    }
+    case ShapeType::Circle: {
+        // Center is model * (0,0). Radius uses X scale; this is conservative if non-uniform/rotated
+        glm::vec4 cw = model * glm::vec4(0, 0, 0, 1);
+        glm::vec2 center(cw.x, cw.y);
+        // If your model may include rotation/non-uniform scale, pick a safe radius:
+        float rLocal = 0.5f * transform.scale.x;
+        float sx = glm::length(glm::vec2(model[0])); // length of first column (x axis)
+        float sy = glm::length(glm::vec2(model[1])); // length of second column (y axis)
+        float r = rLocal * std::max(sx, sy);
+        out.min = center - glm::vec2(r);
+        out.max = center + glm::vec2(r);
+        break;
+    }
+    case ShapeType::Line: {
+        // Line from (0,0) to (len, 0) in local space
+        glm::vec4 a = model * glm::vec4(0, 0, 0, 1);
+        glm::vec4 b = model * glm::vec4(transform.scale.x, 0, 0, 1);
+        glm::vec2 p0(a.x, a.y), p1(b.x, b.y);
+        out.min = glm::min(p0, p1);
+        out.max = glm::max(p0, p1);
+        break;
+    }
+    }
+    return out;
+}
+
 glm::vec2 ColliderComponent::GetMin() const {
-    return transform.position;
+    return ComputeWorldArea().min;
 }
 
 glm::vec2 ColliderComponent::GetMax() const {
-    return transform.position + transform.scale;
+    return ComputeWorldArea().max;
 }
 
 void ColliderComponent::Draw(const glm::mat4& projection) const{
 	//std::cout << "[ColliderComponent] Draw called" << std::endl;
 	renderer->Draw(*this, projection);
+}
+
+bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {
+    bool dirty = false;
+
+    ImGui::Checkbox("Enabled", &mod.enabled);
+    dirty |= ImGui::IsItemEdited();
+
+    dirty |= ImGui::DragFloat2("Offset", glm::value_ptr(mod.positionOffset), 1.0f);
+    dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(mod.scale), 0.01f);
+    dirty |= ImGui::DragFloat("Rotation", &mod.rotation, 0.01f);
+
+    if (dirty) {
+        mod.enabled = enabled;
+        mod.positionOffset = transform.position;
+        mod.scale = transform.scale;
+        mod.rotation = transform.rotation;
+    }
+
+    return dirty;
 }
 
 void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {

@@ -29,12 +29,13 @@ public:
     ~SpriteComponent();
     std::unique_ptr<Component> Clone() const override;
 
-    void SetTexture(const std::string& path);
+    void SetTexturePath(const std::string&) override;
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
     void Draw(const glm::mat4& projection) const override;
     void DrawImGui() override;
+    bool DrawAnimatorImGui(ComponentMod&) override;
     void SetVelocity(float x, float y);
     void Update(float) override;
     void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) override;

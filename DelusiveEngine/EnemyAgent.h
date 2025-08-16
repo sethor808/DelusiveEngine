@@ -12,6 +12,7 @@ public:
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& projection) const override;
 	void OnHit() override;
+	std::string GetType() const override;
 
 	//EnemyAgent logic
 	void SetScript(std::unique_ptr<EnemyScript>);

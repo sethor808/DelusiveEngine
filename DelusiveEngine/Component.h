@@ -1,6 +1,7 @@
 #pragma once
 #include "DelusiveUtils.h"
 #include "TransformData.h"
+#include "AnimatorData.h"
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -21,6 +22,7 @@ public:
 	virtual void Update(float) = 0;
 	virtual void Draw(const glm::mat4& projection) const {};
 	virtual void DrawImGui() {}
+	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }
 	virtual void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) {}
 
 	virtual const char* GetType() const = 0;
@@ -34,7 +36,7 @@ public:
 	void SetOwner(Agent* agent) { this->owner = agent; }
 	Agent* GetOwner() const { return owner; }
 
-	void SetTexturePath(std::string _texPath) { texturePath = _texPath; }
+	virtual void SetTexturePath(const std::string& _texPath) { texturePath = _texPath; }
 	std::string GetTexturePath() { return texturePath; }
 
 	void SetEnabled(bool enabled) { this->enabled = enabled; }

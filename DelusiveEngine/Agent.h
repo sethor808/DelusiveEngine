@@ -25,6 +25,7 @@ public:
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(const glm::mat4& projection) const = 0;
 	virtual void DrawImGui() {};
+	virtual std::string GetType() const = 0;
 	
 	//Virtual functions
 	virtual void OnHit() {};
@@ -118,5 +119,6 @@ public:
 protected:
 	std::vector<std::unique_ptr<Component>> components;
 	std::string name;
-	uint64_t nextComponentID = 1;
+	std::string type;
+	uint64_t nextComponentID = 0;
 };

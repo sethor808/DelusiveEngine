@@ -44,14 +44,11 @@ int main(int argc, char** argv) {
 
     ImGui_ImplSDL3_InitForOpenGL(window, glctx);
     ImGui_ImplOpenGL3_Init("#version 330 core");
-
-    Sprite sprite("C:/Users/Demon Teddy/Documents/Programs/DelusiveEngine/DelusiveEngine/assets/sprites/star.jpg");
     
     ColliderRenderer* gRenderer = new ColliderRenderer();
     ColliderComponent::SetRenderer(gRenderer);  // Called ONCE
 
     const float speed = 0.1f;
-    sprite.SetVelocity(0.0f, 0.0f);
     float xVel = 0.0f, yVel = 0.0f;
     float deltaTime = 0.0f;
     uint64_t lastTicks = SDL_GetTicks();
@@ -99,7 +96,7 @@ int main(int argc, char** argv) {
         // Attack / Dodge (keyboard)
         inputState.lightAttackPressed = keys[SDL_SCANCODE_J];  //TODO: change this
         inputState.heavyAttackPressed = keys[SDL_SCANCODE_K];
-        inputState.dodgePressed = keys[SDL_SCANCODE_L];
+        inputState.dodgePressed = keys[SDL_SCANCODE_LSHIFT];
 
         GameManager::HandleInput(inputState);
 

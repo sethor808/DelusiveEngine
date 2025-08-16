@@ -8,6 +8,7 @@
 #include "DelusiveAgents.h"
 #include "DelusiveUtils.h"
 #include "SceneSystem.h"
+#include "PhysicsSystem.h"
 
 class Scene {
 public:
@@ -50,6 +51,7 @@ public:
 private:
 	std::string name;
 	CameraAgent* camera;
+	static PhysicsSystem physicsSystem;
 	std::vector<std::unique_ptr<Agent>> agents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 };

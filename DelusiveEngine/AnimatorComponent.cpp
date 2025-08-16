@@ -7,28 +7,20 @@
 
 AnimatorComponent::AnimatorComponent() = default;
 AnimatorComponent::AnimatorComponent(const AnimatorData& animatorData)
-	: currentAnimation(animatorData) {}
+    : currentAnimation(animatorData) {
+    SetName("NewAnimatorComponent");
+}
 
 void AnimatorComponent::Update(float deltaTime) {
-	//TODO: Change frame to frame
     if (!playing || !currentBranch || currentBranch->frames.empty()) {
         return;
     }
 
     timeAccumulator += deltaTime;
-
     AnimationFrame& frame = currentBranch->frames[currentFrame];
-    if (timeAccumulator >= frame.duration) {
-        timeAccumulator -= frame.duration;
-        currentFrame++;
-        if (currentFrame >= currentBranch->frames.size()) {
-            currentFrame = currentBranch->loop ? 0 : (int)currentBranch->frames.size() - 1;
-        }
-    }
 
     if (timeAccumulator >= frame.duration) {
         timeAccumulator -= frame.duration;
-
         currentFrame++;
 
         if (currentFrame >= (int)currentBranch->frames.size()) {
@@ -36,16 +28,15 @@ void AnimatorComponent::Update(float deltaTime) {
                 currentFrame = 0;
             }
             else {
-                playing = false;
                 currentFrame = (int)currentBranch->frames.size() - 1;
+                playing = false;
             }
         }
 
-        //This may not be needed
+        // Optional: mark frame dirty for editor refresh, probably remove later
         currentBranch->frames[currentFrame].dirty = true;
     }
 
-    //Apply overrides
     ApplyComponentOverrides();
 }
 
@@ -53,25 +44,28 @@ void AnimatorComponent::ApplyComponentOverrides() {
     if (!currentBranch || currentFrame >= currentBranch->frames.size()) {
         return;
     }
-    
+
+    /*
+    if (baseAgent) {
+        GetOwner()->CopyFrom(*baseAgent);
+    }
+    */
+
     const AnimationFrame& frame = currentBranch->frames[currentFrame];
 
     for (const ComponentMod& mod : frame.componentOverrides) {
         Component* comp = GetOwner()->GetComponentByID(mod.componentID);
-        if (!comp) {
-            continue;
-        }
+        if (!comp) continue;
 
-        comp->transform.position += mod.positionOffset;
+        comp->SetEnabled(mod.enabled);
+        comp->transform.position = mod.positionOffset; // No += here
         comp->transform.scale = mod.scale;
         comp->transform.rotation = mod.rotation;
 
-        comp->SetEnabled(mod.enabled);
-
-        if (auto* sprite = dynamic_cast<SpriteComponent*>(comp)){
-            sprite->SetTexture(mod.texturePath);
+        if (!mod.texturePath.empty()) {
+            comp->SetTexturePath(mod.texturePath);
         }
-    }   
+    }
 }
 
 void AnimatorComponent::PlayBranch(const std::string& branchName) {
@@ -184,30 +178,44 @@ std::unique_ptr<Component> AnimatorComponent::Clone() const {
 void AnimatorComponent::Serialize(std::ofstream& out) const {
     if (!out.is_open()) return;
 
+    out << "name " << name << "\n";
     out << "animpath " << currentAnimationPath << "\n";
+    out << "---\n";
 }
 
 void AnimatorComponent::Deserialize(std::ifstream& in) {
     if (!in.is_open()) return;
 
-    std::string token;
-    in >> token;
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line == "---") break;
 
-    if (token == "animpath") {
-        in >> currentAnimationPath;
+        std::istringstream iss(line);
+        std::string token;
+        iss >> token;
 
-        if (!currentAnimation.LoadFromFile(currentAnimationPath)) {
-            std::cerr << "[AnimatorComponent] Failed to load .anim file: " << currentAnimationPath << "\n";
-            return;
+        if (token == "name") {
+            std::string tempName;
+            std::getline(iss, tempName);
+            if (!tempName.empty() && tempName[0] == ' ') tempName.erase(0, 1);
+            SetName(tempName.c_str());
         }
+        else if (token == "animpath") {
+            iss >> currentAnimationPath;
 
-        //data = currentAnimation.data;
+            if (!currentAnimation.LoadFromFile(currentAnimationPath)) {
+                std::cerr << "[AnimatorComponent] Failed to load .anim file: " << currentAnimationPath << "\n";
+                return;
+            }
 
-        if (!currentAnimation.data.branches.empty()) {
-            PlayBranch(currentAnimation.data.branches[0].name);
+            //data = currentAnimation.data;
+
+            if (!currentAnimation.data.branches.empty()) {
+                PlayBranch(currentAnimation.data.branches[0].name);
+            }
         }
-    }
-    else {
-        std::cerr << "[AnimatorComponent] Unexpected token during Deserialize: " << token << "\n";
+        else {
+            break;
+        }
     }
 }

@@ -31,4 +31,5 @@ public:
 		GLuint texture = 0               // Optional texture (0 = no texture)
 	);
 	//Camera stuff
+	static float GetPixelScale();
 };

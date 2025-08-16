@@ -6,6 +6,8 @@
 #include <iostream>
 
 ColliderRenderer::ColliderRenderer() {
+    handleSize = handleSize / Renderer::GetPixelScale();
+
     // Static 1x1 square for reuse
     float quad[] = {
     -0.5f, -0.5f,
@@ -152,10 +154,9 @@ void ColliderRenderer::DrawCenterHandle(const glm::vec2& center, const glm::mat4
     shader->Use();
     
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(center, 0.0f));
-    model = glm::scale(model, glm::vec3(6.0f, 6.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(handleSize, handleSize, 1.0f));
 
     // Try a bigger handle or consider screen-space scaling
-    float handleSize = 12.0f; // or calculate dynamically based on camera zoom
     model = glm::translate(glm::mat4(1.0f), glm::vec3(center, 0.0f));
     model = glm::scale(model, glm::vec3(handleSize, handleSize, 1.0f));
 
@@ -250,7 +251,7 @@ void ColliderRenderer::DrawLineHandles(const ColliderComponent& collider, const 
 void ColliderRenderer::DrawHandle(const glm::vec2& center, const glm::mat4& projection) const {
     shader->Use();
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(center, 0.0f));
-    model = glm::scale(model, glm::vec3(6.0f, 6.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(handleSize, handleSize, 1.0f));
 
     shader->SetMat4("model", glm::value_ptr(model));
     shader->SetMat4("projection", glm::value_ptr(projection));

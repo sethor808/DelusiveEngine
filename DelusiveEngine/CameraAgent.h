@@ -13,6 +13,7 @@ public:
 	void Update(float) override;
 	void Draw(const glm::mat4&) const override {}
 	std::unique_ptr<Agent> Clone() const override;
+	std::string GetType() const override;
 
 	void HandleInput(const glm::vec2&, bool, float);
 	void Follow(Agent*);

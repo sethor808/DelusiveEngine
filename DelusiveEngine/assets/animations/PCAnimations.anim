@@ -1,2 +1,12 @@
-name 
+name New
+flagdef Comboing
 defaultPath assets/agents\DummyPC.agent
+branch AttackTest
+loop 0
+lockinput 0
+frame 1 0
+compmod 0 1 0 0 1 1 0 assets/sprites\BasicDude\BasicDude2.png
+frame 1 0
+compmod 0 1 0 0 1 1 0 assets/sprites\BasicDude\BasicDude3.png
+frame 1 0
+compmod 0 1 0 0 1 1 0 assets/sprites\BasicDude\BasicDude4.png
