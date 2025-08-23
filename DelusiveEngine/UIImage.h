@@ -5,9 +5,11 @@ class UIImage : public UIElement {
 public:
 	UIImage();
 	UIImage(const glm::vec2& pos, const glm::vec2& size);
+	~UIImage();
 	std::unique_ptr<UIElement> Clone() const override;
 
-	void SetTexture(Texture* texture);
+	void Init();
+	void SetTexturePath(const std::string&);
 	void SetShader(Shader* shader);
 
 	void Draw(const glm::mat4& proj) override;
@@ -21,7 +23,8 @@ public:
 
 private:
 	glm::vec2 size;
+	std::string texturePath = "";
 	Shader* shader = nullptr;
 	Texture* texture = nullptr;
-	GLuint VAO = 0, VBO = 0;
+	GLuint VAO, VBO;
 };

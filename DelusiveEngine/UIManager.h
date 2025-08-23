@@ -19,5 +19,6 @@ public:
 	void Serialize(std::ostream&) const override;
 	void Deserialize(std::istream&) override;
 private:
+	UICanvas* activeCanvas = nullptr;
 	std::vector<std::unique_ptr<UICanvas>> canvases;
 };

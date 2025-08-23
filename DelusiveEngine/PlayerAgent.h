@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "DelusiveComponents.h"
 #include "DelusiveUtils.h"
+#include "DelusiveTalismans.h"
 
 class PlayerAgent : public Agent {
 public:
@@ -15,6 +16,10 @@ public:
 	std::string GetType() const override;
 
 	void ApplyKnockback(const glm::vec2&, float);
+
+	void TakeDamage() override;
+	const std::vector<std::unique_ptr<Talisman>>& GetTalismans() { return talismans; }
+
 private:
 	//std::unique_ptr<Animation> animator;
 	glm::vec2 velocity = { 0.0f, 0.0f};
@@ -25,6 +30,9 @@ private:
 	float acceleration = 10.0f;
 	float deceleration = 8.0f;
 	float damping = 0.9f;
+
+	//HP Management
+	std::vector<std::unique_ptr<Talisman>> talismans;
 
 	//Dodge variables
 	bool dodging = false;
@@ -37,6 +45,9 @@ private:
 
 	//For input control tracking
 	PlayerInputState prevInput;
+
+	//PlayerState Helpers
+	bool CheckIfDead();
 
 	//Player Control Functions
 	void StartDodge(const glm::vec2&);

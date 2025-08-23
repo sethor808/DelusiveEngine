@@ -7,6 +7,7 @@
 #include "DelusiveUtils.h"
 #include "Texture.h"
 #include "Renderer.h"
+#include <imgui/imgui.h>
 
 class UIElement {
 public:
@@ -65,7 +66,7 @@ public:
 	const glm::vec2& GetPosition() const { return position; }
 	void SetPosition(const glm::vec2& pos) { position = pos; }
 	
-	virtual void DrawImGui() {}
+	virtual void DrawImGui() = 0;
 	virtual void Serialize(std::ostream& out) const = 0;
 	virtual void Deserialize(std::istream& in) = 0;
 protected:

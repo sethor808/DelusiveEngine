@@ -1,5 +1,6 @@
 #include "CameraAgent.h"
 #include "Renderer.h"
+#include <imgui/imgui.h>
 
 CameraAgent::CameraAgent() {
 	SetName("NewCamera");
@@ -23,6 +24,18 @@ std::unique_ptr<Agent> CameraAgent::Clone() const {
 
 void CameraAgent::Update(float deltaTime) {
 
+}
+
+void CameraAgent::DrawImGui() {
+	bool changed = false;
+
+	ImGui::Text("Transform");
+	ImGui::Text("Position: ");
+	ImGui::SameLine();
+	glm::vec2 pos = panOffset;
+	if (ImGui::DragFloat2("##position", glm::value_ptr(pos), 1.0f)) {
+		panOffset = pos;
+	}
 }
 
 void CameraAgent::HandleInput(const glm::vec2& mousePos, bool middleMouseDown, float scrollDelta) {

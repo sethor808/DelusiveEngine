@@ -5,6 +5,11 @@
 #include <filesystem>
 
 Texture::Texture(const char* path) {
+    if (!path || path == "") {
+        std::cout << "Path is empty!" << std::endl;
+        return;
+    }
+
     //stbi_set_flip_vertically_on_load(true);
     //path = "C:/Users/Demon Teddy/Documents/Programs/DelusiveEngine/DelusiveEngine/assets/sprites/star.jpg";
     int w, h, channels;
@@ -19,6 +24,7 @@ Texture::Texture(const char* path) {
     }
     else {
         std::cout << "CWD: " << std::filesystem::current_path() << std::endl;
+        std::cout << "Path: " << path << std::endl;
         std::cerr << "Failed to load texture: " << path << std::endl;
         std::cerr << "stb_image reason: " << stbi_failure_reason() << std::endl;
     }

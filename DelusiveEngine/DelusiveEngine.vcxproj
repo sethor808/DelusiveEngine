@@ -141,6 +141,7 @@
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimatorComponent.cpp" />
+    <ClCompile Include="BasicTalisman.cpp" />
     <ClCompile Include="CameraAgent.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteData.cpp" />
     <ClCompile Include="StatsComponent.cpp" />
+    <ClCompile Include="Talisman.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TriggerCollider.cpp" />
     <ClCompile Include="UIButton.cpp" />
@@ -189,12 +191,14 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="AnimatorData.h" />
+    <ClInclude Include="BasicTalisman.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraAgent.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderRenderer.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DelusiveTalismans.h" />
     <ClInclude Include="DelusiveSystems.h" />
     <ClInclude Include="DelusiveUI.h" />
     <ClInclude Include="DelusiveAgents.h" />
@@ -222,6 +226,7 @@
     <ClInclude Include="SpriteData.h" />
     <ClInclude Include="SpriteEditor.h" />
     <ClInclude Include="StatsComponent.h" />
+    <ClInclude Include="Talisman.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformData.h" />
     <ClInclude Include="TriggerCollider.h" />

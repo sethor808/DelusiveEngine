@@ -114,7 +114,10 @@ public:
 	virtual void LoadFromFile(std::ifstream& in);
 
 	void SetName(const std::string& newName) { name = newName; }
-	const std::string& GetName() const { return name; }	
+	const std::string& GetName() const { return name; }
+
+	virtual void TakeDamage() {}
+	virtual void TakeDamage(int) {}
 
 protected:
 	std::vector<std::unique_ptr<Component>> components;

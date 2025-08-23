@@ -24,9 +24,10 @@ void UIManager::Update(float deltaTime) {
 
 void UIManager::Draw(const glm::mat4& projection) {
 	for (auto& canvas : canvases) {
-		if (canvas->IsActive()) {
-			canvas->Draw(projection);
-		}
+		//if (canvas->IsActive()) {
+			//canvas->Draw(projection);
+		//}
+		canvas->Draw(projection);
 	}
 }
 
@@ -39,49 +40,38 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 }
 
 void UIManager::DrawImGui() {
-	ImGui::Begin("UI Manager");
+	ImGui::Text("UI Manager");
 
-	if (ImGui::CollapsingHeader("Canvases", ImGuiTreeNodeFlags_DefaultOpen)) {
+	// Active canvas selection dropdown
+	if (ImGui::BeginCombo("Active Canvas", activeCanvas ? activeCanvas->GetName().c_str() : "(none)")) {
 		for (size_t i = 0; i < canvases.size(); ++i) {
-			auto& canvas = canvases[i];
-
-			ImGui::PushID(static_cast<int>(i));
-			bool isActive = canvas->IsActive();
-			if (ImGui::Checkbox("##active", &isActive)) {
-				canvas->SetActive(isActive);
+			bool isSelected = (activeCanvas == canvases[i].get());
+			if (ImGui::Selectable(canvases[i]->GetName().c_str(), isSelected)) {
+				activeCanvas = canvases[i].get();
 			}
-			ImGui::SameLine();
-
-			ImGui::Text("%s", canvas->GetName().c_str());
-			ImGui::SameLine();
-
-			if (ImGui::BeginCombo("##Options", "Edit")) {
-				if (ImGui::Selectable("Set Active Only")) {
-					SetCanvasActive(canvas->GetName());
-				}
-				if (ImGui::Selectable("Reset")) {
-					canvas->Reset();
-				}
-				if (ImGui::Selectable("Remove")) {
-					canvases.erase(canvases.begin() + i);
-					ImGui::EndCombo();
-					ImGui::PopID();
-					break;
-				}
-				ImGui::EndCombo();
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
 			}
-
-			ImGui::PopID();
 		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::Separator();
+
+	// Draw inspector for selected canvas
+	if (activeCanvas) {
+		activeCanvas->DrawImGui();
+	}
+	else {
+		ImGui::TextDisabled("No canvas selected.");
 	}
 
 	if (ImGui::Button("Add Canvas")) {
 		std::string newName = "Canvas_" + std::to_string(canvases.size());
 		auto newCanvas = std::make_unique<UICanvas>(newName);
+		activeCanvas = newCanvas.get();
 		canvases.push_back(std::move(newCanvas));
 	}
-
-	ImGui::End();
 }
 
 

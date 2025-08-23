@@ -5,6 +5,8 @@ PlayerAgent::PlayerAgent(const std::string& agentName) {
 	SetName(agentName);
 	SetScale({1.0f, 1.0f});
 	velocity = { 0.0f, 0.0f };
+
+    talismans.push_back(std::make_unique<BasicTalisman>());
 }
 
 std::string PlayerAgent::GetType() const{
@@ -17,7 +19,7 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
     bool dodgePressed = (input.dodgePressed && !prevInput.dodgePressed);
 
     if (dodgePressed) {
-        dodgeBufferTimer = 0.15;
+        dodgeBufferTimer = 0.15f;
         dodgeDir = input.moveDir;
     }
 
@@ -25,6 +27,10 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
 }
 
 void PlayerAgent::Update(float deltaTime) {
+    if (CheckIfDead()) {
+        //TODO: Die
+    }
+
     // Input lock countdown
     if (inputLockTimer > 0.0f) {
         inputLockTimer -= deltaTime;
@@ -82,7 +88,10 @@ void PlayerAgent::HandleMovement(float deltaTime) {
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
     dodging = true;
     dodgeTimer = dodgeDuration;
+
+    velocity = velocity * 0.5f;
     impulse = dir * dodgeStrength;
+
     inputLockTimer = dodgeDuration;
 }
 
@@ -97,6 +106,29 @@ void PlayerAgent::HandleDodge(float deltaTime) {
         dodging = false;
         impulse = glm::vec2(0.0f);
     }
+}
+
+void PlayerAgent::TakeDamage() {
+    for (auto& talisman : talismans) {
+        if (talisman->GetIsBroken()) {
+            continue;
+        }
+
+        if (talisman->TakeDamage()) {
+            //Activate consume passive here
+            talisman->OnConsume(); //TODO: Make this do something
+        }
+    }
+}
+
+bool PlayerAgent::CheckIfDead() {
+    if (talismans.empty()) {
+        return true;
+    }
+
+    //Talismans are always added with push_back
+    //Last talisman is always the final one to break
+    return talismans.back()->GetIsBroken();
 }
 
 void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {

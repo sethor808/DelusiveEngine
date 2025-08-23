@@ -49,7 +49,7 @@ void UICanvas::Update(float deltaTime) {
 }
 
 void UICanvas::Draw(const glm::mat4& projection) {
-	if (!active) return;
+	//if (!active) return;
 	for (auto& element : elements) {
 		element->Draw(projection);
 	}
@@ -74,31 +74,49 @@ void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
 }
 
 void UICanvas::DrawImGui() {
-	ImGui::Text("Canvas Name: %s", name.c_str());
-	ImGui::Checkbox("Active", &active);
-	ImGui::Text("File Path: %s", filePath.empty() ? "(unsaved)" : filePath.c_str());
+	for (size_t i = 0; i < elements.size(); ++i) {
+		ImGui::PushID(static_cast<int>(i));
 
-	if (ImGui::CollapsingHeader("Elements", ImGuiTreeNodeFlags_DefaultOpen)) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			ImGui::PushID(static_cast<int>(i));
-			if (ImGui::TreeNode("Element", "Element %zu", i)) {
-				elements[i]->DrawImGui();
-				if (ImGui::Button("Remove Element")) {
-					elements.erase(elements.begin() + i);
-					ImGui::TreePop();
-					ImGui::PopID();
-					break;
-				}
+		if (ImGui::TreeNodeEx("##element", ImGuiTreeNodeFlags_DefaultOpen,
+			"[%s] %zu", elements[i]->GetTypeName(), i)) {
+			elements[i]->DrawImGui();
+
+			if (ImGui::Button("Remove Element")) {
+				elements.erase(elements.begin() + i);
 				ImGui::TreePop();
+				ImGui::PopID();
+				break;
 			}
-			ImGui::PopID();
+
+			ImGui::TreePop();
 		}
+
+		ImGui::PopID();
 	}
 
-	if (ImGui::Button("Add New Element")) {
-		// TODO: UI to select type and create a new element
-		// Example:
-		// AddElement(std::make_unique<UILabel>("New Label"));
+
+	if (ImGui::Button("Add Element")) {
+		ImGui::OpenPopup("AddElementPopup");
+	}
+
+	if (ImGui::BeginPopup("AddElementPopup")) {
+		if (ImGui::MenuItem("UILabel")) {
+			elements.push_back(std::make_unique<UILabel>("New Label"));
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem("UIImage")) {
+			elements.push_back(std::make_unique<UIImage>());
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem("UIButton")) {
+			elements.push_back(std::make_unique<UIButton>());
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem("UIPanel")) {
+			elements.push_back(std::make_unique<UIPanel>());
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 }
 

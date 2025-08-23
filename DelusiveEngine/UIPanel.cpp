@@ -6,7 +6,7 @@
 UIPanel::UIPanel() 
     : UIElement("UIPanel", { 0,0 }), size({ 1,1 })
 {
-
+    name = "UIPanel";
 }
 
 UIPanel::UIPanel(const glm::vec2& pos, const glm::vec2& siz)
@@ -39,12 +39,14 @@ void UIPanel::SetColor(const glm::vec4& c) {
     color = c;
 }
 
-void UIPanel::Draw(const glm::mat4& proj) {
+void UIPanel::Draw(const glm::mat4& projection) {
     if (shader) shader->Use();
-    Renderer::DrawRect(position, size, color, proj, shader, texture);
+    Renderer::DrawRect(position, size, color, projection, shader, texture);
 
     // Draw children
-    UIElement::Draw(proj);
+    for (auto& child : children) {
+        child->Draw(projection);
+    }
 }
 
 void UIPanel::DrawImGui() {

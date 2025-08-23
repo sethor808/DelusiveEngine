@@ -1,6 +1,7 @@
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Agent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Agent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Animation.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Animation.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\AnimatorComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\AnimatorComponent.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\BasicTalisman.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\BasicTalisman.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\CameraAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\CameraAgent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Collider.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Collider.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\ColliderComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\ColliderComponent.obj
@@ -35,6 +36,7 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SpriteEdit
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Sprite.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Sprite.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SpriteData.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SpriteData.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\StatsComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\StatsComponent.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Talisman.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Talisman.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Texture.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Texture.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\TriggerCollider.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\TriggerCollider.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\UIButton.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UIButton.obj

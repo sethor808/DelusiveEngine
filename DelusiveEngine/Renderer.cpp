@@ -86,12 +86,10 @@ glm::mat4 Renderer::GetUIProjection() {
 
 void Renderer::BeginUIRenderPass() {
 	glDisable(GL_DEPTH_TEST);
-	projection = GetUIProjection();
 }
 
 void Renderer::EndUIRenderPass() {
 	glEnable(GL_DEPTH_TEST);
-	GenerateProjection();
 }
 
 void Renderer::DebugDrawLine(glm::vec2 a, glm::vec2 b, glm::vec4 color) {
@@ -144,6 +142,8 @@ void Renderer::InitTextRenderer() {
 
 	// Load text shader
 	textShader = new Shader("shaders/text.vert", "shaders/text.frag");
+	textShader->Use();
+	glUniform1i(glGetUniformLocation(textShader->GetID(), "text"), 0);
 
 	// Load default font (e.g., from assets/fonts/arial.ttf)
 	defaultFont = new Font();
@@ -155,23 +155,24 @@ void Renderer::InitTextRenderer() {
 void Renderer::DrawText(const std::string& text, glm::vec2 position, float size, glm::vec4 color, const glm::mat4& proj) {
 	if (!defaultFont || !textShader) return;
 
+	float scale = size;
 	float x = position.x;
 	float y = position.y;
 
 	glActiveTexture(GL_TEXTURE0);
 	textShader->Use();
-	textShader->SetMat4("uProjection", GetUIProjection());
+	textShader->SetMat4("uProjection", proj);
 	textShader->SetVec4("uColor", color);
 
 	glBindVertexArray(textVAO);
 
 	for (char c : text) {
 		const Character& ch = defaultFont->GetCharacter(c);
-		float xpos = x + ch.bearing.x * pixelsPerUnit;
-		float ypos = y - (ch.size.y - ch.bearing.y) * pixelsPerUnit;
+		float xpos = x + ch.bearing.x * scale;
+		float ypos = y - (ch.size.y - ch.bearing.y) * scale;
 
-		float w = ch.size.x * pixelsPerUnit;
-		float h = ch.size.y * pixelsPerUnit;
+		float w = ch.size.x * scale;
+		float h = ch.size.y * scale;
 
 		float vertices[6][4] = {
 			{ xpos,     ypos + h,   0.0f, 0.0f },
@@ -188,7 +189,7 @@ void Renderer::DrawText(const std::string& text, glm::vec2 position, float size,
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-		x += (ch.advance >> 6) * pixelsPerUnit; // Advance is in 1/64 pixels
+		x += (ch.advance >> 6) * scale; // Advance is in 1/64 pixels
 	}
 
 	glBindVertexArray(0);

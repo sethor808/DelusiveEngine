@@ -12,6 +12,7 @@ public:
 
 	void Update(float) override;
 	void Draw(const glm::mat4&) const override {}
+	void DrawImGui() override;
 	std::unique_ptr<Agent> Clone() const override;
 	std::string GetType() const override;
 

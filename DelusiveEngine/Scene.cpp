@@ -113,7 +113,7 @@ void Scene::Update(float deltaTime) {
 	physicsSystem.HandleCollisions(agents);
 }
 
-void Scene::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const {
+void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {
 	struct RenderEntry {
 		SpriteComponent* sprite;
 		float sortY;
@@ -152,6 +152,12 @@ void Scene::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) 
 	for (const RenderEntry& entry : renderQueue) {
 		entry.sprite->Draw(projection);
 	}
+
+	//Renderer::BeginUIRenderPass();
+	for (auto& system : systems) {
+		system->Draw(Renderer::GetUIProjection());
+	}
+	//Renderer::EndUIRenderPass();
 }
 
 void Scene::HandleInput(const PlayerInputState& input) {

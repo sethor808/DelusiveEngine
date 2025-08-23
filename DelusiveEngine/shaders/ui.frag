@@ -1,15 +1,9 @@
 #version 330 core
+in vec2 TexCoord;
 out vec4 FragColor;
 
-in vec2 TexCoord;
-
-uniform vec4 uColor;
-uniform sampler2D uTexture;
-uniform bool uUseTexture;
+uniform sampler2D tex;
 
 void main() {
-    vec4 baseColor = uColor;
-    if (uUseTexture)
-        baseColor *= texture(uTexture, TexCoord);
-    FragColor = baseColor;
+    FragColor = texture(tex, TexCoord);
 }

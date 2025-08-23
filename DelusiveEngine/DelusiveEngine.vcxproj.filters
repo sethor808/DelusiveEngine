@@ -71,6 +71,15 @@
     <Filter Include="engine\ui\Source Files">
       <UniqueIdentifier>{50235631-d64c-45e4-8747-f6308ffbd1ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\healthsystem">
+      <UniqueIdentifier>{81bfaf08-b97c-45ab-8bc3-e4401007a7c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\healthsystem\Source Files">
+      <UniqueIdentifier>{6e8cc9de-9027-411f-9f88-d7b8a4b794f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\healthsystem\Header Files">
+      <UniqueIdentifier>{f75123e8-804c-4888-86ff-2134cea7c5ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -207,6 +216,12 @@
     </ClCompile>
     <ClCompile Include="DelusiveUI.cpp">
       <Filter>engine\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Talisman.cpp">
+      <Filter>engine\healthsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicTalisman.cpp">
+      <Filter>engine\healthsystem\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,6 +365,15 @@
     </ClInclude>
     <ClInclude Include="DelusiveSystems.h">
       <Filter>engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Talisman.h">
+      <Filter>engine\healthsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveTalismans.h">
+      <Filter>engine\healthsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTalisman.h">
+      <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

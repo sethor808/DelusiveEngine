@@ -37,31 +37,35 @@ bool Font::LoadFromFile(const std::string& path, float pixelHeight) {
     stbtt_GetFontVMetrics(&fontInfo, &ascentRaw, &descent, &lineGap);
     ascent = ascentRaw * scale;
 
-    for (unsigned char c = 32; c < 127; ++c) {
-        int width, height, xoff, yoff;
-        unsigned char* bitmap = stbtt_GetCodepointBitmap(&fontInfo, 0, scale, c, &width, &height, &xoff, &yoff);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    for (unsigned char c = 0; c < 128; ++c) {
+        int w, h, xoff, yoff;
+        unsigned char* bmp = stbtt_GetCodepointBitmap(&fontInfo, 0, scale, c, &w, &h, &xoff, &yoff);
 
         GLuint texID;
         glGenTextures(1, &texID);
         glBindTexture(GL_TEXTURE_2D, texID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, bmp);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        int advance, lsb;
-        stbtt_GetCodepointHMetrics(&fontInfo, c, &advance, &lsb);
-        stbtt_FreeBitmap(bitmap, nullptr);
+        int advWidth, lsb;
+        stbtt_GetCodepointHMetrics(&fontInfo, c, &advWidth, &lsb);
 
-        Character ch = {
+        int x0, y0, x1, y1;
+        stbtt_GetCodepointBitmapBox(&fontInfo, c, scale, scale, &x0, &y0, &x1, &y1);
+
+        stbtt_FreeBitmap(bmp, nullptr);
+
+        Character ch{
             texID,
-            glm::ivec2(width, height),
-            glm::ivec2(xoff, yoff),
-            static_cast<GLuint>(advance * scale)
+            glm::ivec2(x1 - x0, y1 - y0),   // size
+            glm::ivec2(x0, -y0),             // bearing = (x0,y0) RELATIVE TO BASELINE
+            advWidth * scale                 // float
         };
-
         characters[c] = ch;
     }
 

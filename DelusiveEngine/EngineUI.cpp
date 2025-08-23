@@ -483,9 +483,9 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         if (selectedAgentIndex >= 0 && selectedAgentIndex < (int)agents.size()) {
             agents[selectedAgentIndex]->DrawImGui();
         }
-        else{
+        else {
             auto& systems = scene.GetSystems(); //Looks weird but only pulls list if not editing agents, can be optimized more
-            if(selectedSystemIndex >= 0 && selectedSystemIndex < (int)systems.size()) {
+            if (selectedSystemIndex >= 0 && selectedSystemIndex < (int)systems.size()) {
                 systems[selectedSystemIndex]->DrawImGui();
             }
         }
