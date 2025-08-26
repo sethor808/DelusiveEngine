@@ -2,6 +2,7 @@
 #include "DelusiveUtils.h"
 #include "TransformData.h"
 #include "AnimatorData.h"
+#include "DelusiveRegistry.h"
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,18 +17,26 @@ class Component {
 public:
 	TransformComponent transform;
 
+	Component();
+
+	Component(const Component&) = delete;
+	Component& operator=(const Component&) = delete;
+	Component(Component&&) noexcept = default;
+	Component& operator=(Component&&) noexcept = default;
+
 	virtual ~Component() = default;
 	virtual std::unique_ptr<Component> Clone() const = 0;
 
 	virtual void Update(float) = 0;
 	virtual void Draw(const glm::mat4& projection) const {};
-	virtual void DrawImGui() {}
+	virtual void DrawImGui();
 	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }
 	virtual void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) {}
 
+	virtual void RegisterProperties();
 	virtual const char* GetType() const = 0;
-	virtual const char* GetName() const {return name;}
-	virtual void SetName(const char*);
+	virtual const std::string GetName() const {return name;}
+	virtual void SetName(const std::string&);
 
 	//Mouse handler hook
 	virtual void HandleMouse(const glm::vec2&, bool) {}
@@ -49,11 +58,12 @@ public:
 	void SetID(uint64_t id) { componentID = id; }
 
 	// Save/Load
-	virtual void Serialize(std::ofstream& out) const = 0;
-	virtual void Deserialize(std::ifstream& in) = 0;
+	virtual void Serialize(std::ofstream& out) const;
+	virtual void Deserialize(std::ifstream& in);
 protected:
 	Agent* owner = nullptr;
-	char name[64];
+	PropertyRegistry registry;
+	std::string name;
 	std::string texturePath;
 	uint64_t componentID = 0;
 	bool enabled = true;

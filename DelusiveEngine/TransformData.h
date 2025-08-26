@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "DelusiveRegistry.h"
 
 struct TransformComponent {
     glm::vec2 position{ 0.0f, 0.0f };
@@ -13,5 +14,11 @@ struct TransformComponent {
         model = glm::rotate(model, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::scale(model, glm::vec3(scale, 1.0f));
         return model;
+    }
+
+    void RegisterProperties(PropertyRegistry &registry) {
+        registry.Register("position", &position);
+        registry.Register("scale", &scale);
+        registry.Register("rotation", &rotation);
     }
 };

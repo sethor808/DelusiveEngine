@@ -1,6 +1,8 @@
 #include "UIManager.h"
 #include <iostream>
 #include <imgui/imgui.h>
+#include <fstream>
+#include <sstream>
 
 UIManager::UIManager() {
 	name = "NewUIManager";
@@ -90,6 +92,19 @@ std::unique_ptr<SceneSystem> UIManager::Clone() const {
 		}
 	}
 	return clone;
+}
+
+void UIManager::SaveToFile(std::ofstream& out) const {
+	out << "type " << GetType() << "\n";
+	out << "name " << name << "\n";
+	out << "canvases " << canvases.size() << "\n";
+
+	for (const auto& canv : canvases) {
+		out << "canvas" << "\n";
+		canv->Serialize(out);
+	}
+
+	out << "------" << "\n";
 }
 
 void UIManager::Serialize(std::ostream& out) const {

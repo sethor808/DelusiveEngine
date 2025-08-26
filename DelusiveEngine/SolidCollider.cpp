@@ -15,14 +15,14 @@ void SolidCollider::DrawImGui() {
     char nameBuffer[64];
 
     // Copy current name into buffer
-    strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
+    //strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
 
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue;
 
     if (ImGui::InputText("##colliderName", nameBuffer, sizeof(nameBuffer), flags)) {
         // This triggers only when Enter is pressed
         if (nameBuffer[0] == '\0') {
-            strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
+            //strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
         }
         else {
             this->SetName(nameBuffer);
@@ -64,6 +64,7 @@ void SolidCollider::DrawImGui() {
     }
 }
 
+/*
 void SolidCollider::Serialize(std::ofstream& out) const {
     out << "enabled " << (enabled ? 1 : 0) << "\n";
     out << "transform "
@@ -102,3 +103,4 @@ void SolidCollider::Deserialize(std::ifstream& in) {
         }
     }
 }
+*/

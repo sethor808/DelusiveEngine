@@ -17,7 +17,16 @@ float vertices[] = {
     -0.5f, -0.5f,  0.0f, 0.0f
 };
 
+SpriteComponent::SpriteComponent() {
+    Init();
+}
+
 SpriteComponent::SpriteComponent(const char* texturePath) {
+    this->texturePath = texturePath;
+    Init();
+}
+
+void SpriteComponent::Init() {
     char newName[64] = "New Sprite";
     this->SetName(newName);
 
@@ -28,11 +37,11 @@ SpriteComponent::SpriteComponent(const char* texturePath) {
     SetRotation(0.0f);
     SetScale(1.0f, 1.0f);
 
-    std::cout << "[Sprite Component] position: " << transform.position.x << std::endl;
-
-    this->texturePath = texturePath;
     shader = new Shader("shaders/vertex.glsl", "shaders/fragment.glsl");
-    texture = new Texture(texturePath);
+
+    if (this->texturePath != "") {
+        texture = new Texture(texturePath.c_str());
+    }
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -69,7 +78,7 @@ std::unique_ptr<Component> SpriteComponent::Clone() const {
 
 void SpriteComponent::SetTexturePath(const std::string& path) {
     // Don't reload if it's the same texture
-    if (texturePath == path) return;
+    //if (texturePath == path) return; //Commented out because of how the new property registry works
 
     texturePath = path;
 
@@ -104,8 +113,13 @@ void SpriteComponent::SetRotation(float angle) {
 }
 
 void SpriteComponent::Draw(const glm::mat4& projection) const{
-    if (!shader || !texture) {
-        std::cerr << "[SpriteComponent::Draw] Missing shader or texture\n";
+    if (!shader) {
+        std::cerr << "[SpriteComponent::Draw] Missing shader!\n";
+        return;
+    }
+
+    if (!texture) {
+        std::cerr << "[SpriteComponent::Draw] Missing texture! Texture Path: " << texturePath << "\n";
         return;
     }
 
@@ -153,6 +167,7 @@ void SpriteComponent::DrawImGui() {
     ImGui::Text("Name");
     ImGui::SameLine();
 
+    /*
     char nameBuffer[64];
     strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
 
@@ -166,6 +181,7 @@ void SpriteComponent::DrawImGui() {
             this->SetName(nameBuffer);
         }
     }
+    */
 
     ImGui::Text("Texture: %s", std::filesystem::path(texturePath).filename().string().c_str());
     if (ImGui::Button("Change Texture")) {
@@ -295,6 +311,12 @@ void SpriteComponent::SetVelocity(float x, float y) {
 }
 
 void SpriteComponent::Update(float deltaTime){
+    if (!texture) {
+        if (texturePath != "") {
+            SetTexturePath(texturePath);
+        }
+    }
+
     transform.position += velocity * deltaTime;
     //Probably move camera here
 }
@@ -343,6 +365,7 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
     }
 }
 
+/*
 void SpriteComponent::Serialize(std::ofstream& out) const {
     out << "name " << this->GetName() << "\n";
     out << "texture " << texturePath << "\n";
@@ -353,40 +376,10 @@ void SpriteComponent::Serialize(std::ofstream& out) const {
         << transform.scale.x << " " << transform.scale.y << "\n";
     out << "---\n";
 }
+*/
 
 void SpriteComponent::Deserialize(std::ifstream& in) {
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line == "---") break;
+    Component::Deserialize(in);
 
-        std::istringstream iss(line);
-        std::string token;
-        iss >> token;
-
-        if (token == "name") {
-            std::string tempName;
-            std::getline(iss, tempName);
-            if (!tempName.empty() && tempName[0] == ' ') tempName.erase(0, 1);
-            strncpy_s(name, tempName.c_str(), sizeof(name));
-        }
-        else if (token == "texture") {
-            std::getline(iss, texturePath);
-            if (!texturePath.empty() && texturePath[0] == ' ') texturePath.erase(0, 1);
-            delete texture;
-            texture = new Texture(texturePath.c_str());
-        }
-        else if (token == "enabled") {
-            int state;
-            iss >> state;
-            enabled = (state != 0);
-        }
-        else if (token == "transform") {
-            iss >> transform.position.x >> transform.position.y;
-            iss >> transform.rotation;
-            iss >> transform.scale.x >> transform.scale.y;
-        }
-        else {
-            break;
-        }
-    }
+    SetTexturePath(texturePath);
 }

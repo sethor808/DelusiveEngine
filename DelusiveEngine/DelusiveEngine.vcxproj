@@ -212,10 +212,12 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="HitboxCollider.h" />
     <ClInclude Include="HurtboxCollider.h" />
+    <ClInclude Include="INIParser.h" />
     <ClInclude Include="PathfindingComponent.h" />
     <ClInclude Include="PathfindingSystem.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PlayerAgent.h" />
+    <ClInclude Include="DelusiveRegistry.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneSystem.h" />

@@ -20,9 +20,8 @@ public:
     void PlayBranch(const std::string&);
     void ApplyComponentOverrides();
 
-    void Serialize(std::ofstream& out) const override;
-    void Deserialize(std::ifstream& in) override;
-
+    //void Serialize(std::ofstream& out) const override;
+    //void Deserialize(std::ifstream& in) override;
 private:
     std::string currentAnimationPath;
     Animation currentAnimation;

@@ -4,7 +4,8 @@
 class StatsComponent : public Component {
 public:
 	std::unique_ptr<Component> Clone() const override {
-		return std::make_unique<StatsComponent>(*this);
+		//TODO: Properly copy over values
+		return std::make_unique<StatsComponent>();
 	}
 
 	int GetHealth();
@@ -16,9 +17,8 @@ public:
 		return "StatsComponent";
 	}
 
-
-	void Serialize(std::ofstream& out) const override;
-	void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 private:
 	int maxHealth, currentHealth;
 };

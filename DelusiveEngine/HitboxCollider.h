@@ -4,8 +4,10 @@
 
 class HitboxCollider : public ColliderComponent {
 public:
+
 	std::unique_ptr<Component> Clone() const override {
-		return std::make_unique<HitboxCollider>(*this);
+		//TODO: Properly deep copy values
+		return std::make_unique<HitboxCollider>();
 	}
 
 	ColliderType GetColliderType() const override {
@@ -20,6 +22,6 @@ public:
 		return "HitboxCollider";
 	}
 
-	void Serialize(std::ofstream& out) const override;
-	void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 };

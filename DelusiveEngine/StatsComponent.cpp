@@ -32,6 +32,7 @@ void StatsComponent::Update(float deltaTime) {
 
 }
 
+/*
 void StatsComponent::Serialize(std::ofstream& out) const {
 	out << "Stats\n";
 	out << currentHealth << "\n";
@@ -43,3 +44,4 @@ void StatsComponent::Deserialize(std::ifstream& in) {
 	in >> maxHealth;
 	in.ignore();
 }
+*/

@@ -6,11 +6,16 @@
 #include <sstream>
 
 Agent::Agent() {
-
+	RegisterProperties();
 }
 
 Agent::~Agent() {
 
+}
+
+void Agent::RegisterProperties() {
+	registry.Register("name", &name);
+	transform.RegisterProperties(registry);
 }
 
 void Agent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
@@ -120,100 +125,122 @@ const TransformComponent& Agent::GetTransform() const {
 	return transform;
 }
 
-void Agent::SaveToFile(std::ofstream& out) const {
-	out << "type " << GetType() << "\n";
-	out << "name " << name << "\n";
-	out << "transform "
-		<< transform.position.x << " " << transform.position.y << " "
-		<< transform.rotation << " "
-		<< transform.scale.x << " " << transform.scale.y << "\n";
+void Agent::Serialize(std::ofstream& out) const {
+	out << "[Agent " << GetType() << "]\n";
+	registry.Serialize(out);
 
-	out << "components " << components.size() << "\n";
-	for (const auto& comp : components) {
-		out << comp->GetType() << "\n";
+	for (auto& comp : components) {
+		out << "[Component " << comp->GetType() << "]\n";
 		comp->Serialize(out);
+		out << "[/Component]\n";
 	}
-	out << "------" << "\n";
+
+	out << "[/Agent]\n";
+}
+
+void Agent::Deserialize(std::ifstream& in) {
+	std::string line;
+	while (std::getline(in, line)) {
+		if (line.empty()) continue;
+
+		if (line == "[/Agent]") {
+			break; // finished this agent block
+		}
+
+		// Components
+		if (line.rfind("[Component", 0) == 0) {
+			std::istringstream iss(line);
+			std::string discard, type;
+			iss >> discard >> type; // [Component SpriteComponent]
+
+			if (type.back() == ']') {
+				type.pop_back();
+			}
+
+			Component* comp = nullptr;
+			if (type == "SpriteComponent")        comp = AddComponent<SpriteComponent>();
+			else if (type == "SolidCollider")     comp = AddComponent<SolidCollider>();
+			else if (type == "TriggerCollider")   comp = AddComponent<TriggerCollider>();
+			else if (type == "HurtboxCollider")   comp = AddComponent<HurtboxCollider>();
+			else if (type == "HitboxCollider")    comp = AddComponent<HitboxCollider>();
+			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>();
+			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>();
+			if (comp) {
+				comp->Deserialize(in); // consumes until [/Component]
+			}
+		}
+		else {
+			// Allow both "key=value" and "key value"
+			std::string key, value;
+			auto pos = line.find('=');
+			if (pos != std::string::npos) {
+				key = line.substr(0, pos);
+				value = line.substr(pos + 1);
+			}
+			else {
+				std::istringstream iss(line);
+				iss >> key;
+				std::getline(iss, value);
+				if (!value.empty() && value[0] == ' ') value.erase(0, 1); // trim leading space
+			}
+
+			if (key.empty()) continue;
+
+			// Try registry first
+			std::istringstream valStream(value);
+			bool handled = false;
+			for (auto& p : registry.properties) {
+				if (p->name == key) {
+					p->Deserialize(valStream);
+					handled = true;
+					break;
+				}
+			}
+			if (handled) continue;
+
+			// Fallback manual handling
+			if (key == "position") {
+				std::istringstream vs(value);
+				vs >> transform.position.x >> transform.position.y;
+			}
+			else if (key == "scale") {
+				std::istringstream vs(value);
+				vs >> transform.scale.x >> transform.scale.y;
+			}
+			else if (key == "rotation") {
+				std::istringstream vs(value);
+				vs >> transform.rotation;
+			}
+		}
+	}
+}
+
+void Agent::DrawImGui() {
+	registry.DrawImGui();
+	ImGui::Separator();
+
+	for (auto& c : components) {
+		ImGui::Separator();
+		c->DrawImGui();
+	}
 }
 
 void Agent::SaveToFile(const std::string& filePath) const {
 	std::ofstream out(filePath);
 	if (!out.is_open()) return;
-	SaveToFile(out);
+	Serialize(out);
+}
+
+void Agent::SaveToFile(std::ofstream& out) const {
+	Serialize(out);
 }
 
 void Agent::LoadFromFile(std::ifstream& in) {
 	if (!in) return;
 
-	std::string line;
 	components.clear();
 
-	while (std::getline(in, line)) {
-		// Trim line start/end if you like; simple check:
-		if (line == "------") {
-			// agent separator -> this agent's block is finished
-			break;
-		}
-		if (line.empty()) {
-			continue;
-		}
-
-		std::istringstream iss(line);
-		std::string token;
-		iss >> token;
-
-		if (token == "name") {
-			std::string rest;
-			std::getline(iss, rest);
-			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
-			name = rest;
-		}
-		else if (token == "transform") {
-			iss >> transform.position.x >> transform.position.y;
-			iss >> transform.rotation;
-			iss >> transform.scale.x >> transform.scale.y;
-		}
-		else if (token == "components") {
-			size_t count = 0;
-			iss >> count;
-
-			for (size_t i = 0; i < count; ++i) {
-				std::string typeLine;
-				if (!std::getline(in, typeLine)) break;
-
-				// If the file uses '---' after components or component blocks,
-				// handle empty lines and separators:
-				if (typeLine.empty()) { --i; continue; }
-				if (typeLine == "---") { break; }
-
-				std::istringstream typeStream(typeLine);
-				std::string type;
-				typeStream >> type;
-
-				Component* comp = nullptr;
-				// Use AddComponent so ID/owner are properly assigned
-				if (type == "SpriteComponent")       comp = AddComponent<SpriteComponent>("");
-				else if (type == "SolidCollider")    comp = AddComponent<SolidCollider>();
-				else if (type == "TriggerCollider")  comp = AddComponent<TriggerCollider>();
-				else if (type == "HurtboxCollider")  comp = AddComponent<HurtboxCollider>();
-				else if (type == "HitboxCollider")   comp = AddComponent<HitboxCollider>();
-				else if (type == "StatsComponent")   comp = AddComponent<StatsComponent>();
-				else if (type == "AnimatorComponent")comp = AddComponent<AnimatorComponent>();
-				else {
-					std::string discard;
-					while (std::getline(in, discard)) {
-						if (discard == "---") break;
-						if (discard.empty()) continue;
-					}
-					continue;
-				}
-
-				if (comp) {
-					comp->Deserialize(in);
-				}
-			}
-		}
-	}
+	Deserialize(in);
 }
 
 void Agent::LoadFromFile(const std::string& filePath) {

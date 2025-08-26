@@ -8,7 +8,8 @@ PathfindingComponent::PathfindingComponent() {
 }
 
 std::unique_ptr<Component> PathfindingComponent::Clone() const{
-	return std::make_unique<PathfindingComponent>(*this);
+    //TODO: Make a proper deep copy
+	return std::make_unique<PathfindingComponent>();
 }
 
 void PathfindingComponent::Update(float deltaTime) {
@@ -43,6 +44,8 @@ void PathfindingComponent::RequestPath(glm::vec2 start, glm::vec2 end) {
     //currentPath = pathfindingSystem.FindPath(start, end);
 }
 
+
+/*
 void PathfindingComponent::Serialize(std::ofstream& out) const {
     out << "enabled " << (enabled ? 1 : 0) << "\n";
     out << "debugcolor "
@@ -71,3 +74,4 @@ void PathfindingComponent::Deserialize(std::ifstream& in) {
         }
     }
 }
+*/

@@ -183,11 +183,19 @@ bool Scene::SaveToFile(const std::string& path) const {
 	if (!out.is_open()) return false;
 
 	out << "name " << name << "\n";
+
+	// Save agents
 	out << "agents " << agents.size() << "\n";
 	for (const auto& agent : agents) {
 		agent->SaveToFile(out);
 	}
-	
+
+	// Save systems (to be added later)
+	// out << "systems " << systems.size() << "\n";
+	// for (const auto& system : systems) {
+	//     system->SaveToFile(out);
+	// }
+
 	return true;
 }
 
@@ -195,59 +203,44 @@ bool Scene::LoadFromFile(const std::string& path) {
 	std::ifstream in(path);
 	if (!in.is_open()) return false;
 
-	agents.clear();
-	systems.clear(); // if you save/load systems later
+	Clear(); // reset
 
-	std::string token;
-	while (in >> token) {
+	std::string line;
+	while (std::getline(in, line)) {
+		if (line.empty()) continue;
+
+		std::istringstream iss(line);
+		std::string token;
+		iss >> token;
+
 		if (token == "name") {
 			std::string rest;
-			std::getline(in, rest); // read rest of line " New Scene"
+			std::getline(iss, rest);
 			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
-			this->name = rest;
+			name = rest;
 		}
 		else if (token == "agents") {
-			size_t count = 0;
-			in >> count;
-			std::string tmp;
-			std::getline(in, tmp); // consume end of line
-
-			for (size_t i = 0; i < count; ++i) {
-				// Expect a line like: "type PlayerAgent"
-				std::string typeToken;
-				in >> typeToken;
-				if (typeToken != "type") {
-					// attempt to recover: skip rest of line and try to find "type"
-					std::string skipLine;
-					std::getline(in, skipLine);
-					// try to find next "type"
-					while (in >> typeToken && typeToken != "type") {
-						std::getline(in, skipLine);
-					}
-					if (!in) break;
-				}
-
-				std::string agentType;
-				in >> agentType;
-				std::getline(in, tmp);
-
-				std::unique_ptr<Agent> agent;
-				if (agentType == "PlayerAgent") agent = std::make_unique<PlayerAgent>("");
-				else if (agentType == "CameraAgent") agent = std::make_unique<CameraAgent>("");
-				else if (agentType == "EnemyAgent") agent = std::make_unique<EnemyAgent>("");
-				else if (agentType == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>("");
-				else {
-					agent = std::make_unique<PlayerAgent>("");
-				}
-
-				// Agent::LoadFromFile should read only this agent block (until --- or EOF)
-				agent->LoadFromFile(in);
-				agents.push_back(std::move(agent));
-			}
+			// We don’t actually need the number here, we just read [Agent] blocks
+			continue;
 		}
-		else {
-			std::string rest;
-			std::getline(in, rest);
+		else if (token == "[Agent") {
+			std::string type;
+			iss >> type; // e.g. CameraAgent]
+
+			// trim trailing ']'
+			if (!type.empty() && type.back() == ']')
+				type.pop_back();
+
+			std::unique_ptr<Agent> agent;
+			if (type == "PlayerAgent") agent = std::make_unique<PlayerAgent>("");
+			else if (type == "CameraAgent") agent = std::make_unique<CameraAgent>("");
+			else if (type == "EnemyAgent") agent = std::make_unique<EnemyAgent>("");
+			else if (type == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>("");
+			else agent = std::make_unique<PlayerAgent>(""); // fallback
+
+			// Let the agent load its block (until [/Agent])
+			agent->LoadFromFile(in);
+			agents.push_back(std::move(agent));
 		}
 	}
 

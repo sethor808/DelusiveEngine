@@ -175,6 +175,7 @@ std::unique_ptr<Component> AnimatorComponent::Clone() const {
     return clone;
 }
 
+/*
 void AnimatorComponent::Serialize(std::ofstream& out) const {
     if (!out.is_open()) return;
 
@@ -219,3 +220,4 @@ void AnimatorComponent::Deserialize(std::ifstream& in) {
         }
     }
 }
+*/

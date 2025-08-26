@@ -375,5 +375,7 @@
     <ClInclude Include="BasicTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="INIParser.h" />
+    <ClInclude Include="DelusiveRegistry.h" />
   </ItemGroup>
 </Project>

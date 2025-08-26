@@ -5,7 +5,8 @@
 class SolidCollider : public ColliderComponent {
 public:
 	std::unique_ptr<Component> Clone() const override {
-		return std::make_unique<SolidCollider>(*this);
+		//TODO: Properly copy over values
+		return std::make_unique<SolidCollider>();
 	}
 
 	ColliderType GetColliderType() const override {
@@ -20,7 +21,7 @@ public:
 		return "SolidCollider";
 	}
 
-	void Serialize(std::ofstream& out) const override;
-	void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 private:
 };

@@ -5,7 +5,8 @@
 class HurtboxCollider : public ColliderComponent {
 public:
 	std::unique_ptr<Component> Clone() const override {
-		return std::make_unique<HurtboxCollider>(*this);
+		//TODO: Properly copy over values
+		return std::make_unique<HurtboxCollider>();
 	}
 
 	ColliderType GetColliderType() const override {
@@ -20,6 +21,6 @@ public:
 	void DrawImGui() override;
 	void OnCollision(ColliderComponent*) override;
 
-	void Serialize(std::ofstream& out) const override;
-	void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 };

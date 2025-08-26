@@ -1,0 +1,22 @@
+name TestScene3
+agents 2
+[Agent PlayerAgent]
+name=NewPlayer
+position=0 0
+scale=1 1
+rotation=0
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+texturePath=assets/sprites\BasicDude\BasicDude1.jpg
+[/Component]
+[/Agent]
+[Agent CameraAgent]
+name=NewCamera
+position=0 0
+scale=1 1
+rotation=0
+[/Agent]

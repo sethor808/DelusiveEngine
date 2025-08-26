@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "EnemyScript.h"
 #include "DelusiveComponents.h"
+#include "DelusiveRegistry.h"
 
 class EnemyAgent : public Agent {
 public:
@@ -11,8 +12,10 @@ public:
 	std::unique_ptr<Agent> Clone() const override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& projection) const override;
+	void DrawImGui() override;
 	void OnHit() override;
 	std::string GetType() const override;
+	void RegisterProperties() override;
 
 	//EnemyAgent logic
 	void SetScript(std::unique_ptr<EnemyScript>);
@@ -21,6 +24,7 @@ public:
 private:
 	Agent* target;
 	std::unique_ptr<EnemyScript> logicScript;
+
 	glm::vec2 velocity = { 0.0f, 0.0f };
 	glm::vec2 acceleration = { 0.0f, 0.0f };
 	glm::vec2 impulse = { 0.0f, 0.0f };

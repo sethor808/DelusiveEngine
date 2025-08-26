@@ -394,6 +394,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 bool isSelected = (selectedSystemIndex == (int)i);
                 if (ImGui::Selectable(label.c_str(), isSelected)) {
                     selectedSystemIndex = (int)i;
+                    selectedAgentIndex = 0;
                 }
 
                 // Right-click popup for delete and future options
@@ -434,6 +435,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 ImGui::PushID((int)i);
                 if (ImGui::Selectable(name.c_str(), selectedAgentIndex == (int)i)) {
                     selectedAgentIndex = (int)i;
+                    selectedSystemIndex = 0;
                 }
                 if (ImGui::BeginPopupContextItem("AgentContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {
@@ -479,15 +481,14 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
 
     if (ImGui::BeginChild("Inspector", ImVec2(0, 0), true)) {
         ImGui::Text("Inspector");
+        //TODO: Set up a only update if changed system?
         auto& agents = scene.GetAgents();
         if (selectedAgentIndex >= 0 && selectedAgentIndex < (int)agents.size()) {
             agents[selectedAgentIndex]->DrawImGui();
         }
-        else {
-            auto& systems = scene.GetSystems(); //Looks weird but only pulls list if not editing agents, can be optimized more
-            if (selectedSystemIndex >= 0 && selectedSystemIndex < (int)systems.size()) {
-                systems[selectedSystemIndex]->DrawImGui();
-            }
+        auto& systems = scene.GetSystems();
+        if (selectedSystemIndex >= 0 && selectedSystemIndex < (int)systems.size()) {
+            systems[selectedSystemIndex]->DrawImGui();
         }
     }
     ImGui::EndChild();
@@ -575,7 +576,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
         for (const auto& comp : agent.GetComponents()) {
             ImGui::PushID(i);
             bool isSelected = (selectedComponent == comp.get());
-            if (ImGui::Selectable(comp->GetName(), isSelected)) {
+            if (ImGui::Selectable(comp->GetName().c_str(), isSelected)) {
                 selectedComponent = comp.get();
                 agentSelected = false;
             }
@@ -1072,7 +1073,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
 
             for (int i = 0; i < frame.componentOverrides.size(); ++i) {
                 auto& mod = frame.componentOverrides[i];
-                ImGui::PushID(mod.componentID);
+                ImGui::PushID((int)mod.componentID);
 
                 ImGui::Text("%s", baseAgent->GetComponentByID(mod.componentID)->GetName());
                 ImGui::SameLine();

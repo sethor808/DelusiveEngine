@@ -15,8 +15,8 @@ public:
 		return "PathfinderComponent";
 	}
 
-	void Serialize(std::ofstream& out) const override;
-	void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 
 	//Pathfinding logic
 	void SetPath(const std::vector<glm::vec2>& newPath);

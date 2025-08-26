@@ -30,6 +30,9 @@ namespace std {
 class PathfindingSystem : public SceneSystem {
 public:
 	PathfindingSystem();
+
+	std::string GetType() const override { return "PathfindingSystem"; }
+
 	void BuildNavGrid(const std::vector<Node>&);
 	std::vector<glm::vec2> FindPath(glm::vec2, glm::vec2);
 

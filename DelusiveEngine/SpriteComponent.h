@@ -25,8 +25,17 @@ class SpriteComponent : public Component {
 public:
     bool isForeground = false;
 
+    SpriteComponent();
     SpriteComponent(const char* texturePath);
+
+    SpriteComponent(const SpriteComponent&) = delete;
+    SpriteComponent& operator=(const SpriteComponent&) = delete;
+    SpriteComponent(SpriteComponent&&) noexcept = default;
+    SpriteComponent& operator=(SpriteComponent&&) noexcept = default;
+
     ~SpriteComponent();
+    void Init();
+
     std::unique_ptr<Component> Clone() const override;
 
     void SetTexturePath(const std::string&) override;
@@ -45,7 +54,7 @@ public:
         return "SpriteComponent";
     }
 
-    void Serialize(std::ofstream& out) const override;
+    //void Serialize(std::ofstream& out) const override;
     void Deserialize(std::ifstream& in) override;
 private:
     SpriteInteractionState interaction;

@@ -5,7 +5,8 @@
 class TriggerCollider : public ColliderComponent {
 public:
 	std::unique_ptr<Component> Clone() const override {
-		return std::make_unique<TriggerCollider>(*this);
+		//TODO: Properly copy over values
+		return std::make_unique<TriggerCollider>();
 	}
 
 	ColliderType GetColliderType() const override {
@@ -20,7 +21,7 @@ public:
 		return "TriggerCollider";
 	}
 
-	virtual void Serialize(std::ofstream& out) const override;
-	virtual void Deserialize(std::ifstream& in) override;
+	//void Serialize(std::ofstream& out) const override;
+	//void Deserialize(std::ifstream& in) override;
 private:
 };

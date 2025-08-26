@@ -6,6 +6,8 @@ class UIManager : public SceneSystem {
 public:
 	UIManager();
 
+	std::string GetType() const { return "UIManager"; }
+
 	void SetCanvasActive(const std::string&);
 
 	void Update(float) override;
@@ -15,6 +17,8 @@ public:
 
 	void Reset() override;
 	std::unique_ptr<SceneSystem> Clone() const override;
+
+	void SaveToFile(std::ofstream&) const override;
 
 	void Serialize(std::ostream&) const override;
 	void Deserialize(std::istream&) override;

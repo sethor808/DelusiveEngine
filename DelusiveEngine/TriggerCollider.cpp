@@ -18,14 +18,14 @@ void TriggerCollider::DrawImGui() {
     char nameBuffer[64];
 
     // Copy current name into buffer
-    strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
+    //strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
 
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue;
 
     if (ImGui::InputText("##colliderName", nameBuffer, sizeof(nameBuffer), flags)) {
         // This triggers only when Enter is pressed
         if (nameBuffer[0] == '\0') {
-            strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
+            //strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
         }
         else {
             this->SetName(nameBuffer);
@@ -67,6 +67,7 @@ void TriggerCollider::DrawImGui() {
     }
 }
 
+/*
 void TriggerCollider::Serialize(std::ofstream& out) const {
     out << "Trigger Collider\n";
     out << name << "\n";
@@ -82,3 +83,4 @@ void TriggerCollider::Deserialize(std::ifstream& in) {
     in >> transform.scale.x >> transform.scale.y;
     in.ignore();
 }
+*/

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <SDL3/SDL.h>
 #include "DelusiveUtils.h"
+#include "DelusiveRegistry.h"
 
 class Component;
 class Collider;
@@ -24,7 +25,12 @@ public:
 	virtual std::unique_ptr<Agent> Clone() const = 0;
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(const glm::mat4& projection) const = 0;
-	virtual void DrawImGui() {};
+
+	virtual void Serialize(std::ofstream&) const;
+	virtual void Deserialize(std::ifstream&);
+	virtual void DrawImGui();
+
+
 	virtual std::string GetType() const = 0;
 	
 	//Virtual functions
@@ -33,6 +39,7 @@ public:
 	virtual void HandleInput(const PlayerInputState&) {}
 	virtual GLuint RenderAgentToTexture(int width = 128, int height = 128);
 
+	virtual void RegisterProperties();
 	void SetPosition(const glm::vec2& pos);
 	void SetRotation(const float rotation);
 	void SetScale(const glm::vec2 scale);
@@ -70,6 +77,7 @@ public:
 		auto component = std::make_unique<T>(std::forward<Args>(args)...);
 		component->SetOwner(this);
 		component->SetID(nextComponentID++);
+		component->RegisterProperties();
 		T* ptr = component.get();
 		components.push_back(std::move(component));
 		return ptr;
@@ -109,7 +117,7 @@ public:
 	void RemoveComponentByPointer(Component* target);
 
 	void SaveToFile(const std::string&) const;
-	virtual void SaveToFile(std::ofstream& out) const;
+	virtual void SaveToFile(std::ofstream&) const;
 	void LoadFromFile(const std::string&);
 	virtual void LoadFromFile(std::ifstream& in);
 
@@ -124,4 +132,5 @@ protected:
 	std::string name;
 	std::string type;
 	uint64_t nextComponentID = 0;
+	PropertyRegistry registry;
 };

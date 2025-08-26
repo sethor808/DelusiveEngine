@@ -162,6 +162,9 @@ void PlayerAgent::DrawImGui() {
     }
 
     ImGui::Separator();
+    ImGui::Text("Live stat display");
+
+    ImGui::Separator();
     ImGui::Text("Transform");
     ImGui::Text("Position: ");
     ImGui::SameLine();
