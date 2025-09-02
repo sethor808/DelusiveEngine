@@ -1,4 +1,5 @@
 #include "UIManager.h"
+#include "DelusiveUIRegistry.h"
 #include <iostream>
 #include <imgui/imgui.h>
 #include <fstream>
@@ -6,135 +7,156 @@
 
 UIManager::UIManager() {
 	name = "NewUIManager";
+	activeCanvasName = "";
+	activeCanvas = nullptr;
+	RegisterProperties();
+}
+
+void UIManager::RegisterProperties() {
+	SceneSystem::RegisterProperties();
+	registry.Register("activeCanvasName", &activeCanvasName);
+	registry.Register("canvasList", &canvasList);
 }
 
 void UIManager::SetCanvasActive(const std::string& name) {
-	for (auto& canvas : canvases) {
-		if (canvas->GetName() == name) {
-			canvas->SetActive(true);
-		}
+	if (auto canvas = DelusiveUIRegistry::Instance().Get(name)) {
+		canvas->SetActive(true);
+		activeCanvasName = name;
+		activeCanvas = canvas;
 	}
 }
 
 void UIManager::Update(float deltaTime) {
-	for (auto& canvas : canvases) {
-		if (canvas->IsActive()) {
-			canvas->Update(deltaTime);
-		}
+	if(activeCanvas && activeCanvas->IsActive()) {
+		activeCanvas->Update(deltaTime);
 	}
 }
 
 void UIManager::Draw(const glm::mat4& projection) {
-	for (auto& canvas : canvases) {
-		//if (canvas->IsActive()) {
-			//canvas->Draw(projection);
-		//}
-		canvas->Draw(projection);
+	if (activeCanvas && activeCanvas->IsActive()) {
+		activeCanvas->Draw(projection);
 	}
 }
 
 void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
-	for (auto& canvas : canvases) {
-		if (canvas->IsActive()) {
-			canvas->HandleMouse(mousePos, mouseDown);
-		}
+	if (activeCanvas && activeCanvas->IsActive()) {
+		activeCanvas->HandleMouse(mousePos, mouseDown);
 	}
 }
 
 void UIManager::DrawImGui() {
-	ImGui::Text("UI Manager");
+    ImGui::Text("UIManager");
+    ImGui::Separator();
 
-	// Active canvas selection dropdown
-	if (ImGui::BeginCombo("Active Canvas", activeCanvas ? activeCanvas->GetName().c_str() : "(none)")) {
-		for (size_t i = 0; i < canvases.size(); ++i) {
-			bool isSelected = (activeCanvas == canvases[i].get());
-			if (ImGui::Selectable(canvases[i]->GetName().c_str(), isSelected)) {
-				activeCanvas = canvases[i].get();
-			}
-			if (isSelected) {
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
+    // Active canvas selection
+    auto allNames = DelusiveUIRegistry::Instance().GetAllNames();
+    if (!canvasList.empty()) {
+        if (ImGui::BeginCombo("Active Canvas", activeCanvasName.empty() ? "<none>" : activeCanvasName.c_str())) {
+            for (const auto& name : canvasList) {
+                bool isSelected = (activeCanvasName == name);
+                if (ImGui::Selectable(name.c_str(), isSelected)) {
+                    SetCanvasActive(name);
+                }
+                if (isSelected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+    }
+    else {
+        ImGui::TextDisabled("No canvases assigned.");
+    }
 
-	ImGui::Separator();
+    ImGui::Separator();
 
-	// Draw inspector for selected canvas
-	if (activeCanvas) {
-		activeCanvas->DrawImGui();
-	}
-	else {
-		ImGui::TextDisabled("No canvas selected.");
-	}
+    // List assigned canvases
+    ImGui::Text("Canvas List:");
+    for (size_t i = 0; i < canvasList.size(); ++i) {
+        ImGui::PushID(static_cast<int>(i));
+        ImGui::Text("%s", canvasList[i].c_str());
+        ImGui::SameLine();
+        if (ImGui::Button("Remove")) {
+            if (activeCanvasName == canvasList[i]) {
+                Reset(); // active cleared
+            }
+            canvasList.erase(canvasList.begin() + i);
+            ImGui::PopID();
+            break;
+        }
+        ImGui::PopID();
+    }
 
-	if (ImGui::Button("Add Canvas")) {
-		std::string newName = "Canvas_" + std::to_string(canvases.size());
-		auto newCanvas = std::make_unique<UICanvas>(newName);
-		activeCanvas = newCanvas.get();
-		canvases.push_back(std::move(newCanvas));
-	}
+    // Add canvases (from registry or new)
+    if (ImGui::Button("Add Canvas")) {
+        ImGui::OpenPopup("AddCanvasPopup");
+    }
+    if (ImGui::BeginPopup("AddCanvasPopup")) {
+        for (const auto& name : allNames) {
+            if (std::find(canvasList.begin(), canvasList.end(), name) == canvasList.end()) {
+                if (ImGui::MenuItem(name.c_str())) {
+                    canvasList.push_back(name);
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+        }
+        if (ImGui::MenuItem("New Canvas")) {
+            std::string newName = "Canvas_" + std::to_string(allNames.size());
+            auto newCanvas = std::make_unique<UICanvas>();
+            newCanvas->SetName(newName);
+            DelusiveUIRegistry::Instance().Register(std::move(newCanvas));
+            canvasList.push_back(newName);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::Separator();
+
+    // Show the active canvas inspector
+    if (activeCanvas) {
+        if (ImGui::CollapsingHeader("Active Canvas Inspector")) {
+            activeCanvas->DrawImGui();
+        }
+    }
 }
 
-
 void UIManager::Reset() {
-	for (auto& canvas : canvases) {
-		canvas->Reset();
-		canvas->SetActive(false);
-	}
+	activeCanvasName.clear();
+	activeCanvas = nullptr;
 }
 
 std::unique_ptr<SceneSystem> UIManager::Clone() const {
 	auto clone = std::make_unique<UIManager>();
-	for (const auto& canvas : canvases) {
-		if (canvas) {
-			clone->canvases.push_back(std::move(canvas->Clone())); // calls UICanvas::Clone(), returns unique_ptr<UICanvas>
-		}
+	clone->activeCanvasName = activeCanvasName;
+	clone->canvasList = canvasList;
+
+	// only refresh pointer if canvas still exists
+	if (auto canvas = DelusiveUIRegistry::Instance().Get(activeCanvasName)) {
+		clone->activeCanvas = canvas;
 	}
 	return clone;
 }
 
 void UIManager::SaveToFile(std::ofstream& out) const {
-	out << "type " << GetType() << "\n";
-	out << "name " << name << "\n";
-	out << "canvases " << canvases.size() << "\n";
+	out << "[UIManager]\n";
 
-	for (const auto& canv : canvases) {
-		out << "canvas" << "\n";
-		canv->Serialize(out);
+	out << "ActiveCanvas=" << activeCanvasName << "\n";
+	out << "CanvasList=";
+	for (size_t i = 0; i < canvasList.size(); ++i) {
+		out << canvasList[i];
+		if (i < canvasList.size() - 1) out << ",";
 	}
+	out << "\n";
 
-	out << "------" << "\n";
-}
-
-void UIManager::Serialize(std::ostream& out) const {
-	out << canvases.size() << "\n";
-	for (const auto& canvas : canvases) {
-		out << canvas->GetName() << "\n";
-		out << canvas->IsActive() << "\n";
-		canvas->Serialize(out);
-	}
+	out << "[/UIManager]\n";
 }
 
 void UIManager::Deserialize(std::istream& in) {
-	size_t count = 0;
-	in >> count;
-	in.ignore(); // skip newline
+	canvasList.clear();
+	activeCanvasName.clear();
 
-	canvases.clear();
-	for (size_t i = 0; i < count; ++i) {
-		std::string name;
-		std::getline(in, name);
+	SceneSystem::Deserialize(in);
 
-		std::string activeStr;
-		std::getline(in, activeStr);
-		bool active = (activeStr == "1" || activeStr == "true");
-
-		auto canvas = std::make_unique<UICanvas>();
-		canvas->SetName(name);
-		canvas->SetActive(active);
-		canvas->Deserialize(in);
-
-		canvases.push_back(std::move(canvas));
+	if (!activeCanvasName.empty() || activeCanvasName != "") {
+		SetCanvasActive(activeCanvasName);
 	}
 }

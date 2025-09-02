@@ -8,6 +8,13 @@
 
 PathfindingSystem::PathfindingSystem() {
 	name = "New PathfindingSystem";
+	RegisterProperties();
+}
+
+void PathfindingSystem::RegisterProperties() {
+	SceneSystem::RegisterProperties();
+
+
 }
 
 std::unique_ptr<SceneSystem> PathfindingSystem::Clone() const {

@@ -10,7 +10,9 @@ EnemyAgent::EnemyAgent(const std::string& agentName) {
 void EnemyAgent::RegisterProperties() {
     Agent::RegisterProperties();
 
+    registry.Register("scriptName", &scriptName);
     registry.Register("moveSpeed", &moveSpeed);
+    registry.Register("damping", &damping);
 }
 
 std::string EnemyAgent::GetType() const{
@@ -21,7 +23,10 @@ std::unique_ptr<Agent> EnemyAgent::Clone() const {
     auto copy = std::make_unique<EnemyAgent>(this->GetName());  // or however the agent is constructed
 
     // Copy transform and basic properties
-    copy->SetScript(logicScript->Clone());
+    if (!scriptName.empty()) {
+        copy->logicScript = ScriptRegistry::Instance().Create(scriptName);
+    }
+
     copy->SetPosition(this->GetTransform().position);
     copy->SetRotation(this->GetTransform().rotation);
     copy->SetScale(this->GetTransform().scale);
@@ -57,84 +62,23 @@ void EnemyAgent::Draw(const glm::mat4& projection) const {
 }
 
 void EnemyAgent::DrawImGui() {
-    ImGui::Text("EnemyAgent");
-    ImGui::Separator();
+    Agent::DrawImGui();
 
-    ImGui::Text("Name");
-    ImGui::SameLine();
-
-    char nameBuffer[64];
-
-    // Copy current name into buffer
-    strncpy_s(nameBuffer, GetName().c_str(), sizeof(nameBuffer));
-
-    ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue;
-
-    if (ImGui::InputText("##agentName", nameBuffer, sizeof(nameBuffer), flags)) {
-        // This triggers only when Enter is pressed
-        if (nameBuffer[0] == '\0') {
-            strncpy_s(nameBuffer, GetName().c_str(), sizeof(nameBuffer));
-        }
-        else {
-            this->SetName(nameBuffer);
-        }
+    auto names = ScriptRegistry::Instance().GetNames();
+    int currentIndex = 0;
+    for (int i = 0; i < (int)names.size(); i++) {
+        if (names[i] == scriptName) { currentIndex = i; break; }
     }
 
-    ImGui::Separator();
-    ImGui::Text("Transform");
-    ImGui::Text("Position: ");
-    ImGui::SameLine();
-    glm::vec2 pos = transform.position;
-    if (ImGui::DragFloat2("##position", glm::value_ptr(pos), 1.0f)) {
-        transform.position = pos;
-    }
-
-    ImGui::Text("Rotation: ");
-    ImGui::SameLine();
-    float rot = transform.rotation;
-    if (ImGui::DragFloat("##rotation", &rot, 0.1f)) {
-        transform.rotation = rot;
-    }
-
-    ImGui::Text("Scale:    ");
-    ImGui::SameLine();
-    glm::vec2 scale = transform.scale;
-    if (ImGui::DragFloat2("##scale", glm::value_ptr(scale), 0.1f)) {
-        transform.scale = scale;
-    }
-
-    int componentID = 0;
-    for (const auto& comp : GetComponents()) {
-        ImGui::PushID(componentID++);
-        ImGui::NewLine();
-        ImGui::Separator();
-        comp->DrawImGui();
-        ImGui::PopID();
-    }
-
-    components.erase(
-        std::remove_if(components.begin(), components.end(),
-            [](const std::unique_ptr<Component>& comp) {
-                return comp->ToDelete();
-            }),
-        components.end());
-
-    if (ImGui::Button("Add Component")) {
-        ImGui::OpenPopup("AddComponentPopup");
-    }
-
-    if (ImGui::BeginPopup("AddComponentPopup")) {
-        if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>("assets/sprites/star.jpg");
-        if (ImGui::BeginMenu("Collider")) {
-            if (ImGui::MenuItem("Solid")) AddComponent<SolidCollider>();
-            if (ImGui::MenuItem("Hitbox")) AddComponent<HitboxCollider>();
-            if (ImGui::MenuItem("Hurtbox")) AddComponent<HurtboxCollider>();
-            if (ImGui::MenuItem("Trigger")) AddComponent<TriggerCollider>();
-            ImGui::EndMenu();
-        }
-        if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
-        if (ImGui::MenuItem("Stats")) AddComponent<StatsComponent>();
-        ImGui::EndPopup();
+    if (ImGui::Combo("Script", &currentIndex,
+        [](void* data, int idx, const char** out_text) {
+            auto& vec = *reinterpret_cast<std::vector<std::string>*>(data);
+            if (idx < 0 || idx >= (int)vec.size()) return false;
+            *out_text = vec[idx].c_str();
+            return true;
+        },
+        (void*)&names, (int)names.size())) {
+        SetScript(names[currentIndex]);
     }
 }
 
@@ -142,8 +86,9 @@ void EnemyAgent::OnHit() {
 
 }
 
-void EnemyAgent::SetScript(std::unique_ptr<EnemyScript> script) {
-    logicScript = std::move(script);
+void EnemyAgent::SetScript(const std::string& _scriptName) {
+    scriptName = _scriptName;
+    logicScript = ScriptRegistry::Instance().Create(name);
 }
 
 void EnemyAgent::SetTarget(Agent* target) {

@@ -1,4 +1,5 @@
 #pragma once
+#include "DelusiveData.h"
 #include "Component.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -36,6 +37,7 @@ public:
     ~SpriteComponent();
     void Init();
 
+    void RegisterProperties() override;
     std::unique_ptr<Component> Clone() const override;
 
     void SetTexturePath(const std::string&) override;
@@ -61,6 +63,7 @@ private:
     GLuint VAO, VBO;
     Shader* shader;
     Texture* texture;
+	DelusiveTexture textureData;
     
     int renderOrder = 0;
     glm::vec2 velocity = { 0.0f, 0.0f };

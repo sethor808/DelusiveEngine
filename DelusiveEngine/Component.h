@@ -27,13 +27,14 @@ public:
 	virtual ~Component() = default;
 	virtual std::unique_ptr<Component> Clone() const = 0;
 
+	virtual void RegisterProperties();
+
 	virtual void Update(float) = 0;
 	virtual void Draw(const glm::mat4& projection) const {};
 	virtual void DrawImGui();
 	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }
 	virtual void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) {}
-
-	virtual void RegisterProperties();
+	
 	virtual const char* GetType() const = 0;
 	virtual const std::string GetName() const {return name;}
 	virtual void SetName(const std::string&);
@@ -61,8 +62,8 @@ public:
 	virtual void Serialize(std::ofstream& out) const;
 	virtual void Deserialize(std::ifstream& in);
 protected:
-	Agent* owner = nullptr;
 	PropertyRegistry registry;
+	Agent* owner = nullptr;
 	std::string name;
 	std::string texturePath;
 	uint64_t componentID = 0;

@@ -47,9 +47,6 @@
     <Filter Include="engine\agents">
       <UniqueIdentifier>{4eee34fc-51f2-42dc-81a6-2c574dfb8885}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\agents\Header Files">
-      <UniqueIdentifier>{9048e558-172d-4dcc-af60-cf9d408e60a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\agents\Source Files">
       <UniqueIdentifier>{e9d9e0e2-0da7-40f2-87da-8ddf76a8cae5}</UniqueIdentifier>
     </Filter>
@@ -79,6 +76,18 @@
     </Filter>
     <Filter Include="engine\healthsystem\Header Files">
       <UniqueIdentifier>{f75123e8-804c-4888-86ff-2134cea7c5ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\agents\Header Files">
+      <UniqueIdentifier>{9048e558-172d-4dcc-af60-cf9d408e60a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\behaviour scripts">
+      <UniqueIdentifier>{3963e66d-1ab2-4db7-a950-123935363951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\behaviour scripts\Header Files">
+      <UniqueIdentifier>{6a892d59-69f6-4701-86ab-a939741dcd75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\behaviour scripts\Source Files">
+      <UniqueIdentifier>{b8cdef50-a7a2-4d60-852e-85a97eac11cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +232,12 @@
     <ClCompile Include="BasicTalisman.cpp">
       <Filter>engine\healthsystem\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneSystem.cpp">
+      <Filter>engine\core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelusiveUIRegistry.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -339,9 +354,6 @@
     <ClInclude Include="EnvironmentAgent.h">
       <Filter>engine\agents\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyScript.h">
-      <Filter>engine\agents</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
@@ -375,7 +387,20 @@
     <ClInclude Include="BasicTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="INIParser.h" />
-    <ClInclude Include="DelusiveRegistry.h" />
+    <ClInclude Include="DelusiveRegistry.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourScript.h">
+      <Filter>engine\behaviour scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourRegistry.h">
+      <Filter>engine\behaviour scripts\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveUIRegistry.h">
+      <Filter>engine\ui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveData.h">
+      <Filter>engine\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

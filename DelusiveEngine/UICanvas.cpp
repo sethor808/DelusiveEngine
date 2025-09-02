@@ -3,27 +3,11 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-/*
-UICanvas::UICanvas(const UICanvas& other) {
-	name = other.name;
-	active = other.active;
-	for (const auto& element : other.elements) {
-		elements.push_back(std::move(element->Clone()));
-	}
-}
 
-UICanvas& UICanvas::operator=(const UICanvas& other) {
-	if (this != &other) {
-		active = other.active;
-		name = other.name;
-		elements.clear();
-		for (const auto& element : other.elements) {
-			elements.push_back(std::move(element->Clone()));
-		}
-	}
-	return *this;
+void UICanvas::RegisterProperties() {
+	registry.Register("name", &name);
+	registry.Register("filepath", &filePath);
 }
-*/
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
 	// Create a new canvas with the same name
@@ -74,6 +58,8 @@ void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
 }
 
 void UICanvas::DrawImGui() {
+	registry.DrawImGui();
+
 	for (size_t i = 0; i < elements.size(); ++i) {
 		ImGui::PushID(static_cast<int>(i));
 
@@ -93,7 +79,6 @@ void UICanvas::DrawImGui() {
 
 		ImGui::PopID();
 	}
-
 
 	if (ImGui::Button("Add Element")) {
 		ImGui::OpenPopup("AddElementPopup");
@@ -139,72 +124,44 @@ std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
 }
 
 void UICanvas::Serialize(std::ostream& out) const {
-	out << "name " << name << "\n";
-	out << "filepath " << filePath << "\n";
-	out << "active " << (active ? 1 : 0) << "\n";
+	out << "[UICanvas]\n";
+	registry.Serialize(out);
 
-	out << "elements " << elements.size() << "\n";
-	for (const auto& elem : elements) {
-		out << "element {\n";
-		out << "type " << elem->GetTypeName() << "\n";  // e.g., "UIButton", "UILabel"
+	// Serialize elements here
+	for (auto& elem : elements) {
 		elem->Serialize(out);
-		out << "}\n";
 	}
 
-	out << "---\n";
+	out << "[/UICanvas]\n";
 }
 
 void UICanvas::Deserialize(std::istream& in) {
 	elements.clear();
+	registry.Deserialize(in);
+
 	std::string line;
-
 	while (std::getline(in, line)) {
-		if (line == "---") break;
+		if (line == "[/UICanvas]") break;
 
-		std::istringstream iss(line);
-		std::string token;
-		iss >> token;
-
-		if (token == "name") {
-			std::getline(iss >> std::ws, name); // grab rest of the line
+		if (line == "[UILabel]") {
+			auto lbl = std::make_unique<UILabel>("");
+			lbl->Deserialize(in);
+			elements.push_back(std::move(lbl));
 		}
-		else if (token == "filepath") {
-			std::getline(iss >> std::ws, filePath);
+		else if (line == "[UIImage]") {
+			auto img = std::make_unique<UIImage>();
+			img->Deserialize(in);
+			elements.push_back(std::move(img));
 		}
-		else if (token == "active") {
-			int val;
-			iss >> val;
-			active = val != 0;
+		else if (line == "[UIButton]") {
+			auto btn = std::make_unique<UIButton>();
+			btn->Deserialize(in);
+			elements.push_back(std::move(btn));
 		}
-		else if (token == "elements") {
-			size_t count;
-			iss >> count;
-			elements.reserve(count);
-		}
-		else if (token == "element") {
-			// Read until closing '}'
-			std::string type;
-			while (std::getline(in, line) && line != "}") {
-				std::istringstream subIss(line);
-				std::string subToken;
-				subIss >> subToken;
-
-				if (subToken == "type") {
-					subIss >> type;
-				}
-				else {
-					// Let element itself handle remaining content
-					if (!type.empty()) {
-						auto element = CreateUIElementByType(type);
-						if (element) {
-							// let it read all its data until it sees '}'
-							element->Deserialize(in);
-							elements.push_back(std::move(element));
-						}
-						break;  // Done with this element
-					}
-				}
-			}
+		else if (line == "[UIPanel]") {
+			auto pnl = std::make_unique<UIPanel>();
+			pnl->Deserialize(in);
+			elements.push_back(std::move(pnl));
 		}
 	}
 }

@@ -31,6 +31,7 @@ class PathfindingSystem : public SceneSystem {
 public:
 	PathfindingSystem();
 
+	void RegisterProperties() override;
 	std::string GetType() const override { return "PathfindingSystem"; }
 
 	void BuildNavGrid(const std::vector<Node>&);
@@ -43,9 +44,6 @@ public:
 	void DrawImGui() override {};
 
 	std::unique_ptr<SceneSystem> Clone() const override;
-
-	void Serialize(std::ostream& out) const override {};
-	void Deserialize(std::istream& in) override {};
 
 	void DrawDebug(const glm::mat4 projection) const;
 

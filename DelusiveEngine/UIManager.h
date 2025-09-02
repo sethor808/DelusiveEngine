@@ -7,6 +7,7 @@ public:
 	UIManager();
 
 	std::string GetType() const { return "UIManager"; }
+	void RegisterProperties() override;
 
 	void SetCanvasActive(const std::string&);
 
@@ -20,9 +21,9 @@ public:
 
 	void SaveToFile(std::ofstream&) const override;
 
-	void Serialize(std::ostream&) const override;
 	void Deserialize(std::istream&) override;
 private:
 	UICanvas* activeCanvas = nullptr;
-	std::vector<std::unique_ptr<UICanvas>> canvases;
+	std::string activeCanvasName;
+	std::vector<std::string> canvasList;
 };

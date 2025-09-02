@@ -5,13 +5,16 @@
 #include <glm/glm.hpp>
 #include "DelusiveUtils.h"
 #include "DelusiveUI.h"
+#include "DelusiveRegistry.h"
 
 class UICanvas {
 public:
 	UICanvas(const std::string& name = "NewCanvas")
 		: name(name), active(true) {
+		RegisterProperties();
 	}
 	
+	void RegisterProperties();
 
 	std::unique_ptr<UICanvas> Clone() const;
 
@@ -36,6 +39,7 @@ public:
 	bool IsActive() const {return active;}
 	void SetActive(bool);
 private:
+	PropertyRegistry registry;
 	std::string name;
 	std::string filePath;
 	bool active = false;

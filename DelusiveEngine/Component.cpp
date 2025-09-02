@@ -2,14 +2,17 @@
 #include <sstream>
 
 Component::Component() {
-	RegisterProperties();
+    static bool initialized = false;
+    if (!initialized) {
+        RegisterProperties();
+        initialized = true;
+    }
 }
 
 void Component::RegisterProperties() {
 	transform.RegisterProperties(registry);
 	registry.Register("name", &name);
 	registry.Register("enabled", &enabled);
-	registry.Register("texturePath", &texturePath);
 }
 
 void Component::SetName(const std::string& newName) {
@@ -21,32 +24,19 @@ void Component::Serialize(std::ofstream& out) const {
 }
 
 void Component::Deserialize(std::ifstream& in) {
+    std::stringstream buffer;
+
     std::string line;
     while (std::getline(in, line)) {
-        if (line.empty()) continue;
-
         if (line == "[/Component]") {
-            break; // end of this component block
+            break; // stop at end of component
         }
-
-        std::istringstream iss(line);
-        registry.Deserialize(iss);
-
-        /*
-        // Parse as key + value(s)
-        std::istringstream iss(line);
-        std::string key;
-        iss >> key;
-        if (key.empty()) continue;
-
-        for (auto& prop : registry.properties) {
-            if (prop->name == key) {
-                prop->Deserialize(iss);
-                break;
-            }
-        }
-        */
+        buffer << line << "\n";  // collect block into buffer
     }
+
+    // Now let registry parse key=value pairs
+    std::istringstream block(buffer.str());
+    registry.Deserialize(block);
 }
 
 void Component::DrawImGui() {

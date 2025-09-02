@@ -9,6 +9,7 @@
 #include "DelusiveUtils.h"
 #include "SceneSystem.h"
 #include "PhysicsSystem.h"
+#include "DelusiveSystems.h"
 
 class Scene {
 public:

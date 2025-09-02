@@ -12,6 +12,12 @@ ColliderComponent::ColliderComponent(){
 	ColliderComponent::SetRenderer(renderer);
     char newName[64] = "New Collider";
     this->SetName(newName);
+    RegisterProperties();
+}
+
+void ColliderComponent::RegisterProperties() {
+    Component::RegisterProperties();
+    registry.Register("shape", reinterpret_cast<int*>(&shape));
 }
 
 Zone ColliderComponent::ComputeWorldArea() const {

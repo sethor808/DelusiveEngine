@@ -394,9 +394,9 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 bool isSelected = (selectedSystemIndex == (int)i);
                 if (ImGui::Selectable(label.c_str(), isSelected)) {
                     selectedSystemIndex = (int)i;
-                    selectedAgentIndex = 0;
+                    selectedAgentIndex = -1;
                 }
-
+                
                 // Right-click popup for delete and future options
                 if (ImGui::BeginPopupContextItem("SystemContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {

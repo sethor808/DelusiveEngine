@@ -24,6 +24,7 @@ SpriteComponent::SpriteComponent() {
 SpriteComponent::SpriteComponent(const char* texturePath) {
     this->texturePath = texturePath;
     Init();
+    RegisterProperties();
 }
 
 void SpriteComponent::Init() {
@@ -65,6 +66,11 @@ SpriteComponent::~SpriteComponent() {
     delete texture;
     delete shader;
     //glDeleteTextures(1, &texture);
+}
+
+void SpriteComponent::RegisterProperties() {
+    Component::RegisterProperties();
+    registry.Register("textureData", &textureData);
 }
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
@@ -161,92 +167,12 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
 }
 
 void SpriteComponent::DrawImGui() {
-    ImGui::Text("Sprite");
-    ImGui::Separator();
+    Component::DrawImGui();
 
-    ImGui::Text("Name");
-    ImGui::SameLine();
-
-    /*
-    char nameBuffer[64];
-    strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
-
-    ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue;
-
-    if (ImGui::InputText("##spriteName", nameBuffer, sizeof(nameBuffer), flags)) {
-        if (nameBuffer[0] == '\0') {
-            strncpy_s(nameBuffer, GetName(), sizeof(nameBuffer));
-        }
-        else {
-            this->SetName(nameBuffer);
-        }
-    }
-    */
-
-    ImGui::Text("Texture: %s", std::filesystem::path(texturePath).filename().string().c_str());
-    if (ImGui::Button("Change Texture")) {
-        ImGui::OpenPopup("TextureBrowser");
-    }
-
-    if (ImGui::BeginPopup("TextureBrowser")) {
-        std::function<void(const std::filesystem::path&)> DrawDirectory;
-        DrawDirectory = [&](const std::filesystem::path& path) {
-            for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                if (entry.is_directory()) {
-                    if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
-                        DrawDirectory(entry.path()); // recursive submenu
-                        ImGui::EndMenu();
-                    }
-                }
-                else if (entry.is_regular_file()) {
-                    std::string ext = entry.path().extension().string();
-                    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-                        std::string fullPath = entry.path().string();
-                        std::string filename = entry.path().filename().string();
-                        if (ImGui::Selectable(filename.c_str())) {
-                            texturePath = fullPath;
-                            delete texture;
-                            texture = new Texture(fullPath.c_str());
-                            ImGui::CloseCurrentPopup();
-                        }
-                    }
-                }
-            }
-            };
-
-        DrawDirectory("assets/sprites");
-
-        ImGui::EndPopup();
-    }
-
-    ImGui::Checkbox("Render as Foreground", &isForeground);
-
-    ImGui::Separator();
-    ImGui::Text("Transform");
-    ImGui::Text("Position: ");
-    ImGui::SameLine();
-    glm::vec2 pos = transform.position;
-    if (ImGui::DragFloat2("##position", glm::value_ptr(pos), 1.0f)) {
-        transform.position = pos;
-    }
-
-    ImGui::Text("Rotation: ");
-    ImGui::SameLine();
-    float rot = transform.rotation;
-    if (ImGui::DragFloat("##rotation", &rot, 0.1f)) {
-        transform.rotation = rot;
-    }
-
-    ImGui::Text("Scale:    ");
-    ImGui::SameLine();
-    glm::vec2 scale = transform.scale;
-    if (ImGui::DragFloat2("##scale", glm::value_ptr(scale), 0.1f)) {
-        transform.scale = scale;
-    }
-
-    if (ImGui::Button("Delete Component")) {
-        MarkToDelete();
+	//Reloading the texture here to bypass Update not being called in the editor
+    if (textureData.texturePath != textureData.previousTexturePath) {
+        SetTexturePath(textureData.texturePath);
+        textureData.previousTexturePath = textureData.texturePath;
     }
 }
 
@@ -317,6 +243,12 @@ void SpriteComponent::Update(float deltaTime){
         }
     }
 
+    //Reload texture if changed
+    if (textureData.texturePath != textureData.previousTexturePath) {
+        SetTexturePath(textureData.texturePath);
+        textureData.previousTexturePath = textureData.texturePath;
+    }
+
     transform.position += velocity * deltaTime;
     //Probably move camera here
 }
@@ -365,21 +297,8 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
     }
 }
 
-/*
-void SpriteComponent::Serialize(std::ofstream& out) const {
-    out << "name " << this->GetName() << "\n";
-    out << "texture " << texturePath << "\n";
-    out << "enabled " << (enabled ? 1 : 0) << "\n";
-    out << "transform "
-        << transform.position.x << " " << transform.position.y << " "
-        << transform.rotation << " "
-        << transform.scale.x << " " << transform.scale.y << "\n";
-    out << "---\n";
-}
-*/
-
 void SpriteComponent::Deserialize(std::ifstream& in) {
     Component::Deserialize(in);
 
-    SetTexturePath(texturePath);
+    SetTexturePath(textureData.texturePath);
 }

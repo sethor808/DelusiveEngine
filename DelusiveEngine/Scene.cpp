@@ -182,6 +182,7 @@ bool Scene::SaveToFile(const std::string& path) const {
 	std::ofstream out(path);
 	if (!out.is_open()) return false;
 
+	out << "[Scene]" << "\n";
 	out << "name " << name << "\n";
 
 	// Save agents
@@ -190,11 +191,12 @@ bool Scene::SaveToFile(const std::string& path) const {
 		agent->SaveToFile(out);
 	}
 
-	// Save systems (to be added later)
-	// out << "systems " << systems.size() << "\n";
-	// for (const auto& system : systems) {
-	//     system->SaveToFile(out);
-	// }
+	out << "systems " << systems.size() << "\n";
+	for (auto& sys : systems) {
+		sys->Serialize(out);
+	}
+
+	out << "[/Scene]" << "\n";
 
 	return true;
 }
@@ -228,8 +230,9 @@ bool Scene::LoadFromFile(const std::string& path) {
 			iss >> type; // e.g. CameraAgent]
 
 			// trim trailing ']'
-			if (!type.empty() && type.back() == ']')
+			if (!type.empty() && type.back() == ']') {
 				type.pop_back();
+			}
 
 			std::unique_ptr<Agent> agent;
 			if (type == "PlayerAgent") agent = std::make_unique<PlayerAgent>("");
@@ -241,6 +244,24 @@ bool Scene::LoadFromFile(const std::string& path) {
 			// Let the agent load its block (until [/Agent])
 			agent->LoadFromFile(in);
 			agents.push_back(std::move(agent));
+		}
+		else if (token == "systems"){
+			continue;
+		}
+		else if (token == "[System") {
+			std::string type;
+			iss >> type;
+			
+			if (!type.empty() && type.back() == ']') {
+				type.pop_back();
+			}
+
+			std::unique_ptr<SceneSystem> sys = nullptr;
+			if (type == "PathfindingSystem") sys = std::make_unique<PathfindingSystem>();
+			else if (type == "UIManager") sys = std::make_unique<UIManager>();
+
+			sys->Deserialize(in);
+			systems.push_back(std::move(sys));
 		}
 	}
 

@@ -46,6 +46,7 @@ class ColliderRenderer;
 class ColliderComponent : public Component{
 public:
 	TransformComponent transform;
+
 	ColliderComponent();
 
 	ColliderComponent(const ColliderComponent&) = delete;
@@ -55,6 +56,8 @@ public:
 
 	virtual ~ColliderComponent() = default;
 	std::unique_ptr<Component> Clone() const override = 0;
+
+	void RegisterProperties() override;
 
 	glm::vec2 GetMin() const;
 	glm::vec2 GetMax() const;

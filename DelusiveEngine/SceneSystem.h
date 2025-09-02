@@ -1,9 +1,13 @@
 #pragma once
 #include <string>
+#include "DelusiveRegistry.h"
 
 class SceneSystem {
 public:
+	SceneSystem();
 	virtual ~SceneSystem() = default;
+
+	virtual void RegisterProperties();
 
 	virtual void Update(float) = 0;
 	virtual void Draw(const glm::mat4&) = 0;
@@ -20,9 +24,9 @@ public:
 	void SaveToFile(const std::string&) const {};
 	virtual void SaveToFile(std::ofstream&) const {};
 
-	virtual void Serialize(std::ostream& out) const = 0;
-	virtual void Deserialize(std::istream& in) = 0;
-
+	virtual void Serialize(std::ostream&) const;
+	virtual void Deserialize(std::istream&);
 protected:
+	PropertyRegistry registry;
 	std::string name;
 };
