@@ -64,7 +64,7 @@ void UICanvas::DrawImGui() {
 		ImGui::PushID(static_cast<int>(i));
 
 		if (ImGui::TreeNodeEx("##element", ImGuiTreeNodeFlags_DefaultOpen,
-			"[%s] %zu", elements[i]->GetTypeName(), i)) {
+			"[%s] %zu", elements[i]->GetType(), i)) {
 			elements[i]->DrawImGui();
 
 			if (ImGui::Button("Remove Element")) {

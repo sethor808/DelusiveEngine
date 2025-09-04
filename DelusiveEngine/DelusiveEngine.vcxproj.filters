@@ -238,6 +238,9 @@
     <ClCompile Include="DelusiveUIRegistry.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UIElement.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">

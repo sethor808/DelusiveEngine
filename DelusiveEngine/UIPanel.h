@@ -17,15 +17,9 @@ public:
 
     void Draw(const glm::mat4& proj) override;
     void HandleMouse(const glm::vec2&, bool) override {}
-    void DrawImGui() override;
 
-    void Serialize(std::ostream& out) const override;
-    void Deserialize(std::istream& in) override;
-
-    const std::string& GetTypeName() const override;
-
+    const std::string& GetType() const override;
 private:
-    glm::vec2 size;
     glm::vec4 color = { 0.1f, 0.1f, 0.1f, 0.85f };
 
     GLuint texture = 0;

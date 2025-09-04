@@ -15,7 +15,6 @@ public:
 	}
 
 	void Update(float) override {};
-	void DrawImGui() override;
 	void OnCollision(ColliderComponent*) override;
 
 	const char* GetType() const override {

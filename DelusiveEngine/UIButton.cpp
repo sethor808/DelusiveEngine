@@ -109,42 +109,7 @@ void UIButton::HandleMouse(const glm::vec2& mouse, bool mouseDown) {
 	wasDown = mouseDown;
 }
 
-void UIButton::DrawImGui() {
-	ImGui::Text("UIButton: %s", label.c_str());
-	ImGui::DragFloat2("Position", &position.x, 1.0f);
-	ImGui::DragFloat2("Size", &size.x, 1.0f);
-
-	char buffer[256];
-	strncpy_s(buffer, label.c_str(), sizeof(buffer));
-	if (ImGui::InputText("Label", buffer, sizeof(buffer))) {
-		label = buffer;
-	}
-	// TODO: bind button function later
-}
-
-void UIButton::Serialize(std::ostream& out) const {
-	out << "UIButton " << name << "\n";
-	out << "pos " << position.x << " " << position.y << "\n";
-	out << "size " << size.x << " " << size.y << "\n";
-	out << "---\n";
-	for (auto& child : children) {
-		child->Serialize(out);
-	}
-}
-
-void UIButton::Deserialize(std::istream& in) {
-	std::string token;
-	while (in >> token) {
-		if (token == "---") break;
-		else if (token == "pos") in >> position.x >> position.y;
-		else if (token == "size") in >> size.x >> size.y;
-	}
-	for (auto& child : children) {
-		child->Deserialize(in);
-	}
-}
-
-const std::string& UIButton::GetTypeName() const {
+const std::string& UIButton::GetType() const {
 	static std::string type = "UIButton";
 	return type;
 }

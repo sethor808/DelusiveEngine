@@ -219,9 +219,13 @@ void Agent::DrawImGui() {
 	registry.DrawImGui();
 	ImGui::Separator();
 
-	for (auto& c : components) {
+	int componentID = 0;
+	for (const auto& comp : components) {
+		ImGui::PushID(componentID++);
+		ImGui::NewLine();
 		ImGui::Separator();
-		c->DrawImGui();
+		comp->DrawImGui();
+		ImGui::PopID();
 	}
 }
 

@@ -10,8 +10,7 @@ const T& Clamp(const T& v, const T& lo, const T& hi) {
 
 ColliderComponent::ColliderComponent(){ 
 	ColliderComponent::SetRenderer(renderer);
-    char newName[64] = "New Collider";
-    this->SetName(newName);
+	name = "New Collider";
     RegisterProperties();
 }
 

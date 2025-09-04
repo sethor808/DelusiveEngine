@@ -156,54 +156,7 @@ void UILabel::Draw(const glm::mat4& projection) {
 	}
 }
 
-void UILabel::DrawImGui() {
-	ImGui::Text("UILabel");
-	ImGui::DragFloat2("Position", &position.x, 1.0f);
-
-	char buf[256];
-	std::memset(buf, 0, sizeof(buf));
-	std::snprintf(buf, sizeof(buf), "%s", text.c_str());
-	if (ImGui::InputText("Text", buf, sizeof(buf))) {
-		text = buf;
-	}
-
-	ImGui::DragFloat("Font Size (px)", &fontSize, 0.5f, 6.0f, 256.0f);
-	ImGui::ColorEdit4("Color", &color.x);
-}
-
-const std::string& UILabel::GetTypeName() const {
+const std::string& UILabel::GetType() const {
 	std::string type = "UILabel";
 	return type;
-}
-
-void UILabel::Serialize(std::ostream& out) const {
-	out << "UILabel " << name << "\n";
-	out << "pos " << position.x << " " << position.y << "\n";
-	out << "fontsize " << fontSize << "\n";
-	out << "color " << color.r << " " << color.g << " " << color.b << " " << color.a << "\n";
-	out << "text " << text << "\n";
-	out << "---\n";
-	for (auto& child : children) {
-		child->Serialize(out);
-	}
-}
-
-void UILabel::Deserialize(std::istream& in) {
-	std::string token;
-	while (in >> token) {
-		if (token == "---") break;
-		else if (token == "pos") in >> position.x >> position.y;
-		else if (token == "fontsize") in >> fontSize;
-		else if (token == "color") in >> color.r >> color.g >> color.b >> color.a;
-		else if (token == "text") {
-			// read rest of line as text (supports spaces)
-			std::string line;
-			std::getline(in, line);
-			if (!line.empty() && line[0] == ' ') line.erase(0, 1);
-			text = line;
-		}
-	}
-	for (auto& child : children) {
-		child->Deserialize(in);
-	}
 }

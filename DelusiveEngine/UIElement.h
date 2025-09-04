@@ -8,15 +8,17 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include <imgui/imgui.h>
+#include "DelusiveRegistry.h"
 
 class UIElement {
 public:
-	UIElement() = default;
+	UIElement();
 
 	UIElement(const std::string& name, const glm::vec2& position)
 		: name(name), position(position) {
 	}
 
+	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
 
 	virtual ~UIElement() = default;
@@ -57,7 +59,7 @@ public:
 		children.push_back(std::move(element));
 	}
 
-	virtual const std::string& GetTypeName() const = 0;
+	virtual const std::string& GetType() const = 0;
 	
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }
@@ -66,13 +68,14 @@ public:
 	const glm::vec2& GetPosition() const { return position; }
 	void SetPosition(const glm::vec2& pos) { position = pos; }
 	
-	virtual void DrawImGui() = 0;
-	virtual void Serialize(std::ostream& out) const = 0;
-	virtual void Deserialize(std::istream& in) = 0;
+	virtual void DrawImGui();
+	virtual void Serialize(std::ostream& out) const;
+	virtual void Deserialize(std::istream& in);
 protected:
+	PropertyRegistry registry;
 	std::string name;
 	bool enabled = true;
-	glm::vec2 position;
-	glm::vec2 size;
+	glm::vec2 position = { 0,0 };
+	glm::vec2 size = { 1,1 };
 	std::vector<std::unique_ptr<UIElement>> children;
 };

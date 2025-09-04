@@ -18,7 +18,6 @@ public:
 	}
 
 	void Update(float) override {};
-	void DrawImGui() override;
 	void OnCollision(ColliderComponent*) override;
 
 	//void Serialize(std::ofstream& out) const override;

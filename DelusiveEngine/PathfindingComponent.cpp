@@ -43,35 +43,3 @@ void PathfindingComponent::DrawImGui() {
 void PathfindingComponent::RequestPath(glm::vec2 start, glm::vec2 end) {
     //currentPath = pathfindingSystem.FindPath(start, end);
 }
-
-
-/*
-void PathfindingComponent::Serialize(std::ofstream& out) const {
-    out << "enabled " << (enabled ? 1 : 0) << "\n";
-    out << "debugcolor "
-        << debugColor.r << " " << debugColor.g << " "
-        << debugColor.b << " " << debugColor.a << "\n";
-
-    out << "---\n";
-}
-
-void PathfindingComponent::Deserialize(std::ifstream& in) {
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line == "---") break;
-
-        std::istringstream iss(line);
-        std::string token;
-        iss >> token;
-
-        if (token == "enabled") {
-            int val;
-            iss >> val;
-            enabled = val != 0;
-        }
-        else if (token == "debugcolor") {
-            iss >> debugColor.r >> debugColor.g >> debugColor.b >> debugColor.a;
-        }
-    }
-}
-*/

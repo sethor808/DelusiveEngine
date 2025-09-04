@@ -62,8 +62,8 @@ void AnimatorComponent::ApplyComponentOverrides() {
         comp->transform.scale = mod.scale;
         comp->transform.rotation = mod.rotation;
 
-        if (!mod.texturePath.empty()) {
-            comp->SetTexturePath(mod.texturePath);
+        if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
+            static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);
         }
     }
 }

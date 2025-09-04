@@ -40,5 +40,6 @@ void Component::Deserialize(std::ifstream& in) {
 }
 
 void Component::DrawImGui() {
+    ImGui::Text("%s", GetType());
 	registry.DrawImGui();
 }

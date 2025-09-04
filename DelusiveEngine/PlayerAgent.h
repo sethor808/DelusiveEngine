@@ -12,7 +12,6 @@ public:
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& projection) const override;
 	void HandleInput(const PlayerInputState&) override;
-	void DrawImGui() override;
 	std::string GetType() const override;
 
 	void ApplyKnockback(const glm::vec2&, float);

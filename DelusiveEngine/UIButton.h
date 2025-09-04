@@ -17,13 +17,8 @@ public:
 
 	void InitMesh();
 	void SetOnClick(std::function<void()> callback);
-	void DrawImGui() override;
 
-	void Serialize(std::ostream& out) const override;
-	void Deserialize(std::istream& in) override;
-
-	const std::string& GetTypeName() const override;
-
+	const std::string& GetType() const override;
 private:
 	std::string label;
 	

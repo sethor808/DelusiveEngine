@@ -46,9 +46,6 @@ public:
 	void SetOwner(Agent* agent) { this->owner = agent; }
 	Agent* GetOwner() const { return owner; }
 
-	virtual void SetTexturePath(const std::string& _texPath) { texturePath = _texPath; }
-	std::string GetTexturePath() { return texturePath; }
-
 	void SetEnabled(bool enabled) { this->enabled = enabled; }
 	bool IsEnabled() const { return this->enabled; }
 
@@ -65,7 +62,6 @@ protected:
 	PropertyRegistry registry;
 	Agent* owner = nullptr;
 	std::string name;
-	std::string texturePath;
 	uint64_t componentID = 0;
 	bool enabled = true;
 	bool isDragging = false;

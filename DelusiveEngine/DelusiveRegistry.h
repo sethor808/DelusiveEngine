@@ -1,5 +1,6 @@
 #pragma once
 #include "DelusiveData.h"
+#include "BehaviourRegistry.h"
 #include <string>
 #include <functional>
 #include <filesystem>
@@ -32,6 +33,7 @@ class Property : public PropertyBase {
         std::is_same_v<T, bool> ||
         std::is_same_v<T, glm::vec2> ||
         std::is_same_v<T, glm::vec3> ||
+        std::is_same_v<T, glm::vec4> ||
         std::is_same_v<T, std::string>;
 
     static constexpr bool is_vector =
@@ -41,7 +43,9 @@ class Property : public PropertyBase {
         std::is_same_v<T, std::vector<std::string>>;
 
 	static constexpr bool is_custom = 
-        std::is_same_v<T, DelusiveTexture>;
+        std::is_same_v<T, DelusiveTexture> ||
+        std::is_same_v<T, DelusiveFont> ||
+        std::is_same_v<T, DelusiveScript>;
 
     static_assert(
 		is_scalar || is_vector || is_custom,
@@ -61,6 +65,9 @@ public:
             }
             else if constexpr (std::is_same<T, glm::vec3>::value) {
                 out << value->x << " " << value->y << " " << value->z;
+            }
+            else if constexpr (std::is_same<T, glm::vec4>::value) {
+                out << value->x << " " << value->y << " " << value->z << " " << value->w;
             }
             else if constexpr (std::is_same_v<T, std::string>) {
                 out << *value;
@@ -85,8 +92,15 @@ public:
             }
         }
         else if constexpr (is_custom) {
-            // Example for DelusiveTexture, serialize its path
-            out << value->texturePath;
+            if constexpr (std::is_same_v<T, DelusiveTexture>) {
+				out << value->texturePath;
+            }
+            else if constexpr (std::is_same_v<T, DelusiveFont>) {
+				out << value->fontSize << " " << std::quoted(value->fontPath);
+            }
+            else if constexpr (std::is_same_v<T, DelusiveScript>) {
+				out << value->scriptName;
+            }
 		}
     }
 
@@ -97,6 +111,9 @@ public:
             }
             else if constexpr (std::is_same<T, glm::vec3>::value) {
                 in >> value->x >> value->y >> value->z;
+            }
+            else if constexpr (std::is_same<T, glm::vec4>::value) {
+                in >> value->x >> value->y >> value->z >> value->w;
             }
             else if constexpr (std::is_same_v<T, std::string>) {
                 std::getline(in, *value);
@@ -129,8 +146,15 @@ public:
             }
         }
         else if constexpr(is_custom) {
-            // Example for DelusiveTexture, deserialize its path
-            in >> value->texturePath;
+            if constexpr (std::is_same_v<T, DelusiveTexture>) {
+                in >> value->texturePath;
+            }
+            else if constexpr (std::is_same_v<T, DelusiveFont>) {
+                in >> value->fontSize >> std::quoted(value->fontPath);
+            }
+            else if constexpr (std::is_same_v<T, DelusiveScript>) {
+                in >> value->scriptName;
+            }
 		}
     }
 
@@ -150,6 +174,9 @@ public:
             }
             else if constexpr (std::is_same<T, glm::vec3>::value) {
                 ImGui::DragFloat3(name.c_str(), glm::value_ptr(*value), 0.1f);
+            }
+            else if constexpr (std::is_same<T, glm::vec4>::value) {
+                ImGui::ColorEdit4(name.c_str(), glm::value_ptr(*value));
             }
             else if constexpr (std::is_same_v<T, std::string>) {
                 char buffer[256];
@@ -199,39 +226,77 @@ public:
             }
         }
         else if constexpr (is_custom) {
-            ImGui::Text("Texture: %s", std::filesystem::path(value->texturePath).filename().string().c_str());
-            if (ImGui::Button("Change Texture")) {
-                ImGui::OpenPopup("TextureBrowser");
-            }
-
-            if (ImGui::BeginPopup("TextureBrowser")) {
-                std::function<void(const std::filesystem::path&)> DrawDirectory;
-                DrawDirectory = [&](const std::filesystem::path& path) {
-                    for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                        if (entry.is_directory()) {
-                            if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
-                                DrawDirectory(entry.path()); // recursive submenu
-                                ImGui::EndMenu();
+            if constexpr (std::is_same_v<T, DelusiveTexture>) {
+                ImGui::Text("Texture: %s", std::filesystem::path(value->texturePath).filename().string().c_str());
+                if (ImGui::Button(("Change Texture##" + name).c_str())) {
+                    ImGui::OpenPopup(("TextureBrowser##" + name).c_str());
+                }
+                if (ImGui::BeginPopup(("TextureBrowser##" + name).c_str())) {
+                    std::function<void(const std::filesystem::path&)> DrawDirectory;
+                    DrawDirectory = [&](const std::filesystem::path& path) {
+                        for (const auto& entry : std::filesystem::directory_iterator(path)) {
+                            if (entry.is_directory()) {
+                                if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
+                                    DrawDirectory(entry.path());
+                                    ImGui::EndMenu();
+                                }
+                            }
+                            else if (entry.is_regular_file()) {
+                                std::string ext = entry.path().extension().string();
+                                std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+                                if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
+                                    std::string filename = entry.path().filename().string();
+                                    if (ImGui::Selectable(filename.c_str())) {
+                                        value->texturePath = entry.path().string();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                }
                             }
                         }
-                        else if (entry.is_regular_file()) {
+                     };
+                    DrawDirectory("assets/sprites");
+                    ImGui::EndPopup();
+                }
+            }
+            else if constexpr (std::is_same_v<T, DelusiveFont>) {
+                ImGui::Text("Font: %s", std::filesystem::path(value->fontPath).filename().string().c_str());
+                ImGui::DragFloat(("Size##" + name).c_str(), &value->fontSize, 1.0f, 6.0f, 128.0f);
+                if (ImGui::Button(("Change Font##" + name).c_str())) {
+                    ImGui::OpenPopup(("FontBrowser##" + name).c_str());
+                }
+                if (ImGui::BeginPopup(("FontBrowser##" + name).c_str())) {
+                    for (auto& entry : std::filesystem::recursive_directory_iterator("assets/fonts")) {
+                        if (entry.is_regular_file()) {
                             std::string ext = entry.path().extension().string();
                             std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                            if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-                                std::string fullPath = entry.path().string();
+                            if (ext == ".ttf" || ext == ".otf") {
                                 std::string filename = entry.path().filename().string();
                                 if (ImGui::Selectable(filename.c_str())) {
-                                    value->texturePath = fullPath;
+                                    value->fontPath = entry.path().string();
                                     ImGui::CloseCurrentPopup();
                                 }
                             }
                         }
                     }
-                    };
-
-                DrawDirectory("assets/sprites");
-
-                ImGui::EndPopup();
+                    ImGui::EndPopup();
+                }
+            }
+            else if constexpr (std::is_same_v<T, DelusiveScript>) {
+                auto names = ScriptRegistry::Instance().GetNames();
+                int currentIndex = 0;
+                for (int i = 0; i < (int)names.size(); i++) {
+                    if (names[i] == value->scriptName) { currentIndex = i; break; }
+                }
+                if (ImGui::Combo(name.c_str(), &currentIndex,
+                    [](void* data, int idx, const char** out_text) {
+                        auto& vec = *reinterpret_cast<std::vector<std::string>*>(data);
+                        if (idx < 0 || idx >= (int)vec.size()) return false;
+                        *out_text = vec[idx].c_str();
+                        return true;
+                    },
+                    (void*)&names, (int)names.size())) {
+                    value->scriptName = names[currentIndex];
+                }
             }
         }
     }

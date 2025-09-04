@@ -34,13 +34,12 @@ public:
     SpriteComponent(SpriteComponent&&) noexcept = default;
     SpriteComponent& operator=(SpriteComponent&&) noexcept = default;
 
-    ~SpriteComponent();
     void Init();
 
     void RegisterProperties() override;
     std::unique_ptr<Component> Clone() const override;
 
-    void SetTexturePath(const std::string&) override;
+    void SetTexturePath(const std::string&);
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
@@ -60,9 +59,6 @@ public:
     void Deserialize(std::ifstream& in) override;
 private:
     SpriteInteractionState interaction;
-    GLuint VAO, VBO;
-    Shader* shader;
-    Texture* texture;
 	DelusiveTexture textureData;
     
     int renderOrder = 0;

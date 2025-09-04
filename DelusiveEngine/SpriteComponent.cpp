@@ -22,50 +22,25 @@ SpriteComponent::SpriteComponent() {
 }
 
 SpriteComponent::SpriteComponent(const char* texturePath) {
-    this->texturePath = texturePath;
+    textureData.texturePath = texturePath;
     Init();
     RegisterProperties();
 }
 
 void SpriteComponent::Init() {
-    char newName[64] = "New Sprite";
-    this->SetName(newName);
+    this->SetName("New Sprite");
 
     stbi_set_flip_vertically_on_load(true);
 
-    //TODO: Clean this up later
     SetPosition(0.0f, 0.0f);
     SetRotation(0.0f);
     SetScale(1.0f, 1.0f);
 
-    shader = new Shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+    textureData.Init(); // VAO/VBO/Shader setup
 
-    if (this->texturePath != "") {
-        texture = new Texture(texturePath.c_str());
+    if (!textureData.texturePath.empty()) {
+        textureData.SetTexture(textureData.texturePath);
     }
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0);
-}
-
-SpriteComponent::~SpriteComponent() {
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &VAO);
-    delete texture;
-    delete shader;
-    //glDeleteTextures(1, &texture);
 }
 
 void SpriteComponent::RegisterProperties() {
@@ -74,7 +49,7 @@ void SpriteComponent::RegisterProperties() {
 }
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
-    auto sprite = std::make_unique<SpriteComponent>(texturePath.c_str());
+    auto sprite = std::make_unique<SpriteComponent>(textureData.texturePath.c_str());
     sprite->SetPosition(transform.position.x, transform.position.y);
     sprite->SetRotation(transform.rotation);
     sprite->SetScale(transform.scale.x, transform.scale.y);
@@ -86,19 +61,19 @@ void SpriteComponent::SetTexturePath(const std::string& path) {
     // Don't reload if it's the same texture
     //if (texturePath == path) return; //Commented out because of how the new property registry works
 
-    texturePath = path;
+    textureData.texturePath = path;
 
     // Clean up old texture
-    if (texture) {
-        delete texture;
-        texture = nullptr;
+    if (textureData.texture) {
+        delete textureData.texture;
+        textureData.texture = nullptr;
     }
 
     // Load new texture
-    texture = new Texture(path.c_str());
+    textureData.texture = new Texture(path.c_str());
 
     //TODO: Perhaps change this to load the previous texture if it doesn't load
-    if (!texture) {
+    if (!textureData.texture) {
         std::cerr << "[SpriteComponent] Failed to load texture: " << path << "\n";
     }
     else {
@@ -119,51 +94,12 @@ void SpriteComponent::SetRotation(float angle) {
 }
 
 void SpriteComponent::Draw(const glm::mat4& projection) const{
-    if (!shader) {
-        std::cerr << "[SpriteComponent::Draw] Missing shader!\n";
-        return;
-    }
+    glm::mat4 agentTransform = owner->GetTransform().GetTransformMatrix();
+    glm::mat4 localTransform = transform.GetTransformMatrix();
+    glm::mat4 model = agentTransform * localTransform;
+    glm::mat4 view = glm::mat4(1.0f);
 
-    if (!texture) {
-        std::cerr << "[SpriteComponent::Draw] Missing texture! Texture Path: " << texturePath << "\n";
-        return;
-    }
-
-    //std::cout << "[SpriteComponent] Draw called" << std::endl;
-
-    shader->Use();
-    glActiveTexture(GL_TEXTURE0);
-    texture->Bind();
-
-    GLint loc = glGetUniformLocation(shader->GetID(), "tex");
-    if (loc < 0) {
-        std::cerr << "[Error] Uniform 'tex' not found in shader\n";
-    }else{
-        glUniform1i(loc, 0);
-    }
-
-    //glm::mat4 model = transform.GetTransformMatrix();
-    glm::mat4 agentTransform = owner->GetTransform().GetTransformMatrix(); // world transform
-    glm::mat4 localTransform = transform.GetTransformMatrix();             // local offset
-    //glm::mat4 model = agentTransform * localTransform;
-    glm::mat4 model = agentTransform *
-        glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.0f)) *
-        glm::rotate(glm::mat4(1.0f), transform.rotation, glm::vec3(transform.position, 1.0f)) *
-        glm::scale(glm::mat4(1.0f), glm::vec3(transform.scale, 1.0f));
-    glm::mat4 view = glm::mat4(1.0f); // Replace with actual view later
-
-    shader->SetMat4("model", glm::value_ptr(model));
-    shader->SetMat4("view", glm::value_ptr(view));
-    shader->SetMat4("projection", glm::value_ptr(projection));
-
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-        std::cerr << "[SpriteComponent::Draw] OpenGL error: " << err << "\n";
-    }
+    textureData.Draw(model, view, projection);
 }
 
 void SpriteComponent::DrawImGui() {
@@ -185,7 +121,7 @@ bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
     dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(transform.scale), 0.01f);
     dirty |= ImGui::DragFloat("Rotation", &transform.rotation, 0.01f);
 
-    ImGui::Text("Texture: %s", std::filesystem::path(texturePath).filename().string().c_str());
+    ImGui::Text("Texture: %s", std::filesystem::path(textureData.texturePath).filename().string().c_str());
     if (ImGui::Button("Change Texture")) {
         ImGui::OpenPopup("TextureBrowser");
     }
@@ -226,7 +162,7 @@ bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
         mod.positionOffset = transform.position;
         mod.scale = transform.scale;
         mod.rotation = transform.rotation;
-        mod.texturePath = texturePath;
+        mod.texturePath = textureData.texturePath;
     }
 
     return dirty;
@@ -237,9 +173,9 @@ void SpriteComponent::SetVelocity(float x, float y) {
 }
 
 void SpriteComponent::Update(float deltaTime){
-    if (!texture) {
-        if (texturePath != "") {
-            SetTexturePath(texturePath);
+    if (!textureData.texture) {
+        if (textureData.texturePath != "") {
+            SetTexturePath(textureData.texturePath);
         }
     }
 
@@ -270,13 +206,6 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
 
     bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
         worldMouse.y >= min.y && worldMouse.y <= max.y;
-
-    /*
-    std::cout << "[SpriteComponent] worldMouse: " << worldMouse.x << ", " << worldMouse.y
-        << " | center: " << center.x << ", " << center.y
-        << " | transform.pos: " << transform.position.x << ", " << transform.position.y
-        << " | selected: " << mouseOver << "\n";
-    */
 
     if (!isMouseDown && interaction.currentAction == SpriteAction::None) {
         interaction.isSelected = mouseOver;

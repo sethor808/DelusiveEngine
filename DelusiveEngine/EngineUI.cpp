@@ -435,7 +435,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 ImGui::PushID((int)i);
                 if (ImGui::Selectable(name.c_str(), selectedAgentIndex == (int)i)) {
                     selectedAgentIndex = (int)i;
-                    selectedSystemIndex = 0;
+                    selectedSystemIndex = -1;
                 }
                 if (ImGui::BeginPopupContextItem("AgentContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {
@@ -682,8 +682,8 @@ void EngineUI::ApplyOverrides(AnimationFrame& frame, Agent& agent) {
             comp->transform.position = mod.positionOffset;
             comp->transform.scale = mod.scale;
             comp->transform.rotation = mod.rotation;
-            if (!mod.texturePath.empty()) {
-                comp->SetTexturePath(mod.texturePath);
+            if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
+                static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);
             }
         }
     }

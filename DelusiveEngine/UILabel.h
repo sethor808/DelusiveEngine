@@ -17,7 +17,6 @@ public:
 
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& proj) override;
-	void DrawImGui() override;
 
 	void SetText(const std::string& newText) { text = newText; }
 	const std::string& GetText() const { return text; }
@@ -31,9 +30,7 @@ public:
 	void SetFontSize(float s) { fontSize = s; }
 	float GetFontSize() const { return fontSize; }
 
-	const std::string& GetTypeName() const override;
-	void Serialize(std::ostream&) const;
-	void Deserialize(std::istream&);
+	const std::string& GetType() const override;
 private:
 	GLuint VAO, VBO;
 	Shader* shader = nullptr;
