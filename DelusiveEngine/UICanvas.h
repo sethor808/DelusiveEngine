@@ -9,7 +9,7 @@
 
 class UICanvas {
 public:
-	UICanvas(const std::string& name = "NewCanvas")
+	UICanvas(const std::string& name = "")
 		: name(name), active(true) {
 		RegisterProperties();
 	}

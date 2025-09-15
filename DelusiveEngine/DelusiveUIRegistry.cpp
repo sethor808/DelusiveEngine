@@ -4,6 +4,10 @@
 
 DelusiveUIRegistry& DelusiveUIRegistry::Instance() {
 	static DelusiveUIRegistry instance;
+	if (!instance.init) { // Use the instance to access the non-static member
+		instance.init = true;
+		instance.LoadAll();
+	}
 	return instance;
 }
 
@@ -17,8 +21,16 @@ void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
 
 	canvases.clear();
 	for (size_t i = 0; i < count; i++) {
+		std::string line;
+
+		// Skip the opening [UICanvas] line
+		while (std::getline(in, line)) {
+			if (line.empty()) continue;
+			if (line == "[UICanvas]") break;
+		}
+
 		auto canvas = std::make_unique<UICanvas>();
-		canvas->Deserialize(in);
+		canvas->Deserialize(in); // now it starts reading the proper contents
 		canvases[canvas->GetName()] = std::move(canvas);
 	}
 }

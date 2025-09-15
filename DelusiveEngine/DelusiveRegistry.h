@@ -116,7 +116,10 @@ public:
                 in >> value->x >> value->y >> value->z >> value->w;
             }
             else if constexpr (std::is_same_v<T, std::string>) {
-                std::getline(in, *value);
+                std::string temp;
+                std::getline(in, temp);
+                if (!temp.empty() && temp[0] == ' ') temp.erase(0, 1);
+                *value = temp;
             }
             else if constexpr (std::is_same_v<T, bool>) {
                 int tmp;
@@ -333,7 +336,18 @@ public:
 
     void Deserialize(std::istream& in) {
         std::string line;
-        while (std::getline(in, line)) {
+        while (true) {
+            std::streampos pos = in.tellg(); // remember position
+            if (!std::getline(in, line)) break;
+
+            if (line.empty()) continue;
+
+            // Stop at next block header
+            if (!line.empty() && line.front() == '[') {
+                in.seekg(pos);
+                break;
+            }
+
             size_t eq = line.find('=');
             if (eq == std::string::npos) continue;
 

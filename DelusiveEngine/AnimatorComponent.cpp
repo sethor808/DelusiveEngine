@@ -45,12 +45,6 @@ void AnimatorComponent::ApplyComponentOverrides() {
         return;
     }
 
-    /*
-    if (baseAgent) {
-        GetOwner()->CopyFrom(*baseAgent);
-    }
-    */
-
     const AnimationFrame& frame = currentBranch->frames[currentFrame];
 
     for (const ComponentMod& mod : frame.componentOverrides) {

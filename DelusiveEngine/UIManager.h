@@ -21,6 +21,7 @@ public:
 
 	void SaveToFile(std::ofstream&) const override;
 
+	void Serialize(std::ostream&) const override;
 	void Deserialize(std::istream&) override;
 private:
 	UICanvas* activeCanvas = nullptr;

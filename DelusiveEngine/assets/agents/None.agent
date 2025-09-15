@@ -1,0 +1,22 @@
+[Agent PlayerAgent]
+name=NewAgent
+position=0 0
+scale=1 1
+rotation=0
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=assets/sprites/star.jpg
+[/Component]
+[Component SolidCollider]
+position=0 0
+scale=1 1
+rotation=0
+name=New Collider
+enabled=1
+shape=0
+[/Component]
+[/Agent]

@@ -1,19 +1,6 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ElysiumEngine.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Agent.cpp
-  AnimatorComponent.cpp
-  CameraAgent.cpp
-  EnemyAgent.cpp
   EngineUI.cpp
-  EnvironmentAgent.cpp
-  GameManager.cpp
-  HitboxCollider.cpp
-  main.cpp
-  PathfindingComponent.cpp
-  PhysicsSystem.cpp
-  PlayerAgent.cpp
-  Scene.cpp
-  SpriteComponent.cpp
-  SpriteEditor.cpp
-  UIPanel.cpp
-  Generating Code...
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Agent.h(36,34): warning C4244: 'return': conversion from 'const uint64_t' to 'uint16_t', possible loss of data
+  (compiling source file 'EngineUI.cpp')
+  
   DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\bin\x64\Debug\DelusiveEngine.exe

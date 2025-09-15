@@ -13,8 +13,10 @@ void GameManager::Init() {
 
 void GameManager::Play() {
     editorScene.CloneInto(playScene);
-    activeScene = &playScene;
-    isPlaying = true;
+    if (playScene.HasCamera()) {
+        activeScene = &playScene;
+        isPlaying = true;
+    }
 }
 
 void GameManager::Stop() {

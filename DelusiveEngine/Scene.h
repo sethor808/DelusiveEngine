@@ -24,6 +24,8 @@ public:
 
 	std::unique_ptr<Scene> Clone() const;
 
+	bool HasCamera() const;
+
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
 	std::vector<std::unique_ptr<Agent>>& GetAgents();
@@ -53,6 +55,7 @@ private:
 	std::string name;
 	CameraAgent* camera;
 	static PhysicsSystem physicsSystem;
+	uint16_t nextAgentID = 0;
 	std::vector<std::unique_ptr<Agent>> agents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 };

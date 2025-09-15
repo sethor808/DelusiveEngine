@@ -13,6 +13,7 @@ public:
 	virtual void Draw(const glm::mat4&) = 0;
 	virtual void Reset() = 0;
 	virtual void DrawImGui() {}
+	virtual void SetEditorMode(bool editor) { editorMode = editor; }
 
 	virtual void SetName(std::string _name) { name = _name; }
 	virtual std::string GetName() { return name; }
@@ -28,5 +29,6 @@ public:
 	virtual void Deserialize(std::istream&);
 protected:
 	PropertyRegistry registry;
+	bool editorMode = false;
 	std::string name;
 };

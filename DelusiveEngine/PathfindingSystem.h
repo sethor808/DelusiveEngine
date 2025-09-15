@@ -41,7 +41,7 @@ public:
 	void Update(float) override {};
 	void Draw(const glm::mat4&) override {};
 	void Reset() override {};
-	void DrawImGui() override {};
+	void DrawImGui() override;
 
 	std::unique_ptr<SceneSystem> Clone() const override;
 

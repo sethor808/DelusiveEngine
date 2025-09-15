@@ -76,9 +76,6 @@ public:
 
 	virtual void OnCollision(ColliderComponent* other) = 0;
 	ColliderAction FromColliderHandleType(ColliderHandleType h);
-
-	//void Serialize(std::ofstream& out) const override;
-	//void Deserialize(std::ifstream& in) override;
 protected:
 	ShapeType shape = ShapeType::Box;
 	bool showCenter = false;

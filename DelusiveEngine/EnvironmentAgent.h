@@ -10,7 +10,6 @@ public:
 	std::unique_ptr<Agent> Clone() const override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4&) const override;
-	void DrawImGui() override;
 	std::string GetType() const override;
 
 private:

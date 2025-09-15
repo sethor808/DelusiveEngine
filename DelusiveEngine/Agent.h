@@ -10,9 +10,12 @@
 #include <SDL3/SDL.h>
 #include "DelusiveUtils.h"
 #include "DelusiveRegistry.h"
+#include "EditorInferface.h"
 
 class Component;
 class Collider;
+
+
 
 class Agent {
 public:
@@ -30,12 +33,14 @@ public:
 	virtual void Deserialize(std::ifstream&);
 	virtual void DrawImGui();
 
-
+	uint16_t GetID() const { return id; }
+	void SetID(uint64_t newID) { id = newID; }
 	virtual std::string GetType() const = 0;
 	
 	//Virtual functions
 	virtual void OnHit() {};
 	void HandleMouse(const glm::vec2&, bool);
+	virtual void SetEditorMode(bool);
 	virtual void HandleInput(const PlayerInputState&) {}
 	virtual GLuint RenderAgentToTexture(int width = 128, int height = 128);
 
@@ -128,6 +133,9 @@ public:
 	virtual void TakeDamage(int) {}
 
 protected:
+	uint64_t id = 0;
+	bool editorMode = false;
+	InteractionState interaction;
 	std::vector<std::unique_ptr<Component>> components;
 	std::string name;
 	std::string type;

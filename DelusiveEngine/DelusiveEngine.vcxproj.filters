@@ -241,6 +241,10 @@
     <ClCompile Include="UIElement.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditorRegistry.cpp" />
+    <ClCompile Include="EditorInterface.cpp">
+      <Filter>engine\editor\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -404,6 +408,12 @@
     </ClInclude>
     <ClInclude Include="DelusiveData.h">
       <Filter>engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorInput.h" />
+    <ClInclude Include="EditorRegistry.h" />
+    <ClInclude Include="ISelectable.h" />
+    <ClInclude Include="EditorInferface.h">
+      <Filter>engine\editor\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

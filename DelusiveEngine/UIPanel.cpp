@@ -49,7 +49,6 @@ void UIPanel::Draw(const glm::mat4& projection) {
     }
 }
 
-const std::string& UIPanel::GetType() const {
-    static std::string type = "UIPanel";
-    return type;
+const std::string UIPanel::GetType() const {
+    return "UIPanel";
 }

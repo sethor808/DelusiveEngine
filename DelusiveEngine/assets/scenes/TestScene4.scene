@@ -1,0 +1,88 @@
+[Scene]
+name=New Scene
+agents=4
+[Agent PlayerAgent]
+name=NewPlayer
+position=2.5 0
+scale=1 1
+rotation=0
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=assets/sprites\BasicDude\BasicDude1.jpg
+[/Component]
+[Component SolidCollider]
+position=0 0
+scale=1 1
+rotation=0
+name=New Collider
+enabled=1
+shape=0
+[/Component]
+[/Agent]
+[Agent CameraAgent]
+name=NewCamera
+position=0 0
+scale=1 1
+rotation=0
+[/Agent]
+[Agent EnemyAgent]
+name=NewEnemy
+position=-7.5 0
+scale=1 1
+rotation=0
+scriptName=
+moveSpeed=10
+damping=0.9
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=assets/sprites\BasicDude\BasicDude2.png
+[/Component]
+[Component SolidCollider]
+position=0 0
+scale=1 1
+rotation=0
+name=New Collider
+enabled=1
+shape=0
+[/Component]
+[/Agent]
+[Agent EnvironmentAgent]
+name=NewEnvironment
+position=-1 -3.5
+scale=1 1
+rotation=0
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=assets/sprites/star.jpg
+[/Component]
+[Component SolidCollider]
+position=0 0
+scale=1 1
+rotation=0
+name=New Collider
+enabled=1
+shape=0
+[/Component]
+[/Agent]
+systems=2
+[System PathfindingSystem]
+name=New PathfindingSystem
+[/System]
+[System UIManager]
+name=NewUIManager
+activeCanvasName=Canvas_0
+canvasList=1 Canvas_0
+[/System]
+[/Scene]

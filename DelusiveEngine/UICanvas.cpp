@@ -11,7 +11,7 @@ void UICanvas::RegisterProperties() {
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
 	// Create a new canvas with the same name
-	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>();
+	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(name);
 	copy->SetActive(this->IsActive());
 
 	// Copy each child element by cloning them
@@ -137,32 +137,46 @@ void UICanvas::Serialize(std::ostream& out) const {
 
 void UICanvas::Deserialize(std::istream& in) {
 	elements.clear();
+
+	// First load canvas-level properties (will stop at the first '[' line).
 	registry.Deserialize(in);
 
 	std::string line;
 	while (std::getline(in, line)) {
+		if (line.empty()) continue;
+
 		if (line == "[/UICanvas]") break;
 
-		if (line == "[UILabel]") {
-			auto lbl = std::make_unique<UILabel>("");
-			lbl->Deserialize(in);
-			elements.push_back(std::move(lbl));
+		// Expecting line like: [UIElement UILabel]
+		if (line.rfind("[UIElement", 0) == 0) {
+			std::istringstream iss(line);
+			std::string tag, typeToken;
+			iss >> tag >> typeToken; // tag == "[UIElement", typeToken == "UILabel]"
+
+			// strip trailing ']' if present
+			if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
+
+			std::unique_ptr<UIElement> elem;
+
+			if (typeToken == "UILabel")       elem = std::make_unique<UILabel>("");
+			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>();
+			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>();
+			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>();
+			else {
+				// unknown type — skip until end of that UIElement block
+				while (std::getline(in, line)) {
+					if (line == "[/UIElement]") break;
+				}
+				continue;
+			}
+
+			// Let the element deserialize itself (it will consume until [/UIElement])
+			elem->Deserialize(in);
+			elements.push_back(std::move(elem));
+			continue;
 		}
-		else if (line == "[UIImage]") {
-			auto img = std::make_unique<UIImage>();
-			img->Deserialize(in);
-			elements.push_back(std::move(img));
-		}
-		else if (line == "[UIButton]") {
-			auto btn = std::make_unique<UIButton>();
-			btn->Deserialize(in);
-			elements.push_back(std::move(btn));
-		}
-		else if (line == "[UIPanel]") {
-			auto pnl = std::make_unique<UIPanel>();
-			pnl->Deserialize(in);
-			elements.push_back(std::move(pnl));
-		}
+
+		// If we get here, it's an unexpected line inside canvas; ignore or log.
 	}
 }
 

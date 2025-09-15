@@ -150,6 +150,8 @@
     <ClCompile Include="DelusiveUI.cpp" />
     <ClCompile Include="DelusiveUIRegistry.cpp" />
     <ClCompile Include="DelusiveUtils.cpp" />
+    <ClCompile Include="EditorInterface.cpp" />
+    <ClCompile Include="EditorRegistry.cpp" />
     <ClCompile Include="EnemyAgent.cpp" />
     <ClCompile Include="EngineUI.cpp" />
     <ClCompile Include="EnvironmentAgent.cpp" />
@@ -209,6 +211,9 @@
     <ClInclude Include="DelusiveComponents.h" />
     <ClInclude Include="DelusiveUIRegistry.h" />
     <ClInclude Include="DelusiveUtils.h" />
+    <ClInclude Include="EditorInferface.h" />
+    <ClInclude Include="EditorInput.h" />
+    <ClInclude Include="EditorRegistry.h" />
     <ClInclude Include="EnemyAgent.h" />
     <ClInclude Include="BehaviourScript.h" />
     <ClInclude Include="EngineUI.h" />
@@ -217,6 +222,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="HitboxCollider.h" />
     <ClInclude Include="HurtboxCollider.h" />
+    <ClInclude Include="ISelectable.h" />
     <ClInclude Include="PathfindingComponent.h" />
     <ClInclude Include="PathfindingSystem.h" />
     <ClInclude Include="PhysicsSystem.h" />

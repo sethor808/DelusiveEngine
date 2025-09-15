@@ -33,6 +33,7 @@ public:
 	virtual void Draw(const glm::mat4& projection) const {};
 	virtual void DrawImGui();
 	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }
+	virtual void SetEditorMode(bool editor) { editorMode = editor; }
 	virtual void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) {}
 	
 	virtual const char* GetType() const = 0;
@@ -61,6 +62,7 @@ public:
 protected:
 	PropertyRegistry registry;
 	Agent* owner = nullptr;
+	bool editorMode = false;
 	std::string name;
 	uint64_t componentID = 0;
 	bool enabled = true;

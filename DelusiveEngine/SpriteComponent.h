@@ -4,23 +4,13 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "TransformData.h"
+#include "EditorInferface.h"
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <vector>
 #include <imgui/imgui.h>
 #include <imgui/backend/imgui_impl_sdl3.h>
 #include <imgui/backend/imgui_impl_opengl3.h>
-
-enum class SpriteAction {
-    None, Drag, ResizeTop, ResizeBottom, ResizeLeft, ResizeRight,
-    ResizeTopLeft, ResizeTopRight, ResizeBottomLeft, ResizeBottomRight
-};
-
-struct SpriteInteractionState {
-    SpriteAction currentAction = SpriteAction::None;
-    glm::vec2 dragOffset = {};
-    bool isSelected = false;
-};
 
 class SpriteComponent : public Component {
 public:
@@ -58,7 +48,7 @@ public:
     //void Serialize(std::ofstream& out) const override;
     void Deserialize(std::ifstream& in) override;
 private:
-    SpriteInteractionState interaction;
+    InteractionState interaction;
 	DelusiveTexture textureData;
     
     int renderOrder = 0;

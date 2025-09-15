@@ -166,6 +166,9 @@ void EngineUI::RenderTopBar(Scene& scene) {
             if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
                 currentMode = EditorMode::GameView;
             }
+            if (GameManager::IsPlaying()) {
+                GameManager::Stop();
+            }
             ImGui::EndCombo();
         }
         ImGui::SameLine(0.0f, 10.0f);
@@ -261,13 +264,15 @@ void EngineUI::RenderTopBar(Scene& scene) {
             assetToDelete = selectedAsset;
         }
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 150.0f);
-        if (ImGui::Button(GameManager::IsPlaying() ? "Stop" : "Play")) {
-            if (GameManager::IsPlaying()) {
-                GameManager::Stop();
-            }
-            else {
-                GameManager::Play();
+        ImGui::SameLine();
+        if (currentMode == EditorMode::SceneEditor || currentMode == EditorMode::GameView) {
+            if (ImGui::Button(GameManager::IsPlaying() ? "Stop" : "Play")) {
+                if (GameManager::IsPlaying()) {
+                    GameManager::Stop();
+                }
+                else {
+                    GameManager::Play();
+                }
             }
         }
 
@@ -349,6 +354,65 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
 void EngineUI::RenderSceneEditor(Scene& scene) {
     static int agentToDeleteIndex = -1;
+    
+    struct Selection {
+        enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
+		void* ptr = nullptr;
+		void Reset() { kind = None; ptr = nullptr; }
+		bool Is(Kind k, void* p) const { return kind == k && ptr == p; }
+        void Draw() {
+            // Use selection.kind to safely cast to the correct type
+            switch (kind) {
+            case AgentObject:
+                if (ptr) {
+                    Agent* a = static_cast<Agent*>(ptr);
+                    a->DrawImGui();
+                }
+                break;
+            case ComponentObject:
+                if (ptr) {
+                    Component* c = static_cast<Component*>(ptr);
+                    c->DrawImGui();
+                }
+                break;
+            case SystemObject:
+                if (ptr) {
+                    SceneSystem* s = static_cast<SceneSystem*>(ptr);
+                    s->DrawImGui();
+                }
+                break;
+            default:
+                ImGui::TextDisabled("Nothing selected.");
+                break;
+            }   
+        }
+        void SetEditorMode(bool enabled) {
+            switch (kind) {
+            case AgentObject:
+                if (ptr) {
+                    Agent* a = static_cast<Agent*>(ptr);
+                    a->SetEditorMode(enabled);
+                }
+                break;
+            case ComponentObject:
+                if (ptr) {
+                    Component* c = static_cast<Component*>(ptr);
+                    c->SetEditorMode(enabled);
+                }
+                break;
+            case SystemObject:
+                if (ptr) {
+                    SceneSystem* s = static_cast<SceneSystem*>(ptr);
+                    s->SetEditorMode(enabled);
+                }
+                break;
+            default:
+                ImGui::TextDisabled("Nothing selected.");
+                break;
+            }
+        }
+    };
+    static Selection selected;
 
     float topBarHeight = ImGui::GetFrameHeight();
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
@@ -393,8 +457,10 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 // System selectable
                 bool isSelected = (selectedSystemIndex == (int)i);
                 if (ImGui::Selectable(label.c_str(), isSelected)) {
-                    selectedSystemIndex = (int)i;
-                    selectedAgentIndex = -1;
+                    selected.SetEditorMode(false); // Deselect previous
+                    selected.kind = Selection::SystemObject;
+                    selected.ptr = system.get();
+                    selected.SetEditorMode(true); // Enable editor mode for new selection
                 }
                 
                 // Right-click popup for delete and future options
@@ -431,12 +497,26 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         if (ImGui::TreeNode("Agents")) {
             auto& agents = scene.GetAgents();
             for (size_t i = 0; i < agents.size(); ++i) {
-                std::string name = agents[i]->GetName().empty() ? "Agent " + std::to_string(i) : agents[i]->GetName();
+				Agent* agent = agents[i].get();
+                std::string agentName = agent->GetName().empty() ? "Agent " + std::to_string(i) : agent->GetName();
+
                 ImGui::PushID((int)i);
-                if (ImGui::Selectable(name.c_str(), selectedAgentIndex == (int)i)) {
-                    selectedAgentIndex = (int)i;
-                    selectedSystemIndex = -1;
+
+                ImGuiTreeNodeFlags flags =
+                    ImGuiTreeNodeFlags_OpenOnArrow |
+                    ImGuiTreeNodeFlags_OpenOnDoubleClick |
+                    ImGuiTreeNodeFlags_SpanAvailWidth |
+                    (selected.Is(Selection::AgentObject, agent) ? ImGuiTreeNodeFlags_Selected : 0);
+
+                bool agentOpen = ImGui::TreeNodeEx(agentName.c_str(), flags);
+                if (ImGui::IsItemClicked()) {
+					selected.SetEditorMode(false); // Deselect previous
+					selected.kind = Selection::AgentObject;
+                    selected.ptr = agent;
+					selected.SetEditorMode(true); // Enable editor mode for new selection
                 }
+
+
                 if (ImGui::BeginPopupContextItem("AgentContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {
                         agentToDeleteIndex = (int)i;
@@ -455,6 +535,35 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                     }
                     ImGui::EndPopup();
                 }
+
+                //Component list
+                if (agentOpen) {
+                    auto& comps = agent->GetComponents();
+                    for (size_t c = 0; c < comps.size(); ++c) {
+                        Component* comp = comps[c].get();
+                        ImGui::PushID((int)c);
+
+                        bool compSelected = selected.Is(Selection::ComponentObject, comp);
+                        if (ImGui::Selectable(comp->GetName().c_str(), compSelected)) {
+                            selected.SetEditorMode(false);
+                            selected.kind = Selection::ComponentObject;
+                            selected.ptr = comp;
+							selected.SetEditorMode(true);
+                        }
+
+                        if (ImGui::BeginPopupContextItem(("ComponentContextMenu##" + std::to_string(i) + "_" + std::to_string(c)).c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+                            if (ImGui::MenuItem("Delete Component")) {
+                                // deletion deferred to avoid invalidating iteration
+                                agent->RemoveComponentByPointer(comp);
+                                if (selected.Is(Selection::ComponentObject, comp)) selected.Reset();
+                            }
+                            ImGui::EndPopup();
+                        }
+                        ImGui::PopID();
+                    }
+                    ImGui::TreePop();
+                }
+
                 ImGui::PopID();
             }
             ImGui::TreePop();
@@ -480,16 +589,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
     ImGui::SameLine();
 
     if (ImGui::BeginChild("Inspector", ImVec2(0, 0), true)) {
-        ImGui::Text("Inspector");
-        //TODO: Set up a only update if changed system?
-        auto& agents = scene.GetAgents();
-        if (selectedAgentIndex >= 0 && selectedAgentIndex < (int)agents.size()) {
-            agents[selectedAgentIndex]->DrawImGui();
-        }
-        auto& systems = scene.GetSystems();
-        if (selectedSystemIndex >= 0 && selectedSystemIndex < (int)systems.size()) {
-            systems[selectedSystemIndex]->DrawImGui();
-        }
+        selected.Draw();
     }
     ImGui::EndChild();
 
@@ -528,6 +628,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
 
     if (ImGui::BeginChild("Component List", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0), true)) {
         if (ImGui::Selectable(agent.GetName().c_str(), agentSelected)) {
+            if(selectedComponent) selectedComponent->SetEditorMode(false);
             selectedComponent = nullptr;
             agentSelected = true;
         } 
@@ -577,7 +678,9 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
             ImGui::PushID(i);
             bool isSelected = (selectedComponent == comp.get());
             if (ImGui::Selectable(comp->GetName().c_str(), isSelected)) {
+				if (selectedComponent) selectedComponent->SetEditorMode(false);
                 selectedComponent = comp.get();
+				selectedComponent->SetEditorMode(true);
                 agentSelected = false;
             }
 
@@ -1075,7 +1178,13 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                 auto& mod = frame.componentOverrides[i];
                 ImGui::PushID((int)mod.componentID);
 
-                ImGui::Text("%s", baseAgent->GetComponentByID(mod.componentID)->GetName());
+                if (Component* comp = baseAgent->GetComponentByID(mod.componentID)) {
+                    const std::string& compName = comp->GetName();
+                    ImGui::Text("%s", compName.c_str());
+                }
+                else {
+                    ImGui::Text("Missing Component (ID %llu)", mod.componentID);
+                }
                 ImGui::SameLine();
                 if (ImGui::Button("X")) {
                     ImGui::OpenPopup("ConfirmDeleteComponent");

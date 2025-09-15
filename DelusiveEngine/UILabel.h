@@ -9,11 +9,12 @@ public:
 	UILabel();
 	UILabel(const std::string);
 	UILabel(const std::string& text, const glm::vec2& pos, float size = 16.0f, const glm::vec4& color = { 1, 1, 1, 1 });
-	~UILabel();
+
+	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;
 
 	void Init();
-	bool LoadFont(const std::string&, float);
+	void LoadFont(const std::string&, float);
 
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& proj) override;
@@ -27,19 +28,13 @@ public:
 	void SetColor(const glm::vec4& col) { color = col; }
 	glm::vec4 GetColor() const { return color; }
 
-	void SetFontSize(float s) { fontSize = s; }
-	float GetFontSize() const { return fontSize; }
+	void SetFontSize(float s) { fontData.fontSize = s; }
+	float GetFontSize() const { return fontData.fontSize; }
 
-	const std::string& GetType() const override;
+	const std::string GetType() const override;
 private:
-	GLuint VAO, VBO;
-	Shader* shader = nullptr;
 	std::string text;
-	std::string fontPath;
-	std::unique_ptr<Font> font;
-	float loadedPixelHeight;
-	glm::vec2 position;
-	glm::vec2 size;
 	glm::vec4 color;
-	float fontSize;
+
+	DelusiveFont fontData;
 };

@@ -59,7 +59,7 @@ public:
 		children.push_back(std::move(element));
 	}
 
-	virtual const std::string& GetType() const = 0;
+	virtual const std::string GetType() const = 0;
 	
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }

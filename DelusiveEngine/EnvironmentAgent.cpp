@@ -41,6 +41,8 @@ void EnvironmentAgent::Draw(const glm::mat4& projection) const {
     }
 }
 
+
+/*
 void EnvironmentAgent::DrawImGui() {
     ImGui::Text("EnvironmentAgent");
     ImGui::Separator();
@@ -122,3 +124,4 @@ void EnvironmentAgent::DrawImGui() {
         ImGui::EndPopup();
     }
 }
+*/

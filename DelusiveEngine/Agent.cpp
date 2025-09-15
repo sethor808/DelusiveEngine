@@ -18,9 +18,46 @@ void Agent::RegisterProperties() {
 	transform.RegisterProperties(registry);
 }
 
+void Agent::SetEditorMode(bool selected) {
+	editorMode = selected;
+	if (selected) {}
+}
+
 void Agent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
-	for (auto& c : components) {
-		c->HandleMouse(worldMouse, mouseDown);
+	if (editorMode) {
+		if (editorMode) {
+			glm::vec2 center = transform.position;
+			glm::vec2 halfSize = transform.scale * 0.5f;
+
+			glm::vec2 min = center - halfSize;
+			glm::vec2 max = center + halfSize;
+
+			bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
+				worldMouse.y >= min.y && worldMouse.y <= max.y;
+
+			if (!mouseDown && interaction.currentAction == EditorAction::None) {
+				interaction.isSelected = mouseOver;
+			}
+
+			if (mouseDown && interaction.currentAction == EditorAction::None && mouseOver) {
+				interaction.currentAction = EditorAction::Drag;
+				interaction.dragOffset = (worldMouse - center) / transform.scale;
+			}
+
+			if (!mouseDown) {
+				interaction.currentAction = EditorAction::None;
+			}
+
+			if (interaction.currentAction == EditorAction::Drag) {
+				glm::vec2 delta = (worldMouse) - (interaction.dragOffset * transform.scale);
+				transform.position = delta;
+			}
+		}
+	}
+	else {
+		for (auto& c : components) {
+			c->HandleMouse(worldMouse, mouseDown);
+		}	
 	}
 }
 
@@ -226,6 +263,24 @@ void Agent::DrawImGui() {
 		ImGui::Separator();
 		comp->DrawImGui();
 		ImGui::PopID();
+	}
+
+	if (ImGui::Button("Add Component")) {
+		ImGui::OpenPopup("AddComponentPopup");
+	}
+
+	if (ImGui::BeginPopup("AddComponentPopup")) {
+		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>("assets/sprites/star.jpg");
+		if (ImGui::BeginMenu("Collider")) {
+			if (ImGui::MenuItem("Solid")) AddComponent<SolidCollider>();
+			if (ImGui::MenuItem("Hitbox")) AddComponent<HitboxCollider>();
+			if (ImGui::MenuItem("Hurtbox")) AddComponent<HurtboxCollider>();
+			if (ImGui::MenuItem("Trigger")) AddComponent<TriggerCollider>();
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
+		if (ImGui::MenuItem("Stats")) AddComponent<StatsComponent>();
+		ImGui::EndPopup();
 	}
 }
 

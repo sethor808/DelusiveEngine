@@ -7,6 +7,10 @@
 class DelusiveUIRegistry {
 public:
 	static DelusiveUIRegistry& Instance();
+	~DelusiveUIRegistry() { SaveAll(); }
+
+	void LoadAll() { LoadFromFile(registryFile); }
+	void SaveAll() const {SaveToFile(registryFile);}
 
 	void LoadFromFile(const std::string&);
 	void SaveToFile(const std::string&) const;
@@ -20,5 +24,7 @@ public:
 
 private:
 	DelusiveUIRegistry() = default;
+	bool init = false;
+	inline static const std::string registryFile = "assets/canvasData/ui_canvases.txt";
 	std::unordered_map<std::string, std::unique_ptr<UICanvas>> canvases;
 };

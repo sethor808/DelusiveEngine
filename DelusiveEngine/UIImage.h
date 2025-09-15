@@ -16,7 +16,7 @@ public:
 	void Draw(const glm::mat4& proj) override;
 	void HandleMouse(const glm::vec2&, bool) override {}
 
-	const std::string& GetType() const override;
+	const std::string GetType() const override;
 
 private:
 	DelusiveTexture textureData;

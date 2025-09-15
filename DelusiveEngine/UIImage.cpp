@@ -7,17 +7,6 @@
 #include <glm/vec4.hpp>
 #include <filesystem>
 
-float uiVertices[] = {
-	// pos       // tex
-	-0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  1.0f, 1.0f,
-
-	 0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.0f, 0.0f
-};
-
 UIImage::UIImage()
 	: UIElement("UIImage", { 0,0 })
 {
@@ -89,7 +78,7 @@ void UIImage::Draw(const glm::mat4& projection) {
 	}
 
 	// World position and size (accounting for pixel scale)
-	glm::vec2 worldPos = position / Renderer::GetPixelScale();
+	glm::vec2 worldPos = position * Renderer::GetPixelScale();
 	glm::vec2 worldSize = size * Renderer::GetPixelScale();
 
 	glm::mat4 model =
@@ -106,7 +95,6 @@ void UIImage::Draw(const glm::mat4& projection) {
 	}
 }
 
-const std::string& UIImage::GetType() const {
-	static std::string type = "UIImage";
-	return type;
+const std::string UIImage::GetType() const {
+	return "UIIMage";
 }

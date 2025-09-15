@@ -58,8 +58,19 @@ void Scene::CloneInto(Scene& container) const {
 	}
 }
 
+bool Scene::HasCamera() const {
+	for (const auto& agent : agents) {
+		if (dynamic_cast<CameraAgent*>(agent.get())) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
+	_agent->SetID(nextAgentID);
 	agents.push_back(std::move(_agent));
+	nextAgentID++;
 }
 
 std::vector<std::unique_ptr<Agent>>& Scene::GetAgents() {
@@ -183,15 +194,15 @@ bool Scene::SaveToFile(const std::string& path) const {
 	if (!out.is_open()) return false;
 
 	out << "[Scene]" << "\n";
-	out << "name " << name << "\n";
+	out << "name=" << name << "\n";
 
 	// Save agents
-	out << "agents " << agents.size() << "\n";
+	out << "agents=" << agents.size() << "\n";
 	for (const auto& agent : agents) {
 		agent->SaveToFile(out);
 	}
 
-	out << "systems " << systems.size() << "\n";
+	out << "systems=" << systems.size() << "\n";
 	for (auto& sys : systems) {
 		sys->Serialize(out);
 	}

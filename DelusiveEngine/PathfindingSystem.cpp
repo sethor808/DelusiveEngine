@@ -46,6 +46,65 @@ std::unique_ptr<SceneSystem> PathfindingSystem::Clone() const {
 	return clone;
 }
 
+void PathfindingSystem::DrawImGui() {
+	ImGui::SeparatorText("Pathfinding System");
+
+	// Show stats
+	ImGui::Text("Nodes: %zu", allNodes.size());
+	ImGui::Text("GridMap Size: %zu", gridMap.size());
+
+	// Toggle debug draw
+	static bool drawGrid = true;
+	if (ImGui::Checkbox("Draw NavGrid", &drawGrid)) {
+		// You can hook this into your Scene debug-draw flag instead of static
+	}
+
+	// Grid build parameters
+	static int gridWidth = 20;
+	static int gridHeight = 20;
+	static float cellSize = 1.0f;
+
+	ImGui::InputInt("Grid Width", &gridWidth);
+	ImGui::InputInt("Grid Height", &gridHeight);
+	ImGui::InputFloat("Cell Size", &cellSize);
+
+	if (ImGui::Button("Build Grid")) {
+		std::vector<Node> newNodes;
+		newNodes.reserve(gridWidth * gridHeight);
+
+		for (int y = 0; y < gridHeight; ++y) {
+			for (int x = 0; x < gridWidth; ++x) {
+				glm::ivec2 gridPos(x, y);
+				glm::vec2 worldPos = glm::vec2(x * cellSize, y * cellSize);
+				newNodes.emplace_back(gridPos, worldPos, true);
+			}
+		}
+		BuildNavGrid(newNodes);
+	}
+
+	// Manual walkability editing
+	static glm::ivec2 selectedTile(0, 0);
+	ImGui::InputInt2("Selected Tile", &selectedTile.x);
+
+	auto it = gridMap.find(selectedTile);
+	if (it != gridMap.end()) {
+		Node* node = it->second;
+		bool walkable = node->walkable;
+		if (ImGui::Checkbox("Walkable", &walkable)) {
+			node->walkable = walkable;
+		}
+	}
+	else {
+		ImGui::TextDisabled("No node at this tile");
+	}
+
+	// Optional clear button
+	if (ImGui::Button("Clear Grid")) {
+		gridMap.clear();
+		allNodes.clear();
+	}
+}
+
 void PathfindingSystem::BuildNavGrid(const std::vector<Node>& nodes) {
 	gridMap.clear();
 	allNodes.clear();

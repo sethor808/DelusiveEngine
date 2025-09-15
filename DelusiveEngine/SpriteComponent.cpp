@@ -198,31 +198,33 @@ void SpriteComponent::SetLocalTransform(const glm::vec2& pos, const glm::vec2& s
 void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown) {
     if (!enabled) return;
 
-    glm::vec2 center = owner->GetTransform().position + transform.position;
-    glm::vec2 halfSize = transform.scale * 0.5f;
+    if (editorMode) {
+        glm::vec2 center = owner->GetTransform().position + transform.position;
+        glm::vec2 halfSize = transform.scale * 0.5f;
 
-    glm::vec2 min = center - halfSize;
-    glm::vec2 max = center + halfSize;
+        glm::vec2 min = center - halfSize;
+        glm::vec2 max = center + halfSize;
 
-    bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
-        worldMouse.y >= min.y && worldMouse.y <= max.y;
+        bool mouseOver = worldMouse.x >= min.x && worldMouse.x <= max.x &&
+            worldMouse.y >= min.y && worldMouse.y <= max.y;
 
-    if (!isMouseDown && interaction.currentAction == SpriteAction::None) {
-        interaction.isSelected = mouseOver;
-    }
+        if (!isMouseDown && interaction.currentAction == EditorAction::None) {
+            interaction.isSelected = mouseOver;
+        }
 
-    if (isMouseDown && interaction.currentAction == SpriteAction::None && mouseOver) {
-        interaction.currentAction = SpriteAction::Drag;
-        interaction.dragOffset = (worldMouse - center) / transform.scale;
-    }
+        if (isMouseDown && interaction.currentAction == EditorAction::None && mouseOver) {
+            interaction.currentAction = EditorAction::Drag;
+            interaction.dragOffset = (worldMouse - center) / transform.scale;
+        }
 
-    if (!isMouseDown) {
-        interaction.currentAction = SpriteAction::None;
-    }
+        if (!isMouseDown) {
+            interaction.currentAction = EditorAction::None;
+        }
 
-    if (interaction.currentAction == SpriteAction::Drag) {
-        glm::vec2 delta = (worldMouse - owner->GetTransform().position) - (interaction.dragOffset * transform.scale);
-        transform.position = delta;
+        if (interaction.currentAction == EditorAction::Drag) {
+            glm::vec2 delta = (worldMouse - owner->GetTransform().position) - (interaction.dragOffset * transform.scale);
+            transform.position = delta;
+        }
     }
 }
 

@@ -137,6 +137,7 @@ std::unique_ptr<SceneSystem> UIManager::Clone() const {
 }
 
 void UIManager::SaveToFile(std::ofstream& out) const {
+    DelusiveUIRegistry::Instance().SaveAll();
 	out << "[UIManager]\n";
 
 	out << "ActiveCanvas=" << activeCanvasName << "\n";
@@ -148,6 +149,11 @@ void UIManager::SaveToFile(std::ofstream& out) const {
 	out << "\n";
 
 	out << "[/UIManager]\n";
+}
+
+void UIManager::Serialize(std::ostream& out) const {
+    SceneSystem::Serialize(out);
+	DelusiveUIRegistry::Instance().SaveAll();
 }
 
 void UIManager::Deserialize(std::istream& in) {
