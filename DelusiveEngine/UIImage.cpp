@@ -1,5 +1,5 @@
 #include "UIImage.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -7,16 +7,9 @@
 #include <glm/vec4.hpp>
 #include <filesystem>
 
-UIImage::UIImage()
-	: UIElement("UIImage", { 0,0 })
+UIImage::UIImage(DelusiveRenderer& _renderer)
+	: UIElement(_renderer)
 {
-	Init();
-}
-
-UIImage::UIImage(const glm::vec2& pos, const glm::vec2& siz)
-	: UIElement("UIImage", pos)
-{
-	SetSize(siz);
 	Init();
 }
 
@@ -34,7 +27,9 @@ void UIImage::RegisterProperties() {
 }
 
 std::unique_ptr<UIElement> UIImage::Clone() const{
-	auto copy = std::make_unique<UIImage>(position, size);
+	auto copy = std::make_unique<UIImage>(renderer);
+	copy->SetPosition(position);
+	copy->SetSize(size);
 	copy->SetName(name);
 	copy->SetEnabled(enabled);
 	copy->SetPosition(position);
@@ -78,8 +73,8 @@ void UIImage::Draw(const glm::mat4& projection) {
 	}
 
 	// World position and size (accounting for pixel scale)
-	glm::vec2 worldPos = position * Renderer::GetPixelScale();
-	glm::vec2 worldSize = size * Renderer::GetPixelScale();
+	glm::vec2 worldPos = position * DELUSIVE_PIXEL_SCALE;
+	glm::vec2 worldSize = size * DELUSIVE_PIXEL_SCALE;
 
 	glm::mat4 model =
 		glm::translate(glm::mat4(1.0f), glm::vec3(worldPos, 0.0f)) *

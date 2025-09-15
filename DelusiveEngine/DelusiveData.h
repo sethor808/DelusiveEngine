@@ -2,6 +2,7 @@
 #include <string>
 #include <GL/glew.h>
 #include "Texture.h"
+#include "DelusiveMacros.h"
 #include "Shader.h"
 #include "Font.h"
 #include <memory>
@@ -41,8 +42,8 @@ struct DelusiveTexture {
     }
 
 	void Init(
-		const std::string& shaderVert = "shaders/vertex.glsl",
-		const std::string& shaderFrag = "shaders/fragment.glsl")
+		const std::string& shaderVert = DEFAULT_VERT,
+		const std::string& shaderFrag = DEFAULT_FRAG)
 	{
 		shader = new Shader(shaderVert.c_str(), shaderFrag.c_str());
 		if (!texturePath.empty()) {
@@ -127,8 +128,8 @@ struct DelusiveFont {
     }
 
     // Create VAO/VBO and set sampler uniform (call after GL context ready)
-    void Init(const std::string& shaderVert = "shaders/text.vert",
-        const std::string& shaderFrag = "shaders/text.frag")
+    void Init(const std::string& shaderVert = DEFAULT_TEXT_VERT,
+        const std::string& shaderFrag = DEFAULT_TEXT_FRAG)
     {
         // cleanup any leftover GL objects
         Cleanup();

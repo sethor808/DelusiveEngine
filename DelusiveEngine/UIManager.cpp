@@ -5,7 +5,9 @@
 #include <fstream>
 #include <sstream>
 
-UIManager::UIManager() {
+UIManager::UIManager(DelusiveRenderer& _renderer) 
+	: SceneSystem(_renderer), uiRegistry(_renderer)
+{
 	name = "NewUIManager";
 	activeCanvasName = "";
 	activeCanvas = nullptr;
@@ -19,7 +21,7 @@ void UIManager::RegisterProperties() {
 }
 
 void UIManager::SetCanvasActive(const std::string& name) {
-	if (auto canvas = DelusiveUIRegistry::Instance().Get(name)) {
+	if (auto canvas = uiRegistry.Get(name)) {
 		canvas->SetActive(true);
 		activeCanvasName = name;
 		activeCanvas = canvas;
@@ -49,7 +51,7 @@ void UIManager::DrawImGui() {
     ImGui::Separator();
 
     // Active canvas selection
-    auto allNames = DelusiveUIRegistry::Instance().GetAllNames();
+    auto allNames = uiRegistry.GetAllNames();
     if (!canvasList.empty()) {
         if (ImGui::BeginCombo("Active Canvas", activeCanvasName.empty() ? "<none>" : activeCanvasName.c_str())) {
             for (const auto& name : canvasList) {
@@ -100,9 +102,9 @@ void UIManager::DrawImGui() {
         }
         if (ImGui::MenuItem("New Canvas")) {
             std::string newName = "Canvas_" + std::to_string(allNames.size());
-            auto newCanvas = std::make_unique<UICanvas>();
+            auto newCanvas = std::make_unique<UICanvas>(renderer);
             newCanvas->SetName(newName);
-            DelusiveUIRegistry::Instance().Register(std::move(newCanvas));
+            uiRegistry.Register(std::move(newCanvas));
             canvasList.push_back(newName);
             ImGui::CloseCurrentPopup();
         }
@@ -125,19 +127,19 @@ void UIManager::Reset() {
 }
 
 std::unique_ptr<SceneSystem> UIManager::Clone() const {
-	auto clone = std::make_unique<UIManager>();
+	auto clone = std::make_unique<UIManager>(renderer);
 	clone->activeCanvasName = activeCanvasName;
 	clone->canvasList = canvasList;
 
 	// only refresh pointer if canvas still exists
-	if (auto canvas = DelusiveUIRegistry::Instance().Get(activeCanvasName)) {
+	if (auto canvas = uiRegistry.Get(activeCanvasName)) {
 		clone->activeCanvas = canvas;
 	}
 	return clone;
 }
 
 void UIManager::SaveToFile(std::ofstream& out) const {
-    DelusiveUIRegistry::Instance().SaveAll();
+    uiRegistry.SaveAll();
 	out << "[UIManager]\n";
 
 	out << "ActiveCanvas=" << activeCanvasName << "\n";
@@ -153,7 +155,7 @@ void UIManager::SaveToFile(std::ofstream& out) const {
 
 void UIManager::Serialize(std::ostream& out) const {
     SceneSystem::Serialize(out);
-	DelusiveUIRegistry::Instance().SaveAll();
+    uiRegistry.SaveAll();
 }
 
 void UIManager::Deserialize(std::istream& in) {

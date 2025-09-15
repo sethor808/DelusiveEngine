@@ -1,15 +1,12 @@
 #include "ColliderComponent.h"
 #include <iostream>
 
-ColliderRenderer* ColliderComponent::renderer = nullptr;
-
 template<typename T>
 const T& Clamp(const T& v, const T& lo, const T& hi) {
     return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
 ColliderComponent::ColliderComponent(){ 
-	ColliderComponent::SetRenderer(renderer);
 	name = "New Collider";
     RegisterProperties();
 }
@@ -79,9 +76,9 @@ glm::vec2 ColliderComponent::GetMax() const {
     return ComputeWorldArea().max;
 }
 
-void ColliderComponent::Draw(const glm::mat4& projection) const{
+void ColliderComponent::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const{
 	//std::cout << "[ColliderComponent] Draw called" << std::endl;
-	renderer->Draw(*this, projection);
+	renderer.Draw(*this, projection);
 }
 
 bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {

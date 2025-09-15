@@ -1,5 +1,7 @@
 #include "SceneSystem.h"
-SceneSystem::SceneSystem() {
+SceneSystem::SceneSystem(DelusiveRenderer& _renderer)
+	: renderer(_renderer)
+{
     RegisterProperties();
 }
 

@@ -1,25 +1,20 @@
 #include "UIButton.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-UIButton::UIButton() 
-	: UIElement("UIButton", { 0,0 }), label("New Button")
+UIButton::UIButton(DelusiveRenderer& _renderer) 
+	: UIElement(_renderer)
 {
 	Init();
 }
 
-UIButton::UIButton(const std::string& label, const glm::vec2& pos)
-	: UIElement(label, pos), label(label) {
-	Init();
-}
-
 void UIButton::Init() {
-	buttonTexture.texturePath = "assets/ui/default_button.png";
+	buttonTexture.texturePath = "../assets/ui/default_button.png";
 	buttonTexture.Init();
 
-	buttonFont.fontPath = "assets/fonts/pixel_arial_11/PIXEARG_.TTF";
+	buttonFont.fontPath = DEFAULT_FONT;
 	buttonFont.fontSize = 16;
 	buttonFont.Init();
 
@@ -36,7 +31,9 @@ void UIButton::RegisterProperties() {
 }
 
 std::unique_ptr<UIElement> UIButton::Clone() const {
-	auto copy = std::make_unique<UIButton>(label, position);
+	auto copy = std::make_unique<UIButton>(renderer);
+	//TODO: Set label
+	copy->SetPosition(position);
 	copy->SetSize(size);
 	copy->SetEnabled(enabled);
 

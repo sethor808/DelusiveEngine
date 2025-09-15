@@ -1,9 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DelusiveEngine", "DelusiveEngine\DelusiveEngine.vcxproj", "{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DelusiveScripts", "DelusiveScripts\DelusiveScripts.vcxproj", "{52525237-AF54-4C76-B671-3DF5E0673AD1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF} = {86F6F630-A225-40C0-8F1C-C2CE8F040DEF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reflections", "Reflections\Reflections.vcxproj", "{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{52525237-AF54-4C76-B671-3DF5E0673AD1} = {52525237-AF54-4C76-B671-3DF5E0673AD1}
+		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF} = {86F6F630-A225-40C0-8F1C-C2CE8F040DEF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DelusiveGameEditor", "DelusiveGameEditor\DelusiveGameEditor.vcxproj", "{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF} = {86F6F630-A225-40C0-8F1C-C2CE8F040DEF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +37,30 @@ Global
 		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}.Release|x64.Build.0 = Release|x64
 		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}.Release|x86.ActiveCfg = Release|Win32
 		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}.Release|x86.Build.0 = Release|Win32
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Debug|x64.ActiveCfg = Debug|x64
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Debug|x64.Build.0 = Debug|x64
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Debug|x86.ActiveCfg = Debug|Win32
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Debug|x86.Build.0 = Debug|Win32
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Release|x64.ActiveCfg = Release|x64
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Release|x64.Build.0 = Release|x64
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Release|x86.ActiveCfg = Release|Win32
+		{52525237-AF54-4C76-B671-3DF5E0673AD1}.Release|x86.Build.0 = Release|Win32
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Debug|x64.ActiveCfg = Debug|x64
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Debug|x64.Build.0 = Debug|x64
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Debug|x86.ActiveCfg = Debug|Win32
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Debug|x86.Build.0 = Debug|Win32
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Release|x64.ActiveCfg = Release|x64
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Release|x64.Build.0 = Release|x64
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Release|x86.ActiveCfg = Release|Win32
+		{71B81A96-E2C1-4CEC-A3AA-3FD7A4F04CAF}.Release|x86.Build.0 = Release|Win32
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Debug|x64.ActiveCfg = Debug|x64
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Debug|x64.Build.0 = Debug|x64
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Debug|x86.ActiveCfg = Debug|Win32
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Debug|x86.Build.0 = Debug|Win32
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Release|x64.ActiveCfg = Release|x64
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Release|x64.Build.0 = Release|x64
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Release|x86.ActiveCfg = Release|Win32
+		{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

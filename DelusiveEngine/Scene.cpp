@@ -1,15 +1,9 @@
 #include "Scene.h"
 //TODO: If there is no camera, handle properly
-Scene::Scene()
-	: name("New Scene"), camera(nullptr)
+Scene::Scene(DelusiveRenderer& _renderer)
+	: renderer(_renderer), name("New Scene"), camera(nullptr)
 {
 
-}
-
-Scene::Scene(std::string _name)
-	: name(std::move(_name)), camera(nullptr)
-{
-	
 }
 
 Scene::~Scene() {
@@ -17,7 +11,8 @@ Scene::~Scene() {
 }
 
 std::unique_ptr<Scene> Scene::Clone() const{
-	auto cloned = std::make_unique<Scene>(name);
+	auto cloned = std::make_unique<Scene>(renderer);
+	cloned->name = this->name;
 
 	for (const auto& agent : agents) {
 		cloned->AddAgent(agent->Clone());
@@ -147,7 +142,7 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 		// Immediately draw enabled colliders (no sorting needed)
 		for (const ColliderComponent* collider : agent->GetComponentsOfType<ColliderComponent>()) {
 			if (collider->IsEnabled()) {
-				collider->Draw(projection);
+				collider->Draw(colRenderer, projection);
 			}
 		}
 	}
@@ -166,7 +161,7 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 
 	//Renderer::BeginUIRenderPass();
 	for (auto& system : systems) {
-		system->Draw(Renderer::GetUIProjection());
+		system->Draw(renderer.GetUIProjection());
 	}
 	//Renderer::EndUIRenderPass();
 }
@@ -268,8 +263,8 @@ bool Scene::LoadFromFile(const std::string& path) {
 			}
 
 			std::unique_ptr<SceneSystem> sys = nullptr;
-			if (type == "PathfindingSystem") sys = std::make_unique<PathfindingSystem>();
-			else if (type == "UIManager") sys = std::make_unique<UIManager>();
+			if (type == "PathfindingSystem") sys = std::make_unique<PathfindingSystem>(renderer);
+			else if (type == "UIManager") sys = std::make_unique<UIManager>(renderer);
 
 			sys->Deserialize(in);
 			systems.push_back(std::move(sys));

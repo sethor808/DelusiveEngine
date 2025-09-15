@@ -1,5 +1,5 @@
 ﻿#include "Sprite.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>

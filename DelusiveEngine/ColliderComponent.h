@@ -68,18 +68,15 @@ public:
 	virtual bool CheckCenterRender() const { return showCenter; }
 	virtual void ToggleCenterDisplay() { showCenter = !showCenter; };
 	
-	void Draw(const glm::mat4& projection) const override;
+	virtual void Draw(const ColliderRenderer&, const glm::mat4& ) const;
 	virtual bool DrawAnimatorImGui(ComponentMod&) override;
 	void HandleMouse(const glm::vec2&, bool) override;
-
-	static void SetRenderer(ColliderRenderer* r) { renderer = r; }
 
 	virtual void OnCollision(ColliderComponent* other) = 0;
 	ColliderAction FromColliderHandleType(ColliderHandleType h);
 protected:
 	ShapeType shape = ShapeType::Box;
 	bool showCenter = false;
-	static ColliderRenderer* renderer;
 	ColliderHandleType activeHandle = ColliderHandleType::None;
 	ColliderAction currentAction = ColliderAction::None;
 	glm::vec2 dragStartMouse;

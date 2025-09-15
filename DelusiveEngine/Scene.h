@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "DelusiveRenderer.h"
 #include "Sprite.h"
 #include "Agent.h"
 #include "DelusiveAgents.h"
@@ -13,8 +14,8 @@
 
 class Scene {
 public:
-	Scene();
-	Scene(std::string);
+	Scene() = delete;
+	Scene(DelusiveRenderer&);
 	~Scene();
 
 	Scene(Scene&&) noexcept = default;
@@ -52,6 +53,7 @@ public:
 	bool LoadFromFile(const std::string& path);
 
 private:
+	DelusiveRenderer& renderer;
 	std::string name;
 	CameraAgent* camera;
 	static PhysicsSystem physicsSystem;

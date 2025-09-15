@@ -1,12 +1,15 @@
 #include "GameManager.h"
 
-Scene GameManager::editorScene;
-Scene GameManager::playScene;
-Scene* GameManager::activeScene = nullptr;
-bool GameManager::isPlaying = false;
+
+
+GameManager::GameManager(DelusiveRenderer& _renderer)
+	: renderer(_renderer), editorScene(_renderer), playScene(_renderer)
+{
+    Init();
+}
 
 void GameManager::Init() {
-    editorScene = Scene();
+    isPlaying = false;
     activeScene = &editorScene;
     isPlaying = false;
 }

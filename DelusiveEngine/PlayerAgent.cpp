@@ -1,5 +1,5 @@
 #include "PlayerAgent.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 
 PlayerAgent::PlayerAgent(const std::string& agentName) {
 	SetName(agentName);

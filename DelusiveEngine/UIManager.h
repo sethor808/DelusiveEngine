@@ -1,10 +1,11 @@
 #pragma once
 #include "UICanvas.h"
+#include "DelusiveUIRegistry.h"
 #include "SceneSystem.h"
 
 class UIManager : public SceneSystem {
 public:
-	UIManager();
+	UIManager(DelusiveRenderer&);
 
 	std::string GetType() const { return "UIManager"; }
 	void RegisterProperties() override;
@@ -24,6 +25,7 @@ public:
 	void Serialize(std::ostream&) const override;
 	void Deserialize(std::istream&) override;
 private:
+	DelusiveUIRegistry uiRegistry;
 	UICanvas* activeCanvas = nullptr;
 	std::string activeCanvasName;
 	std::vector<std::string> canvasList;

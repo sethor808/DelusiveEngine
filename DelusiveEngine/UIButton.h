@@ -4,7 +4,7 @@
 
 class UIButton : public UIElement {
 public:
-	UIButton();
+	UIButton(DelusiveRenderer&);
 	UIButton(const std::string& label, const glm::vec2& position);
 	std::unique_ptr<UIElement> Clone() const override;
 

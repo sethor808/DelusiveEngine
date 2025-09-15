@@ -1,13 +1,15 @@
 #include <filesystem>
 #include "EngineUI.h"
-#include "Renderer.h"
-#include "GameManager.h"
+#include "DelusiveMacros.h"
+#include "DelusiveRenderer.h"
 #include "DelusiveComponents.h"
 #include "DelusiveUtils.h"
 #include "DelusiveSystems.h"
 #include <glm/gtc/type_ptr.hpp>
 
-EngineUI::EngineUI() {
+EngineUI::EngineUI(GameManager& _game, DelusiveRenderer& _renderer)
+    : gameManager(_game), renderer(_renderer)
+{
     currentMode = EditorMode::SceneEditor;
     loadedAssets = LoadSceneList();
 }
@@ -39,13 +41,13 @@ std::vector<std::string> EngineUI::LoadSceneList() {
     std::string path;
     switch (currentMode) {
     case EditorMode::SceneEditor:
-        path = scenePath;
+        path = SCENE_PATH;
         break;
     case EditorMode::AgentEditor:
-        path = agentPath;
+        path = AGENT_PATH;
         break;
     case EditorMode::AnimatorEditor:
-        path = animationPath;
+        path = ANIM_PATH;
         break;
     }
 
@@ -101,8 +103,6 @@ void EngineUI::SwitchMode(Scene& scene, EditorMode mode) {
     currentMode = mode;
     selectedAsset = "None";
 
-    selectedAgentIndex = -1;
-    selectedSystemIndex = -1;
     selectedComponent = nullptr;
     selectedFrame = -1;
     selectedBranch = -1;
@@ -134,11 +134,11 @@ std::string EngineUI::GetPath(std::string fileName) {
     std::string fullPath = "";
     switch (currentMode) {
     case EditorMode::SceneEditor:
-        return scenePath + fileName + sceneExtension;
+        return std::string(SCENE_PATH) + fileName + SCENE_EXT;
     case EditorMode::AgentEditor:
-        return agentPath + fileName + agentExtension;
+        return std::string(AGENT_PATH) + fileName + AGENT_EXT;
     case EditorMode::AnimatorEditor:
-        return animationPath + fileName + animationExtension;
+        return std::string(ANIM_PATH) + fileName + ANIM_EXT;
     default:
         return "";
     }
@@ -166,8 +166,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
             if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
                 currentMode = EditorMode::GameView;
             }
-            if (GameManager::IsPlaying()) {
-                GameManager::Stop();
+            if (gameManager.IsPlaying()) {
+                gameManager.Stop();
             }
             ImGui::EndCombo();
         }
@@ -266,12 +266,12 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
         ImGui::SameLine();
         if (currentMode == EditorMode::SceneEditor || currentMode == EditorMode::GameView) {
-            if (ImGui::Button(GameManager::IsPlaying() ? "Stop" : "Play")) {
-                if (GameManager::IsPlaying()) {
-                    GameManager::Stop();
+            if (ImGui::Button(gameManager.IsPlaying() ? "Stop" : "Play")) {
+                if (gameManager.IsPlaying()) {
+                    gameManager.Stop();
                 }
                 else {
-                    GameManager::Play();
+                    gameManager.Play();
                 }
             }
         }
@@ -332,7 +332,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
                         break;
                     }
 
-                    scene = Scene(sceneName);
+                    scene.Clear();
+                    scene.SetName(sceneName);
 
                     std::ofstream out(GetPath(selectedAsset));
                     out << "name " << selectedAsset << "\n";
@@ -353,8 +354,6 @@ void EngineUI::RenderTopBar(Scene& scene) {
 }
 
 void EngineUI::RenderSceneEditor(Scene& scene) {
-    static int agentToDeleteIndex = -1;
-    
     struct Selection {
         enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
 		void* ptr = nullptr;
@@ -450,27 +449,38 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
             // List systems like agents
             for (size_t i = 0; i < systems.size(); ++i) {
                 auto& system = systems[i];
-                std::string label = system->GetName().empty() ? "System " + std::to_string(i) : system->GetName();
+                std::string label = system->GetName().empty()
+                    ? "System " + std::to_string(i)
+                    : system->GetName();
 
                 ImGui::PushID((int)i);
 
+                // Check if this system is the selected one
+                bool isSelected = (selected.kind == Selection::SystemObject &&
+                    selected.ptr == system.get());
+
                 // System selectable
-                bool isSelected = (selectedSystemIndex == (int)i);
                 if (ImGui::Selectable(label.c_str(), isSelected)) {
-                    selected.SetEditorMode(false); // Deselect previous
+                    if (selected.ptr) selected.SetEditorMode(false); // deselect previous
                     selected.kind = Selection::SystemObject;
                     selected.ptr = system.get();
-                    selected.SetEditorMode(true); // Enable editor mode for new selection
+                    selected.SetEditorMode(true); // select new
                 }
-                
+
                 // Right-click popup for delete and future options
                 if (ImGui::BeginPopupContextItem("SystemContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {
+                        // If deleting the currently selected system, clear selection
+                        if (selected.ptr == system.get()) {
+                            selected.SetEditorMode(false);
+                            selected.Reset();
+                        }
+
                         systems.erase(systems.begin() + i);
-                        if (selectedSystemIndex == (int)i) selectedSystemIndex = -1;
+
                         ImGui::EndPopup();
                         ImGui::PopID();
-                        break;
+                        break; // exit loop, iterator invalid now
                     }
                     ImGui::EndPopup();
                 }
@@ -482,10 +492,10 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
             if (ImGui::BeginPopupContextItem("AddSystemPopup", ImGuiPopupFlags_MouseButtonRight)) {
                 if (ImGui::BeginMenu("Add System")) {
                     if (ImGui::MenuItem("PathfindingSystem")) {
-                        scene.AddSystem(std::make_unique<PathfindingSystem>());
+                        scene.AddSystem(std::make_unique<PathfindingSystem>(renderer));
                     }
                     if (ImGui::MenuItem("UIManager")) {
-                        scene.AddSystem(std::make_unique<UIManager>());
+                        scene.AddSystem(std::make_unique<UIManager>(renderer));
                     }
                     ImGui::EndMenu();
                 }
@@ -522,7 +532,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                         agentToDeleteIndex = (int)i;
                     }
                     if (ImGui::BeginMenu("Load Prefab")) {
-                        for (const auto& entry : std::filesystem::directory_iterator("assets/agents")) {
+                        for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
                             if (entry.path().extension() == ".agent") {
                                 if (ImGui::MenuItem(entry.path().filename().string().c_str())) {
                                     auto loaded = std::make_unique<PlayerAgent>("LoadedAgent");
@@ -576,12 +586,9 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         scene.GetAgents().erase(scene.GetAgents().begin() + agentToDeleteIndex);
 
         // Adjust selectedAgentIndex accordingly
-        if (selectedAgentIndex == agentToDeleteIndex) {
-            selectedAgentIndex = -1; // deselect if deleted agent was selected
-        }
-        else if (selectedAgentIndex > agentToDeleteIndex) {
-            selectedAgentIndex--;
-        }
+        if(selected.ptr == scene.GetAgents()[agentToDeleteIndex].get()) {
+            selected.Reset(); // Deselect if the deleted agent was selected
+		}
 
         agentToDeleteIndex = -1; // reset delete index
     }
@@ -598,11 +605,10 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
 
 void EngineUI::RenderAgentEditor(Scene& scene) {
     //Mouse stuff
-    static bool isDraggingCollider = false;
     if (!ImGui::GetIO().WantCaptureMouse) {
         float mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
-        glm::vec2 worldMouse = ScreenToWorld2D((int)mouseX, (int)mouseY);
+        glm::vec2 worldMouse = ScreenToWorld2D((int)mouseX, (int)mouseY, renderer.GetProjection());
         bool mouseDown = SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_LMASK;
 
         Agent& agent = *scene.GetAgents().front();
@@ -636,7 +642,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
         if (ImGui::BeginPopupContextItem("AgentContext")) { 
             if (ImGui::BeginMenu("Add")) { 
                 if (ImGui::MenuItem("Sprite")) {
-                    selectedComponent = agent.AddComponent<SpriteComponent>("assets/sprites/star.jpg");
+                    selectedComponent = agent.AddComponent<SpriteComponent>(DEFAULT_SPRITE);
                     agentSelected = false;
                 }
                 if (ImGui::BeginMenu("Collider")) {
@@ -857,7 +863,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
     }
 
     if (ImGui::BeginPopup("AgentFileSelect")) {
-        for (const auto& entry : std::filesystem::directory_iterator("assets/agents")) {
+        for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
             if (entry.path().extension() == ".agent") {
                 if (ImGui::Selectable(entry.path().filename().string().c_str())) {
                     pendingAgentFile = entry.path().string();

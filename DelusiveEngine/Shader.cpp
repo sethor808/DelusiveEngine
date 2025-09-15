@@ -2,9 +2,11 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <filesystem>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     std::cout << "[Shader] Loading: " << vertexPath << " and " << fragmentPath << std::endl;
+    std::cout << "CWD: " << std::filesystem::current_path() << std::endl;
 
     std::string vertexCode, fragmentCode;
     std::ifstream vFile(vertexPath), fFile(fragmentPath);

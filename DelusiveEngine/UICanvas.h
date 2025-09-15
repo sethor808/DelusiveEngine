@@ -6,11 +6,13 @@
 #include "DelusiveUtils.h"
 #include "DelusiveUI.h"
 #include "DelusiveRegistry.h"
+#include "DelusiveRenderer.h"
 
 class UICanvas {
 public:
-	UICanvas(const std::string& name = "")
-		: name(name), active(true) {
+	UICanvas() = delete;
+	UICanvas(DelusiveRenderer& _renderer)
+		: renderer(_renderer) {
 		RegisterProperties();
 	}
 	
@@ -28,7 +30,7 @@ public:
 
 	//Serialize
 	void SerializeToFile() const;
-	static std::unique_ptr<UICanvas> LoadFromFile(const std::string&);
+	std::unique_ptr<UICanvas> LoadFromFile(const std::string&);
 	void Serialize(std::ostream&) const;
 	void Deserialize(std::istream&);
 
@@ -39,6 +41,7 @@ public:
 	bool IsActive() const {return active;}
 	void SetActive(bool);
 private:
+	DelusiveRenderer& renderer;
 	PropertyRegistry registry;
 	std::string name;
 	std::string filePath;

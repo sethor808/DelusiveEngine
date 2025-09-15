@@ -1,10 +1,12 @@
 #pragma once
 #include <string>
 #include "DelusiveRegistry.h"
+#include "DelusiveRenderer.h"
 
 class SceneSystem {
 public:
-	SceneSystem();
+	SceneSystem() = delete;
+	SceneSystem(DelusiveRenderer&);
 	virtual ~SceneSystem() = default;
 
 	virtual void RegisterProperties();
@@ -28,6 +30,7 @@ public:
 	virtual void Serialize(std::ostream&) const;
 	virtual void Deserialize(std::istream&);
 protected:
+	DelusiveRenderer& renderer;
 	PropertyRegistry registry;
 	bool editorMode = false;
 	std::string name;

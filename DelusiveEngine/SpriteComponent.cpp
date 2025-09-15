@@ -1,5 +1,6 @@
 #include "SpriteComponent.h"
 #include "Agent.h"
+#include "DelusiveMacros.h"
 #include <filesystem>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -152,7 +153,7 @@ bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
             }
         };
 
-        DrawDirectory("assets/sprites");
+        DrawDirectory(SPRITE_FOLDER);
 
         ImGui::EndPopup();
     }

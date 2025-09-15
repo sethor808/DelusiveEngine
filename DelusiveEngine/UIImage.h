@@ -4,8 +4,7 @@
 
 class UIImage : public UIElement {
 public:
-	UIImage();
-	UIImage(const glm::vec2& pos, const glm::vec2& size);
+	UIImage(DelusiveRenderer&);
 
 	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;

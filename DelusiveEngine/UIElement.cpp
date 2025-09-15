@@ -1,7 +1,9 @@
 #include "UIElement.h"
 #include "DelusiveUI.h"
 
-UIElement::UIElement() {
+UIElement::UIElement(DelusiveRenderer& _renderer)
+    : renderer(_renderer)
+{
 	RegisterProperties();
 }
 
@@ -45,10 +47,10 @@ void UIElement::Deserialize(std::istream& in) {
             if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
             std::unique_ptr<UIElement> child;
-            if (typeToken == "UILabel")       child = std::make_unique<UILabel>("");
-            else if (typeToken == "UIImage")  child = std::make_unique<UIImage>();
-            else if (typeToken == "UIButton") child = std::make_unique<UIButton>();
-            else if (typeToken == "UIPanel")  child = std::make_unique<UIPanel>();
+            if (typeToken == "UILabel")       child = std::make_unique<UILabel>(renderer);
+            else if (typeToken == "UIImage")  child = std::make_unique<UIImage>(renderer);
+            else if (typeToken == "UIButton") child = std::make_unique<UIButton>(renderer);
+            else if (typeToken == "UIPanel")  child = std::make_unique<UIPanel>(renderer);
 
             if (child) {
                 child->Deserialize(in);

@@ -3,6 +3,7 @@
 #include "PlayerAgent.h"
 #include "AnimatorData.h"
 #include "Animation.h"
+#include "GameManager.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
 #include <imgui/backend/imgui_impl_sdl3.h>
@@ -18,10 +19,11 @@ enum class EditorMode {
 
 class EngineUI {
 public:
-	EngineUI();
+	EngineUI(GameManager&, DelusiveRenderer&);
 	~EngineUI();
 	std::vector<std::string> LoadSceneList();
 	ImTextureID GetFramePreviewTexture(AnimationFrame&, Agent&);
+	void SetRenderer(const DelusiveRenderer&);
 	void Render(Scene& scene);
 	void RenderTopBar(Scene& scene);
 	void RenderSceneEditor(Scene& scene);
@@ -29,12 +31,19 @@ public:
 	void RenderAnimatorEditor(Scene& scene);
 	void RenderGameView(Scene& scene);
 private:
-	int selectedAgentIndex = -1;
-	int selectedSystemIndex = -1;
+	GameManager& gameManager;
+	DelusiveRenderer& renderer;
+
 	EditorMode currentMode = EditorMode::SceneEditor;
 	std::string selectedAsset = "None";
 	std::vector<std::string> loadedAssets;
 	AgentType selectedAgentType = AgentType::None;
+
+	//Scene editor specifics
+	int agentToDeleteIndex = -1;
+
+	//Agent editor specifics
+	bool isDraggingCollider = false;
 
 	//AnimatorData
 	Animation currentAnimation;
@@ -47,14 +56,6 @@ private:
 	std::string currentBaseAgentFile;
 	bool confirmAgentSwitch = false;
 	std::string pendingAgentFile;
-
-	//TODO: Define as macros somewhere
-	const std::string scenePath = "assets/scenes/";
-	const std::string sceneExtension = ".scene";
-    const std::string agentPath = "assets/agents/";
-	const std::string agentExtension = ".agent";
-	const std::string animationPath = "assets/animations/";
-	const std::string animationExtension = ".anim";
 
 	//Helper functions
 	void SwitchMode(Scene&, EditorMode);

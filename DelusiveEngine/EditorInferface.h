@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/glm.hpp>
 
 enum class EditorAction {
     None, Drag, ResizeTop, ResizeBottom, ResizeLeft, ResizeRight,

@@ -1,7 +1,8 @@
 #include "Agent.h"
 #include "Component.h"
+#include "DelusiveMacros.h"
 #include "DelusiveComponents.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include <limits>
 #include <sstream>
 
@@ -270,7 +271,7 @@ void Agent::DrawImGui() {
 	}
 
 	if (ImGui::BeginPopup("AddComponentPopup")) {
-		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>("assets/sprites/star.jpg");
+		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>(DEFAULT_SPRITE);
 		if (ImGui::BeginMenu("Collider")) {
 			if (ImGui::MenuItem("Solid")) AddComponent<SolidCollider>();
 			if (ImGui::MenuItem("Hitbox")) AddComponent<HitboxCollider>();

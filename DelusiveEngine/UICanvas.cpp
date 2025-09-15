@@ -11,7 +11,8 @@ void UICanvas::RegisterProperties() {
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
 	// Create a new canvas with the same name
-	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(name);
+	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(renderer);
+	copy->name = this->name;
 	copy->SetActive(this->IsActive());
 
 	// Copy each child element by cloning them
@@ -86,19 +87,19 @@ void UICanvas::DrawImGui() {
 
 	if (ImGui::BeginPopup("AddElementPopup")) {
 		if (ImGui::MenuItem("UILabel")) {
-			elements.push_back(std::make_unique<UILabel>("New Label"));
+			elements.push_back(std::make_unique<UILabel>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIImage")) {
-			elements.push_back(std::make_unique<UIImage>());
+			elements.push_back(std::make_unique<UIImage>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIButton")) {
-			elements.push_back(std::make_unique<UIButton>());
+			elements.push_back(std::make_unique<UIButton>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIPanel")) {
-			elements.push_back(std::make_unique<UIPanel>());
+			elements.push_back(std::make_unique<UIPanel>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
@@ -117,7 +118,7 @@ std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
 	std::ifstream in(path, std::ios::binary);
 	if (!in) return nullptr;
 
-	auto canvas = std::make_unique<UICanvas>();
+	auto canvas = std::make_unique<UICanvas>(renderer);
 	canvas->Deserialize(in);
 	canvas->filePath = path;
 	return canvas;
@@ -158,10 +159,10 @@ void UICanvas::Deserialize(std::istream& in) {
 
 			std::unique_ptr<UIElement> elem;
 
-			if (typeToken == "UILabel")       elem = std::make_unique<UILabel>("");
-			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>();
-			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>();
-			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>();
+			if (typeToken == "UILabel")       elem = std::make_unique<UILabel>(renderer);
+			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>(renderer);
+			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>(renderer);
+			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>(renderer);
 			else {
 				// unknown type — skip until end of that UIElement block
 				while (std::getline(in, line)) {

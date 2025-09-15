@@ -2,13 +2,10 @@
 #include <fstream>
 #include <iostream>
 
-DelusiveUIRegistry& DelusiveUIRegistry::Instance() {
-	static DelusiveUIRegistry instance;
-	if (!instance.init) { // Use the instance to access the non-static member
-		instance.init = true;
-		instance.LoadAll();
-	}
-	return instance;
+DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer) 
+	: renderer(_renderer)
+{
+
 }
 
 void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
@@ -29,7 +26,7 @@ void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
 			if (line == "[UICanvas]") break;
 		}
 
-		auto canvas = std::make_unique<UICanvas>();
+		auto canvas = std::make_unique<UICanvas>(renderer);
 		canvas->Deserialize(in); // now it starts reading the proper contents
 		canvases[canvas->GetName()] = std::move(canvas);
 	}
@@ -43,7 +40,7 @@ void DelusiveUIRegistry::SaveToFile(const std::string& path) const {
 	}
 }
 
-UICanvas* DelusiveUIRegistry::Get(const std::string& name) {
+UICanvas* DelusiveUIRegistry::Get(const std::string& name) const{
 	auto canv = canvases.find(name);
 	if (canv != canvases.end()) {
 		return canv->second.get();

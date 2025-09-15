@@ -2,7 +2,8 @@
 #include <sstream>
 
 Component::Component() {
-    static bool initialized = false;
+    
+    bool initialized = false;
     if (!initialized) {
         RegisterProperties();
         initialized = true;

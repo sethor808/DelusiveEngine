@@ -1,20 +1,16 @@
 #include "UIPanel.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include "Shader.h"
 #include <imgui/imgui.h>
 
-UIPanel::UIPanel() 
-    : UIElement("UIPanel", { 0,0 })
+UIPanel::UIPanel(DelusiveRenderer& _renderer)
+    : UIElement(_renderer)
 {
     name = "UIPanel";
 }
 
-UIPanel::UIPanel(const glm::vec2& pos, const glm::vec2& siz)
-    : UIElement("UIPanel", pos){
-}
-
 std::unique_ptr<UIElement> UIPanel::Clone() const {
-    auto copy = std::make_unique<UIPanel>();
+    auto copy = std::make_unique<UIPanel>(renderer);
     copy->SetPosition(position);
     copy->SetSize(size);
     copy->SetColor(color);
@@ -41,7 +37,7 @@ void UIPanel::SetColor(const glm::vec4& c) {
 
 void UIPanel::Draw(const glm::mat4& projection) {
     if (shader) shader->Use();
-    Renderer::DrawRect(position, size, color, projection, shader, texture);
+    renderer.DrawRect(position, size, color, projection, shader, texture);
 
     // Draw children
     for (auto& child : children) {

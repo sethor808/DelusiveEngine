@@ -33,7 +33,7 @@ public:
 	virtual void Deserialize(std::ifstream&);
 	virtual void DrawImGui();
 
-	uint16_t GetID() const { return id; }
+	uint64_t GetID() const { return id; }
 	void SetID(uint64_t newID) { id = newID; }
 	virtual std::string GetType() const = 0;
 	

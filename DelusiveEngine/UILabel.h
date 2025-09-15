@@ -6,9 +6,8 @@
 
 class UILabel : public UIElement {
 public:
-	UILabel();
-	UILabel(const std::string);
-	UILabel(const std::string& text, const glm::vec2& pos, float size = 16.0f, const glm::vec4& color = { 1, 1, 1, 1 });
+	UILabel() = delete;
+	UILabel(DelusiveRenderer&);
 
 	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;

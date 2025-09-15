@@ -1,12 +1,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Renderer.h"
 #include "PathfindingSystem.h"
 #include <limits>
 #include <algorithm>
 #include <cmath>
 #include <glm/gtx/hash.hpp>
 
-PathfindingSystem::PathfindingSystem() {
+PathfindingSystem::PathfindingSystem(DelusiveRenderer& _renderer) 
+	: SceneSystem(_renderer)
+{
 	name = "New PathfindingSystem";
 	RegisterProperties();
 }
@@ -18,7 +19,7 @@ void PathfindingSystem::RegisterProperties() {
 }
 
 std::unique_ptr<SceneSystem> PathfindingSystem::Clone() const {
-	auto clone = std::make_unique<PathfindingSystem>();
+	auto clone = std::make_unique<PathfindingSystem>(renderer);
 
 	// Clone all nodes
 	std::unordered_map<const Node*, Node*> originalToClone;
@@ -220,6 +221,6 @@ void PathfindingSystem::DrawDebug(const glm::mat4 projection) const {
 			color = glm::vec4(0.8f, 0.2f, 0.2f, 0.5f); // Red
 
 		// Draw a unit-size square at node center
-		Renderer::DebugDrawRect(worldPos + glm::vec2(0.5f), 1.0f, color);
+		renderer.DebugDrawRect(worldPos + glm::vec2(0.5f), 1.0f, color);
 	}
 }

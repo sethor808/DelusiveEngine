@@ -3,10 +3,11 @@
 #include <gl/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "DelusiveMacros.h"
 #include <iostream>
 
 ColliderRenderer::ColliderRenderer() {
-    handleSize = handleSize / Renderer::GetPixelScale();
+    handleSize = handleSize / DELUSIVE_PIXEL_SCALE;
 
     // Static 1x1 square for reuse
     float quad[] = {
@@ -23,7 +24,7 @@ ColliderRenderer::ColliderRenderer() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 
-    shader = new Shader("shaders\\collider_vert.glsl", "shaders\\collider_frag.glsl");
+    shader = new Shader(DEFAULT_COLL_VERT, DEFAULT_COLL_FRAG);
     std::cout << "[ColliderRenderer] Shader program ID: " << shader->GetID() << std::endl;
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
@@ -37,6 +38,11 @@ ColliderRenderer::~ColliderRenderer() {
 }
 
 void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& projection) const{
+    if(!shader) {
+        std::cerr << "[ColliderRenderer] shader is nullptr!\n";
+        return;
+    }
+
     shader->Use();
 
     GLint colorLoc = glGetUniformLocation(shader->GetID(), "color");

@@ -6,17 +6,15 @@
 #include "Shader.h"
 #include "DelusiveUtils.h"
 #include "Texture.h"
-#include "Renderer.h"
+#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 #include "DelusiveRegistry.h"
+#include "DelusiveMacros.h"
 
 class UIElement {
 public:
-	UIElement();
-
-	UIElement(const std::string& name, const glm::vec2& position)
-		: name(name), position(position) {
-	}
+	UIElement() = delete;
+	UIElement(DelusiveRenderer& _renderer);
 
 	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
@@ -72,6 +70,7 @@ public:
 	virtual void Serialize(std::ostream& out) const;
 	virtual void Deserialize(std::istream& in);
 protected:
+	DelusiveRenderer& renderer;
 	PropertyRegistry registry;
 	std::string name;
 	bool enabled = true;

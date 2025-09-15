@@ -7,6 +7,7 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Collider.c
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\ColliderComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\ColliderComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\ColliderRenderer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\ColliderRenderer.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Component.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Component.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveEngine.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveEngine.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveUI.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveUI.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveUIRegistry.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveUIRegistry.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveUtils.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveUtils.obj
@@ -25,18 +26,16 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include\im
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include\imgui\imgui_draw.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_draw.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include\imgui\imgui_tables.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_tables.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include\imgui\imgui_widgets.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_widgets.obj
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\main.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\main.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\PathfindingComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PathfindingComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\PathfindingSystem.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PathfindingSystem.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\PhysicsSystem.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PhysicsSystem.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\PlayerAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PlayerAgent.obj
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Renderer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Renderer.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveRenderer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveRenderer.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Scene.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Scene.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SceneSystem.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SceneSystem.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Shader.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Shader.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SolidCollider.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SolidCollider.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SpriteComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SpriteComponent.obj
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SpriteEditor.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SpriteEditor.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Sprite.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Sprite.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\SpriteData.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\SpriteData.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\StatsComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\StatsComponent.obj

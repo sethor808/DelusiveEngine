@@ -1,5 +1,6 @@
 #include "AnimatorComponent.h"
 #include "Agent.h"
+#include "DelusiveMacros.h"
 #include <imgui/imgui.h>
 #include <fstream>
 #include <iostream>
@@ -87,7 +88,7 @@ void AnimatorComponent::DrawImGui() {
     }
 
     if (ImGui::BeginPopup("AnimationFileBrowser")) {
-        for (const auto& entry : std::filesystem::directory_iterator("assets/animations")) { //TODO: Setup a macro path somewhere
+        for (const auto& entry : std::filesystem::directory_iterator(ANIMS_FOLDER)) { //TODO: Setup a macro path somewhere
             if (entry.is_regular_file() && entry.path().extension() == ".anim") {
                 std::string fullPath = entry.path().string();
                 std::string filename = entry.path().filename().string();

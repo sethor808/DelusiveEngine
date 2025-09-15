@@ -41,7 +41,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\DelusiveEngine\bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\lib</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,16 +106,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32.lib;opengl32.lib;SDL3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -147,6 +148,7 @@
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="ColliderRenderer.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DelusiveEngine.cpp" />
     <ClCompile Include="DelusiveUI.cpp" />
     <ClCompile Include="DelusiveUIRegistry.cpp" />
     <ClCompile Include="DelusiveUtils.cpp" />
@@ -165,18 +167,16 @@
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="PathfindingComponent.cpp" />
     <ClCompile Include="PathfindingSystem.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="PlayerAgent.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="DelusiveRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SolidCollider.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
-    <ClCompile Include="SpriteEditor.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteData.cpp" />
     <ClCompile Include="StatsComponent.cpp" />
@@ -204,6 +204,8 @@
     <ClInclude Include="ColliderRenderer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DelusiveData.h" />
+    <ClInclude Include="DelusiveEngine.h" />
+    <ClInclude Include="DelusiveMacros.h" />
     <ClInclude Include="DelusiveTalismans.h" />
     <ClInclude Include="DelusiveSystems.h" />
     <ClInclude Include="DelusiveUI.h" />
@@ -228,7 +230,7 @@
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PlayerAgent.h" />
     <ClInclude Include="DelusiveRegistry.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="DelusiveRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="BehaviourRegistry.h" />
@@ -237,7 +239,6 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="SpriteData.h" />
-    <ClInclude Include="SpriteEditor.h" />
     <ClInclude Include="StatsComponent.h" />
     <ClInclude Include="Talisman.h" />
     <ClInclude Include="Texture.h" />

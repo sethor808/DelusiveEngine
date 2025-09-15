@@ -17,20 +17,11 @@
     <Filter Include="engine\physics">
       <UniqueIdentifier>{2bca794d-0cf9-4aad-bcfb-f8bd993daeae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\editor">
-      <UniqueIdentifier>{0475492e-f1ca-4566-8121-8f2b34bd4927}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\core\Source Files">
       <UniqueIdentifier>{826a5ae5-9688-4a4d-beb9-69949fcae5ac}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\core\Header Files">
       <UniqueIdentifier>{aa305504-4276-415d-b57e-f7a63d786117}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\editor\Header Files">
-      <UniqueIdentifier>{9462efdf-9fdc-4024-a5e8-7668a5f126e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\editor\Source Files">
-      <UniqueIdentifier>{1a6f38f3-15b8-4ddb-ab5b-f089e5dd55e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\physics\Header Files">
       <UniqueIdentifier>{832d43cc-c824-4802-af04-758eba2f7b95}</UniqueIdentifier>
@@ -89,6 +80,15 @@
     <Filter Include="engine\behaviour scripts\Source Files">
       <UniqueIdentifier>{b8cdef50-a7a2-4d60-852e-85a97eac11cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\editor">
+      <UniqueIdentifier>{2b0c9f40-5622-4798-b681-9a41fcc519c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\editor\Header Files">
+      <UniqueIdentifier>{d936ee94-f98c-44aa-b6f0-aeff48fea58b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\editor\Source Files">
+      <UniqueIdentifier>{2795c03b-d9c8-4ab6-b9c7-b4ee6ab80f57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -112,13 +112,10 @@
     <ClCompile Include="Scene.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteEditor.cpp">
-      <Filter>engine\editor\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Collider.cpp">
       <Filter>engine\physics\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="DelusiveRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ColliderRenderer.cpp">
@@ -135,12 +132,6 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>engine\render\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineUI.cpp">
-      <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayerAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
@@ -242,7 +233,11 @@
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditorRegistry.cpp" />
+    <ClCompile Include="DelusiveEngine.cpp" />
     <ClCompile Include="EditorInterface.cpp">
+      <Filter>engine\editor\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -250,13 +245,10 @@
     <ClInclude Include="Scene.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteEditor.h">
-      <Filter>engine\editor\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Collider.h">
       <Filter>engine\physics\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="DelusiveRenderer.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
@@ -279,9 +271,6 @@
     </ClInclude>
     <ClInclude Include="TransformData.h">
       <Filter>engine\core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineUI.h">
-      <Filter>engine\editor\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayerAgent.h">
       <Filter>engine\agents\Header Files</Filter>
@@ -412,8 +401,15 @@
     <ClInclude Include="EditorInput.h" />
     <ClInclude Include="EditorRegistry.h" />
     <ClInclude Include="ISelectable.h" />
+    <ClInclude Include="DelusiveEngine.h" />
     <ClInclude Include="EditorInferface.h">
       <Filter>engine\editor\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUI.h">
+      <Filter>engine\editor\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveMacros.h">
+      <Filter>engine\core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

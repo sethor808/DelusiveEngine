@@ -1,6 +1,7 @@
 #pragma once
 #include "DelusiveData.h"
 #include "BehaviourRegistry.h"
+#include "DelusiveMacros.h"
 #include <string>
 #include <functional>
 #include <filesystem>
@@ -257,7 +258,7 @@ public:
                             }
                         }
                      };
-                    DrawDirectory("assets/sprites");
+                    DrawDirectory(SPRITE_FOLDER);
                     ImGui::EndPopup();
                 }
             }
@@ -268,7 +269,7 @@ public:
                     ImGui::OpenPopup(("FontBrowser##" + name).c_str());
                 }
                 if (ImGui::BeginPopup(("FontBrowser##" + name).c_str())) {
-                    for (auto& entry : std::filesystem::recursive_directory_iterator("assets/fonts")) {
+                    for (auto& entry : std::filesystem::recursive_directory_iterator(FONT_FOLDER)) {
                         if (entry.is_regular_file()) {
                             std::string ext = entry.path().extension().string();
                             std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
