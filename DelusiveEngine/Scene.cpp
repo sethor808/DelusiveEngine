@@ -260,7 +260,7 @@ bool Scene::LoadFromFile(const std::string& path) {
 
 			// Let the agent load its block (until [/Agent])
 			agent->LoadFromFile(in);
-			agents.push_back(std::move(agent));
+			//agents.push_back(std::move(agent));
 			AddAgent(std::move(agent));
 		}
 		else if (token == "systems"){
