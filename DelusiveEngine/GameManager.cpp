@@ -9,9 +9,11 @@ GameManager::GameManager(DelusiveRenderer& _renderer)
 }
 
 void GameManager::Init() {
+    scriptManager.Initialize();
     isPlaying = false;
     activeScene = &editorScene;
-    isPlaying = false;
+    editorScene.SetGameManager(this);
+	playScene.SetGameManager(this);
 }
 
 void GameManager::Play() {

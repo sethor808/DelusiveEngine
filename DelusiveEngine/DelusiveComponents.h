@@ -6,6 +6,6 @@
 #include "SpriteComponent.h"
 #include "StatsComponent.h"
 #include "TriggerCollider.h"
-#include "TransformData.h"
+#include "TransformComponent.h"
 #include "AnimatorComponent.h"
 #include "PathfindingComponent.h"

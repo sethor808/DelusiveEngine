@@ -9,16 +9,21 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="BehaviourScripts">
+      <UniqueIdentifier>{5a461c92-ce69-45df-9469-b345cb56577c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BehaviourScripts\Source Files">
+      <UniqueIdentifier>{e285daa5-923a-4184-9007-24bf9dba4857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BehaviourScripts\Header Files">
+      <UniqueIdentifier>{fd00ffcf-9c49-4a2e-bf23-69ae44f59809}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="BasicFollow.h">
+      <Filter>BehaviourScripts\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="DelusiveScripts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,8 +31,11 @@
     <ClCompile Include="DelusiveScripts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="BasicFollow.cpp">
+      <Filter>BehaviourScripts\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelusiveScriptAPI.cpp">
+      <Filter>BehaviourScripts\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

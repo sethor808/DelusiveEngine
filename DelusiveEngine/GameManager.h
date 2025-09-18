@@ -2,6 +2,7 @@
 #include <memory>
 #include "Scene.h"
 #include "DelusiveRenderer.h"
+#include "ScriptManager.h"
 
 class Scene;
 
@@ -23,8 +24,11 @@ public:
     Scene& GetEditorScene();
     void SetEditorScene(const Scene&);
 
+	ScriptManager& GetScriptManager() { return scriptManager; }
+
 private:
     DelusiveRenderer& renderer;
+    ScriptManager scriptManager;
     Scene editorScene;
     Scene playScene;
     Scene* activeScene = nullptr;

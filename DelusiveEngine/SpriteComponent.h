@@ -1,9 +1,7 @@
 #pragma once
 #include "DelusiveData.h"
 #include "Component.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "TransformData.h"
+#include "TransformComponent.h"
 #include "EditorInferface.h"
 #include <glm/glm.hpp>
 #include <GL/glew.h>
@@ -46,7 +44,7 @@ public:
     }
 
     //void Serialize(std::ofstream& out) const override;
-    void Deserialize(std::ifstream& in) override;
+    void Deserialize(std::istream& in) override;
 private:
     InteractionState interaction;
 	DelusiveTexture textureData;

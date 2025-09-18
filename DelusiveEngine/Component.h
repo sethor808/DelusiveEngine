@@ -1,17 +1,15 @@
 #pragma once
 #include "DelusiveUtils.h"
-#include "TransformData.h"
 #include "AnimatorData.h"
-#include "DelusiveRegistry.h"
+#include "TransformComponent.h"
 #include <glm/glm.hpp>
-#include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <string>
-#include <sstream>
 
 class Agent;
+class PropertyRegistry;
 
 class Component {
 public:
@@ -57,10 +55,10 @@ public:
 	void SetID(uint64_t id) { componentID = id; }
 
 	// Save/Load
-	virtual void Serialize(std::ofstream& out) const;
-	virtual void Deserialize(std::ifstream& in);
+	virtual void Serialize(std::ostream& out) const;
+	virtual void Deserialize(std::istream& in);
 protected:
-	PropertyRegistry registry;
+	std::unique_ptr<PropertyRegistry> registry;
 	Agent* owner = nullptr;
 	bool editorMode = false;
 	std::string name;

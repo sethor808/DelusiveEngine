@@ -1,3 +1,4 @@
-﻿  pch.cpp
-  DelusiveScripts.cpp
-  DelusiveScripts.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\x64\Debug\DelusiveScripts.lib
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  LINK : ..\lib\DelusiveScripts.dll not found or not built by the last incremental link; performing full link
+     Creating library ..\lib\DelusiveScripts.lib and object ..\lib\DelusiveScripts.exp
+  DelusiveScripts.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\lib\DelusiveScripts.dll

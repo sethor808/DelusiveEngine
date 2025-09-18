@@ -89,6 +89,15 @@
     <Filter Include="engine\editor\Source Files">
       <UniqueIdentifier>{2795c03b-d9c8-4ab6-b9c7-b4ee6ab80f57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External Files">
+      <UniqueIdentifier>{65a35c46-3e84-42f7-a3d8-f811191afe14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Files\External Headers">
+      <UniqueIdentifier>{56f8f0c3-b540-4aa0-ba32-c9e9d6886498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Files\Internal Implementation">
+      <UniqueIdentifier>{0abab48b-fdc9-4767-ade6-953bbf1aab3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -240,6 +249,15 @@
     <ClCompile Include="EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DelusiveScriptAgent.cpp">
+      <Filter>External Files\Internal Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptComponent.cpp">
+      <Filter>engine\components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelusiveRegistry.cpp">
+      <Filter>engine\core\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -269,7 +287,7 @@
     <ClInclude Include="ColliderRenderer.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformData.h">
+    <ClInclude Include="TransformComponent.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayerAgent.h">
@@ -386,12 +404,6 @@
     <ClInclude Include="DelusiveRegistry.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourScript.h">
-      <Filter>engine\behaviour scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourRegistry.h">
-      <Filter>engine\behaviour scripts\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DelusiveUIRegistry.h">
       <Filter>engine\ui\Headers</Filter>
     </ClInclude>
@@ -411,5 +423,32 @@
     <ClInclude Include="DelusiveMacros.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Delusive\DelusiveScriptAgent.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Delusive\ScriptRegistry.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Delusive\BehaviourScript.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptManager.h">
+      <Filter>engine\behaviour scripts\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Delusive\DelusiveScriptAPI.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptComponent.h">
+      <Filter>engine\components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AgentTypes.h">
+      <Filter>engine\agents</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Property.inl" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 #include "Scene.h"
+#include "DelusiveAgents.h"
+
 //TODO: If there is no camera, handle properly
 Scene::Scene(DelusiveRenderer& _renderer)
 	: renderer(_renderer), name("New Scene"), camera(nullptr)
@@ -14,6 +16,10 @@ std::unique_ptr<Scene> Scene::Clone() const{
 	auto cloned = std::make_unique<Scene>(renderer);
 	cloned->name = this->name;
 
+	if(gameManager) {
+		cloned->gameManager = gameManager;
+	}
+
 	for (const auto& agent : agents) {
 		cloned->AddAgent(agent->Clone());
 	}
@@ -28,6 +34,10 @@ std::unique_ptr<Scene> Scene::Clone() const{
 void Scene::CloneInto(Scene& container) const {
 	container.name = this->name;
 	container.Clear(); // Clean existing contents before cloning
+
+	if (gameManager) {
+		container.gameManager = gameManager;
+	}
 
 	// Clone Agents
 	for (const auto& agent : agents) {
@@ -64,6 +74,7 @@ bool Scene::HasCamera() const {
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
 	_agent->SetID(nextAgentID);
+	_agent->SetScene(this);
 	agents.push_back(std::move(_agent));
 	nextAgentID++;
 }
@@ -250,6 +261,7 @@ bool Scene::LoadFromFile(const std::string& path) {
 			// Let the agent load its block (until [/Agent])
 			agent->LoadFromFile(in);
 			agents.push_back(std::move(agent));
+			AddAgent(std::move(agent));
 		}
 		else if (token == "systems"){
 			continue;

@@ -3,9 +3,4 @@
 #include "CameraAgent.h"
 #include "EnemyAgent.h"
 #include "EnvironmentAgent.h"
-
-enum class AgentType {
-	Player,
-	Camera,
-	None
-};
+#include "AgentTypes.h"

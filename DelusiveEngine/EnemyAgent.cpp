@@ -22,11 +22,6 @@ std::string EnemyAgent::GetType() const{
 std::unique_ptr<Agent> EnemyAgent::Clone() const {
     auto copy = std::make_unique<EnemyAgent>(this->GetName());  // or however the agent is constructed
 
-    // Copy transform and basic properties
-    if (!scriptName.empty()) {
-        copy->logicScript = ScriptRegistry::Instance().Create(scriptName);
-    }
-
     copy->SetPosition(this->GetTransform().position);
     copy->SetRotation(this->GetTransform().rotation);
     copy->SetScale(this->GetTransform().scale);
@@ -46,9 +41,9 @@ std::unique_ptr<Agent> EnemyAgent::Clone() const {
 }
 
 void EnemyAgent::Update(float deltaTime) {
-    if (logicScript) {
-        logicScript->Update(this, deltaTime);
-    }
+    //if (logicScript) {
+      //  logicScript->Update(deltaTime);
+    //}
 
     for (auto& comp : GetComponents()) {
         comp->Update(deltaTime);
@@ -63,8 +58,7 @@ void EnemyAgent::Draw(const glm::mat4& projection) const {
 
 void EnemyAgent::DrawImGui() {
     Agent::DrawImGui();
-
-    auto names = ScriptRegistry::Instance().GetNames();
+    /*
     int currentIndex = 0;
     for (int i = 0; i < (int)names.size(); i++) {
         if (names[i] == scriptName) { currentIndex = i; break; }
@@ -80,6 +74,7 @@ void EnemyAgent::DrawImGui() {
         (void*)&names, (int)names.size())) {
         SetScript(names[currentIndex]);
     }
+    */
 }
 
 void EnemyAgent::OnHit() {
@@ -88,7 +83,6 @@ void EnemyAgent::OnHit() {
 
 void EnemyAgent::SetScript(const std::string& _scriptName) {
     scriptName = _scriptName;
-    logicScript = ScriptRegistry::Instance().Create(name);
 }
 
 void EnemyAgent::SetTarget(Agent* target) {

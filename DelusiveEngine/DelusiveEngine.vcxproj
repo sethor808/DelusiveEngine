@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\Delusive;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -149,6 +149,8 @@
     <ClCompile Include="ColliderRenderer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DelusiveEngine.cpp" />
+    <ClCompile Include="DelusiveRegistry.cpp" />
+    <ClCompile Include="DelusiveScriptAgent.cpp" />
     <ClCompile Include="DelusiveUI.cpp" />
     <ClCompile Include="DelusiveUIRegistry.cpp" />
     <ClCompile Include="DelusiveUtils.cpp" />
@@ -174,6 +176,7 @@
     <ClCompile Include="DelusiveRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
+    <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SolidCollider.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
@@ -192,7 +195,12 @@
     <ClCompile Include="UIPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\Delusive\BehaviourScript.h" />
+    <ClInclude Include="..\include\Delusive\DelusiveScriptAgent.h" />
+    <ClInclude Include="..\include\Delusive\DelusiveScriptAPI.h" />
+    <ClInclude Include="..\include\Delusive\ScriptRegistry.h" />
     <ClInclude Include="Agent.h" />
+    <ClInclude Include="AgentTypes.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="AnimatorData.h" />
@@ -217,7 +225,6 @@
     <ClInclude Include="EditorInput.h" />
     <ClInclude Include="EditorRegistry.h" />
     <ClInclude Include="EnemyAgent.h" />
-    <ClInclude Include="BehaviourScript.h" />
     <ClInclude Include="EngineUI.h" />
     <ClInclude Include="EnvironmentAgent.h" />
     <ClInclude Include="Font.h" />
@@ -233,7 +240,8 @@
     <ClInclude Include="DelusiveRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneSystem.h" />
-    <ClInclude Include="BehaviourRegistry.h" />
+    <ClInclude Include="ScriptComponent.h" />
+    <ClInclude Include="ScriptManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SolidCollider.h" />
     <ClInclude Include="Sprite.h" />
@@ -242,7 +250,8 @@
     <ClInclude Include="StatsComponent.h" />
     <ClInclude Include="Talisman.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TransformData.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriggerCollider.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="UICanvas.h" />
@@ -251,6 +260,9 @@
     <ClInclude Include="UILabel.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Property.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

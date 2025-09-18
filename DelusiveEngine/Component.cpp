@@ -1,7 +1,11 @@
 #include "Component.h"
+#include "DelusiveRegistry.h"
+#include <imgui/imgui.h>
 #include <sstream>
 
-Component::Component() {
+Component::Component()
+    : registry(std::make_unique<PropertyRegistry>())
+{
     
     bool initialized = false;
     if (!initialized) {
@@ -11,20 +15,20 @@ Component::Component() {
 }
 
 void Component::RegisterProperties() {
-	transform.RegisterProperties(registry);
-	registry.Register("name", &name);
-	registry.Register("enabled", &enabled);
+	transform.RegisterProperties(*registry);
+	registry->Register("name", &name);
+	registry->Register("enabled", &enabled);
 }
 
 void Component::SetName(const std::string& newName) {
 	name = newName;
 }
 
-void Component::Serialize(std::ofstream& out) const {
-	registry.Serialize(out);
+void Component::Serialize(std::ostream& out) const {
+	registry->Serialize(out);
 }
 
-void Component::Deserialize(std::ifstream& in) {
+void Component::Deserialize(std::istream& in) {
     std::stringstream buffer;
 
     std::string line;
@@ -37,10 +41,10 @@ void Component::Deserialize(std::ifstream& in) {
 
     // Now let registry parse key=value pairs
     std::istringstream block(buffer.str());
-    registry.Deserialize(block);
+    registry->Deserialize(block);
 }
 
 void Component::DrawImGui() {
     ImGui::Text("%s", GetType());
-	registry.DrawImGui();
+	registry->DrawImGui();
 }

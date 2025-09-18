@@ -1,5 +1,5 @@
 #pragma once
-#include "TransformData.h"
+#include "TransformComponent.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <memory>
@@ -14,7 +14,7 @@
 
 class Component;
 class Collider;
-
+class Scene;
 
 
 class Agent {
@@ -38,6 +38,9 @@ public:
 	virtual std::string GetType() const = 0;
 	
 	//Virtual functions
+	virtual void SetScene(Scene* _scene) { Scene = _scene; }
+	virtual Scene* GetScene() const { return Scene; }
+
 	virtual void OnHit() {};
 	void HandleMouse(const glm::vec2&, bool);
 	virtual void SetEditorMode(bool);
@@ -133,6 +136,7 @@ public:
 	virtual void TakeDamage(int) {}
 
 protected:
+	Scene* Scene;
 	uint64_t id = 0;
 	bool editorMode = false;
 	InteractionState interaction;

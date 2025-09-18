@@ -72,7 +72,7 @@ void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& 
     }
 
     if (collider.CheckCenterRender()) {
-        glm::vec4 worldCenter = collider.GetOwner()->GetTransform().GetTransformMatrix() * glm::vec4(collider.transform.position, 0.0f, 1.0f);
+        glm::vec4 worldCenter = collider.GetOwner()->GetTransform().ToMatrix() * glm::vec4(collider.transform.position, 0.0f, 1.0f);
         DrawCenterHandle(glm::vec2(worldCenter), projection);
     }
 
@@ -80,7 +80,7 @@ void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& 
 }
 
 void ColliderRenderer::DrawBox(const ColliderComponent& collider, const glm::mat4& projection) const {
-    glm::mat4 model = collider.GetOwner()->GetTransform().GetTransformMatrix() * collider.transform.GetTransformMatrix();
+    glm::mat4 model = collider.GetOwner()->GetTransform().ToMatrix() * collider.transform.ToMatrix();
     shader->SetMat4("model", glm::value_ptr(model));
     shader->SetMat4("projection", glm::value_ptr(projection));
     glUniform4f(glGetUniformLocation(shader->GetID(), "color"), 1.0f, 0.0f, 0.0f, 1.0f);
@@ -91,7 +91,7 @@ void ColliderRenderer::DrawBox(const ColliderComponent& collider, const glm::mat
 void ColliderRenderer::DrawCircle(const ColliderComponent& collider, const glm::mat4& projection) const {
     glm::vec2 center = collider.transform.position;
     float radius = collider.transform.scale.x * 0.5f;
-    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().GetTransformMatrix();
+    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().ToMatrix();
 
     const int segments = 32;
     std::vector<glm::vec2> points;
@@ -129,7 +129,7 @@ void ColliderRenderer::DrawLine(const ColliderComponent& collider, const glm::ma
     float length = collider.transform.scale.x;
     glm::vec2 end = start + dir * length;
 
-    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().GetTransformMatrix();
+    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().ToMatrix();
     glm::vec2 worldStart = glm::vec2(agentMatrix * glm::vec4(start, 0.0f, 1.0f));
     glm::vec2 worldEnd = glm::vec2(agentMatrix * glm::vec4(end, 0.0f, 1.0f));
 
@@ -193,8 +193,8 @@ void ColliderRenderer::DrawHandles(const ColliderComponent& collider, const glm:
 }
 
 void ColliderRenderer::DrawBoxHandles(const ColliderComponent& collider, const glm::mat4& projection) const {
-    const glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().GetTransformMatrix();
-    const glm::mat4 localMatrix = collider.transform.GetTransformMatrix();
+    const glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().ToMatrix();
+    const glm::mat4 localMatrix = collider.transform.ToMatrix();
     const glm::mat4 model = agentMatrix * localMatrix;
 
     const glm::vec2 size = collider.transform.scale;
@@ -223,7 +223,7 @@ void ColliderRenderer::DrawCircleHandles(const ColliderComponent& collider, cons
     glm::vec2 center = collider.transform.position;
     float radius = collider.transform.scale.x * 0.5f;
 
-    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().GetTransformMatrix();
+    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().ToMatrix();
 
     // Center handle
     glm::vec4 worldCenter = agentMatrix * glm::vec4(center, 0.0f, 1.0f);
@@ -241,7 +241,7 @@ void ColliderRenderer::DrawLineHandles(const ColliderComponent& collider, const 
     float length = collider.transform.scale.x;
     glm::vec2 end = start + dir * length;
 
-    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().GetTransformMatrix();
+    glm::mat4 agentMatrix = collider.GetOwner()->GetTransform().ToMatrix();
     glm::vec2 worldStart = glm::vec2(agentMatrix * glm::vec4(start, 0.0f, 1.0f));
     glm::vec2 worldEnd = glm::vec2(agentMatrix * glm::vec4(end, 0.0f, 1.0f));
     glm::vec2 worldCenter = (worldStart + worldEnd) * 0.5f;

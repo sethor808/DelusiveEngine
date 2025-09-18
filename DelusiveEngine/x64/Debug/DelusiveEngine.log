@@ -1,19 +1,63 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   Agent.cpp
+  Animation.cpp
+  AnimatorComponent.cpp
+  BasicTalisman.cpp
+  CameraAgent.cpp
+  Collider.cpp
   ColliderComponent.cpp
   ColliderRenderer.cpp
+  Component.cpp
   DelusiveEngine.cpp
+  DelusiveRegistry.cpp
+  DelusiveScriptAgent.cpp
+  DelusiveUI.cpp
+  DelusiveUIRegistry.cpp
+  DelusiveUtils.cpp
+  EditorInterface.cpp
+  EditorRegistry.cpp
   EnemyAgent.cpp
   EngineUI.cpp
   EnvironmentAgent.cpp
+  Generating Code...
+  Compiling...
+  Font.cpp
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Font.cpp(67,22): warning C4838: conversion from 'float' to 'GLuint' requires a narrowing conversion
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Font.cpp(67,22): warning C4244: 'initializing': conversion from 'float' to 'GLuint', possible loss of data
   GameManager.cpp
   HitboxCollider.cpp
   HurtboxCollider.cpp
+  imgui.cpp
+  imgui_impl_opengl3.cpp
+  imgui_impl_sdl3.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  PathfindingComponent.cpp
+  PathfindingSystem.cpp
   PhysicsSystem.cpp
   PlayerAgent.cpp
+  DelusiveRenderer.cpp
   Scene.cpp
+  SceneSystem.cpp
+  ScriptComponent.cpp
+  Shader.cpp
   SolidCollider.cpp
+  Generating Code...
+  Compiling...
+  SpriteComponent.cpp
   Sprite.cpp
+  SpriteData.cpp
+  StatsComponent.cpp
+  Talisman.cpp
+  Texture.cpp
   TriggerCollider.cpp
+  UIButton.cpp
+  UICanvas.cpp
+  UIElement.cpp
+  UIImage.cpp
+  UILabel.cpp
+  UIManager.cpp
+  UIPanel.cpp
   Generating Code...
   DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\lib\DelusiveEngine.lib

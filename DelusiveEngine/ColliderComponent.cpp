@@ -13,13 +13,13 @@ ColliderComponent::ColliderComponent(){
 
 void ColliderComponent::RegisterProperties() {
     Component::RegisterProperties();
-    registry.Register("shape", reinterpret_cast<int*>(&shape));
+    registry->Register("shape", reinterpret_cast<int*>(&shape));
 }
 
 Zone ColliderComponent::ComputeWorldArea() const {
     const glm::mat4 model =
-        GetOwner()->GetTransform().GetTransformMatrix() *
-        transform.GetTransformMatrix();
+        GetOwner()->GetTransform().ToMatrix() *
+        transform.ToMatrix();
 
     Zone out{ {  std::numeric_limits<float>::infinity(),
                  std::numeric_limits<float>::infinity() },
@@ -103,7 +103,7 @@ bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {
 
 void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
     if (editorMode) {
-        glm::mat4 world = GetOwner()->GetTransform().GetTransformMatrix();
+        glm::mat4 world = GetOwner()->GetTransform().ToMatrix();
         glm::vec2 center = transform.position;
         float radius = transform.scale.x * 0.5f; // assuming uniform scaling
 
@@ -160,7 +160,7 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
             glm::vec2 dir = glm::vec2(cos(angle), sin(angle));
             glm::vec2 end = start + dir * length;
 
-            glm::mat4 world = GetOwner()->GetTransform().GetTransformMatrix();
+            glm::mat4 world = GetOwner()->GetTransform().ToMatrix();
             glm::vec2 worldStart = glm::vec2(world * glm::vec4(start, 0, 1));
             glm::vec2 worldEnd = glm::vec2(world * glm::vec4(end, 0, 1));
             glm::vec2 worldCenter = (worldStart + worldEnd) * 0.5f;

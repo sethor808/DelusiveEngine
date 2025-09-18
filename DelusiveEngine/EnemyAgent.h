@@ -3,7 +3,6 @@
 #include "BehaviourScript.h"
 #include "DelusiveComponents.h"
 #include "DelusiveRegistry.h"
-#include "BehaviourRegistry.h"
 
 class EnemyAgent : public Agent {
 public:
@@ -25,7 +24,7 @@ public:
 private:
 	Agent* target = nullptr;
 	std::string scriptName;
-	std::unique_ptr<BehaviourScript> logicScript;
+	
 
 	glm::vec2 velocity = { 0.0f, 0.0f };
 	glm::vec2 acceleration = { 0.0f, 0.0f };

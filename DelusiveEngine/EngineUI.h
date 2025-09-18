@@ -1,9 +1,9 @@
 #pragma once
 #include "Scene.h"
-#include "PlayerAgent.h"
 #include "AnimatorData.h"
 #include "Animation.h"
 #include "GameManager.h"
+#include "AgentTypes.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
 #include <imgui/backend/imgui_impl_sdl3.h>

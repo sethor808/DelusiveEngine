@@ -18,6 +18,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reflections", "Reflections\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DelusiveGameEditor", "DelusiveGameEditor\DelusiveGameEditor.vcxproj", "{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{52525237-AF54-4C76-B671-3DF5E0673AD1} = {52525237-AF54-4C76-B671-3DF5E0673AD1}
 		{86F6F630-A225-40C0-8F1C-C2CE8F040DEF} = {86F6F630-A225-40C0-8F1C-C2CE8F040DEF}
 	EndProjectSection
 EndProject

@@ -46,7 +46,7 @@ void SpriteComponent::Init() {
 
 void SpriteComponent::RegisterProperties() {
     Component::RegisterProperties();
-    registry.Register("textureData", &textureData);
+    registry->Register("textureData", &textureData);
 }
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
@@ -95,8 +95,8 @@ void SpriteComponent::SetRotation(float angle) {
 }
 
 void SpriteComponent::Draw(const glm::mat4& projection) const{
-    glm::mat4 agentTransform = owner->GetTransform().GetTransformMatrix();
-    glm::mat4 localTransform = transform.GetTransformMatrix();
+    glm::mat4 agentTransform = owner->GetTransform().ToMatrix();
+    glm::mat4 localTransform = transform.ToMatrix();
     glm::mat4 model = agentTransform * localTransform;
     glm::mat4 view = glm::mat4(1.0f);
 
@@ -229,7 +229,7 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
     }
 }
 
-void SpriteComponent::Deserialize(std::ifstream& in) {
+void SpriteComponent::Deserialize(std::istream& in) {
     Component::Deserialize(in);
 
     SetTexturePath(textureData.texturePath);

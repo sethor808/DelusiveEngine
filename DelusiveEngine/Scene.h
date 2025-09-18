@@ -4,13 +4,15 @@
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "DelusiveRenderer.h"
-#include "Sprite.h"
-#include "Agent.h"
-#include "DelusiveAgents.h"
 #include "DelusiveUtils.h"
 #include "SceneSystem.h"
 #include "PhysicsSystem.h"
 #include "DelusiveSystems.h"
+
+//Forward declarations
+class Agent; //Forward declaration
+class CameraAgent;
+class GameManager;
 
 class Scene {
 public:
@@ -26,6 +28,10 @@ public:
 	std::unique_ptr<Scene> Clone() const;
 
 	bool HasCamera() const;
+
+	//Ownership methods
+	void SetGameManager(GameManager* gm) { gameManager = gm; }
+	GameManager* GetGameManager() const { return gameManager; }
 
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
@@ -53,6 +59,7 @@ public:
 	bool LoadFromFile(const std::string& path);
 
 private:
+	GameManager* gameManager = nullptr;
 	DelusiveRenderer& renderer;
 	std::string name;
 	CameraAgent* camera;

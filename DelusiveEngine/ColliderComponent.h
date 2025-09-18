@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "TransformData.h"
+#include "TransformComponent.h"
 #include "ColliderRenderer.h"
 #include "Agent.h"
 #include <glm/glm.hpp>

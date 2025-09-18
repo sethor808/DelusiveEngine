@@ -1,5 +1,6 @@
 #include <filesystem>
 #include "EngineUI.h"
+#include "DelusiveAgents.h"
 #include "DelusiveMacros.h"
 #include "DelusiveRenderer.h"
 #include "DelusiveComponents.h"
