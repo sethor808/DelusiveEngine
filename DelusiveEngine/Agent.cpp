@@ -288,7 +288,7 @@ void Agent::DrawImGui() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
-		else if (type == "ScriptComponent") {
+		if (ImGui::MenuItem("ScriptComponent")) {
 			ScriptManager& scriptManager = this->scene->GetScriptManager();
 			AddComponent<ScriptComponent>(scriptManager);
 		}

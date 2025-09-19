@@ -4,6 +4,7 @@
 ScriptComponent::ScriptComponent(ScriptManager& scriptManager)
 	: scriptManager(scriptManager)
 { 
+	name = "New ScriptComponent";
 	if (owner) {
 		scriptAgent = std::make_unique<DelusiveScriptAgent>(owner);
 	}

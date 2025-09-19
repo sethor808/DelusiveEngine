@@ -74,7 +74,7 @@ bool Scene::HasCamera() const {
 }
 
 ScriptManager& Scene::GetScriptManager() const {
-	if (gameManager) {
+	if (gameManager != nullptr) {
 		return gameManager->GetScriptManager();
 	}
 }
@@ -266,9 +266,11 @@ bool Scene::LoadFromFile(const std::string& path) {
 			else agent = std::make_unique<PlayerAgent>(""); // fallback
 
 			// Let the agent load its block (until [/Agent])
-			agent->LoadFromFile(in);
-			//agents.push_back(std::move(agent));
+			//There has to be a better way to do this
+			Agent* link = agent.get();
 			AddAgent(std::move(agent));
+			link->LoadFromFile(in);
+			
 		}
 		else if (token == "systems"){
 			continue;

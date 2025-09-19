@@ -53,6 +53,14 @@ name New Collider
 enabled 1
 shape 0
 [/Component]
+[Component ScriptComponent]
+position 0 0
+scale 1 1
+rotation 0
+name NewScriptComponent
+enabled 1
+script BasicFollow
+[/Component]
 [/Agent]
 [Agent EnvironmentAgent]
 name NewEnvironment
