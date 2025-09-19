@@ -147,10 +147,6 @@ std::string EngineUI::GetPath(std::string fileName) {
 
 void EngineUI::RenderTopBar(Scene& scene) {
     if (ImGui::BeginMainMenuBar()) {
-        static bool newAssetPopup = false;
-        static std::string assetToDelete;
-        static bool showDeleteConfirm = false;
-
         ImGui::Text("View");
         ImGui::SameLine();
         ImGui::SetNextItemWidth(175.0f);
@@ -321,8 +317,6 @@ void EngineUI::RenderTopBar(Scene& scene) {
         }
 
         if (ImGui::BeginPopup("NewAssetPopup")) {
-            static char assetNameBuffer[64] = "";
-
             ImGui::InputText("Name", assetNameBuffer, sizeof(assetNameBuffer));
             if (ImGui::Button("Create")) {
                 if (strlen(assetNameBuffer) > 0) {
@@ -481,6 +475,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 if (ImGui::BeginPopupContextItem("AgentContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::MenuItem("Delete")) {
                         agentToDeleteIndex = (int)i;
+                        selected.Reset();
                     }
                     if (ImGui::BeginMenu("Load Prefab")) {
                         for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
@@ -682,7 +677,6 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
                 }
             }
 
-            static char descBuffer[256] = "";
             ImGui::Text("Description");
             ImGui::InputTextMultiline("##descInput", descBuffer, sizeof(descBuffer), ImVec2(-1, 60));
 
@@ -883,8 +877,6 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
             selectedBranch = (int)i;
             selectedFrame = 0;
         }
-        
-        static bool openRenamePopup = false; // Declare at top of your loop
 
         if (ImGui::BeginPopupContextItem("BranchContext")) {
             if (ImGui::MenuItem("Rename")) {
@@ -907,7 +899,6 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
         }
 
         if (ImGui::BeginPopup("RenameBranch")) {
-            static char renameBuffer[64] = "";
             strncpy_s(renameBuffer, currentAnimation.data.branches[i].name.c_str(), sizeof(renameBuffer));
             if (ImGui::InputText("New Name", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
                 currentAnimation.data.branches[i].name = renameBuffer;

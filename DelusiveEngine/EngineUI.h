@@ -97,6 +97,17 @@ private:
 	std::vector<std::string> loadedAssets;
 	AgentType selectedAgentType = AgentType::None;
 
+    //General containers
+    char assetNameBuffer[64] = "";
+    char renameBuffer[64] = "";
+    char descBuffer[256] = "";
+    std::string assetToDelete = "";
+
+    //Popup flags
+    bool openRenamePopup = false;
+    bool newAssetPopup = false;
+    bool showDeleteConfirm = false;
+
 	//Scene editor specifics
     Selection selected;
 	int agentToDeleteIndex = -1;
