@@ -17,6 +17,64 @@ enum class EditorMode {
 	GameView
 };
 
+struct Selection {
+    enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
+    void* ptr = nullptr;
+    void Reset() { kind = None; ptr = nullptr; }
+    bool Is(Kind k, void* p) const { return kind == k && ptr == p; }
+    void Draw() {
+        // Use selection.kind to safely cast to the correct type
+        switch (kind) {
+        case AgentObject:
+            if (ptr) {
+                Agent* a = static_cast<Agent*>(ptr);
+                a->DrawImGui();
+            }
+            break;
+        case ComponentObject:
+            if (ptr) {
+                Component* c = static_cast<Component*>(ptr);
+                c->DrawImGui();
+            }
+            break;
+        case SystemObject:
+            if (ptr) {
+                SceneSystem* s = static_cast<SceneSystem*>(ptr);
+                s->DrawImGui();
+            }
+            break;
+        default:
+            ImGui::TextDisabled("Nothing selected.");
+            break;
+        }
+    }
+    void SetEditorMode(bool enabled) {
+        switch (kind) {
+        case AgentObject:
+            if (ptr) {
+                Agent* a = static_cast<Agent*>(ptr);
+                a->SetEditorMode(enabled);
+            }
+            break;
+        case ComponentObject:
+            if (ptr) {
+                Component* c = static_cast<Component*>(ptr);
+                c->SetEditorMode(enabled);
+            }
+            break;
+        case SystemObject:
+            if (ptr) {
+                SceneSystem* s = static_cast<SceneSystem*>(ptr);
+                s->SetEditorMode(enabled);
+            }
+            break;
+        default:
+            ImGui::TextDisabled("Nothing selected.");
+            break;
+        }
+    }
+};
+
 class EngineUI {
 public:
 	EngineUI(GameManager&, DelusiveRenderer&);
@@ -40,6 +98,7 @@ private:
 	AgentType selectedAgentType = AgentType::None;
 
 	//Scene editor specifics
+    Selection selected;
 	int agentToDeleteIndex = -1;
 
 	//Agent editor specifics

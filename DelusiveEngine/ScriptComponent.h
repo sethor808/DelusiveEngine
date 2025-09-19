@@ -15,12 +15,16 @@ public:
     ScriptComponent(ScriptComponent&&) noexcept = default;
     ScriptComponent& operator=(ScriptComponent&&) noexcept = default;
 
+    void InitScript();
+
     void RegisterProperties() override;
 
     const char* GetType() const override { return "ScriptComponent"; }
     std::unique_ptr<Component> Clone() const override;
 
-    void SetOwner(Agent* agent) override;
+    void SetOwner(Agent*) override;
+    void SetTarget();
+    void SetTarget(Agent*);
 
     //ScriptManager is fetched from GameManager
     void AttachScript();
@@ -35,5 +39,6 @@ public:
 private:
     ScriptManager& scriptManager;
 	std::unique_ptr<DelusiveScriptAgent> scriptAgent;
+    std::unique_ptr<DelusiveScriptAgent> target;
     std::unique_ptr<DelusiveScript> scriptContainer;
 };

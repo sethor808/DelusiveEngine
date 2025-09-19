@@ -26,7 +26,7 @@ public:
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 
-	std::unique_ptr<Scene> Clone() const;
+	std::unique_ptr<Scene> Clone();
 
 	bool HasCamera() const;
 
@@ -38,6 +38,7 @@ public:
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
 	std::vector<std::unique_ptr<Agent>>& GetAgents();
+	Agent* FetchPlayer();
 	void ClearAgents();
 
 	//System management

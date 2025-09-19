@@ -13,7 +13,7 @@ Scene::~Scene() {
 
 }
 
-std::unique_ptr<Scene> Scene::Clone() const{
+std::unique_ptr<Scene> Scene::Clone() {
 	auto cloned = std::make_unique<Scene>(renderer);
 	cloned->name = this->name;
 
@@ -22,7 +22,7 @@ std::unique_ptr<Scene> Scene::Clone() const{
 	}
 
 	for (const auto& agent : agents) {
-		cloned->AddAgent(agent->Clone());
+		cloned->AddAgent(agent->Clone(this));
 	}
 
 	for (const auto& sys : systems) {
@@ -43,7 +43,7 @@ void Scene::CloneInto(Scene& container) const {
 	// Clone Agents
 	for (const auto& agent : agents) {
 		if (agent) {
-			container.AddAgent(agent->Clone());
+			container.AddAgent(agent->Clone(&container));
 		}
 	}
 
@@ -77,6 +77,7 @@ ScriptManager& Scene::GetScriptManager() const {
 	if (gameManager != nullptr) {
 		return gameManager->GetScriptManager();
 	}
+	throw std::runtime_error("Scene::GetScriptManager() - GameManager is null");
 }
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
@@ -84,6 +85,17 @@ void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
 	_agent->SetScene(this);
 	agents.push_back(std::move(_agent));
 	nextAgentID++;
+}
+
+Agent* Scene::FetchPlayer() {
+	for (const auto& agent : agents) {
+		if (agent) {
+			if (auto player = dynamic_cast<PlayerAgent*>(agent.get())) {
+				return player;
+			}
+		}
+	}
+	return nullptr;
 }
 
 std::vector<std::unique_ptr<Agent>>& Scene::GetAgents() {

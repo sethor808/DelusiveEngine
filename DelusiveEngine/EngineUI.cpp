@@ -69,7 +69,7 @@ ImTextureID EngineUI::GetFramePreviewTexture(AnimationFrame& frame, Agent& baseA
     if (!frame.dirty && frame.previewTexture != 0)
         return (ImTextureID)(intptr_t)frame.previewTexture;
 
-    std::unique_ptr<Agent> tempAgent = baseAgent.Clone();
+    std::unique_ptr<Agent> tempAgent = baseAgent.Clone(&gameManager.GetActiveScene());
     ApplyOverrides(frame, *tempAgent);
 
     if (frame.previewTexture != 0)
@@ -169,7 +169,9 @@ void EngineUI::RenderTopBar(Scene& scene) {
             }
             if (gameManager.IsPlaying()) {
                 gameManager.Stop();
+                selected.Reset();
             }
+            selected.Reset();
             ImGui::EndCombo();
         }
         ImGui::SameLine(0.0f, 10.0f);
@@ -230,6 +232,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
             if (gameManager.IsPlaying()) {
                 gameManager.Stop();
+                selected.Reset();
             }
 
             ImGui::EndCombo();
@@ -279,6 +282,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 else {
                     gameManager.Play();
                 }
+                selected.Reset();
             }
         }
 
@@ -360,65 +364,6 @@ void EngineUI::RenderTopBar(Scene& scene) {
 }
 
 void EngineUI::RenderSceneEditor(Scene& scene) {
-    struct Selection {
-        enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
-		void* ptr = nullptr;
-		void Reset() { kind = None; ptr = nullptr; }
-		bool Is(Kind k, void* p) const { return kind == k && ptr == p; }
-        void Draw() {
-            // Use selection.kind to safely cast to the correct type
-            switch (kind) {
-            case AgentObject:
-                if (ptr) {
-                    Agent* a = static_cast<Agent*>(ptr);
-                    a->DrawImGui();
-                }
-                break;
-            case ComponentObject:
-                if (ptr) {
-                    Component* c = static_cast<Component*>(ptr);
-                    c->DrawImGui();
-                }
-                break;
-            case SystemObject:
-                if (ptr) {
-                    SceneSystem* s = static_cast<SceneSystem*>(ptr);
-                    s->DrawImGui();
-                }
-                break;
-            default:
-                ImGui::TextDisabled("Nothing selected.");
-                break;
-            }   
-        }
-        void SetEditorMode(bool enabled) {
-            switch (kind) {
-            case AgentObject:
-                if (ptr) {
-                    Agent* a = static_cast<Agent*>(ptr);
-                    a->SetEditorMode(enabled);
-                }
-                break;
-            case ComponentObject:
-                if (ptr) {
-                    Component* c = static_cast<Component*>(ptr);
-                    c->SetEditorMode(enabled);
-                }
-                break;
-            case SystemObject:
-                if (ptr) {
-                    SceneSystem* s = static_cast<SceneSystem*>(ptr);
-                    s->SetEditorMode(enabled);
-                }
-                break;
-            default:
-                ImGui::TextDisabled("Nothing selected.");
-                break;
-            }
-        }
-    };
-    static Selection selected;
-
     float topBarHeight = ImGui::GetFrameHeight();
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.3f, ImGui::GetIO().DisplaySize.y - topBarHeight), ImGuiCond_Always);

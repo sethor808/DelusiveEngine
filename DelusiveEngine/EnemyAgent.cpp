@@ -21,24 +21,9 @@ std::string EnemyAgent::GetType() const{
     return "EnemyAgent";
 }
 
-std::unique_ptr<Agent> EnemyAgent::Clone() const {
-    auto copy = std::make_unique<EnemyAgent>(this->GetName());  // or however the agent is constructed
-
-    copy->SetPosition(this->GetTransform().position);
-    copy->SetRotation(this->GetTransform().rotation);
-    copy->SetScale(this->GetTransform().scale);
-    copy->SetName(this->GetName());
-
-    // Deep copy each component
-    for (const auto& comp : this->GetComponents()) {
-        if (comp) {
-            std::unique_ptr<Component> clone = comp->Clone();
-            if (clone) {
-                copy->AddRawComponent(std::move(clone));  // Assumes internal AddRawComponent
-            }
-        }
-    }
-
+std::unique_ptr<Agent> EnemyAgent::Clone(Scene* scene) const {
+    auto copy = std::make_unique<EnemyAgent>(GetName());
+    CloneBaseProperties(copy.get(), scene);
     return copy;
 }
 

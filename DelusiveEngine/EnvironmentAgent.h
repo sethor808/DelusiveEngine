@@ -7,7 +7,7 @@ public:
 	EnvironmentAgent(const std::string& agentName);
 
 	//Overrides
-	std::unique_ptr<Agent> Clone() const override;
+	std::unique_ptr<Agent> Clone(Scene*) const override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4&) const override;
 	std::string GetType() const override;

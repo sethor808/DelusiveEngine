@@ -1,9 +1,14 @@
-name TestDummy
-transform 0 0 0 1 1
-components 2
-SpriteComponent
+[Agent PlayerAgent]
+name NewAgent
+position 0 0
+scale 1 1
+rotation 0
+[Component SpriteComponent]
+position 0 0
+scale 1 1
+rotation 0
 name New Sprite
-texture assets/sprites/star.jpg
 enabled 1
-transform 0 0 0 1 1
----
+textureData ../assets/sprites/star.jpg
+[/Component]
+[/Agent]

@@ -25,7 +25,7 @@ public:
 	virtual ~Agent();
 
 	//Mandatory virtual functions
-	virtual std::unique_ptr<Agent> Clone() const = 0;
+	virtual std::unique_ptr<Agent> Clone(Scene*) const = 0;
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(const glm::mat4& projection) const = 0;
 
@@ -52,8 +52,8 @@ public:
 	void SetRotation(const float rotation);
 	void SetScale(const glm::vec2 scale);
 
-	TransformComponent& GetTransform();
-	const TransformComponent& GetTransform() const;
+	Transform& GetTransform();
+	const Transform& GetTransform() const;
 
 	template<typename T>
 	T* GetComponentOfType() {
@@ -145,4 +145,6 @@ protected:
 	std::string type;
 	uint64_t nextComponentID = 0;
 	std::unique_ptr<PropertyRegistry> registry;
+
+	void CloneBaseProperties(Agent*, Scene*) const;
 };

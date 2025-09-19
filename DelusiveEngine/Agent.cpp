@@ -159,11 +159,11 @@ Component* Agent::GetComponentByID(uint64_t id) {
 	return nullptr;
 }
 
-TransformComponent& Agent::GetTransform() {
+Transform& Agent::GetTransform() {
 	return transform;
 }
 
-const TransformComponent& Agent::GetTransform() const {
+const Transform& Agent::GetTransform() const {
 	return transform;
 }
 
@@ -336,4 +336,20 @@ void Agent::RemoveComponentByPointer(Component* target) {
 
 const std::vector<std::unique_ptr<Component>>& Agent::GetComponents() const {
 	return components;
+}
+
+void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
+	copy->SetPosition(GetTransform().position);
+	copy->SetRotation(GetTransform().rotation);
+	copy->SetScale(GetTransform().scale);
+	copy->SetName(GetName());
+	copy->SetScene(scene);
+
+	// Deep copy components
+	for (const auto& comp : GetComponents()) {
+		if (comp) {
+			std::unique_ptr<Component> clone = comp->Clone();
+			if (clone) copy->AddRawComponent(std::move(clone));
+		}
+	}
 }

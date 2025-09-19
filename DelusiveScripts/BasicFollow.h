@@ -13,8 +13,5 @@ public:
     void SetTarget(DelusiveScriptAgent* targetAgent) { target = targetAgent; }
 
 private:
-    DelusiveScriptAgent* owner = nullptr;  // script-facing owner
-    DelusiveScriptAgent* target = nullptr; // player or other agent to follow
-    float moveSpeed = 2.0f;
-    float followDistance = 100.0f;
+    float followDistance = 1.0f;
 };

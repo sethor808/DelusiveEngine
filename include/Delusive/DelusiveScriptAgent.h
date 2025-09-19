@@ -7,7 +7,7 @@ class Agent; //Forward declaration
 
 class DelusiveScriptAgent {
 public:
-	Transform transform;
+	Transform* transform;
 
 	DelusiveScriptAgent(Agent* engineAgent);
 

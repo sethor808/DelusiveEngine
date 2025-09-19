@@ -53,6 +53,8 @@ void PlayerAgent::Update(float deltaTime) {
         HandleMovement(deltaTime);
     }
 
+    std::cout << "[PlayerAgent] Current Position: " << transform.position.x << ", " << transform.position.y << std::endl;
+
     // If dodging, override with dodge impulse
     glm::vec2 finalVelocity = velocity + impulse;
 
@@ -137,25 +139,9 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
     inputLockTimer = 0.1f;
 }
 
-std::unique_ptr<Agent> PlayerAgent::Clone() const {
-    auto copy = std::make_unique<PlayerAgent>(this->GetName());  // or however the agent is constructed
-
-    // Copy transform and basic properties
-    copy->SetPosition(this->GetTransform().position);
-    copy->SetRotation(this->GetTransform().rotation);
-    copy->SetScale(this->GetTransform().scale);
-    copy->SetName(this->GetName());
-
-    // Deep copy each component
-    for (const auto& comp : this->GetComponents()) {
-        if (comp) {
-            std::unique_ptr<Component> clone = comp->Clone();
-            if (clone) {
-                copy->AddRawComponent(std::move(clone));  // Assumes internal AddRawComponent
-            }
-        }
-    }
-
+std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
+    auto copy = std::make_unique<PlayerAgent>(GetName());
+    CloneBaseProperties(copy.get(), scene);
     return copy;
 }
 

@@ -14,11 +14,12 @@ std::string CameraAgent::GetType() const{
 	return "CameraAgent";
 }
 
-std::unique_ptr<Agent> CameraAgent::Clone() const {
+std::unique_ptr<Agent> CameraAgent::Clone(Scene* scene) const {
 	auto cam = std::make_unique<CameraAgent>();
 	cam->SetName(GetName());
 	cam->SetZoom(zoom);
 	cam->panOffset = panOffset;
+	cam->SetScene(scene);
 	return cam;
 }
 

@@ -4,7 +4,7 @@
 
 DelusiveScriptAgent::DelusiveScriptAgent(Agent* agent)
 	: agent(agent) {
-
+	transform = &agent->GetTransform();
 }
 
 uint64_t DelusiveScriptAgent::GetID() const {

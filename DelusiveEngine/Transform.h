@@ -5,9 +5,9 @@
 
 struct Transform {
 public:
-    glm::vec2 position{ 0.0f, 0.0f };
-    float rotation{ 0.0f }; // radians
-    glm::vec2 scale{ 1.0f, 1.0f };
+    glm::vec2 position = glm::vec2(0.0f);
+    float rotation = 0.0f; // radians
+    glm::vec2 scale = glm::vec2(1.0f);;
 
     glm::mat4 ToMatrix() const {
         glm::mat4 model(1.0f);
