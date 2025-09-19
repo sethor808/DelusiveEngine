@@ -1,4 +1,6 @@
 #include "EnemyAgent.h"
+#include "DelusiveComponents.h"
+
 EnemyAgent::EnemyAgent(const std::string& agentName) {
     SetName(agentName);
     SetScale({ 1.0f, 1.0f });
@@ -10,9 +12,9 @@ EnemyAgent::EnemyAgent(const std::string& agentName) {
 void EnemyAgent::RegisterProperties() {
     Agent::RegisterProperties();
 
-    registry.Register("scriptName", &scriptName);
-    registry.Register("moveSpeed", &moveSpeed);
-    registry.Register("damping", &damping);
+    registry->Register("scriptName", &scriptName);
+    registry->Register("moveSpeed", &moveSpeed);
+    registry->Register("damping", &damping);
 }
 
 std::string EnemyAgent::GetType() const{

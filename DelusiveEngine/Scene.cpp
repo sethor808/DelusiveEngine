@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "GameManager.h"
 #include "DelusiveAgents.h"
 
 //TODO: If there is no camera, handle properly
@@ -70,6 +71,12 @@ bool Scene::HasCamera() const {
 		}
 	}
 	return false;
+}
+
+ScriptManager& Scene::GetScriptManager() const {
+	if (gameManager) {
+		return gameManager->GetScriptManager();
+	}
 }
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {

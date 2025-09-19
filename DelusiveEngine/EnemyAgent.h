@@ -1,7 +1,6 @@
 #pragma once
 #include "Agent.h"
 #include "BehaviourScript.h"
-#include "DelusiveComponents.h"
 #include "DelusiveRegistry.h"
 
 class EnemyAgent : public Agent {

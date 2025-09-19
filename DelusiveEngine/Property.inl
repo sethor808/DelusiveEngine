@@ -272,25 +272,44 @@ public:
                     ImGui::EndPopup();
                 }
             }
-            /*
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
-                auto names = ScriptRegistry::Instance().GetNames();
-                int currentIndex = 0;
-                for (int i = 0; i < (int)names.size(); i++) {
-                    if (names[i] == value->scriptName) { currentIndex = i; break; }
+                if (!value->manager) {
+                    ImGui::Text("No ScriptManager available");
+                    return;
                 }
-                if (ImGui::Combo(name.c_str(), &currentIndex,
-                    [](void* data, int idx, const char** out_text) {
-                        auto& vec = *reinterpret_cast<std::vector<std::string>*>(data);
-                        if (idx < 0 || idx >= (int)vec.size()) return false;
-                        *out_text = vec[idx].c_str();
-                        return true;
-                    },
-                    (void*)&names, (int)names.size())) {
-                    value->scriptName = names[currentIndex];
+
+                std::vector<std::string> scriptNames;
+                value->manager->GetAvailableScripts(scriptNames);
+
+                // Find currently selected index
+                int currentIndex = -1;
+                for (int i = 0; i < (int)scriptNames.size(); i++) {
+                    if (scriptNames[i] == value->scriptName) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+
+                if (ImGui::BeginCombo(name.c_str(),
+                    currentIndex >= 0 ? scriptNames[currentIndex].c_str() : "<None>"))
+                {
+                    for (int i = 0; i < (int)scriptNames.size(); i++) {
+                        bool isSelected = (i == currentIndex);
+                        if (ImGui::Selectable(scriptNames[i].c_str(), isSelected)) {
+                            value->scriptName = scriptNames[i];
+
+                            // Recreate the script instance
+                            if (value->manager) {
+                                value->script.reset(value->manager->CreateScript(scriptNames[i], nullptr));
+                                // ScriptComponent can later patch in the owner
+                            }
+                        }
+                        if (isSelected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
                 }
             }
-            */
         }
     }
 };

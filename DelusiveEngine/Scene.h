@@ -10,9 +10,10 @@
 #include "DelusiveSystems.h"
 
 //Forward declarations
-class Agent; //Forward declaration
+class Agent;
 class CameraAgent;
 class GameManager;
+class ScriptManager;
 
 class Scene {
 public:
@@ -32,6 +33,7 @@ public:
 	//Ownership methods
 	void SetGameManager(GameManager* gm) { gameManager = gm; }
 	GameManager* GetGameManager() const { return gameManager; }
+	ScriptManager& GetScriptManager() const;
 
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);

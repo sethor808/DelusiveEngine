@@ -1,12 +1,16 @@
 #include "Agent.h"
 #include "Component.h"
+#include "Scene.h"
+#include "DelusiveRegistry.h"
 #include "DelusiveMacros.h"
 #include "DelusiveComponents.h"
 #include "DelusiveRenderer.h"
 #include <limits>
 #include <sstream>
 
-Agent::Agent() {
+Agent::Agent()
+	: registry(std::make_unique<PropertyRegistry>())
+{
 	RegisterProperties();
 }
 
@@ -15,8 +19,8 @@ Agent::~Agent() {
 }
 
 void Agent::RegisterProperties() {
-	registry.Register("name", &name);
-	transform.RegisterProperties(registry);
+	registry->Register("name", &name);
+	transform.RegisterProperties(*registry);
 }
 
 void Agent::SetEditorMode(bool selected) {
@@ -165,7 +169,7 @@ const TransformComponent& Agent::GetTransform() const {
 
 void Agent::Serialize(std::ofstream& out) const {
 	out << "[Agent " << GetType() << "]\n";
-	registry.Serialize(out);
+	registry->Serialize(out);
 
 	for (auto& comp : components) {
 		out << "[Component " << comp->GetType() << "]\n";
@@ -203,6 +207,10 @@ void Agent::Deserialize(std::ifstream& in) {
 			else if (type == "HitboxCollider")    comp = AddComponent<HitboxCollider>();
 			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>();
 			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>();
+			else if (type == "ScriptComponent") {
+				ScriptManager& scriptManager = this->scene->GetScriptManager();
+				comp = AddComponent<ScriptComponent>(scriptManager);
+			}
 			if (comp) {
 				comp->Deserialize(in); // consumes until [/Component]
 			}
@@ -227,7 +235,7 @@ void Agent::Deserialize(std::ifstream& in) {
 			// Try registry first
 			std::istringstream valStream(value);
 			bool handled = false;
-			for (auto& p : registry.properties) {
+			for (auto& p : registry->properties) {
 				if (p->name == key) {
 					p->Deserialize(valStream);
 					handled = true;
@@ -254,7 +262,7 @@ void Agent::Deserialize(std::ifstream& in) {
 }
 
 void Agent::DrawImGui() {
-	registry.DrawImGui();
+	registry->DrawImGui();
 	ImGui::Separator();
 
 	int componentID = 0;
@@ -280,6 +288,10 @@ void Agent::DrawImGui() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
+		else if (type == "ScriptComponent") {
+			ScriptManager& scriptManager = this->scene->GetScriptManager();
+			AddComponent<ScriptComponent>(scriptManager);
+		}
 		if (ImGui::MenuItem("Stats")) AddComponent<StatsComponent>();
 		ImGui::EndPopup();
 	}

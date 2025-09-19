@@ -5,6 +5,8 @@
 #include "DelusiveMacros.h"
 #include "Shader.h"
 #include "Font.h"
+#include "BehaviourScript.h"
+#include "ScriptManager.h"
 #include <memory>
 #include <iostream>
 #include <glm/glm.hpp>
@@ -269,4 +271,6 @@ struct DelusiveFont {
 
 struct DelusiveScript {
 	std::string scriptName;
+    std::unique_ptr<BehaviourScript> script;
+	ScriptManager* manager = nullptr;
 };

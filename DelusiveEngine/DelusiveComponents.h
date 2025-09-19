@@ -9,3 +9,4 @@
 #include "TransformComponent.h"
 #include "AnimatorComponent.h"
 #include "PathfindingComponent.h"
+#include "ScriptComponent.h"

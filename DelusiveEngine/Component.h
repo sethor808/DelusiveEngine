@@ -42,7 +42,7 @@ public:
 	virtual void HandleMouse(const glm::vec2&, bool) {}
 	virtual bool IsDragging() const { return isDragging; }
 
-	void SetOwner(Agent* agent) { this->owner = agent; }
+	virtual void SetOwner(Agent* agent) { this->owner = agent; }
 	Agent* GetOwner() const { return owner; }
 
 	void SetEnabled(bool enabled) { this->enabled = enabled; }

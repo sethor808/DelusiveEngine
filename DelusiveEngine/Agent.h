@@ -9,10 +9,10 @@
 #include <fstream>
 #include <SDL3/SDL.h>
 #include "DelusiveUtils.h"
-#include "DelusiveRegistry.h"
 #include "EditorInferface.h"
 
 class Component;
+class PropertyRegistry;
 class Collider;
 class Scene;
 
@@ -38,8 +38,8 @@ public:
 	virtual std::string GetType() const = 0;
 	
 	//Virtual functions
-	virtual void SetScene(Scene* _scene) { Scene = _scene; }
-	virtual Scene* GetScene() const { return Scene; }
+	virtual void SetScene(Scene* _scene) { scene = _scene; }
+	virtual Scene* GetScene() const { return scene; }
 
 	virtual void OnHit() {};
 	void HandleMouse(const glm::vec2&, bool);
@@ -136,7 +136,7 @@ public:
 	virtual void TakeDamage(int) {}
 
 protected:
-	Scene* Scene;
+	Scene* scene;
 	uint64_t id = 0;
 	bool editorMode = false;
 	InteractionState interaction;
@@ -144,5 +144,5 @@ protected:
 	std::string name;
 	std::string type;
 	uint64_t nextComponentID = 0;
-	PropertyRegistry registry;
+	std::unique_ptr<PropertyRegistry> registry;
 };
