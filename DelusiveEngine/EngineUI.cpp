@@ -227,6 +227,11 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 }
                 ImGui::PopID();
             }
+
+            if (gameManager.IsPlaying()) {
+                gameManager.Stop();
+            }
+
             ImGui::EndCombo();
         }
 
