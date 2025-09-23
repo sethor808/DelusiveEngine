@@ -20,8 +20,14 @@ public:
     void PlayBranch(const std::string&);
     void ApplyComponentOverrides();
 
-    //void Serialize(std::ofstream& out) const override;
-    //void Deserialize(std::ifstream& in) override;
+    //Getters & Setters
+	void Start() { playing = true; }
+	void Stop() { playing = false; }
+	bool IsPlaying() const { return playing; }
+	int GetCurrentFrame() const { return currentFrame; }
+    float GetTimeAccumulated() const { return timeAccumulator; }
+    std::vector<std::string>& GetFlags() { return currentAnimation.data.flags; }
+
 private:
     std::string currentAnimationPath;
     Animation currentAnimation;

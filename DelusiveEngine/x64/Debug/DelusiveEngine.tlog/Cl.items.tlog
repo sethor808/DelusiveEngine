@@ -7,7 +7,9 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Collider.c
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\ColliderComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\ColliderComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\ColliderRenderer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\ColliderRenderer.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\Component.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Component.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveAnimatorComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveAnimatorComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveEngine.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveEngine.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusivePathfindingComponent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusivePathfindingComponent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveRegistry.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveRegistry.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveScriptAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveScriptAgent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\DelusiveUI.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveUI.obj

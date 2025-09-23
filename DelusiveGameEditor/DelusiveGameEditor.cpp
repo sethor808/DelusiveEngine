@@ -8,6 +8,6 @@ int main()
 {
 	std::cout << "Starting Delusive Game Editor..." << std::endl;
     DelusiveEngine::DelusiveContext context;
-    context.editorMode = true;
+	context.editorMode = true;
 	return DelusiveEngine::Run(context);
 }

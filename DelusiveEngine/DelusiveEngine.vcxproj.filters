@@ -258,6 +258,12 @@
     <ClCompile Include="DelusiveRegistry.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DelusiveAnimatorComponent.cpp">
+      <Filter>External Files\Internal Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="DelusivePathfindingComponent.cpp">
+      <Filter>External Files\Internal Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -446,6 +452,15 @@
     </ClInclude>
     <ClInclude Include="AgentTypes.h">
       <Filter>engine\agents</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusivePathfindingComponent.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveAnimatorComponent.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveComponent.h">
+      <Filter>External Files\External Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

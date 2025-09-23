@@ -149,7 +149,9 @@
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="ColliderRenderer.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DelusiveAnimatorComponent.cpp" />
     <ClCompile Include="DelusiveEngine.cpp" />
+    <ClCompile Include="DelusivePathfindingComponent.cpp" />
     <ClCompile Include="DelusiveRegistry.cpp" />
     <ClCompile Include="DelusiveScriptAgent.cpp" />
     <ClCompile Include="DelusiveUI.cpp" />
@@ -212,9 +214,12 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderRenderer.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DelusiveAnimatorComponent.h" />
+    <ClInclude Include="DelusiveComponent.h" />
     <ClInclude Include="DelusiveData.h" />
     <ClInclude Include="DelusiveEngine.h" />
     <ClInclude Include="DelusiveMacros.h" />
+    <ClInclude Include="DelusivePathfindingComponent.h" />
     <ClInclude Include="DelusiveTalismans.h" />
     <ClInclude Include="DelusiveSystems.h" />
     <ClInclude Include="DelusiveUI.h" />

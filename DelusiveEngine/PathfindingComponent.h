@@ -21,11 +21,14 @@ public:
 	//Pathfinding logic
 	void SetPath(const std::vector<glm::vec2>& newPath);
 	void RequestPath(glm::vec2, glm::vec2);
-	void GetNextTarget() const;
+	glm::vec2 GetNextPoint();
 	void AdvanceIfClose(glm::vec2 position, float threshold = 0.1f);
-	void PathComplete() const;
+	bool PathComplete();
 	
+	float GetSpeed() const { return speed; }
+	void SetSpeed(float newSpeed) { speed = newSpeed; }
 
+	std::vector<glm::vec2>& GetCurrentPath() { return currentPath; }
 private:
 	std::vector<glm::vec2> currentPath;
 	float speed = 5.0f;
