@@ -42,8 +42,8 @@ void UIElement::Deserialize(std::istream& in) {
         // If a child block starts (e.g. nested elements in UIPanel)
         if (line.rfind("[UIElement", 0) == 0) {
             std::istringstream iss(line);
-            std::string tag, typeToken;
-            iss >> tag >> typeToken;
+            std::string discard, typeToken;
+            iss >> discard >> typeToken;
             if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
             std::unique_ptr<UIElement> child;

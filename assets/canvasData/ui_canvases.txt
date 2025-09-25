@@ -1,1 +1,13 @@
-0
+1
+[UICanvas]
+name=Canvas_0
+[UIElement UILabel]
+name=UILabel
+enabled=1
+position=0 0
+size=1 1
+font=16 "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
+text=New Text
+color=1 1 1 1
+[/UIElement]
+[/UICanvas]

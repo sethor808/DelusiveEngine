@@ -219,21 +219,20 @@ bool Scene::SaveToFile(const std::string& path) const {
 	if (!out.is_open()) return false;
 
 	out << "[Scene]" << "\n";
-	out << "name=" << name << "\n";
+	out << "name " << name << "\n";
 
 	// Save agents
-	out << "agents=" << agents.size() << "\n";
+	out << "agents " << agents.size() << "\n";
 	for (const auto& agent : agents) {
 		agent->SaveToFile(out);
 	}
 
-	out << "systems=" << systems.size() << "\n";
+	out << "systems " << systems.size() << "\n";
 	for (auto& sys : systems) {
 		sys->Serialize(out);
 	}
 
 	out << "[/Scene]" << "\n";
-
 	return true;
 }
 
@@ -251,14 +250,21 @@ bool Scene::LoadFromFile(const std::string& path) {
 		std::string token;
 		iss >> token;
 
-		if (token == "name") {
+		if (token == "[/Scene]") {
+			break;
+		}
+		else if (token == "[Scene]") {
+			continue;
+		}
+		else if (token == "name") {
 			std::string rest;
 			std::getline(iss, rest);
 			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
 			name = rest;
 		}
 		else if (token == "agents") {
-			// We don’t actually need the number here, we just read [Agent] blocks
+			int count;
+			iss >> count;
 			continue;
 		}
 		else if (token == "[Agent") {
@@ -285,6 +291,8 @@ bool Scene::LoadFromFile(const std::string& path) {
 			
 		}
 		else if (token == "systems"){
+			int count;
+			iss >> count;
 			continue;
 		}
 		else if (token == "[System") {

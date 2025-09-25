@@ -6,7 +6,6 @@
 
 void UICanvas::RegisterProperties() {
 	registry.Register("name", &name);
-	registry.Register("filepath", &filePath);
 }
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
@@ -65,7 +64,7 @@ void UICanvas::DrawImGui() {
 		ImGui::PushID(static_cast<int>(i));
 
 		if (ImGui::TreeNodeEx("##element", ImGuiTreeNodeFlags_DefaultOpen,
-			"[%s] %zu", elements[i]->GetType(), i)) {
+			"[%s] %zu", elements[i]->GetType().c_str(), i)) {
 			elements[i]->DrawImGui();
 
 			if (ImGui::Button("Remove Element")) {
@@ -107,11 +106,14 @@ void UICanvas::DrawImGui() {
 }
 
 void UICanvas::SerializeToFile() const {
+	return;
+	/*
 	if (filePath.empty()) return;
 	std::ofstream out(filePath, std::ios::binary);
 	if (out) {
 		Serialize(out);
 	}
+	*/
 }
 
 std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
@@ -120,7 +122,6 @@ std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
 
 	auto canvas = std::make_unique<UICanvas>(renderer);
 	canvas->Deserialize(in);
-	canvas->filePath = path;
 	return canvas;
 }
 
@@ -139,9 +140,6 @@ void UICanvas::Serialize(std::ostream& out) const {
 void UICanvas::Deserialize(std::istream& in) {
 	elements.clear();
 
-	// First load canvas-level properties (will stop at the first '[' line).
-	registry.Deserialize(in);
-
 	std::string line;
 	while (std::getline(in, line)) {
 		if (line.empty()) continue;
@@ -151,8 +149,8 @@ void UICanvas::Deserialize(std::istream& in) {
 		// Expecting line like: [UIElement UILabel]
 		if (line.rfind("[UIElement", 0) == 0) {
 			std::istringstream iss(line);
-			std::string tag, typeToken;
-			iss >> tag >> typeToken; // tag == "[UIElement", typeToken == "UILabel]"
+			std::string discard, typeToken;
+			iss >> discard >> typeToken; // discard == "[UIElement", typeToken == "UILabel]"
 
 			// strip trailing ']' if present
 			if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
@@ -163,20 +161,41 @@ void UICanvas::Deserialize(std::istream& in) {
 			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>(renderer);
 			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>(renderer);
 			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>(renderer);
+
+			if (elem) {
+				// Let the element deserialize itself (it will consume until [/UIElement])
+				elem->Deserialize(in);
+				elements.push_back(std::move(elem));
+			}
+		}
+		else {
+			std::string key, value;
+			auto pos = line.find('=');
+			if (pos != std::string::npos) {
+				key = line.substr(0, pos);
+				value = line.substr(pos + 1);
+			}
 			else {
-				// unknown type — skip until end of that UIElement block
-				while (std::getline(in, line)) {
-					if (line == "[/UIElement]") break;
-				}
-				continue;
+				std::istringstream iss(line);
+				iss >> key;
+				std::getline(iss, value);
+				if (!value.empty() && value[0] == ' ') value.erase(0, 1); // trim leading space
 			}
 
-			// Let the element deserialize itself (it will consume until [/UIElement])
-			elem->Deserialize(in);
-			elements.push_back(std::move(elem));
-			continue;
-		}
+			if (key.empty()) continue;
 
+			// Try registry first
+			std::istringstream valStream(value);
+			bool handled = false;
+			for (auto& p : registry.properties) {
+				if (p->name == key) {
+					p->Deserialize(valStream);
+					handled = true;
+					break;
+				}
+			}
+			if (handled) continue;
+		}
 		// If we get here, it's an unexpected line inside canvas; ignore or log.
 	}
 }

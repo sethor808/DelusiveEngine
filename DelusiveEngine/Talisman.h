@@ -1,8 +1,15 @@
 #pragma once
+#include <string>
+
+class PlayerAgent;
 
 class Talisman {
 public:
 	Talisman() = default;
+
+	virtual void Link(PlayerAgent* p) { player = p; }
+
+	virtual std::string GetType() = 0;
 
 	virtual int GetCurrentHP() { return hp; }
 	virtual bool TakeDamage();
@@ -14,7 +21,13 @@ public:
 	virtual void WhileActive() {}
 	virtual void OnConsume() {}
 
+	virtual void Reset() { hp = maxHP; isBroken = false; } //TODO: Write a graphical reset
+
 protected:
-	int hp = 2;
+	PlayerAgent* player; //shallow
+	int maxHP = 2;
+	int hp = maxHP;
 	bool isBroken;
+	std::string talismanBase;
+	std::string talismanGlyph;
 };

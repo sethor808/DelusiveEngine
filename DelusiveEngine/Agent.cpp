@@ -195,7 +195,7 @@ void Agent::Deserialize(std::ifstream& in) {
 			std::string discard, type;
 			iss >> discard >> type; // [Component SpriteComponent]
 
-			if (type.back() == ']') {
+			if (!type.empty() && type.back() == ']') {
 				type.pop_back();
 			}
 

@@ -78,7 +78,9 @@ glm::vec2 ColliderComponent::GetMax() const {
 
 void ColliderComponent::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const{
 	//std::cout << "[ColliderComponent] Draw called" << std::endl;
-	renderer.Draw(*this, projection);
+    if (editorMode) {
+        renderer.Draw(*this, projection);
+    }
 }
 
 bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {

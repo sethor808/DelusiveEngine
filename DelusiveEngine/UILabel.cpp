@@ -11,8 +11,8 @@ UILabel::UILabel(DelusiveRenderer& _renderer)
 
 void UILabel::Init() {
 	name = "UILabel";
-	fontData.fontPath = "assets/fonts/pixel_arial_11/PIXEARG_.TTF";
-	fontData.Init("shaders/text.vert", "shaders/text.frag");
+	fontData.fontPath = DEFAULT_FONT;
+	fontData.Init(DEFAULT_TEXT_VERT, DEFAULT_TEXT_FRAG);
 	fontData.SetFont(fontData.fontPath, 48.0f);
 
 	RegisterProperties();

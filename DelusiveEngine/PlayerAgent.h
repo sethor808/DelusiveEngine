@@ -3,6 +3,7 @@
 #include "DelusiveComponents.h"
 #include "DelusiveUtils.h"
 #include "DelusiveTalismans.h"
+#include "PlayerStats.h"
 
 class PlayerAgent : public Agent {
 public:
@@ -19,28 +20,28 @@ public:
 	void TakeDamage() override;
 	const std::vector<std::unique_ptr<Talisman>>& GetTalismans() { return talismans; }
 
-private:
-	//std::unique_ptr<Animation> animator;
-	glm::vec2 velocity = { 0.0f, 0.0f};
-	glm::vec2 impulse = { 0.0f, 0.0f };
-	glm::vec2 dodgeDir = { 0.0f, 0.0f };
+	void TriggerInvul(float);
+	void ResetStats();
 
-	float moveSpeed = 400.0f/64.0f;
-	float acceleration = 10.0f;
-	float deceleration = 8.0f;
-	float damping = 0.9f;
+private:
+	PlayerStats base;
+	PlayerStats modified;
 
 	//HP Management
 	std::vector<std::unique_ptr<Talisman>> talismans;
 
+	glm::vec2 velocity = { 0.0f, 0.0f };
+	glm::vec2 impulse = { 0.0f, 0.0f };
+	glm::vec2 dodgeDir = { 0.0f, 0.0f };
+
 	//Dodge variables
 	bool dodging = false;
-	const float dodgeStrength = moveSpeed * 2.0f; //TESTING ONLY
-	const float dodgeDuration = .10f;
+
 	float dodgeTimer = 0.0f;
 
 	float inputLockTimer = 0.0f;
 	float dodgeBufferTimer = 0.0f;
+	float invulTimer = 0.0f;
 
 	//For input control tracking
 	PlayerInputState prevInput;

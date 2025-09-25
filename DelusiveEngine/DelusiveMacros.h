@@ -1,4 +1,5 @@
 #pragma once
+//Constant values
 #define DELUSIVE_PIXEL_SCALE 64.0f
 
 //Default asset path stuff

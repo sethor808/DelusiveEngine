@@ -73,11 +73,11 @@ void PlayerAgent::HandleMovement(float deltaTime) {
     // Normal WASD movement
     if (glm::length(prevInput.moveDir) > 0.0f) {
         glm::vec2 dir = glm::normalize(prevInput.moveDir);
-        velocity = dir * moveSpeed;
+        velocity = dir * modified.moveSpeed;
     }
 
     //Apply acceleration
-    float accelRate = (glm::length(targetVel) > 0.0f) ? acceleration : deceleration;
+    float accelRate = (glm::length(targetVel) > 0.0f) ? modified.acceleration : modified.deceleration;
     velocity = glm::mix(velocity, targetVel, accelRate * deltaTime);
 
     float decayRate = 8.0f; // higher = stops faster
@@ -89,12 +89,12 @@ void PlayerAgent::HandleMovement(float deltaTime) {
 
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
     dodging = true;
-    dodgeTimer = dodgeDuration;
+    dodgeTimer = modified.dodgeDuration;
 
     velocity = velocity * 0.5f;
-    impulse = dir * dodgeStrength;
+    impulse = dir * modified.dodgeStrength;
 
-    inputLockTimer = dodgeDuration;
+    inputLockTimer = modified.dodgeDuration;
 }
 
 void PlayerAgent::HandleDodge(float deltaTime) {
@@ -149,4 +149,12 @@ void PlayerAgent::Draw(const glm::mat4& projection) const {
 	for (const auto& comp : this->GetComponents()) {
 		comp->Draw(projection);
 	}
+}
+
+void PlayerAgent::TriggerInvul(float duration) {
+	invulTimer = duration; //TODO: Add more effects to make this really feel like an invul
+}
+
+void PlayerAgent::ResetStats() {
+    modified = base; //TODO: Reapply talisman effects after sync
 }

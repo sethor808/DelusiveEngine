@@ -462,6 +462,15 @@
     <ClInclude Include="DelusiveComponent.h">
       <Filter>External Files\External Headers</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerStats.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedTalisman.h">
+      <Filter>engine\healthsystem\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MajorSpeedTalisman.h">
+      <Filter>engine\healthsystem\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Property.inl" />

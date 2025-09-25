@@ -5,7 +5,7 @@
 DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer) 
 	: renderer(_renderer)
 {
-
+	LoadAll();
 }
 
 void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
@@ -13,21 +13,20 @@ void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
 	if (!in) return;
 
 	size_t count;
-	in >> count;
-	in.ignore();
+	if (!(in >> count)) return;
+	std::string dummy;
+	std::getline(in, dummy); // consume the rest of the line reliably
 
 	canvases.clear();
 	for (size_t i = 0; i < count; i++) {
 		std::string line;
-
-		// Skip the opening [UICanvas] line
+		// Skip until the [UICanvas] header
 		while (std::getline(in, line)) {
 			if (line.empty()) continue;
 			if (line == "[UICanvas]") break;
 		}
-
 		auto canvas = std::make_unique<UICanvas>(renderer);
-		canvas->Deserialize(in); // now it starts reading the proper contents
+		canvas->Deserialize(in);
 		canvases[canvas->GetName()] = std::move(canvas);
 	}
 }

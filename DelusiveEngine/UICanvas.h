@@ -37,14 +37,12 @@ public:
 	void Reset();
 	void SetName(const std::string& _name) { name = _name; }
 	const std::string& GetName() const { return name; }
-	const std::string& GetFilePath() const { return filePath; }
 	bool IsActive() const {return active;}
 	void SetActive(bool);
 private:
 	DelusiveRenderer& renderer;
 	PropertyRegistry registry;
 	std::string name;
-	std::string filePath;
 	bool active = false;
 
 	std::vector<std::unique_ptr<UIElement>> elements;
