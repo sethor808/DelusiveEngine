@@ -9,6 +9,8 @@ public:
 	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;
 
+	void Update(float) override;
+
 	void Init();
 	void SetTexturePath(const std::string&);
 
@@ -17,6 +19,7 @@ public:
 
 	const std::string GetType() const override;
 
+	void Deserialize(std::istream& in) override;
 private:
 	DelusiveTexture textureData;
 };

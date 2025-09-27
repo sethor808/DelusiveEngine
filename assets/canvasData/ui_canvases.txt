@@ -1,4 +1,4 @@
-1
+2
 [UICanvas]
 name=Canvas_0
 [UIElement UILabel]
@@ -9,5 +9,15 @@ size=1 1
 font=16 "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
 text=New Text
 color=1 1 1 1
+[/UIElement]
+[/UICanvas]
+[UICanvas]
+name=HP Display
+[UIElement UIImage]
+name=UIImage
+enabled=1
+position=-1 0
+size=1 1
+textureData=../assets/sprites/star.jpg
 [/UIElement]
 [/UICanvas]

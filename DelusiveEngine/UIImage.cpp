@@ -1,5 +1,6 @@
 #include "UIImage.h"
 #include "DelusiveRenderer.h"
+#include "DelusiveMacros.h"
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -15,8 +16,8 @@ UIImage::UIImage(DelusiveRenderer& _renderer)
 
 void UIImage::Init() {
 	name = "UIImage";
-	textureData.texturePath = "assets/sprites/star.jpg";
-	textureData.Init("shaders/ui.vert", "shaders/ui.frag");
+	textureData.texturePath = DEFAULT_SPRITE;
+	textureData.Init(DEFAULT_UI_VERT, DEFAULT_UI_FRAG);
 
 	RegisterProperties();
 }
@@ -41,6 +42,22 @@ std::unique_ptr<UIElement> UIImage::Clone() const{
 	}
 
 	return copy;
+}
+
+void UIImage::Update(float deltaTime) {
+	if (!textureData.texture) {
+		if (textureData.texturePath != "") {
+			SetTexturePath(textureData.texturePath);
+		}
+	}
+
+	//Reload texture if changed
+	if (textureData.texturePath != textureData.previousTexturePath) {
+		SetTexturePath(textureData.texturePath);
+		textureData.previousTexturePath = textureData.texturePath;
+	}
+
+	UIElement::Update(deltaTime);
 }
 
 void UIImage::SetTexturePath(const std::string& path) {
@@ -91,5 +108,11 @@ void UIImage::Draw(const glm::mat4& projection) {
 }
 
 const std::string UIImage::GetType() const {
-	return "UIIMage";
+	return "UIImage";
+}
+
+void UIImage::Deserialize(std::istream& in) {
+	UIElement::Deserialize(in);
+
+	SetTexturePath(textureData.texturePath);
 }

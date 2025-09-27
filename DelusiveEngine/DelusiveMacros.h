@@ -7,11 +7,13 @@
 #define DEFAULT_FRAG "../assets/shaders/fragment.glsl"
 #define DEFAULT_TEXT_VERT "../assets/shaders/text.vert"
 #define DEFAULT_TEXT_FRAG "../assets/shaders/text.frag"
+#define DEFAULT_UI_VERT "../assets/shaders/ui.vert"
+#define DEFAULT_UI_FRAG "../assets/shaders/ui.frag"
 #define DEFAULT_FONT "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
 #define DEFAULT_COLL_VERT "../assets/shaders/collider_vert.glsl"
 #define DEFAULT_COLL_FRAG "../assets/shaders/collider_frag.glsl"
 
-#define DEFAULT_SPRITE "../assets/sprites/star.png"
+#define DEFAULT_SPRITE "../assets/sprites/star.jpg"
 
 #define SCENE_PATH "../assets/scenes/"
 #define SCENE_EXT ".scene"

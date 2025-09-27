@@ -144,7 +144,9 @@ void UICanvas::Deserialize(std::istream& in) {
 	while (std::getline(in, line)) {
 		if (line.empty()) continue;
 
-		if (line == "[/UICanvas]") break;
+		if (line == "[/UICanvas]") {
+			break;
+		}
 
 		// Expecting line like: [UIElement UILabel]
 		if (line.rfind("[UIElement", 0) == 0) {

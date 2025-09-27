@@ -90,7 +90,7 @@ name=New PathfindingSystem
 [/System]
 [System UIManager]
 name=NewUIManager
-activeCanvasName=Canvas_0
-canvasList=1 Canvas_0
+activeCanvasName=
+canvasList=0
 [/System]
 [/Scene]

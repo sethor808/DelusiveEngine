@@ -37,7 +37,7 @@ void UIElement::Deserialize(std::istream& in) {
     while (std::getline(in, line)) {
         if (line.empty()) continue;
 
-        if (line == "[/UIElement]") break;
+        if (line == "[/UIElement]") return;
 
         // If a child block starts (e.g. nested elements in UIPanel)
         if (line.rfind("[UIElement", 0) == 0) {
