@@ -1,5 +1,6 @@
 #include "UIManager.h"
 #include "DelusiveUIRegistry.h"
+#include "DelusiveRegistry.h"
 #include <iostream>
 #include <imgui/imgui.h>
 #include <fstream>
@@ -16,8 +17,8 @@ UIManager::UIManager(DelusiveRenderer& _renderer)
 
 void UIManager::RegisterProperties() {
 	SceneSystem::RegisterProperties();
-	registry.Register("activeCanvasName", &activeCanvasName);
-	registry.Register("canvasList", &canvasList);
+	registry->Register("activeCanvasName", &activeCanvasName);
+	registry->Register("canvasList", &canvasList);
 }
 
 void UIManager::SetCanvasActive(const std::string& name) {

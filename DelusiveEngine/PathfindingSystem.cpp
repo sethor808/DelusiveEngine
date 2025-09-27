@@ -1,5 +1,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "PathfindingSystem.h"
+#include "DelusiveRenderer.h"
+#include "DelusiveData.h"
+#include <imgui/imgui.h>
 #include <limits>
 #include <algorithm>
 #include <cmath>

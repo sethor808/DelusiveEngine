@@ -196,6 +196,7 @@
     <ClCompile Include="UILabel.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp" />
+    <ClCompile Include="UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Delusive\BehaviourScript.h" />
@@ -269,6 +270,7 @@
     <ClInclude Include="UILabel.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
+    <ClInclude Include="UITalismanDisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Property.inl" />

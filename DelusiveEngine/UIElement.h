@@ -3,23 +3,28 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "Shader.h"
 #include "DelusiveUtils.h"
-#include "Texture.h"
-#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
-#include "DelusiveRegistry.h"
-#include "DelusiveMacros.h"
+
+class DelusiveRenderer;
+class PropertyRegistry;
+class UICanvas;
 
 class UIElement {
 public:
 	UIElement() = delete;
-	UIElement(DelusiveRenderer& _renderer);
+	UIElement(const UIElement&) = delete;
+	UIElement& operator=(const UIElement&) = delete;
+	UIElement(UIElement&&) noexcept = default;
+	UIElement& operator=(UIElement&&) noexcept = default;
+	UIElement(DelusiveRenderer&);
 
 	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
 
-	virtual ~UIElement() = default;
+	virtual ~UIElement();
+
+	virtual void LinkCanvas(UICanvas* canvas) { parent = canvas; }
 
 	virtual void Update(float deltaTime) {
 		for (auto& child : children) {
@@ -70,8 +75,9 @@ public:
 	virtual void Serialize(std::ostream& out) const;
 	virtual void Deserialize(std::istream& in);
 protected:
+	UICanvas* parent = nullptr; //Shallow copy
 	DelusiveRenderer& renderer;
-	PropertyRegistry registry;
+	std::unique_ptr<PropertyRegistry> registry;
 	std::string name;
 	bool enabled = true;
 	glm::vec2 position = { 0,0 };

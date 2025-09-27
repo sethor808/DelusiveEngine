@@ -1,5 +1,6 @@
 #include "PathfindingComponent.h"
 #include "PathfindingSystem.h"
+#include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <fstream>
 

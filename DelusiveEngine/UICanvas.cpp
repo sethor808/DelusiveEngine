@@ -1,11 +1,22 @@
 #include "UICanvas.h"
+#include "DelusiveRegistry.h"
+#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-void UICanvas::RegisterProperties() {
-	registry.Register("name", &name);
+UICanvas::UICanvas(DelusiveRenderer& _renderer)
+	: renderer(_renderer), registry(std::make_unique<PropertyRegistry>())
+{
+	RegisterProperties();
+}
+
+UICanvas::~UICanvas() = default;
+
+void UICanvas::RegisterProperties()
+{
+	registry->Register("name", &name);
 }
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
@@ -58,7 +69,7 @@ void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
 }
 
 void UICanvas::DrawImGui() {
-	registry.DrawImGui();
+	registry->DrawImGui();
 
 	for (size_t i = 0; i < elements.size(); ++i) {
 		ImGui::PushID(static_cast<int>(i));
@@ -127,7 +138,7 @@ std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
 
 void UICanvas::Serialize(std::ostream& out) const {
 	out << "[UICanvas]\n";
-	registry.Serialize(out);
+	registry->Serialize(out);
 
 	// Serialize elements here
 	for (auto& elem : elements) {
@@ -189,7 +200,7 @@ void UICanvas::Deserialize(std::istream& in) {
 			// Try registry first
 			std::istringstream valStream(value);
 			bool handled = false;
-			for (auto& p : registry.properties) {
+			for (auto& p : registry->properties) {
 				if (p->name == key) {
 					p->Deserialize(valStream);
 					handled = true;

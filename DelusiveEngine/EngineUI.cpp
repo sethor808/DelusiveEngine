@@ -6,6 +6,7 @@
 #include "DelusiveComponents.h"
 #include "DelusiveUtils.h"
 #include "DelusiveSystems.h"
+#include "TransformComponent.h"
 #include <glm/gtc/type_ptr.hpp>
 
 EngineUI::EngineUI(GameManager& _game, DelusiveRenderer& _renderer)
@@ -733,9 +734,9 @@ void EngineUI::ApplyOverrides(AnimationFrame& frame, Agent& agent) {
     for (const auto& mod : overrides) {
         if (Component* comp = agent.GetComponentByID(mod.componentID)) {
             comp->SetEnabled(mod.enabled);
-            comp->transform.position = mod.positionOffset;
-            comp->transform.scale = mod.scale;
-            comp->transform.rotation = mod.rotation;
+            comp->transform->position = mod.positionOffset;
+            comp->transform->scale = mod.scale;
+            comp->transform->rotation = mod.rotation;
             if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
                 static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);
             }
@@ -756,9 +757,9 @@ void EngineUI::ResetOverrides() {
                 Component* pure = pureAgent->GetComponentByID(mod.componentID);
                 if (pure) {
                     mod.enabled = pure->IsEnabled();
-                    mod.positionOffset = pure->transform.position;
-                    mod.scale = pure->transform.scale;
-                    mod.rotation = pure->transform.rotation;
+                    mod.positionOffset = pure->transform->position;
+                    mod.scale = pure->transform->scale;
+                    mod.rotation = pure->transform->rotation;
                 }
             }
 
@@ -994,8 +995,8 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
             if (baseAgent) {
                 for (auto& comp : baseAgent->GetComponents()) {
                     newFrame.componentOverrides.push_back(ComponentMod{
-                        comp->GetID(), comp->IsEnabled(), comp->transform.position, 
-                        comp->transform.scale, comp->transform.rotation
+                        comp->GetID(), comp->IsEnabled(), comp->transform->position, 
+                        comp->transform->scale, comp->transform->rotation
                         });
                     newFrame.dirty = true;
                 }
@@ -1089,9 +1090,9 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                     for (auto& mod : frame.componentOverrides) {
                         Component* comp = baseAgent->GetComponentByID(mod.componentID);
                         if (comp) {
-                            mod.positionOffset = comp->transform.position;
-                            mod.scale = comp->transform.scale;
-                            mod.rotation = comp->transform.rotation;
+                            mod.positionOffset = comp->transform->position;
+                            mod.scale = comp->transform->scale;
+                            mod.rotation = comp->transform->rotation;
                             frame.dirty = true;
                         }
                     }

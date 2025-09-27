@@ -264,6 +264,9 @@
     <ClCompile Include="DelusivePathfindingComponent.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="UITalismanDisplay.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -470,6 +473,9 @@
     </ClInclude>
     <ClInclude Include="MajorSpeedTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UITalismanDisplay.h">
+      <Filter>engine\ui\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

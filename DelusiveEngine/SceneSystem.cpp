@@ -1,17 +1,22 @@
 #include "SceneSystem.h"
+#include "DelusiveRegistry.h"
+#include <memory>
+
 SceneSystem::SceneSystem(DelusiveRenderer& _renderer)
-	: renderer(_renderer)
+	: renderer(_renderer), registry(std::make_unique<PropertyRegistry>())
 {
     RegisterProperties();
 }
 
+SceneSystem::~SceneSystem() = default;
+
 void SceneSystem::RegisterProperties() {
-    registry.Register("name", &name);
+    registry->Register("name", &name);
 }
 
 void SceneSystem::Serialize(std::ostream& out) const {
     out << "[System " << GetType() << "]\n";
-    registry.Serialize(out);
+    registry->Serialize(out);
     out << "[/System]\n";
 }
 
@@ -25,6 +30,6 @@ void SceneSystem::Deserialize(std::istream& in) {
             break; // finished this agent block
         }
 
-        registry.Deserialize(iss);
+        registry->Deserialize(iss);
     }
 }

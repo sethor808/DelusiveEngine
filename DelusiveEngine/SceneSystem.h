@@ -1,13 +1,20 @@
 #pragma once
 #include <string>
-#include "DelusiveRegistry.h"
-#include "DelusiveRenderer.h"
+#include <memory>
+#include <glm/glm.hpp>
+
+class Scene;
+class PropertyRegistry;
+class DelusiveRenderer;
 
 class SceneSystem {
 public:
 	SceneSystem() = delete;
 	SceneSystem(DelusiveRenderer&);
-	virtual ~SceneSystem() = default;
+	virtual ~SceneSystem();
+
+	virtual void LinkScene(Scene* _scene) { scene = _scene; }
+	virtual Scene* GetScene() const { return scene; }
 
 	virtual void RegisterProperties();
 
@@ -30,8 +37,9 @@ public:
 	virtual void Serialize(std::ostream&) const;
 	virtual void Deserialize(std::istream&);
 protected:
+	Scene* scene = nullptr;
 	DelusiveRenderer& renderer;
-	PropertyRegistry registry;
+	std::unique_ptr<PropertyRegistry> registry;
 	bool editorMode = false;
 	std::string name;
 };

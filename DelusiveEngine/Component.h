@@ -1,7 +1,6 @@
 #pragma once
 #include "DelusiveUtils.h"
 #include "AnimatorData.h"
-#include "TransformComponent.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,10 +9,11 @@
 
 class Agent;
 class PropertyRegistry;
+class TransformComponent;
 
 class Component {
 public:
-	TransformComponent transform;
+	std::unique_ptr<TransformComponent> transform;
 
 	Component();
 
@@ -22,7 +22,7 @@ public:
 	Component(Component&&) noexcept = default;
 	Component& operator=(Component&&) noexcept = default;
 
-	virtual ~Component() = default;
+	virtual ~Component();
 	virtual std::unique_ptr<Component> Clone() const = 0;
 
 	virtual void RegisterProperties();

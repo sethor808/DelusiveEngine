@@ -1,5 +1,7 @@
 #include "UIButton.h"
 #include "DelusiveRenderer.h"
+#include "DelusiveMacros.h"
+#include "DelusiveRegistry.h"
 #include <imgui/imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,11 +25,11 @@ void UIButton::Init() {
 
 void UIButton::RegisterProperties() {
 	UIElement::RegisterProperties();
-	registry.Register("Label", &label);
-	registry.Register("ButtonTexture", &buttonTexture);
-	registry.Register("Font", &buttonFont);
-	registry.Register("FontColor", &fontColor);
-	registry.Register("TextOffset", &textOffset);
+	registry->Register("Label", &label);
+	registry->Register("ButtonTexture", &buttonTexture);
+	registry->Register("Font", &buttonFont);
+	registry->Register("FontColor", &fontColor);
+	registry->Register("TextOffset", &textOffset);
 }
 
 std::unique_ptr<UIElement> UIButton::Clone() const {

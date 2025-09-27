@@ -1,6 +1,7 @@
 #include "UIImage.h"
 #include "DelusiveRenderer.h"
 #include "DelusiveMacros.h"
+#include "DelusiveRegistry.h"
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -24,7 +25,7 @@ void UIImage::Init() {
 
 void UIImage::RegisterProperties() {
 	UIElement::RegisterProperties();
-	registry.Register("textureData", &textureData);
+	registry->Register("textureData", &textureData);
 }
 
 std::unique_ptr<UIElement> UIImage::Clone() const{

@@ -1,6 +1,7 @@
 #include "AnimatorComponent.h"
 #include "Agent.h"
 #include "DelusiveMacros.h"
+#include "TransformComponent.h"
 #include <imgui/imgui.h>
 #include <fstream>
 #include <iostream>
@@ -53,9 +54,9 @@ void AnimatorComponent::ApplyComponentOverrides() {
         if (!comp) continue;
 
         comp->SetEnabled(mod.enabled);
-        comp->transform.position = mod.positionOffset; // No += here
-        comp->transform.scale = mod.scale;
-        comp->transform.rotation = mod.rotation;
+        comp->transform->position = mod.positionOffset; // No += here
+        comp->transform->scale = mod.scale;
+        comp->transform->rotation = mod.rotation;
 
         if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
             static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);

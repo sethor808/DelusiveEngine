@@ -1,6 +1,7 @@
 #include "SpriteComponent.h"
 #include "Agent.h"
 #include "DelusiveMacros.h"
+#include "TransformComponent.h"
 #include <filesystem>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -51,9 +52,9 @@ void SpriteComponent::RegisterProperties() {
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
     auto sprite = std::make_unique<SpriteComponent>(textureData.texturePath.c_str());
-    sprite->SetPosition(transform.position.x, transform.position.y);
-    sprite->SetRotation(transform.rotation);
-    sprite->SetScale(transform.scale.x, transform.scale.y);
+    sprite->SetPosition(transform->position.x, transform->position.y);
+    sprite->SetRotation(transform->rotation);
+    sprite->SetScale(transform->scale.x, transform->scale.y);
     sprite->SetName(GetName());
     return sprite;
 }
@@ -82,20 +83,20 @@ void SpriteComponent::SetTexturePath(const std::string& path) {
 }
 
 void SpriteComponent::SetPosition(float x, float y) {
-    transform.position = { x, y };
+    transform->position = { x, y };
 }
 
 void SpriteComponent::SetScale(float sx, float sy) {
-    transform.scale = { sx, sy };
+    transform->scale = { sx, sy };
 }
 
 void SpriteComponent::SetRotation(float angle) {
-    transform.rotation = { angle };
+    transform->rotation = { angle };
 }
 
 void SpriteComponent::Draw(const glm::mat4& projection) const{
     glm::mat4 agentTransform = owner->GetTransform().ToMatrix();
-    glm::mat4 localTransform = transform.ToMatrix();
+    glm::mat4 localTransform = transform->ToMatrix();
     glm::mat4 model = agentTransform * localTransform;
     glm::mat4 view = glm::mat4(1.0f);
 
@@ -117,9 +118,9 @@ bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
     ImGui::Checkbox("Enabled", &enabled);
     dirty |= ImGui::IsItemEdited();
 
-    dirty |= ImGui::DragFloat2("Offset", glm::value_ptr(transform.position), 1.0f);
-    dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(transform.scale), 0.01f);
-    dirty |= ImGui::DragFloat("Rotation", &transform.rotation, 0.01f);
+    dirty |= ImGui::DragFloat2("Offset", glm::value_ptr(transform->position), 1.0f);
+    dirty |= ImGui::DragFloat2("Scale", glm::value_ptr(transform->scale), 0.01f);
+    dirty |= ImGui::DragFloat("Rotation", &transform->rotation, 0.01f);
 
     ImGui::Text("Texture: %s", std::filesystem::path(textureData.texturePath).filename().string().c_str());
     if (ImGui::Button("Change Texture")) {
@@ -159,9 +160,9 @@ bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
 
     if (dirty) {
         mod.enabled = enabled;
-        mod.positionOffset = transform.position;
-        mod.scale = transform.scale;
-        mod.rotation = transform.rotation;
+        mod.positionOffset = transform->position;
+        mod.scale = transform->scale;
+        mod.rotation = transform->rotation;
         mod.texturePath = textureData.texturePath;
     }
 
@@ -185,22 +186,22 @@ void SpriteComponent::Update(float deltaTime){
         textureData.previousTexturePath = textureData.texturePath;
     }
 
-    transform.position += velocity * deltaTime;
+    transform->position += velocity * deltaTime;
     //Probably move camera here
 }
 
 void SpriteComponent::SetLocalTransform(const glm::vec2& pos, const glm::vec2& scale, float rot) {
-    transform.position = pos;
-    transform.scale = scale;
-    transform.rotation = rot;
+    transform->position = pos;
+    transform->scale = scale;
+    transform->rotation = rot;
 }
 
 void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown) {
     if (!enabled) return;
 
     if (editorMode) {
-        glm::vec2 center = owner->GetTransform().position + transform.position;
-        glm::vec2 halfSize = transform.scale * 0.5f;
+        glm::vec2 center = owner->GetTransform().position + transform->position;
+        glm::vec2 halfSize = transform->scale * 0.5f;
 
         glm::vec2 min = center - halfSize;
         glm::vec2 max = center + halfSize;
@@ -214,7 +215,7 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
 
         if (isMouseDown && interaction.currentAction == EditorAction::None && mouseOver) {
             interaction.currentAction = EditorAction::Drag;
-            interaction.dragOffset = (worldMouse - center) / transform.scale;
+            interaction.dragOffset = (worldMouse - center) / transform->scale;
         }
 
         if (!isMouseDown) {
@@ -222,8 +223,8 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
         }
 
         if (interaction.currentAction == EditorAction::Drag) {
-            glm::vec2 delta = (worldMouse - owner->GetTransform().position) - (interaction.dragOffset * transform.scale);
-            transform.position = delta;
+            glm::vec2 delta = (worldMouse - owner->GetTransform().position) - (interaction.dragOffset * transform->scale);
+            transform->position = delta;
         }
     }
 }

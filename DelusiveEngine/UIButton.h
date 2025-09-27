@@ -1,6 +1,7 @@
 #pragma once
 #include "UIElement.h"
 #include <functional>
+#include "DelusiveData.h"
 
 class UIButton : public UIElement {
 public:

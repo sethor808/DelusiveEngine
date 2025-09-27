@@ -1,5 +1,6 @@
 #include "UILabel.h"
 #include "DelusiveRenderer.h" // for Renderer::DrawText
+#include "DelusiveRegistry.h"
 #include "Font.h"
 
 UILabel::UILabel(DelusiveRenderer& _renderer)
@@ -20,9 +21,9 @@ void UILabel::Init() {
 
 void UILabel::RegisterProperties() {
 	UIElement::RegisterProperties();
-	registry.Register("font", &fontData);
-	registry.Register("text", &text);
-	registry.Register("color", &color);
+	registry->Register("font", &fontData);
+	registry->Register("text", &text);
+	registry->Register("color", &color);
 }
 
 void UILabel::LoadFont(const std::string& ttfPath, float pixelHeight) {

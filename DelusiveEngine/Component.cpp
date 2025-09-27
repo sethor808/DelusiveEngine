@@ -1,10 +1,11 @@
 #include "Component.h"
 #include "DelusiveRegistry.h"
+#include "TransformComponent.h"
 #include <imgui/imgui.h>
 #include <sstream>
 
 Component::Component()
-    : registry(std::make_unique<PropertyRegistry>())
+    : registry(std::make_unique<PropertyRegistry>()), transform(std::make_unique<TransformComponent>())
 {
     
     bool initialized = false;
@@ -14,8 +15,10 @@ Component::Component()
     }
 }
 
+Component::~Component() = default;
+
 void Component::RegisterProperties() {
-	transform.RegisterProperties(*registry);
+	transform->RegisterProperties(*registry);
 	registry->Register("name", &name);
 	registry->Register("enabled", &enabled);
 }

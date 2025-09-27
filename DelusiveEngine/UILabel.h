@@ -2,6 +2,7 @@
 #include "UIElement.h"
 #include <string>
 #include <glm/glm.hpp>
+#include "DelusiveData.h"
 #include "Font.h"
 
 class UILabel : public UIElement {

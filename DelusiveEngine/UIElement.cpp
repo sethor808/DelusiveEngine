@@ -1,26 +1,31 @@
 #include "UIElement.h"
 #include "DelusiveUI.h"
+#include "DelusiveRegistry.h"
+#include "DelusiveMacros.h"
+#include "DelusiveRenderer.h"
 
 UIElement::UIElement(DelusiveRenderer& _renderer)
-    : renderer(_renderer)
+    : renderer(_renderer), registry(std::make_unique<PropertyRegistry>())
 {
 	RegisterProperties();
 }
 
+UIElement::~UIElement() = default;
+
 void UIElement::RegisterProperties(){
-	registry.Register("name", &name);
-	registry.Register("enabled", &enabled);
-	registry.Register("position", &position);
-	registry.Register("size", &size);
+	registry->Register("name", &name);
+	registry->Register("enabled", &enabled);
+	registry->Register("position", &position);
+	registry->Register("size", &size);
 }
 
 void UIElement::DrawImGui() {
-	registry.DrawImGui();
+	registry->DrawImGui();
 }
 
 void UIElement::Serialize(std::ostream& out) const{
 	out << "[UIElement " << this->GetType() << "]\n";
-	registry.Serialize(out);
+	registry->Serialize(out);
 
 	// Serialize elements here
 	for (auto& elem : children) {
@@ -31,7 +36,7 @@ void UIElement::Serialize(std::ostream& out) const{
 }
 
 void UIElement::Deserialize(std::istream& in) {
-    registry.Deserialize(in); // will stop at first header
+    registry->Deserialize(in); // will stop at first header
 
     std::string line;
     while (std::getline(in, line)) {
