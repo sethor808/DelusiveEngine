@@ -60,24 +60,34 @@ void UIImage::Update(float deltaTime) {
 	UIElement::Update(deltaTime);
 }
 
-void UIImage::SetTexturePath(const std::string& path) {
-	if (textureData.texturePath == path) return;
+void UIImage::DrawImGui() {
+	UIElement::DrawImGui();
 
-	textureData.previousTexturePath = textureData.texturePath;
+	//Reloading the texture here to bypass Update not being called in the editor
+	if (textureData.texturePath != textureData.previousTexturePath) {
+		SetTexturePath(textureData.texturePath);
+		textureData.previousTexturePath = textureData.texturePath;
+	}
+}
+
+void UIImage::SetTexturePath(const std::string& path) {
 	textureData.texturePath = path;
 
+	// Clean up old texture
 	if (textureData.texture) {
 		delete textureData.texture;
 		textureData.texture = nullptr;
 	}
 
-	textureData.texture = new Texture(textureData.texturePath.c_str());
+	// Load new texture
+	textureData.texture = new Texture(path.c_str());
 
+	//TODO: Perhaps change this to load the previous texture if it doesn't load
 	if (!textureData.texture) {
-		std::cerr << "[UIImage] Failed to load texture: " << path << std::endl;
+		std::cerr << "[UIImage] Failed to load texture: " << path << "\n";
 	}
 	else {
-		std::cout << "[UIImage] Texture set to: " << path << std::endl;
+		std::cout << "[UIImage] Texture set to: " << path << "\n";
 	}
 }
 

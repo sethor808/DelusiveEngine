@@ -60,7 +60,6 @@ std::unique_ptr<Component> SpriteComponent::Clone() const {
 
 void SpriteComponent::SetTexturePath(const std::string& path) {
     // Don't reload if it's the same texture
-    //if (texturePath == path) return; //Commented out because of how the new property registry works
 
     textureData.texturePath = path;
 

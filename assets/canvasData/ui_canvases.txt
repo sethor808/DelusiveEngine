@@ -16,8 +16,8 @@ name=HP Display
 [UIElement UIImage]
 name=UIImage
 enabled=1
-position=-1 0
-size=1 1
-textureData=../assets/sprites/star.jpg
+position=-13.8 7.4
+size=2 2
+textureData=../assets/sprites/HPSystem\BasicTalisman.png
 [/UIElement]
 [/UICanvas]

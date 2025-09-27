@@ -10,6 +10,7 @@ public:
 	std::unique_ptr<UIElement> Clone() const override;
 
 	void Update(float) override;
+	void DrawImGui() override;
 
 	void Init();
 	void SetTexturePath(const std::string&);
