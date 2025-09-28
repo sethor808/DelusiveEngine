@@ -188,6 +188,7 @@
     <ClCompile Include="StatsComponent.cpp" />
     <ClCompile Include="Talisman.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TriggerCollider.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICanvas.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="StatsComponent.h" />
     <ClInclude Include="Talisman.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriggerCollider.h" />

@@ -1,7 +1,9 @@
 #include "EnvironmentAgent.h"
 
-EnvironmentAgent::EnvironmentAgent(const std::string& agentName) {
-	SetName(agentName);
+EnvironmentAgent::EnvironmentAgent(DelusiveRenderer& renderer)
+    : Agent(renderer)
+{
+    SetName("New EnvironmentAgent");
 	SetScale({ 1.0f, 1.0f });
 }
 
@@ -10,7 +12,8 @@ std::string EnvironmentAgent::GetType() const{
 }
 
 std::unique_ptr<Agent> EnvironmentAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<EnvironmentAgent>(GetName());
+    auto copy = std::make_unique<EnvironmentAgent>(renderer);
+    copy->name = GetName();
     CloneBaseProperties(copy.get(), scene);
     return copy;
 }

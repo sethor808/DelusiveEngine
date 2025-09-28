@@ -2,21 +2,36 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <memory>
+#include <vector>
 #include "Shader.h"
 #include "Font.h"
 
+struct RenderCommand;
+class TextureManager;
+
 class DelusiveRenderer {
 public:
+	DelusiveRenderer();
 	~DelusiveRenderer();
 
 	void Init();
 	void InitTextRenderer();
 	void Clear();
 	void Shutdown();
+
+	void SetViewProjection(glm::mat4& view, glm::mat4& projection) { this->view = view; this->projection = projection; }
+
 	void GenerateProjection();
 	void OnResize(int width, int height);
 	void GetWindowSize(int&, int&);
 	const glm::mat4& GetProjection() const;
+
+	//Draw functions
+	GLuint GetTexture(const std::string&);
+	Shader* GetDefaultShader();
+	void Submit(const RenderCommand&);
+	void Flush();
+
 	GLuint CreateFallbackWhiteTexture();
 	glm::mat4 GetUIProjection();
 	void BeginUIRenderPass();
@@ -39,7 +54,11 @@ public:
 	//Camera stuff
 	float GetPixelScale();
 private:
+	std::unique_ptr<TextureManager> textureManager;
+	std::vector<RenderCommand> commands;
+
 	glm::mat4 projection;
+	glm::mat4 view;
 	int width = 800;
 	int height = 600;
 
@@ -51,6 +70,7 @@ private:
 	GLuint quadVAO = 0;
 	GLuint quadVBO = 0;
 
+	std::unique_ptr<Shader> defaultShader;
 	std::unique_ptr<Shader> textShader; // Make sure Shader is included
 	std::unique_ptr<Shader> uiShader;
 	std::unique_ptr<Font> defaultFont;

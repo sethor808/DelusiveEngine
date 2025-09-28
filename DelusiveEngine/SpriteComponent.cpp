@@ -2,11 +2,17 @@
 #include "Agent.h"
 #include "DelusiveMacros.h"
 #include "TransformComponent.h"
+#include "TextureManager.h"
+#include "DelusiveRenderer.h"
 #include <filesystem>
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 #include <string>
+#include <imgui/imgui.h>
+#include <imgui/backend/imgui_impl_sdl3.h>
+#include <imgui/backend/imgui_impl_opengl3.h>
 
 float vertices[] = {
     // pos       // tex
@@ -19,12 +25,9 @@ float vertices[] = {
     -0.5f, -0.5f,  0.0f, 0.0f
 };
 
-SpriteComponent::SpriteComponent() {
-    Init();
-}
-
-SpriteComponent::SpriteComponent(const char* texturePath) {
-    textureData.texturePath = texturePath;
+SpriteComponent::SpriteComponent(DelusiveRenderer& renderer)
+    : Component(renderer)
+{
     Init();
     RegisterProperties();
 }
@@ -38,10 +41,8 @@ void SpriteComponent::Init() {
     SetRotation(0.0f);
     SetScale(1.0f, 1.0f);
 
-    textureData.Init(); // VAO/VBO/Shader setup
-
     if (!textureData.texturePath.empty()) {
-        textureData.SetTexture(textureData.texturePath);
+        SetTexturePath(textureData.texturePath);
     }
 }
 
@@ -51,7 +52,8 @@ void SpriteComponent::RegisterProperties() {
 }
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
-    auto sprite = std::make_unique<SpriteComponent>(textureData.texturePath.c_str());
+    auto sprite = std::make_unique<SpriteComponent>(renderer);
+    sprite->textureData.texturePath = textureData.texturePath;
     sprite->SetPosition(transform->position.x, transform->position.y);
     sprite->SetRotation(transform->rotation);
     sprite->SetScale(transform->scale.x, transform->scale.y);
@@ -60,26 +62,8 @@ std::unique_ptr<Component> SpriteComponent::Clone() const {
 }
 
 void SpriteComponent::SetTexturePath(const std::string& path) {
-    // Don't reload if it's the same texture
-
     textureData.texturePath = path;
-
-    // Clean up old texture
-    if (textureData.texture) {
-        delete textureData.texture;
-        textureData.texture = nullptr;
-    }
-
-    // Load new texture
-    textureData.texture = new Texture(path.c_str());
-
-    //TODO: Perhaps change this to load the previous texture if it doesn't load
-    if (!textureData.texture) {
-        std::cerr << "[SpriteComponent] Failed to load texture: " << path << "\n";
-    }
-    else {
-        std::cout << "[SpriteComponent] Texture set to: " << path << "\n";
-    }
+    textureData.textureID = renderer.GetTexture(path);
 }
 
 void SpriteComponent::SetPosition(float x, float y) {
@@ -98,19 +82,20 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
     glm::mat4 agentTransform = owner->GetTransform().ToMatrix();
     glm::mat4 localTransform = transform->ToMatrix();
     glm::mat4 model = agentTransform * localTransform;
-    glm::mat4 view = glm::mat4(1.0f);
 
-    textureData.Draw(model, view, projection);
+    renderer.Submit({
+        .modelMatrix = model,
+        .color = glm::vec4(1.0f), // could expose as property
+        .textureID = textureData.textureID,
+        .layer = renderOrder,
+        .isUI = false
+        });
 }
 
 void SpriteComponent::DrawImGui() {
     Component::DrawImGui();
 
-	//Reloading the texture here to bypass Update not being called in the editor
-    if (textureData.texturePath != textureData.previousTexturePath) {
-        SetTexturePath(textureData.texturePath);
-        textureData.previousTexturePath = textureData.texturePath;
-    }
+    SetTexturePath(textureData.texturePath);
 }
 
 bool SpriteComponent::DrawAnimatorImGui(ComponentMod& mod) {
@@ -174,18 +159,6 @@ void SpriteComponent::SetVelocity(float x, float y) {
 }
 
 void SpriteComponent::Update(float deltaTime){
-    if (!textureData.texture) {
-        if (textureData.texturePath != "") {
-            SetTexturePath(textureData.texturePath);
-        }
-    }
-
-    //Reload texture if changed
-    if (textureData.texturePath != textureData.previousTexturePath) {
-        SetTexturePath(textureData.texturePath);
-        textureData.previousTexturePath = textureData.texturePath;
-    }
-
     transform->position += velocity * deltaTime;
     //Probably move camera here
 }

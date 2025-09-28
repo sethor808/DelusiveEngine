@@ -7,7 +7,8 @@
 
 class PlayerAgent : public Agent {
 public:
-	PlayerAgent(const std::string& agentName);
+	PlayerAgent(DelusiveRenderer&);
+	PlayerAgent() = delete;
 	std::unique_ptr<Agent> Clone(Scene*) const override;
 
 	void Update(float deltaTime) override;

@@ -1,8 +1,10 @@
 #include "PlayerAgent.h"
 #include "DelusiveRenderer.h"
 
-PlayerAgent::PlayerAgent(const std::string& agentName) {
-	SetName(agentName);
+PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
+    : Agent(renderer)
+{
+    SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});
 	velocity = { 0.0f, 0.0f };
 
@@ -140,7 +142,7 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
 }
 
 std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<PlayerAgent>(GetName());
+    auto copy = std::make_unique<PlayerAgent>(renderer);
     CloneBaseProperties(copy.get(), scene);
     return copy;
 }

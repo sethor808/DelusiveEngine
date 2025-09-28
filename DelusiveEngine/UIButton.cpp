@@ -14,8 +14,13 @@ UIButton::UIButton(DelusiveRenderer& _renderer)
 
 void UIButton::Init() {
 	buttonTexture.texturePath = "../assets/ui/default_button.png";
-	buttonTexture.Init();
 
+	buttonTexture.textureID = renderer.GetTexture(buttonTexture.texturePath);
+	if (buttonTexture.textureID == 0) {
+		buttonTexture.textureID = renderer.CreateFallbackWhiteTexture();
+	}
+
+	// Font initialization (leave as-is if your Font class handles its own resources)
 	buttonFont.fontPath = DEFAULT_FONT;
 	buttonFont.fontSize = 16;
 	buttonFont.Init();
@@ -34,17 +39,28 @@ void UIButton::RegisterProperties() {
 
 std::unique_ptr<UIElement> UIButton::Clone() const {
 	auto copy = std::make_unique<UIButton>(renderer);
-	//TODO: Set label
 	copy->SetPosition(position);
 	copy->SetSize(size);
 	copy->SetEnabled(enabled);
+	copy->SetName(name);
 
-	copy->buttonTexture.CloneFrom(buttonTexture);
-	copy->buttonFont.CloneFrom(buttonFont);
+	// copy simple data
+	copy->label = label;
 	copy->fontColor = fontColor;
-	copy->buttonFont.fontSize = buttonFont.fontSize;
 	copy->textOffset = textOffset;
-	copy->onClick = onClick; // note: lambda copying can be tricky
+
+	// copy texture path and ask renderer for the cached textureID
+	copy->buttonTexture.texturePath = buttonTexture.texturePath;
+	copy->buttonTexture.textureID = renderer.GetTexture(copy->buttonTexture.texturePath);
+	if (copy->buttonTexture.textureID == 0) {
+		copy->buttonTexture.textureID = renderer.CreateFallbackWhiteTexture();
+	}
+
+	// Copy font (if Font is copyable; adjust if it requires a special clone)
+	copy->buttonFont.fontSize = buttonFont.fontSize;
+
+	// copy onClick (note: copying lambdas with captures might not behave as you expect)
+	copy->onClick = onClick;
 
 	for (const auto& child : children) {
 		copy->AddChild(std::move(child->Clone()));
@@ -60,16 +76,25 @@ void UIButton::SetOnClick(std::function<void()> callback) {
 void UIButton::Draw(const glm::mat4& projection) {
 	if (!enabled) return;
 
-	// draw button background
+	// Compute world-space position/size for UI (accounting for pixel scale)
+	glm::vec2 worldPos = position * DELUSIVE_PIXEL_SCALE;
+	glm::vec2 worldSize = size * DELUSIVE_PIXEL_SCALE;
+
 	glm::mat4 model =
-		glm::translate(glm::mat4(1.0f), glm::vec3(position, 0.0f)) *
-		glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+		glm::translate(glm::mat4(1.0f), glm::vec3(worldPos, 0.0f)) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(worldSize, 1.0f));
 
-	glm::mat4 view = glm::mat4(1.0f);
+	// Build render command and submit to the renderer (batched)
+	RenderCommand cmd;
+	cmd.modelMatrix = model;
+	cmd.color = glm::vec4(1.0f); // could become a property/tint
+	cmd.textureID = buttonTexture.textureID ? buttonTexture.textureID : renderer.CreateFallbackWhiteTexture();
+	cmd.layer = 0; // UI layer ordering -- feel free to expose as a member
+	cmd.isUI = true;
+	renderer.Submit(cmd);
 
-	buttonTexture.Draw(model, view, projection);
-
-	// draw button label
+	// Draw label text using your font system (unchanged)
+	// Note: position for text should be in same coordinate space as Draw (center-origin)
 	buttonFont.DrawText(
 		label,
 		position + textOffset,
@@ -77,7 +102,12 @@ void UIButton::Draw(const glm::mat4& projection) {
 		projection
 	);
 
-	UIElement::Draw(projection); // draw children
+	// Draw children (they will submit their own RenderCommands)
+	UIElement::Draw(projection);
+}
+
+void UIButton::SetTexturePath(const std::string& path) {
+
 }
 
 void UIButton::HandleMouse(const glm::vec2& mouse, bool mouseDown) {

@@ -4,9 +4,12 @@
 
 class TriggerCollider : public ColliderComponent {
 public:
+	TriggerCollider(DelusiveRenderer&);
+	TriggerCollider() = delete;
+
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<TriggerCollider>();
+		return std::make_unique<TriggerCollider>(renderer);
 	}
 
 	ColliderType GetColliderType() const override {

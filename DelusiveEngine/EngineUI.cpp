@@ -199,7 +199,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
                         std::ifstream in(fullPath);
                         if (in.is_open()) {
-                            auto agent = std::make_unique<PlayerAgent>("Temp");
+                            auto agent = std::make_unique<PlayerAgent>(renderer);
                             agent->LoadFromFile(in);
                             scene.AddAgent(std::move(agent));
                         }
@@ -369,16 +369,16 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         if (ImGui::BeginPopupContextWindow("SceneRightClick", ImGuiPopupFlags_MouseButtonRight)) {
             if (ImGui::BeginMenu("Add Agent")) {
                 if (ImGui::MenuItem("Player Agent")) {
-                    scene.AddAgent(std::make_unique<PlayerAgent>("NewPlayer"));
+                    scene.AddAgent(std::make_unique<PlayerAgent>(renderer));
                 }
                 if (ImGui::MenuItem("Camera Agent")) {
-                    scene.AddAgent(std::make_unique<CameraAgent>());
+                    scene.AddAgent(std::make_unique<CameraAgent>(renderer));
                 }
                 if (ImGui::MenuItem("Enemy Agent")) {
-                    scene.AddAgent(std::make_unique<EnemyAgent>("NewEnemy"));
+                    scene.AddAgent(std::make_unique<EnemyAgent>(renderer));
                 }
                 if (ImGui::MenuItem("Environment Agent")) {
-                    scene.AddAgent(std::make_unique<EnvironmentAgent>("NewEnvironment"));
+                    scene.AddAgent(std::make_unique<EnvironmentAgent>(renderer));
                 }
                 ImGui::EndMenu();
             }
@@ -482,7 +482,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                         for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
                             if (entry.path().extension() == ".agent") {
                                 if (ImGui::MenuItem(entry.path().filename().string().c_str())) {
-                                    auto loaded = std::make_unique<PlayerAgent>("LoadedAgent");
+                                    auto loaded = std::make_unique<PlayerAgent>(renderer);
                                     loaded->LoadFromFile(entry.path().string());
                                     scene.AddAgent(std::move(loaded));
                                 }
@@ -574,7 +574,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
 
     auto& agents = scene.GetAgents();
     if (agents.empty()) {
-        scene.AddAgent(std::make_unique<PlayerAgent>("NewAgent"));
+        scene.AddAgent(std::make_unique<PlayerAgent>(renderer));
     }
 
     Agent& agent = *scene.GetAgents().front();
@@ -589,7 +589,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
         if (ImGui::BeginPopupContextItem("AgentContext")) { 
             if (ImGui::BeginMenu("Add")) { 
                 if (ImGui::MenuItem("Sprite")) {
-                    selectedComponent = agent.AddComponent<SpriteComponent>(DEFAULT_SPRITE);
+                    selectedComponent = agent.AddComponent<SpriteComponent>();
                     agentSelected = false;
                 }
                 if (ImGui::BeginMenu("Collider")) {
@@ -769,10 +769,10 @@ void EngineUI::ResetOverrides() {
 }
 
 void EngineUI::SetupAnimation(const std::string pendingAgentFile) {
-    baseAgent = std::make_unique<PlayerAgent>("Loaded");
+    baseAgent = std::make_unique<PlayerAgent>(renderer);
     baseAgent->LoadFromFile(pendingAgentFile);
 
-    pureAgent = std::make_unique<PlayerAgent>("Pure");
+    pureAgent = std::make_unique<PlayerAgent>(renderer);
     pureAgent->LoadFromFile(pendingAgentFile);
 
     currentBaseAgentFile = pendingAgentFile;
@@ -1040,7 +1040,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
         }
         else {
             if (!baseAgent && !currentAnimation.data.defaultAgentPath.empty()) {
-                baseAgent = std::make_unique<PlayerAgent>("Loaded");
+                baseAgent = std::make_unique<PlayerAgent>(renderer);
                 baseAgent->LoadFromFile(currentAnimation.data.defaultAgentPath);
             }
 

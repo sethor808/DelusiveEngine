@@ -4,8 +4,8 @@
 #include "DelusiveData.h"
 #include <iostream>
 
-ScriptComponent::ScriptComponent(ScriptManager& scriptManager)
-	: scriptManager(scriptManager)
+ScriptComponent::ScriptComponent(DelusiveRenderer& renderer, ScriptManager& scriptManager)
+	: Component(renderer), scriptManager(scriptManager)
 { 
 	name = "New ScriptComponent";
 	InitScript();
@@ -20,7 +20,7 @@ void ScriptComponent::InitScript() {
 }
 
 std::unique_ptr<Component> ScriptComponent::Clone() const {
-	auto copy = std::make_unique<ScriptComponent>(scriptManager);
+	auto copy = std::make_unique<ScriptComponent>(renderer, scriptManager);
 	copy->SetName(GetName());
 	copy->scriptContainer->scriptName = scriptContainer->scriptName;
 	return copy;

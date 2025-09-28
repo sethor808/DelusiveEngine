@@ -14,6 +14,7 @@
 #define DEFAULT_COLL_FRAG "../assets/shaders/collider_frag.glsl"
 
 #define DEFAULT_SPRITE "../assets/sprites/star.jpg"
+#define TALISMAN_STRING "../assets/sprites/HPSystem/string.png"
 
 #define SCENE_PATH "../assets/scenes/"
 #define SCENE_EXT ".scene"

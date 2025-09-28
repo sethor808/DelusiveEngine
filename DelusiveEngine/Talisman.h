@@ -21,6 +21,10 @@ public:
 	virtual void WhileActive() {}
 	virtual void OnConsume() {}
 
+	virtual std::string GetBaseTexture() const;
+	virtual std::string GetGlyphTexture() const;
+	virtual std::string GetStringTexture() const;
+
 	virtual void Reset() { hp = maxHP; isBroken = false; } //TODO: Write a graphical reset
 
 protected:

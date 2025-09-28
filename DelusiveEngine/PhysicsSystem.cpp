@@ -1,5 +1,7 @@
 #include "PhysicsSystem.h"
 #include "DelusiveComponents.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void PhysicsSystem::HandleCollisions(const std::vector<std::unique_ptr<Agent>>& agents) {
 	for (size_t i = 0; i < agents.size(); ++i) {
@@ -93,10 +95,10 @@ bool PhysicsSystem::CheckBoxBoxCollision(ColliderComponent* a, ColliderComponent
 }
 
 bool PhysicsSystem::CheckCircleCircleCollision(ColliderComponent* circle, ColliderComponent* box) {
-	glm::vec2 centerA = circle->transform.position;
-	glm::vec2 centerB = box->transform.position;
-	float radiusA = circle->transform.scale.x * 0.5f;
-	float radiusB = box->transform.scale.x * 0.5f;
+	glm::vec2 centerA = circle->transform->position;
+	glm::vec2 centerB = box->transform->position;
+	float radiusA = circle->transform->scale.x * 0.5f;
+	float radiusB = box->transform->scale.x * 0.5f;
 
 	float distSq = glm::length2(centerA - centerB);
 	float radiusSum = radiusA + radiusB;
@@ -107,8 +109,8 @@ bool PhysicsSystem::CheckCircleCircleCollision(ColliderComponent* circle, Collid
 bool PhysicsSystem::CheckBoxCircleCollision(ColliderComponent* box, ColliderComponent* circle) {
 	glm::vec2 boxMin = box->GetMin();
 	glm::vec2 boxMax = box->GetMax();
-	glm::vec2 circleCenter = circle->transform.position;
-	float radius = circle->transform.scale.x * 0.5f;
+	glm::vec2 circleCenter = circle->transform->position;
+	float radius = circle->transform->scale.x * 0.5f;
 
 	// Clamp circle center to nearest point inside box
 	glm::vec2 closest = glm::clamp(circleCenter, boxMin, boxMax);
@@ -118,10 +120,10 @@ bool PhysicsSystem::CheckBoxCircleCollision(ColliderComponent* box, ColliderComp
 }
 
 bool PhysicsSystem::CheckLineLineCollision(ColliderComponent* a, ColliderComponent* b) {
-	glm::vec2 p1 = a->transform.position;
-	glm::vec2 d1 = glm::vec2(cos(a->transform.rotation), sin(a->transform.rotation)) * a->transform.scale.x;
-	glm::vec2 p2 = b->transform.position;
-	glm::vec2 d2 = glm::vec2(cos(b->transform.rotation), sin(b->transform.rotation)) * b->transform.scale.x;
+	glm::vec2 p1 = a->transform->position;
+	glm::vec2 d1 = glm::vec2(cos(a->transform->rotation), sin(a->transform->rotation)) * a->transform->scale.x;
+	glm::vec2 p2 = b->transform->position;
+	glm::vec2 d2 = glm::vec2(cos(b->transform->rotation), sin(b->transform->rotation)) * b->transform->scale.x;
 
 	glm::vec2 q1 = p1 + d1;
 	glm::vec2 q2 = p2 + d2;
@@ -136,12 +138,12 @@ bool PhysicsSystem::CheckLineLineCollision(ColliderComponent* a, ColliderCompone
 }
 
 bool PhysicsSystem::CheckLineCircleCollision(ColliderComponent* line, ColliderComponent* circle) {
-	glm::vec2 p1 = line->transform.position;
-	glm::vec2 dir = glm::vec2(cos(line->transform.rotation), sin(line->transform.rotation));
-	glm::vec2 p2 = p1 + dir * line->transform.scale.x;
+	glm::vec2 p1 = line->transform->position;
+	glm::vec2 dir = glm::vec2(cos(line->transform->rotation), sin(line->transform->rotation));
+	glm::vec2 p2 = p1 + dir * line->transform->scale.x;
 
-	glm::vec2 circleCenter = circle->transform.position;
-	float radius = circle->transform.scale.x * 0.5f;
+	glm::vec2 circleCenter = circle->transform->position;
+	float radius = circle->transform->scale.x * 0.5f;
 
 	// Project point onto segment
 	glm::vec2 seg = p2 - p1;
@@ -155,9 +157,9 @@ bool PhysicsSystem::CheckLineCircleCollision(ColliderComponent* line, ColliderCo
 }
 
 bool PhysicsSystem::CheckLineBoxCollision(ColliderComponent* line, ColliderComponent* box) {
-	glm::vec2 p1 = line->transform.position;
-	glm::vec2 dir = glm::vec2(cos(line->transform.rotation), sin(line->transform.rotation));
-	glm::vec2 p2 = p1 + dir * line->transform.scale.x;
+	glm::vec2 p1 = line->transform->position;
+	glm::vec2 dir = glm::vec2(cos(line->transform->rotation), sin(line->transform->rotation));
+	glm::vec2 p2 = p1 + dir * line->transform->scale.x;
 
 	glm::vec2 boxMin = box->GetMin();
 	glm::vec2 boxMax = box->GetMax();

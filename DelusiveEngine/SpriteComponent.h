@@ -1,21 +1,17 @@
 #pragma once
 #include "DelusiveData.h"
 #include "Component.h"
-#include "TransformComponent.h"
 #include "EditorInferface.h"
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <vector>
-#include <imgui/imgui.h>
-#include <imgui/backend/imgui_impl_sdl3.h>
-#include <imgui/backend/imgui_impl_opengl3.h>
 
 class SpriteComponent : public Component {
 public:
     bool isForeground = false;
 
-    SpriteComponent();
-    SpriteComponent(const char* texturePath);
+    SpriteComponent(DelusiveRenderer& renderer);
+    SpriteComponent() = delete;
 
     SpriteComponent(const SpriteComponent&) = delete;
     SpriteComponent& operator=(const SpriteComponent&) = delete;

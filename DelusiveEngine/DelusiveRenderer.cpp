@@ -1,7 +1,16 @@
 #include "DelusiveRenderer.h"
+#include "TextureManager.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include "DelusiveMacros.h"
+#include "DelusiveData.h"
+#include <algorithm>
+
+DelusiveRenderer::DelusiveRenderer() 
+	: textureManager(std::make_unique<TextureManager>())
+{
+
+}
 
 DelusiveRenderer::~DelusiveRenderer() {
 	Shutdown();
@@ -14,13 +23,13 @@ void DelusiveRenderer::Init() {
 
 	float quadVertices[] = {
 		// positions   // texCoords
-		0.0f, 1.0f,    0.0f, 1.0f,
-		1.0f, 0.0f,    1.0f, 0.0f,
-		0.0f, 0.0f,    0.0f, 0.0f,
+		-0.5f,  0.5f,     0.0f, 1.0f,
+	 0.5f, -0.5f,     1.0f, 0.0f,
+	-0.5f, -0.5f,     0.0f, 0.0f,
 
-		0.0f, 1.0f,    0.0f, 1.0f,
-		1.0f, 1.0f,    1.0f, 1.0f,
-		1.0f, 0.0f,    1.0f, 0.0f
+	-0.5f,  0.5f,     0.0f, 1.0f,
+	 0.5f,  0.5f,     1.0f, 1.0f,
+	 0.5f, -0.5f,     1.0f, 0.0f
 	};
 
 	glGenVertexArrays(1, &quadVAO);
@@ -30,10 +39,11 @@ void DelusiveRenderer::Init() {
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(0);
+
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
 
@@ -96,6 +106,67 @@ void DelusiveRenderer::Shutdown() {
 	if (textVBO) glDeleteBuffers(1, &textVBO);
 	if (textVAO) glDeleteVertexArrays(1, &textVAO);
 	textVBO = textVAO = 0;
+
+	textureManager->UnloadAll();
+}
+
+GLuint DelusiveRenderer::GetTexture(const std::string& path) {
+	return textureManager->Load(path);
+}
+
+Shader* DelusiveRenderer::GetDefaultShader() {
+	const std::string& shaderVert = DEFAULT_VERT;
+	const std::string& shaderFrag = DEFAULT_FRAG;
+	if (!defaultShader.get()) {
+		defaultShader = std::make_unique<Shader>(
+			shaderVert.c_str(),
+			shaderFrag.c_str()
+		);
+	}
+
+	return defaultShader.get();
+}
+
+void DelusiveRenderer::Submit(const RenderCommand& cmd) {
+	commands.push_back(cmd);
+}
+
+void DelusiveRenderer::Flush() {
+	std::sort(commands.begin(), commands.end(),
+		[](const RenderCommand& a, const RenderCommand& b) {
+			if (a.isUI != b.isUI) return a.isUI < b.isUI;
+			if (a.textureID != b.textureID) return a.textureID < b.textureID;
+			return a.layer < b.layer;
+		});
+
+	Shader* shader = GetDefaultShader();
+	shader->Use();
+	GLint loc = glGetUniformLocation(shader->GetID(), "tex");
+	if (loc >= 0) glUniform1i(loc, 0);
+
+	GLuint currentTex = 0;
+	glBindVertexArray(quadVAO);
+
+	for (auto& cmd : commands) {
+		// Per-pass uniforms
+		shader->SetMat4("projection", cmd.isUI ? GetUIProjection() : projection);
+		shader->SetMat4("view", cmd.isUI ? glm::mat4(1.0f) : view);
+		shader->SetMat4("model", glm::value_ptr(cmd.modelMatrix));
+
+		//shader->SetVec4("uColor", cmd.color);
+
+		// Bind texture if it changed
+		if (cmd.textureID != currentTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, cmd.textureID);
+			currentTex = cmd.textureID;
+		}
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+
+	glBindVertexArray(0);
+	commands.clear();
 }
 
 const glm::mat4& DelusiveRenderer::GetProjection() const{

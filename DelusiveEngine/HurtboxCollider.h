@@ -4,9 +4,12 @@
 
 class HurtboxCollider : public ColliderComponent {
 public:
+	HurtboxCollider(DelusiveRenderer&);
+	HurtboxCollider() = delete;
+
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<HurtboxCollider>();
+		return std::make_unique<HurtboxCollider>(renderer);
 	}
 
 	ColliderType GetColliderType() const override {

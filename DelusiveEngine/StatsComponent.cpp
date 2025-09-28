@@ -1,6 +1,12 @@
 #include "StatsComponent.h"
 #include <fstream>
 
+StatsComponent::StatsComponent(DelusiveRenderer& renderer)
+	: Component(renderer)
+{
+
+}
+
 int StatsComponent::GetHealth() {
 	return 0;
 }

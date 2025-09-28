@@ -70,7 +70,7 @@ namespace DelusiveEngine {
         
 
         // --- Editor Camera ---
-        auto editorCamera = std::make_unique<CameraAgent>();
+        auto editorCamera = std::make_unique<CameraAgent>(renderer);
         CameraAgent* editorCamPtr = editorCamera.get();
 
         float scrollDelta = 0.0f;
@@ -144,6 +144,8 @@ namespace DelusiveEngine {
             int width, height;
             renderer.GetWindowSize(width, height);
             glm::mat4 projection = cam->GetViewProjectionFromWindow(window);
+            glm::mat4 view = glm::inverse(cam->transform.ToMatrix());
+            renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);
 
             game.HandleMouse(worldMouse, mouseState & SDL_BUTTON_LEFT);

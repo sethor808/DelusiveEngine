@@ -12,7 +12,7 @@ scale=1 1
 rotation=0
 name=New Sprite
 enabled=1
-textureData=
+textureData=../assets/sprites/BasicDude\BasicDude1.jpg
 [/Component]
 [Component SolidCollider]
 position=0 0

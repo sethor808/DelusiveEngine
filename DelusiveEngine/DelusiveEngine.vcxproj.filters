@@ -267,6 +267,9 @@
     <ClCompile Include="UITalismanDisplay.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>engine\render\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -476,6 +479,9 @@
     </ClInclude>
     <ClInclude Include="UITalismanDisplay.h">
       <Filter>engine\ui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>engine\render\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

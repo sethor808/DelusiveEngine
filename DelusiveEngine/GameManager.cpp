@@ -52,6 +52,7 @@ void GameManager::Update(float deltaTime) {
 
 void GameManager::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) {
     activeScene->Draw(renderer, projection);
+    this->renderer.Flush(); //TODO: Fix the naming here it is confusing
 }
 
 void GameManager::HandleInput(const PlayerInputState& input) {

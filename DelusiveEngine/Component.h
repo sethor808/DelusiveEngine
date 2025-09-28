@@ -4,18 +4,20 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <memory>
 #include <string>
+#include <memory>
 
 class Agent;
 class PropertyRegistry;
-class TransformComponent;
+class DelusiveRenderer;
+struct TransformComponent;
 
 class Component {
 public:
 	std::unique_ptr<TransformComponent> transform;
 
-	Component();
+	Component(DelusiveRenderer&);
+	Component() = delete;
 
 	Component(const Component&) = delete;
 	Component& operator=(const Component&) = delete;
@@ -58,6 +60,7 @@ public:
 	virtual void Serialize(std::ostream& out) const;
 	virtual void Deserialize(std::istream& in);
 protected:
+	DelusiveRenderer& renderer;
 	std::unique_ptr<PropertyRegistry> registry;
 	Agent* owner = nullptr;
 	bool editorMode = false;

@@ -3,9 +3,12 @@
 
 class StatsComponent : public Component {
 public:
+	StatsComponent(DelusiveRenderer&);
+	StatsComponent() = delete;
+
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<StatsComponent>();
+		return std::make_unique<StatsComponent>(renderer);
 	}
 
 	int GetHealth();

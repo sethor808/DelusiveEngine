@@ -30,6 +30,15 @@ Texture::Texture(const char* path) {
     }
 
     stbi_image_free(data);
+
+    GLint currentContext;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentContext);
+    std::cout << "Current texture binding: " << currentContext << "\n";
+
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "OpenGL error during texture load: " << err << "\n";
+    }
 }
 
 Texture::~Texture() {

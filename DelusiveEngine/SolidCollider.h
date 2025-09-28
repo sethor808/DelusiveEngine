@@ -4,9 +4,12 @@
 
 class SolidCollider : public ColliderComponent {
 public:
+	SolidCollider(DelusiveRenderer&);
+	SolidCollider() = delete;
+
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<SolidCollider>();
+		return std::make_unique<SolidCollider>(renderer);
 	}
 
 	ColliderType GetColliderType() const override {

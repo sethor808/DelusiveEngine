@@ -6,7 +6,9 @@ const T& Clamp(const T& v, const T& lo, const T& hi) {
     return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
-ColliderComponent::ColliderComponent(){ 
+ColliderComponent::ColliderComponent(DelusiveRenderer& renderer)
+    : Component(renderer)
+{ 
 	name = "New Collider";
     RegisterProperties();
 }
@@ -19,7 +21,7 @@ void ColliderComponent::RegisterProperties() {
 Zone ColliderComponent::ComputeWorldArea() const {
     const glm::mat4 model =
         GetOwner()->GetTransform().ToMatrix() *
-        transform.ToMatrix();
+        transform->ToMatrix();
 
     Zone out{ {  std::numeric_limits<float>::infinity(),
                  std::numeric_limits<float>::infinity() },
@@ -29,7 +31,7 @@ Zone ColliderComponent::ComputeWorldArea() const {
     switch (shape) {
     case ShapeType::Box: {
         // Local corners centered at origin, scaled by full size
-        const glm::vec2 he = 0.5f * transform.scale;
+        const glm::vec2 he = 0.5f * transform->scale;
         const glm::vec2 corners[4] = {
             {-he.x, -he.y}, { he.x, -he.y},
             { he.x,  he.y}, {-he.x,  he.y}
@@ -47,7 +49,7 @@ Zone ColliderComponent::ComputeWorldArea() const {
         glm::vec4 cw = model * glm::vec4(0, 0, 0, 1);
         glm::vec2 center(cw.x, cw.y);
         // If your model may include rotation/non-uniform scale, pick a safe radius:
-        float rLocal = 0.5f * transform.scale.x;
+        float rLocal = 0.5f * transform->scale.x;
         float sx = glm::length(glm::vec2(model[0])); // length of first column (x axis)
         float sy = glm::length(glm::vec2(model[1])); // length of second column (y axis)
         float r = rLocal * std::max(sx, sy);
@@ -58,7 +60,7 @@ Zone ColliderComponent::ComputeWorldArea() const {
     case ShapeType::Line: {
         // Line from (0,0) to (len, 0) in local space
         glm::vec4 a = model * glm::vec4(0, 0, 0, 1);
-        glm::vec4 b = model * glm::vec4(transform.scale.x, 0, 0, 1);
+        glm::vec4 b = model * glm::vec4(transform->scale.x, 0, 0, 1);
         glm::vec2 p0(a.x, a.y), p1(b.x, b.y);
         out.min = glm::min(p0, p1);
         out.max = glm::max(p0, p1);
@@ -95,9 +97,9 @@ bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {
 
     if (dirty) {
         mod.enabled = enabled;
-        mod.positionOffset = transform.position;
-        mod.scale = transform.scale;
-        mod.rotation = transform.rotation;
+        mod.positionOffset = transform->position;
+        mod.scale = transform->scale;
+        mod.rotation = transform->rotation;
     }
 
     return dirty;
@@ -106,8 +108,8 @@ bool ColliderComponent::DrawAnimatorImGui(ComponentMod& mod) {
 void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
     if (editorMode) {
         glm::mat4 world = GetOwner()->GetTransform().ToMatrix();
-        glm::vec2 center = transform.position;
-        float radius = transform.scale.x * 0.5f; // assuming uniform scaling
+        glm::vec2 center = transform->position;
+        float radius = transform->scale.x * 0.5f; // assuming uniform scaling
 
         float handleRadius = 6.0f / (64.0f * 1); // TODO: replace with dynamic zoom scaling
 
@@ -139,12 +141,12 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
 
                 switch (currentAction) {
                 case ColliderAction::Drag:
-                    transform.position += delta;
+                    transform->position += delta;
                     break;
                 case ColliderAction::ResizeRight: {
                     glm::vec2 localDelta = glm::inverse(world) * glm::vec4(delta, 0, 0);
                     float newRadius = glm::length(localDelta + glm::vec2(radius, 0));
-                    transform.scale.x = transform.scale.y = newRadius * 2.0f;
+                    transform->scale.x = transform->scale.y = newRadius * 2.0f;
                     break;
                 }
                 default:
@@ -156,9 +158,9 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
         }
 
         if (GetShapeType() == ShapeType::Line) {
-            glm::vec2 start = transform.position;
-            float length = transform.scale.x;
-            float angle = transform.rotation;
+            glm::vec2 start = transform->position;
+            float length = transform->scale.x;
+            float angle = transform->rotation;
             glm::vec2 dir = glm::vec2(cos(angle), sin(angle));
             glm::vec2 end = start + dir * length;
 
@@ -200,18 +202,18 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
 
                 switch (currentAction) {
                 case ColliderAction::Drag:
-                    transform.position += delta;
+                    transform->position += delta;
                     break;
 
                 case ColliderAction::ResizeLeft: {
                     // Dragging start point
-                    glm::vec2 newStart = glm::vec2(world * glm::vec4(transform.position, 0, 1)) + delta;
+                    glm::vec2 newStart = glm::vec2(world * glm::vec4(transform->position, 0, 1)) + delta;
                     glm::vec2 newEnd = worldEnd;
                     glm::vec2 newVec = newEnd - newStart;
 
-                    transform.position = glm::vec2(inverseWorld * glm::vec4(newStart, 0, 1));
-                    transform.rotation = atan2(newVec.y, newVec.x);
-                    transform.scale.x = glm::length(newVec);
+                    transform->position = glm::vec2(inverseWorld * glm::vec4(newStart, 0, 1));
+                    transform->rotation = atan2(newVec.y, newVec.x);
+                    transform->scale.x = glm::length(newVec);
                     break;
                 }
 
@@ -220,9 +222,9 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
                     glm::vec2 newEnd = worldEnd + delta;
                     glm::vec2 newVec = newEnd - worldStart;
 
-                    transform.rotation = atan2(newVec.y, newVec.x);
-                    transform.scale.x = glm::length(newVec);
-                    // Start stays the same (transform.position)
+                    transform->rotation = atan2(newVec.y, newVec.x);
+                    transform->scale.x = glm::length(newVec);
+                    // Start stays the same (transform->position)
                     break;
                 }
 
@@ -235,7 +237,7 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
         }
 
         // --- Default Box collider logic follows ---
-        glm::vec2 halfSize = transform.scale * 0.5f;
+        glm::vec2 halfSize = transform->scale * 0.5f;
 
         std::vector<std::pair<ColliderHandleType, glm::vec2>> handles = {
             { ColliderHandleType::Center,       glm::vec2(world * glm::vec4(center, 0, 1)) },
@@ -270,21 +272,21 @@ void ColliderComponent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown)
 
             switch (currentAction) {
             case ColliderAction::Drag:
-                transform.position += delta;
+                transform->position += delta;
                 break;
             case ColliderAction::ResizeRight:
-                transform.scale.x += delta.x;
+                transform->scale.x += delta.x;
                 break;
             case ColliderAction::ResizeLeft:
-                transform.position.x += delta.x;
-                transform.scale.x -= delta.x;
+                transform->position.x += delta.x;
+                transform->scale.x -= delta.x;
                 break;
             case ColliderAction::ResizeTop:
-                transform.scale.y += delta.y;
+                transform->scale.y += delta.y;
                 break;
             case ColliderAction::ResizeBottom:
-                transform.position.y += delta.y;
-                transform.scale.y -= delta.y;
+                transform->position.y += delta.y;
+                transform->scale.y -= delta.y;
                 break;
             default:
                 break;

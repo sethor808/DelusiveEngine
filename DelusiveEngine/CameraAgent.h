@@ -7,8 +7,8 @@
 
 class CameraAgent : public Agent {
 public:
-	CameraAgent();
-	CameraAgent(const std::string&);
+	CameraAgent(DelusiveRenderer&);
+	CameraAgent() = delete;
 
 	void Update(float) override;
 	void Draw(const glm::mat4&) const override {}

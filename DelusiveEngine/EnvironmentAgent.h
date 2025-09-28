@@ -4,7 +4,8 @@
 
 class EnvironmentAgent : public Agent {
 public:
-	EnvironmentAgent(const std::string& agentName);
+	EnvironmentAgent(DelusiveRenderer&);
+	EnvironmentAgent() = delete;
 
 	//Overrides
 	std::unique_ptr<Agent> Clone(Scene*) const override;

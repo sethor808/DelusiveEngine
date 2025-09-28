@@ -1,4 +1,5 @@
 #include "Talisman.h"
+#include "DelusiveMacros.h"
 
 bool Talisman::TakeDamage() {
 	hp -= 1;
@@ -10,4 +11,16 @@ bool Talisman::TakeDamage() {
 		isBroken = false;
 		return isBroken;
 	}
+}
+
+std::string Talisman::GetBaseTexture() const {
+	return talismanBase;
+}
+
+std::string Talisman::GetGlyphTexture() const {
+	return talismanGlyph;
+}
+
+std::string Talisman::GetStringTexture() const {
+	return TALISMAN_STRING;
 }

@@ -5,7 +5,8 @@
 
 class EnemyAgent : public Agent {
 public:
-	EnemyAgent(const std::string& agentName);
+	EnemyAgent(DelusiveRenderer&);
+	EnemyAgent() = delete;
 
 	//Overrides
 	std::unique_ptr<Agent> Clone(Scene*) const override;

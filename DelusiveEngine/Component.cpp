@@ -1,11 +1,14 @@
 #include "Component.h"
 #include "DelusiveRegistry.h"
 #include "TransformComponent.h"
+#include "DelusiveRenderer.h"
+#include <memory>
 #include <imgui/imgui.h>
 #include <sstream>
 
-Component::Component()
-    : registry(std::make_unique<PropertyRegistry>()), transform(std::make_unique<TransformComponent>())
+Component::Component(DelusiveRenderer& renderer)
+    :   renderer(renderer),
+        registry(std::make_unique<PropertyRegistry>()), transform(std::make_unique<TransformComponent>())
 {
     
     bool initialized = false;

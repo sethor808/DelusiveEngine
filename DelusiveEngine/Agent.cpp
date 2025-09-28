@@ -8,8 +8,8 @@
 #include <limits>
 #include <sstream>
 
-Agent::Agent()
-	: registry(std::make_unique<PropertyRegistry>())
+Agent::Agent(DelusiveRenderer& renderer)
+	: renderer(renderer), registry(std::make_unique<PropertyRegistry>())
 {
 	RegisterProperties();
 }
@@ -279,7 +279,7 @@ void Agent::DrawImGui() {
 	}
 
 	if (ImGui::BeginPopup("AddComponentPopup")) {
-		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>(DEFAULT_SPRITE);
+		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>();
 		if (ImGui::BeginMenu("Collider")) {
 			if (ImGui::MenuItem("Solid")) AddComponent<SolidCollider>();
 			if (ImGui::MenuItem("Hitbox")) AddComponent<HitboxCollider>();

@@ -18,7 +18,7 @@ UIImage::UIImage(DelusiveRenderer& _renderer)
 void UIImage::Init() {
 	name = "UIImage";
 	textureData.texturePath = DEFAULT_SPRITE;
-	textureData.Init(DEFAULT_UI_VERT, DEFAULT_UI_FRAG);
+	textureData.textureID = renderer.GetTexture(textureData.texturePath);
 
 	RegisterProperties();
 }
@@ -46,61 +46,23 @@ std::unique_ptr<UIElement> UIImage::Clone() const{
 }
 
 void UIImage::Update(float deltaTime) {
-	if (!textureData.texture) {
-		if (textureData.texturePath != "") {
-			SetTexturePath(textureData.texturePath);
-		}
-	}
-
-	//Reload texture if changed
-	if (textureData.texturePath != textureData.previousTexturePath) {
-		SetTexturePath(textureData.texturePath);
-		textureData.previousTexturePath = textureData.texturePath;
-	}
-
 	UIElement::Update(deltaTime);
 }
 
 void UIImage::DrawImGui() {
 	UIElement::DrawImGui();
 
-	//Reloading the texture here to bypass Update not being called in the editor
-	if (textureData.texturePath != textureData.previousTexturePath) {
-		SetTexturePath(textureData.texturePath);
-		textureData.previousTexturePath = textureData.texturePath;
-	}
+	textureData.textureID = renderer.GetTexture(textureData.texturePath);
 }
 
 void UIImage::SetTexturePath(const std::string& path) {
 	textureData.texturePath = path;
-
-	// Clean up old texture
-	if (textureData.texture) {
-		delete textureData.texture;
-		textureData.texture = nullptr;
-	}
-
-	// Load new texture
-	textureData.texture = new Texture(path.c_str());
-
-	//TODO: Perhaps change this to load the previous texture if it doesn't load
-	if (!textureData.texture) {
-		std::cerr << "[UIImage] Failed to load texture: " << path << "\n";
-	}
-	else {
-		std::cout << "[UIImage] Texture set to: " << path << "\n";
-	}
+	textureData.textureID = renderer.GetTexture(textureData.texturePath);
 }
 
 void UIImage::Draw(const glm::mat4& projection) {
 	if (!enabled) return;
 
-	// Reload texture if changed
-	if (textureData.texturePath != textureData.previousTexturePath) {
-		SetTexturePath(textureData.texturePath);
-	}
-
-	// World position and size (accounting for pixel scale)
 	glm::vec2 worldPos = position * DELUSIVE_PIXEL_SCALE;
 	glm::vec2 worldSize = size * DELUSIVE_PIXEL_SCALE;
 
@@ -108,11 +70,14 @@ void UIImage::Draw(const glm::mat4& projection) {
 		glm::translate(glm::mat4(1.0f), glm::vec3(worldPos, 0.0f)) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(worldSize, 1.0f));
 
-	glm::mat4 view = glm::mat4(1.0f); // no view transform for UI
+	renderer.Submit({
+		.modelMatrix = model,
+		.color = glm::vec4(1.0f), // could expose as property
+		.textureID = textureData.textureID,
+		.layer = 0,
+		.isUI = true
+		});
 
-	textureData.Draw(model, view, projection);
-
-	// Draw children UI elements
 	for (auto& child : children) {
 		child->Draw(projection);
 	}

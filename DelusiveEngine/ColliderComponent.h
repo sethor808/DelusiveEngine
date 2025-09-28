@@ -45,9 +45,8 @@ class ColliderRenderer;
 
 class ColliderComponent : public Component{
 public:
-	TransformComponent transform;
-
-	ColliderComponent();
+	ColliderComponent(DelusiveRenderer&);
+	ColliderComponent() = delete;
 
 	ColliderComponent(const ColliderComponent&) = delete;
 	ColliderComponent& operator=(const ColliderComponent&) = delete;

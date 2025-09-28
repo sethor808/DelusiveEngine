@@ -277,11 +277,11 @@ bool Scene::LoadFromFile(const std::string& path) {
 			}
 
 			std::unique_ptr<Agent> agent;
-			if (type == "PlayerAgent") agent = std::make_unique<PlayerAgent>("");
-			else if (type == "CameraAgent") agent = std::make_unique<CameraAgent>("");
-			else if (type == "EnemyAgent") agent = std::make_unique<EnemyAgent>("");
-			else if (type == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>("");
-			else agent = std::make_unique<PlayerAgent>(""); // fallback
+			if (type == "PlayerAgent") agent = std::make_unique<PlayerAgent>(renderer);
+			else if (type == "CameraAgent") agent = std::make_unique<CameraAgent>(renderer);
+			else if (type == "EnemyAgent") agent = std::make_unique<EnemyAgent>(renderer);
+			else if (type == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>(renderer);
+			else agent = std::make_unique<PlayerAgent>(renderer); // fallback
 
 			// Let the agent load its block (until [/Agent])
 			//There has to be a better way to do this

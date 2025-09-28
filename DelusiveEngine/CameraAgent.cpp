@@ -2,12 +2,10 @@
 #include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 
-CameraAgent::CameraAgent() {
-	SetName("NewCamera");
-}
-
-CameraAgent::CameraAgent(const std::string& name) {
-	SetName(name);
+CameraAgent::CameraAgent(DelusiveRenderer& renderer)
+	: Agent(renderer)
+{
+	SetName("New Camera");
 }
 
 std::string CameraAgent::GetType() const{
@@ -15,7 +13,7 @@ std::string CameraAgent::GetType() const{
 }
 
 std::unique_ptr<Agent> CameraAgent::Clone(Scene* scene) const {
-	auto cam = std::make_unique<CameraAgent>();
+	auto cam = std::make_unique<CameraAgent>(renderer);
 	cam->SetName(GetName());
 	cam->SetZoom(zoom);
 	cam->panOffset = panOffset;

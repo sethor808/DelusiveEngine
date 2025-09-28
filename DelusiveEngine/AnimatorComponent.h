@@ -6,8 +6,8 @@
 
 class AnimatorComponent : public Component {
 public:
-    AnimatorComponent();
-    AnimatorComponent(const AnimatorData& animatorData);
+    AnimatorComponent(DelusiveRenderer&);
+    AnimatorComponent() = delete;
 
     void Update(float deltaTime) override;
     void DrawImGui() override;
@@ -24,6 +24,7 @@ public:
 	void Start() { playing = true; }
 	void Stop() { playing = false; }
 	bool IsPlaying() const { return playing; }
+    void SetAnimatorData(const AnimatorData& animatorData);
 	int GetCurrentFrame() const { return currentFrame; }
     float GetTimeAccumulated() const { return timeAccumulator; }
     std::vector<std::string>& GetFlags() { return currentAnimation.data.flags; }

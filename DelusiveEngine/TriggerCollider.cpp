@@ -1,5 +1,11 @@
 #include "TriggerCollider.h"
 
+TriggerCollider::TriggerCollider(DelusiveRenderer& renderer) 
+    : ColliderComponent(renderer)
+{
+
+}
+
 void TriggerCollider::OnCollision(ColliderComponent* col) {
 	//TODO: Prevent self hits
 	if (col->GetColliderType() == ColliderType::Solid) {

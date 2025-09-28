@@ -13,6 +13,7 @@
 
 class Component;
 class PropertyRegistry;
+class DelusiveRenderer;
 class Collider;
 class Scene;
 
@@ -21,7 +22,8 @@ class Agent {
 public:
 	TransformComponent transform;
 
-	Agent();
+	Agent(DelusiveRenderer&);
+	Agent() = delete;
 	virtual ~Agent();
 
 	//Mandatory virtual functions
@@ -82,10 +84,15 @@ public:
 	// Add a component of type T and forward any constructor arguments
 	template<typename T, typename... Args>
 	T* AddComponent(Args&&... args) {
-		auto component = std::make_unique<T>(std::forward<Args>(args)...);
+		static_assert(std::is_base_of<Component, T>::value,
+			"T must derive from Component");
+
+		// Inject the renderer reference before forwarded args
+		auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
 		component->SetOwner(this);
 		component->SetID(nextComponentID++);
 		component->RegisterProperties();
+
 		T* ptr = component.get();
 		components.push_back(std::move(component));
 		return ptr;
@@ -136,6 +143,7 @@ public:
 	virtual void TakeDamage(int) {}
 
 protected:
+	DelusiveRenderer& renderer;
 	Scene* scene;
 	uint64_t id = 0;
 	bool editorMode = false;

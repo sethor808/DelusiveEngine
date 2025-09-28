@@ -2,15 +2,18 @@
 #include "PathfindingSystem.h"
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 
-PathfindingComponent::PathfindingComponent() {
+PathfindingComponent::PathfindingComponent(DelusiveRenderer& renderer)
+    : Component(renderer)
+{
 
 }
 
 std::unique_ptr<Component> PathfindingComponent::Clone() const{
     //TODO: Make a proper deep copy
-	return std::make_unique<PathfindingComponent>();
+	return std::make_unique<PathfindingComponent>(renderer);
 }
 
 void PathfindingComponent::Update(float deltaTime) {

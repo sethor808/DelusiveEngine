@@ -8,7 +8,8 @@ class DelusiveScriptAgent;
 
 class ScriptComponent : public Component {
 public:
-    ScriptComponent(ScriptManager& scriptManager);
+    ScriptComponent(DelusiveRenderer&, ScriptManager&);
+    ScriptComponent() = delete;
 
     ScriptComponent(const Component&) = delete;
     ScriptComponent& operator=(const ScriptComponent&) = delete;

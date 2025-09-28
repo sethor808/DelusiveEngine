@@ -15,6 +15,7 @@ public:
 	void Update(float) override {}
 	void Draw(const glm::mat4& proj) override;
 	void HandleMouse(const glm::vec2& mouse, bool mouseDown) override;
+	void SetTexturePath(const std::string&);
 
 	void SetOnClick(std::function<void()> callback);
 

@@ -2,15 +2,16 @@
 #include "Agent.h"
 #include "DelusiveMacros.h"
 #include "TransformComponent.h"
+#include "DelusiveRenderer.h"
 #include <imgui/imgui.h>
 #include <fstream>
 #include <iostream>
 #include <filesystem>
 
-AnimatorComponent::AnimatorComponent() = default;
-AnimatorComponent::AnimatorComponent(const AnimatorData& animatorData)
-    : currentAnimation(animatorData) {
-    SetName("NewAnimatorComponent");
+AnimatorComponent::AnimatorComponent(DelusiveRenderer& _renderer)
+    : Component(_renderer)
+{
+
 }
 
 void AnimatorComponent::Update(float deltaTime) {
@@ -74,6 +75,10 @@ void AnimatorComponent::PlayBranch(const std::string& branchName) {
             break;
         }
     }
+}
+
+void AnimatorComponent::SetAnimatorData(const AnimatorData& animatorData) {
+    currentAnimation = Animation(animatorData);
 }
 
 void AnimatorComponent::DrawImGui() {
@@ -165,7 +170,8 @@ void AnimatorComponent::DrawImGui() {
 
 
 std::unique_ptr<Component> AnimatorComponent::Clone() const {
-    auto clone = std::make_unique<AnimatorComponent>(currentAnimation.data);
+    auto clone = std::make_unique<AnimatorComponent>(renderer);
+    clone->SetAnimatorData(currentAnimation.data);
     clone->currentAnimationPath = currentAnimationPath;
     clone->currentAnimation = currentAnimation;
     return clone;

@@ -3,7 +3,7 @@
 
 class PathfindingComponent : public Component {
 public:
-	PathfindingComponent();
+	PathfindingComponent(DelusiveRenderer&);
 
 	//Virtual function overrides
 	std::unique_ptr<Component> Clone() const override;
