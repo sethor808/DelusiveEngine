@@ -25,6 +25,7 @@ struct DelusiveTexture {
     GLuint textureID = 0;
 };
 
+//Depreciated structure
 /*
 struct DelusiveTexture {
     std::string texturePath = "";

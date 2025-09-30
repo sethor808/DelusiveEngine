@@ -54,6 +54,7 @@ void SpriteComponent::RegisterProperties() {
 std::unique_ptr<Component> SpriteComponent::Clone() const {
     auto sprite = std::make_unique<SpriteComponent>(renderer);
     sprite->textureData.texturePath = textureData.texturePath;
+	sprite->textureData.textureID = textureData.textureID;
     sprite->SetPosition(transform->position.x, transform->position.y);
     sprite->SetRotation(transform->rotation);
     sprite->SetScale(transform->scale.x, transform->scale.y);
