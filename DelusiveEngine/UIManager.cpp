@@ -15,6 +15,12 @@ UIManager::UIManager(DelusiveRenderer& _renderer)
 	RegisterProperties();
 }
 
+UIManager::~UIManager() {
+    if (activeCanvas) {
+		activeCanvas->DelinkManager();
+    }
+}
+
 void UIManager::RegisterProperties() {
 	SceneSystem::RegisterProperties();
 	registry->Register("activeCanvasName", &activeCanvasName);
@@ -22,10 +28,15 @@ void UIManager::RegisterProperties() {
 }
 
 void UIManager::SetCanvasActive(const std::string& name) {
+    if (activeCanvas) {
+        activeCanvas->DelinkManager();
+    }
+
 	if (auto canvas = uiRegistry.Get(name)) {
 		canvas->SetActive(true);
 		activeCanvasName = name;
 		activeCanvas = canvas;
+        activeCanvas->LinkManager(this);
 	}
 }
 

@@ -6,7 +6,7 @@
 GLuint TextureManager::Load(const std::string& path) {
     auto it = cache.find(path);
     if (it != cache.end()) {
-        std::cout << "TextureManager: Loaded cached texture: " << path << "\n";
+        //std::cout << "TextureManager: Loaded cached texture: " << path << "\n";
         return it->second->ID;
     }
 
@@ -18,7 +18,7 @@ GLuint TextureManager::Load(const std::string& path) {
 
     GLuint texID = texture->ID;
     cache[path] = std::move(texture);
-    std::cout << "TextureManager: Loaded texture: " << path << "\n";
+    //std::cout << "TextureManager: Loaded texture: " << path << "\n";
     return texID;
 }
 

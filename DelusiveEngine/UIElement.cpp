@@ -56,9 +56,11 @@ void UIElement::Deserialize(std::istream& in) {
             else if (typeToken == "UIImage")  child = std::make_unique<UIImage>(renderer);
             else if (typeToken == "UIButton") child = std::make_unique<UIButton>(renderer);
             else if (typeToken == "UIPanel")  child = std::make_unique<UIPanel>(renderer);
+            else if (typeToken == "UITalismanDisplay") child = std::make_unique<UITalismanDisplay>(renderer);
 
             if (child) {
                 child->Deserialize(in);
+                child->LinkCanvas(parentCanvas);
                 children.push_back(std::move(child));
             }
             continue;

@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\bin\DelusiveGameEditor_Debug.exe</FullPath>
+      <FullPath>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\debug_bin\DelusiveGameEditor_Debug.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

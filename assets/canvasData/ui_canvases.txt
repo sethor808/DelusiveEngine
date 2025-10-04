@@ -1,23 +1,18 @@
-2
+1
 [UICanvas]
-name=Canvas_0
-[UIElement UILabel]
-name=UILabel
+name=HP Display
+[UIElement UITalismanDisplay]
+name=Test
 enabled=1
 position=0 0
 size=1 1
-font=16 "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
-text=New Text
-color=1 1 1 1
-[/UIElement]
-[/UICanvas]
-[UICanvas]
-name=HP Display
-[UIElement UIImage]
-name=UIImage
-enabled=1
-position=-13.8 7.4
-size=2 2
-textureData=../assets/sprites/HPSystem\BasicTalisman.png
+leftOffset=34.2
+topOffset=75.5
+iconSize=1.6
+spacing=0.8
+stringSize=5.3
+stringXOffset=0
+stringYOffset=-0.7
+stringSpacing=0.1
 [/UIElement]
 [/UICanvas]

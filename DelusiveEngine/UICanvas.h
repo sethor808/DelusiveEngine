@@ -9,6 +9,7 @@
 class UIManager;
 class PropertyRegistry;
 class DelusiveRenderer;
+class PlayerAgent;
 
 class UICanvas {
 public:
@@ -26,6 +27,8 @@ public:
 	std::unique_ptr<UICanvas> Clone() const;
 
 	void LinkManager(UIManager* manager) { uiManager = manager; }
+	void DelinkManager() { uiManager = nullptr; }
+	PlayerAgent* FetchPlayer() const;
 	void Update(float);
 	void Draw(const glm::mat4&);
 	void HandleMouse(const glm::vec2&, bool);

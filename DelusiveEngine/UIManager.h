@@ -7,6 +7,8 @@ class UIManager : public SceneSystem {
 public:
 	UIManager(DelusiveRenderer&);
 
+	~UIManager();
+
 	std::string GetType() const { return "UIManager"; }
 	void RegisterProperties() override;
 

@@ -26,7 +26,7 @@ std::unique_ptr<Scene> Scene::Clone() {
 	}
 
 	for (const auto& sys : systems) {
-		cloned->systems.push_back(std::unique_ptr<SceneSystem>(sys->Clone()));
+		cloned->AddSystem(sys->Clone());
 	}
 
 	return cloned;
@@ -87,7 +87,18 @@ void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
 	nextAgentID++;
 }
 
-Agent* Scene::FetchPlayer() {
+PlayerAgent* Scene::FetchPlayer() {
+	for (const auto& agent : agents) {
+		if (agent) {
+			if (auto player = dynamic_cast<PlayerAgent*>(agent.get())) {
+				return player;
+			}
+		}
+	}
+	return nullptr;
+}
+
+Agent* Scene::FetchPlayerRaw() {
 	for (const auto& agent : agents) {
 		if (agent) {
 			if (auto player = dynamic_cast<PlayerAgent*>(agent.get())) {
@@ -107,6 +118,7 @@ void Scene::ClearAgents() {
 }
 
 void Scene::AddSystem(std::unique_ptr<SceneSystem> sys) {
+	sys->LinkScene(this);
 	systems.push_back(std::move(sys));
 }
 
@@ -308,7 +320,7 @@ bool Scene::LoadFromFile(const std::string& path) {
 			else if (type == "UIManager") sys = std::make_unique<UIManager>(renderer);
 
 			sys->Deserialize(in);
-			systems.push_back(std::move(sys));
+			AddSystem(std::move(sys));
 		}
 	}
 

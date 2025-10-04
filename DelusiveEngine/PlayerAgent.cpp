@@ -1,4 +1,5 @@
 #include "PlayerAgent.h"
+#include "DelusiveTalismans.h"
 #include "DelusiveRenderer.h"
 
 PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
@@ -8,13 +9,15 @@ PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
 	SetScale({1.0f, 1.0f});
 	velocity = { 0.0f, 0.0f };
 
-    talismans.push_back(std::make_unique<BasicTalisman>());
+	int numTalismans = 5; // Experimental control variable
+    for (int i = 0; i < numTalismans; ++i) {
+        talismans.push_back(std::make_unique<BasicTalisman>());
+    }
 }
 
 std::string PlayerAgent::GetType() const{
     return "PlayerAgent";
 }
-
 
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
     // Movement logic

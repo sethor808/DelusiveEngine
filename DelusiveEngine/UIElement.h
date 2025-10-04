@@ -24,7 +24,7 @@ public:
 
 	virtual ~UIElement();
 
-	virtual void LinkCanvas(UICanvas* canvas) { parent = canvas; }
+	virtual void LinkCanvas(UICanvas* canvas) { parentCanvas = canvas; }
 
 	virtual void Update(float deltaTime) {
 		for (auto& child : children) {
@@ -75,7 +75,7 @@ public:
 	virtual void Serialize(std::ostream& out) const;
 	virtual void Deserialize(std::istream& in);
 protected:
-	UICanvas* parent = nullptr; //Shallow copy
+	UICanvas* parentCanvas = nullptr; //Shallow copy
 	DelusiveRenderer& renderer;
 	std::unique_ptr<PropertyRegistry> registry;
 	std::string name;

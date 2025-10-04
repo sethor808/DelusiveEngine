@@ -18,6 +18,15 @@ public:
 	void LinkPlayer(PlayerAgent* _player = nullptr);
 private:
 	PlayerAgent* player;
+	//Talisman settings
 	float leftOffset = 0.0f;
 	float topOffset = 0.0f;
+	float iconSize = 32.0f;
+	float spacing = 8.0f;
+
+	//String settings
+	float stringSize = 5.0f;
+	float stringXOffset = 1.0f;
+	float stringYOffset = 16.0f;
+	float stringSpacing = 2.0f;
 };

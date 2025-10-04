@@ -1,6 +1,7 @@
 #include "UICanvas.h"
 #include "DelusiveRegistry.h"
 #include "DelusiveRenderer.h"
+#include "UIManager.h"
 #include <imgui/imgui.h>
 #include <fstream>
 #include <sstream>
@@ -65,7 +66,12 @@ void UICanvas::HandleInput(const PlayerInputState& input) {
 }
 
 void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
+	element->LinkCanvas(this);
 	elements.push_back(std::move(element));
+}
+
+PlayerAgent* UICanvas::FetchPlayer() const {
+	return uiManager ? uiManager->FetchPlayer() : nullptr;
 }
 
 void UICanvas::DrawImGui() {
@@ -97,19 +103,23 @@ void UICanvas::DrawImGui() {
 
 	if (ImGui::BeginPopup("AddElementPopup")) {
 		if (ImGui::MenuItem("UILabel")) {
-			elements.push_back(std::make_unique<UILabel>(renderer));
+			AddElement(std::make_unique<UILabel>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIImage")) {
-			elements.push_back(std::make_unique<UIImage>(renderer));
+			AddElement(std::make_unique<UIImage>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIButton")) {
-			elements.push_back(std::make_unique<UIButton>(renderer));
+			AddElement(std::make_unique<UIButton>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::MenuItem("UIPanel")) {
-			elements.push_back(std::make_unique<UIPanel>(renderer));
+			AddElement(std::make_unique<UIPanel>(renderer));
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem("UITalismanDisplay")) {
+			AddElement(std::make_unique<UITalismanDisplay>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
@@ -174,11 +184,18 @@ void UICanvas::Deserialize(std::istream& in) {
 			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>(renderer);
 			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>(renderer);
 			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>(renderer);
+			else if (typeToken == "UITalismanDisplay") elem = std::make_unique<UITalismanDisplay>(renderer);
+			else {
+				// Unknown type; skip until [/UIElement]
+				while (std::getline(in, line)) {
+					if (line == "[/UIElement]") break;
+				}
+			}
 
 			if (elem) {
 				// Let the element deserialize itself (it will consume until [/UIElement])
 				elem->Deserialize(in);
-				elements.push_back(std::move(elem));
+				AddElement(std::move(elem));
 			}
 		}
 		else {

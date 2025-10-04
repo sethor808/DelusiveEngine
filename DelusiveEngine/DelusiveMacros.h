@@ -15,6 +15,7 @@
 
 #define DEFAULT_SPRITE "../assets/sprites/star.jpg"
 #define TALISMAN_STRING "../assets/sprites/HPSystem/string.png"
+#define DEFAULT_TALISMAN "../assets/sprites/HPSystem/BasicTalisman.png"
 
 #define SCENE_PATH "../assets/scenes/"
 #define SCENE_EXT ".scene"

@@ -4,5 +4,6 @@
 #include "UIButton.h"
 #include "UIImage.h"
 #include "UIPanel.h"
+#include "UITalismanDisplay.h"
 
 std::unique_ptr<UIElement> CreateUIElementByType(const std::string&, DelusiveRenderer&);

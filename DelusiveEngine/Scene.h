@@ -11,6 +11,7 @@
 
 //Forward declarations
 class Agent;
+class PlayerAgent;
 class CameraAgent;
 class GameManager;
 class ScriptManager;
@@ -38,7 +39,8 @@ public:
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
 	std::vector<std::unique_ptr<Agent>>& GetAgents();
-	Agent* FetchPlayer();
+	PlayerAgent* FetchPlayer();
+	Agent* FetchPlayerRaw();
 	void ClearAgents();
 
 	//System management

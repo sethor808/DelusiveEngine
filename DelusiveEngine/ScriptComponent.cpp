@@ -38,7 +38,7 @@ void ScriptComponent::SetOwner(Agent* agent) {
 void ScriptComponent::SetTarget() {
 	if (!owner || !owner->GetScene()) return;
 
-	Agent* player = owner->GetScene()->FetchPlayer();
+	Agent* player = owner->GetScene()->FetchPlayerRaw();
 	if (player) {
 		SetTarget(player);
 	}

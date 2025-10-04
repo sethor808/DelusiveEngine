@@ -2,8 +2,9 @@
 #include "Agent.h"
 #include "DelusiveComponents.h"
 #include "DelusiveUtils.h"
-#include "DelusiveTalismans.h"
 #include "PlayerStats.h"
+
+class Talisman;
 
 class PlayerAgent : public Agent {
 public:

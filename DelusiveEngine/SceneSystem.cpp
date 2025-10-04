@@ -1,5 +1,6 @@
 #include "SceneSystem.h"
 #include "DelusiveRegistry.h"
+#include "Scene.h"
 #include <memory>
 
 SceneSystem::SceneSystem(DelusiveRenderer& _renderer)
@@ -12,6 +13,10 @@ SceneSystem::~SceneSystem() = default;
 
 void SceneSystem::RegisterProperties() {
     registry->Register("name", &name);
+}
+
+PlayerAgent* SceneSystem::FetchPlayer() const {
+    return scene ? scene->FetchPlayer() : nullptr;
 }
 
 void SceneSystem::Serialize(std::ostream& out) const {

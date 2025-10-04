@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "DelusiveMacros.h"
 
 class PlayerAgent;
 
@@ -11,6 +12,7 @@ public:
 
 	virtual std::string GetType() = 0;
 
+	virtual int GetMaxHP() { return maxHP; }
 	virtual int GetCurrentHP() { return hp; }
 	virtual bool TakeDamage();
 
@@ -32,6 +34,7 @@ protected:
 	int maxHP = 2;
 	int hp = maxHP;
 	bool isBroken;
-	std::string talismanBase;
-	std::string talismanGlyph;
+	std::string talismanBase = DEFAULT_TALISMAN;
+	std::string talismanGlyph = TALISMAN_STRING;
+	std::string talismanString = TALISMAN_STRING;
 };

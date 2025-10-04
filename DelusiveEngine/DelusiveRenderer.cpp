@@ -19,7 +19,17 @@ DelusiveRenderer::~DelusiveRenderer() {
 void DelusiveRenderer::Init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	OnResize(width, height);
+
+	// Query current GL viewport/drawable size (works even if window was created elsewhere)
+	GLint vp[4] = { 0,0,800,600 };
+	glGetIntegerv(GL_VIEWPORT, vp);
+	// vp[2] = width, vp[3] = height
+	width = vp[2];
+	height = vp[3];
+
+	// Ensure viewport is set and projection generated for the actual drawable
+	glViewport(0, 0, width, height);
+	GenerateProjection();
 
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -85,12 +95,9 @@ void DelusiveRenderer::GetWindowSize(int& _width, int& _height) {
 }
 
 void DelusiveRenderer::OnResize(int _width, int _height) {
-	if (width != _width || height != _height) {
-		width = _width;
-		height = _height;
-		glViewport(0, 0, _width, _height);
-	}
-	
+	width = _width;
+	height = _height;
+	glViewport(0, 0, _width, _height);
 	GenerateProjection();
 }
 

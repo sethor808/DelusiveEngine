@@ -6,6 +6,7 @@
 class Scene;
 class PropertyRegistry;
 class DelusiveRenderer;
+class PlayerAgent;
 
 class SceneSystem {
 public:
@@ -15,6 +16,7 @@ public:
 
 	virtual void LinkScene(Scene* _scene) { scene = _scene; }
 	virtual Scene* GetScene() const { return scene; }
+	virtual PlayerAgent* FetchPlayer() const;
 
 	virtual void RegisterProperties();
 
