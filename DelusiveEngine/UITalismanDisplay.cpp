@@ -114,7 +114,6 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 			// --- Compute string world size ---
 			glm::vec2 stringPos = (stringStart + glm::vec2(stringSpacing * s + stringXOffset, 0)) * DELUSIVE_PIXEL_SCALE; // start Y distance above talisman
 			
-
 			glm::mat4 stringModel =
 				glm::translate(glm::mat4(1.0f), glm::vec3(stringPos, 0.0f)) *
 				glm::scale(glm::mat4(1.0f), glm::vec3(stringWorldSize, 1.0f));

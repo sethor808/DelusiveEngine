@@ -6,13 +6,13 @@ name=Test
 enabled=1
 position=0 0
 size=1 1
-leftOffset=34.2
-topOffset=75.5
-iconSize=1.6
+leftOffset=40.3
+topOffset=78
+iconSize=1.8
 spacing=0.8
-stringSize=5.3
+stringSize=6.2
 stringXOffset=0
-stringYOffset=-0.7
-stringSpacing=0.1
+stringYOffset=-0.9
+stringSpacing=0.2
 [/UIElement]
 [/UICanvas]
