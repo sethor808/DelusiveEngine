@@ -1,9 +1,10 @@
 #include "PlayerAgent.h"
 #include "DelusiveTalismans.h"
 #include "DelusiveRenderer.h"
+#include "DelusiveInventory.h"
 
 PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
-    : Agent(renderer)
+    : Agent(renderer), inventory(std::make_unique<DelusiveInventory>())
 {
     SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});

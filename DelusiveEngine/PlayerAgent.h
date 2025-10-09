@@ -5,6 +5,7 @@
 #include "PlayerStats.h"
 
 class Talisman;
+class DelusiveInventory;
 
 class PlayerAgent : public Agent {
 public:
@@ -24,6 +25,10 @@ public:
 
 	void TriggerInvul(float);
 	void ResetStats();
+
+	//InventoryAccess
+	void EquipTalisman(int, Talisman*);
+	DelusiveInventory* GetInventory() { return inventory.get(); }
 
 private:
 	PlayerStats base;
@@ -47,6 +52,9 @@ private:
 
 	//For input control tracking
 	PlayerInputState prevInput;
+
+	//Inventory Management
+	std::unique_ptr<DelusiveInventory> inventory;
 
 	//PlayerState Helpers
 	bool CheckIfDead();

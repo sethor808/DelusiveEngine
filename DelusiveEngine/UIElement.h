@@ -21,6 +21,7 @@ public:
 
 	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
+	virtual const std::string GetType() const = 0;
 
 	virtual ~UIElement();
 
@@ -52,7 +53,7 @@ public:
 	
 	template<typename T, typename... Args>
 	T* AddChild(Args&&... args) {
-		auto child = std::make_unique<T>(std::forward<Args>(args)...);
+		auto child = std::make_unique<T>(renderer, std::forward<Args>(args)...);
 		T* ptr = child.get();
 		children.push_back(std::move(child));
 		return ptr;
@@ -62,7 +63,7 @@ public:
 		children.push_back(std::move(element));
 	}
 
-	virtual const std::string GetType() const = 0;
+	std::vector<UIElement*> GetChildren();
 	
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }

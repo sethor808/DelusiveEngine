@@ -98,6 +98,24 @@
     <Filter Include="External Files\Internal Implementation">
       <UniqueIdentifier>{0abab48b-fdc9-4767-ade6-953bbf1aab3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\ui\Buttons">
+      <UniqueIdentifier>{1f3ec516-c34f-493f-9749-6a7af5bb9d3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\ui\Buttons\Header Files">
+      <UniqueIdentifier>{7feaf987-1adb-44fc-aec3-0d1e11bf4707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\ui\Buttons\Source Files">
+      <UniqueIdentifier>{a8a51f93-b3eb-44f6-ae1a-5696e76331f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\inventory system">
+      <UniqueIdentifier>{86fecdf6-5351-47c7-a424-ada336b81a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\inventory system\Header Files">
+      <UniqueIdentifier>{3dc14115-3d78-4562-985d-0984c58d07f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\inventory system\Source Files">
+      <UniqueIdentifier>{fa1a949a-64cb-43f7-8284-91bc38abab05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -269,6 +287,18 @@
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>engine\render\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIEquipScreen.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRepeatContainer.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UITalismanButton.cpp">
+      <Filter>engine\ui\Buttons\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelusiveInventory.cpp">
+      <Filter>engine\inventory system\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -482,6 +512,18 @@
     </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>engine\render\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIEquipScreen.h">
+      <Filter>engine\ui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRepeatContainer.h">
+      <Filter>engine\ui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="UITalismanButton.h">
+      <Filter>engine\ui\Buttons\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveInventory.h">
+      <Filter>engine\inventory system\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

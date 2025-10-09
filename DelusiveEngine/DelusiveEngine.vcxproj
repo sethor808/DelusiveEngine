@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\Delusive;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include\Delusive;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -134,7 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\Delusive;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include\Delusive;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -156,6 +156,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DelusiveAnimatorComponent.cpp" />
     <ClCompile Include="DelusiveEngine.cpp" />
+    <ClCompile Include="DelusiveInventory.cpp" />
     <ClCompile Include="DelusivePathfindingComponent.cpp" />
     <ClCompile Include="DelusiveRegistry.cpp" />
     <ClCompile Include="DelusiveScriptAgent.cpp" />
@@ -203,6 +204,8 @@
     <ClCompile Include="UILabel.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp" />
+    <ClCompile Include="UIRepeatContainer.cpp" />
+    <ClCompile Include="UITalismanButton.cpp" />
     <ClCompile Include="UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +229,7 @@
     <ClInclude Include="DelusiveComponent.h" />
     <ClInclude Include="DelusiveData.h" />
     <ClInclude Include="DelusiveEngine.h" />
+    <ClInclude Include="DelusiveInventory.h" />
     <ClInclude Include="DelusiveMacros.h" />
     <ClInclude Include="DelusivePathfindingComponent.h" />
     <ClInclude Include="DelusiveTalismans.h" />
@@ -279,6 +283,8 @@
     <ClInclude Include="UILabel.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
+    <ClInclude Include="UIRepeatContainer.h" />
+    <ClInclude Include="UITalismanButton.h" />
     <ClInclude Include="UITalismanDisplay.h" />
   </ItemGroup>
   <ItemGroup>

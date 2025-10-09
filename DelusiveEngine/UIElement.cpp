@@ -19,6 +19,17 @@ void UIElement::RegisterProperties(){
 	registry->Register("size", &size);
 }
 
+std::vector<UIElement*> UIElement::GetChildren() {
+    std::vector<UIElement*> result;
+    result.reserve(children.size());
+
+    for (auto& c : children) {
+        if (!c) continue;
+        result.push_back(c.get());
+    }
+    return result;
+}
+
 void UIElement::DrawImGui() {
 	registry->DrawImGui();
 }

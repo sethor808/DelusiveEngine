@@ -1,8 +1,10 @@
 #pragma once
 #include "UIElement.h"
 
+class PlayerAgent;
 class Talisman;
 class UIButton;
+class UIRepeatContainer;
 
 class UIEquipScreen : public UIElement {
 public:
@@ -13,11 +15,21 @@ public:
 
 	void Draw(const glm::mat4&) override;
 
+	void Init();
+	void BuildEquipSlots();
+	void BuildAvailableTalismans();
+
+	void LinkPlayer(PlayerAgent* p) { player = p; }
+
+	void Equip(int, Talisman*);
+
 private:
+	PlayerAgent* player = nullptr;
 	int selectedSlot = -1;
-	int selectedTalisman = -1;
-	std::vector<std::shared_ptr<Talisman>> availableTalismans;
-	std::vector<std::shared_ptr<Talisman>> equippedTalismans;
-	std::vector<std::unique_ptr<UIButton>> slotButtons;
-	std::vector<std::unique_ptr<UIButton>> talismanButtons;
+
+	std::vector<Talisman*> availableTalismans;
+	std::vector<Talisman*> equippedTalismans;
+
+	UIRepeatContainer* slotContainer = nullptr;
+	UIRepeatContainer* talismanContainer = nullptr;
 };

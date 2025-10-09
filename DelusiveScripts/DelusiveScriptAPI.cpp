@@ -1,5 +1,5 @@
 #include <Delusive/DelusiveScriptAPI.h>
-#include "BasicFollow.h"
+#include "DelusiveScripts.h"
 #include <iostream>
 
 // Macro to simplify registration
