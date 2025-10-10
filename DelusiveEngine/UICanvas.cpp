@@ -118,8 +118,16 @@ void UICanvas::DrawImGui() {
 			AddElement(std::make_unique<UIPanel>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
+		if(ImGui::MenuItem("UIRepeatContainer")) {
+			AddElement(std::make_unique<UIRepeatContainer>(renderer));
+			ImGui::CloseCurrentPopup();
+		}
 		if (ImGui::MenuItem("UITalismanDisplay")) {
 			AddElement(std::make_unique<UITalismanDisplay>(renderer));
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem("UIEquipScreen")) {
+			AddElement(std::make_unique<UIEquipScreen>(renderer));
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
@@ -185,6 +193,8 @@ void UICanvas::Deserialize(std::istream& in) {
 			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>(renderer);
 			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>(renderer);
 			else if (typeToken == "UITalismanDisplay") elem = std::make_unique<UITalismanDisplay>(renderer);
+			else if (typeToken == "UIEquipScreen")    elem = std::make_unique<UIEquipScreen>(renderer);
+			else if (typeToken == "UIRepeatContainer") elem = std::make_unique<UIRepeatContainer>(renderer);
 			else {
 				// Unknown type; skip until [/UIElement]
 				while (std::getline(in, line)) {

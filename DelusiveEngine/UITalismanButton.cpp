@@ -8,6 +8,27 @@ UITalismanButton::UITalismanButton(DelusiveRenderer& renderer)
 	name = "New UITalismanButton";
 }
 
+std::unique_ptr<UIElement> UITalismanButton::Clone() const {
+    auto copy = std::make_unique<UITalismanButton>(renderer);
+
+    copy->SetPosition(position);
+    copy->SetSize(size);
+    copy->SetName(name);
+    copy->SetEnabled(enabled);
+
+    return copy;
+}
+
+void UITalismanButton::RegisterProperties() {
+    UIElement::RegisterProperties();
+}
+
+void UITalismanButton::HandleMouse(const glm::vec2& mousePos, bool isPressed) {
+    if (!talisman) return;
+    
+    UIButton::HandleMouse(mousePos, isPressed);
+}
+
 void UITalismanButton::BindTalisman(Talisman* t) {
 	talisman = t;
 }

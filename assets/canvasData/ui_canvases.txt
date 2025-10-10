@@ -1,4 +1,4 @@
-1
+2
 [UICanvas]
 name=HP Display
 [UIElement UITalismanDisplay]
@@ -14,5 +14,17 @@ stringSize=6.2
 stringXOffset=0
 stringYOffset=-0.9
 stringSpacing=0.2
+[/UIElement]
+[/UICanvas]
+[UICanvas]
+name=Equip Screen
+[UIElement UIRepeatContainer]
+name=New UIRepeatContainer
+enabled=1
+position=0 0
+size=1 1
+count=0
+rows=1
+spacing=0
 [/UIElement]
 [/UICanvas]

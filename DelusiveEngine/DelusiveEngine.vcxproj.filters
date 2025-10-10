@@ -116,6 +116,9 @@
     <Filter Include="engine\inventory system\Source Files">
       <UniqueIdentifier>{fa1a949a-64cb-43f7-8284-91bc38abab05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\ui\UIScripts">
+      <UniqueIdentifier>{2af7e258-80b3-48db-a430-27c05bfcd28c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -524,6 +527,18 @@
     </ClInclude>
     <ClInclude Include="DelusiveInventory.h">
       <Filter>engine\inventory system\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIScript.h">
+      <Filter>engine\ui\UIScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="UIScriptContainer.h">
+      <Filter>engine\ui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="UUID.h">
+      <Filter>engine\core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIUUIDManager.h">
+      <Filter>engine\ui\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

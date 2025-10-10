@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "DelusiveUtils.h"
 #include <imgui/imgui.h>
+#include "UUID.h"
 
 class DelusiveRenderer;
 class PropertyRegistry;
@@ -25,7 +26,7 @@ public:
 
 	virtual ~UIElement();
 
-	virtual void LinkCanvas(UICanvas* canvas) { parentCanvas = canvas; }
+	virtual void LinkCanvas(UICanvas* canvas);
 
 	virtual void Update(float deltaTime) {
 		for (auto& child : children) {
@@ -65,6 +66,7 @@ public:
 
 	std::vector<UIElement*> GetChildren();
 	
+	const UUID& GetID() const { return id; }
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }
 	void SetSize(const glm::vec2& _size) { size = _size; }
@@ -76,6 +78,7 @@ public:
 	virtual void Serialize(std::ostream& out) const;
 	virtual void Deserialize(std::istream& in);
 protected:
+	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
 	DelusiveRenderer& renderer;
 	std::unique_ptr<PropertyRegistry> registry;

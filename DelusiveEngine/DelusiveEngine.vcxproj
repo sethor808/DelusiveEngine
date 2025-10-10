@@ -284,8 +284,12 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
     <ClInclude Include="UIRepeatContainer.h" />
+    <ClInclude Include="UIScript.h" />
+    <ClInclude Include="UIScriptContainer.h" />
     <ClInclude Include="UITalismanButton.h" />
     <ClInclude Include="UITalismanDisplay.h" />
+    <ClInclude Include="UIUUIDManager.h" />
+    <ClInclude Include="UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Property.inl" />

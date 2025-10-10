@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "DelusiveUtils.h"
 #include "DelusiveUI.h"
+#include "UIUUIDManager.h"
 
 class UIManager;
 class PropertyRegistry;
@@ -13,6 +14,8 @@ class PlayerAgent;
 
 class UICanvas {
 public:
+	UIUUIDManager idManager;
+
 	UICanvas() = delete;
 	UICanvas(const UICanvas&) = delete;
 	UICanvas& operator=(const UICanvas&) = delete;

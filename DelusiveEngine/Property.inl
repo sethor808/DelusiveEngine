@@ -1,5 +1,6 @@
 #pragma once
 #include "DelusiveData.h"
+#include "UUID.h"
 #include <type_traits>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -31,6 +32,7 @@ class Property : public PropertyBase {
         std::is_same_v<T, std::vector<std::string>>;
 
     static constexpr bool is_custom =
+        std::is_same_v<T, UUID> ||
         std::is_same_v<T, DelusiveTexture> ||
         std::is_same_v<T, DelusiveFont> ||
         std::is_same_v<T, DelusiveScript>;
@@ -89,6 +91,9 @@ public:
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
                 out << value->scriptName;
             }
+            else if constexpr (std::is_same_v<T, UUID>) {
+                out << value->ToString();
+            }
         }
     }
 
@@ -146,6 +151,11 @@ public:
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
                 in >> value->scriptName;
             }
+            else if constexpr (std::is_same_v<T, UUID>) {
+                std::string uuidStr;
+                in >> uuidStr;
+                value->FromString(uuidStr);
+			}
         }
     }
 
@@ -310,6 +320,9 @@ public:
                     ImGui::EndCombo();
                 }
             }
+            else if constexpr (std::is_same_v<T, UUID>) {
+                ImGui::Text("UUID: %s", value->ToString().c_str());
+			}
         }
     }
 };

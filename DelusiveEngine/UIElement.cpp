@@ -3,16 +3,38 @@
 #include "DelusiveRegistry.h"
 #include "DelusiveMacros.h"
 #include "DelusiveRenderer.h"
+#include "UICanvas.h"
 
 UIElement::UIElement(DelusiveRenderer& _renderer)
-    : renderer(_renderer), registry(std::make_unique<PropertyRegistry>())
+    : renderer(_renderer), registry(std::make_unique<PropertyRegistry>()), id(UUID::GenerateRandom())
 {
 	RegisterProperties();
 }
 
-UIElement::~UIElement() = default;
+UIElement::~UIElement() {
+    if(parentCanvas) {
+        parentCanvas->idManager.Unregister(id);
+	}
+}
+
+
+void UIElement::LinkCanvas(UICanvas* canvas) {
+    parentCanvas = canvas;
+    for (auto& child : children) {
+        if (child) {
+            child->LinkCanvas(canvas);
+        }
+	}
+
+    //Just for safe measures - probably extra code
+	if (parentCanvas == nullptr) return;
+
+	//Generate ID here since we may not be linked upwards until after construction
+	parentCanvas->idManager.Register(this, id);
+}
 
 void UIElement::RegisterProperties(){
+	registry->Register("id", &id);
 	registry->Register("name", &name);
 	registry->Register("enabled", &enabled);
 	registry->Register("position", &position);
@@ -20,18 +42,25 @@ void UIElement::RegisterProperties(){
 }
 
 std::vector<UIElement*> UIElement::GetChildren() {
-    std::vector<UIElement*> result;
-    result.reserve(children.size());
-
+    std::vector<UIElement*> refs;
+    refs.reserve(children.size());
+    
     for (auto& c : children) {
-        if (!c) continue;
-        result.push_back(c.get());
+        refs.push_back(c.get());
     }
-    return result;
+
+    return refs;
 }
 
 void UIElement::DrawImGui() {
 	registry->DrawImGui();
+
+    for(auto& child : children) {
+        ImGui::Separator();
+        if (child) {
+            child->DrawImGui();
+        }
+	}
 }
 
 void UIElement::Serialize(std::ostream& out) const{
@@ -48,6 +77,10 @@ void UIElement::Serialize(std::ostream& out) const{
 
 void UIElement::Deserialize(std::istream& in) {
     registry->Deserialize(in); // will stop at first header
+
+    if (parentCanvas) {
+        parentCanvas->idManager.Register(this, id);
+	}
 
     std::string line;
     while (std::getline(in, line)) {
@@ -68,6 +101,9 @@ void UIElement::Deserialize(std::istream& in) {
             else if (typeToken == "UIButton") child = std::make_unique<UIButton>(renderer);
             else if (typeToken == "UIPanel")  child = std::make_unique<UIPanel>(renderer);
             else if (typeToken == "UITalismanDisplay") child = std::make_unique<UITalismanDisplay>(renderer);
+            else if (typeToken == "UITalismanButton") child = std::make_unique<UITalismanButton>(renderer);
+            else if (typeToken == "UIEquipScreen") child = std::make_unique<UIEquipScreen>(renderer);
+            else if (typeToken == "UIRepeatContainer") child = std::make_unique<UIRepeatContainer>(renderer);
 
             if (child) {
                 child->Deserialize(in);

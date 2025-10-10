@@ -164,3 +164,10 @@ void PlayerAgent::TriggerInvul(float duration) {
 void PlayerAgent::ResetStats() {
     modified = base; //TODO: Reapply talisman effects after sync
 }
+
+void PlayerAgent::EquipTalisman(int index, Talisman* talisman) {
+    if (index < 0 || index >= static_cast<int>(talismans.size())) return;
+    
+    //TODO: Properly equip talisman
+	//inventory->EquipTalisman(index, talisman);
+}
