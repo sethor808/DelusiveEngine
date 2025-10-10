@@ -2,6 +2,7 @@
 [UICanvas]
 name=HP Display
 [UIElement UITalismanDisplay]
+id=d5a07768a82f20ba-8d8385ef7854a98a
 name=Test
 enabled=1
 position=0 0
@@ -19,6 +20,7 @@ stringSpacing=0.2
 [UICanvas]
 name=Equip Screen
 [UIElement UIRepeatContainer]
+id=ed96f169313104b3-bf1592f03f8196c1
 name=New UIRepeatContainer
 enabled=1
 position=0 0

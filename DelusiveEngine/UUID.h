@@ -12,7 +12,7 @@ public:
 
 	static UUID GenerateRandom() {
 		UUID id;
-		id.GenerateRandom();
+		id.Generate();
 		return id;
 	}
 
