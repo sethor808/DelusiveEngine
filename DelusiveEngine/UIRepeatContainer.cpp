@@ -1,9 +1,15 @@
+#define DELUSIVE_EDITOR_MODE
 #include "UIRepeatContainer.h"
 #include "DelusiveRegistry.h"
+#include "DelusiveRenderer.h"
+#include "DelusiveUI.h"
+#include "DelusiveData.h"
 
-UIRepeatContainer::UIRepeatContainer(DelusiveRenderer& renderer) 
-	: UIElement(renderer), prototype(nullptr)
+UIRepeatContainer::UIRepeatContainer(DelusiveRenderer& renderer)
+	: UIElement(renderer)
 {
+	prototype = std::make_unique<DelusiveUIPrototype>();
+	prototype->element = nullptr;
 	name = "New UIRepeatContainer";
 	RegisterProperties();
 }
@@ -19,7 +25,7 @@ std::unique_ptr<UIElement> UIRepeatContainer::Clone() const {
 
 	if (prototype) {
 		// prototype->Clone() returns unique_ptr<UIElement>
-		copy->prototype = prototype->Clone();
+		copy->prototype->element = prototype->element->Clone();
 	}
 
 	// Caller can call RegenerateChildren() when appropriate.
@@ -33,17 +39,73 @@ void UIRepeatContainer::RegisterProperties() {
 	registry->Register("spacing", &spacing);
 }
 
+void UIRepeatContainer::Draw(const glm::mat4& projection) {
+	UIElement::Draw(projection);
+
+	for(auto& child : children){
+		if (child) {
+			child->Draw(projection);
+		}
+	}
+
+#ifdef DELUSIVE_EDITOR_MODE
+	if (prototype) {
+		renderer.PushAlpha(0.3f);
+		prototype->element->Draw(projection);
+		renderer.PopAlpha();
+	}
+#endif
+}
+
 void UIRepeatContainer::DrawImGui() {
 	UIElement::DrawImGui();
 	// --- Prototype editing section ---
-	if (ImGui::CollapsingHeader("Prototype", ImGuiTreeNodeFlags_DefaultOpen)) {
-		if (!prototype) {
-			ImGui::TextDisabled("No prototype assigned.");
+	// --- Prototype Management Section ---
+	ImGui::SeparatorText("Prototype");
+
+	if (!prototype) {
+		ImGui::TextDisabled("No prototype assigned.");
+
+		if (ImGui::Button("Create Prototype", ImVec2(-FLT_MIN, 0))) {
+			ImGui::OpenPopup("AddPrototypePopup");
 		}
-		else {
+
+		if (ImGui::BeginPopup("AddPrototypePopup")) {
+			std::string type = DelusiveUI::DrawUIElementAddMenu();
+			if (!type.empty()) {
+				auto newProto = DelusiveUI::CreateUIElementByType(type, renderer);
+				if (newProto) {
+					newProto->LinkCanvas(parentCanvas);
+					prototype = std::move(newProto);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+	}
+	else {
+		// Collapsible framed region for the prototype
+		if (ImGui::TreeNodeEx("Prototype Details",
+			ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			// --- Inline prototype editing ---
 			ImGui::PushID("PrototypeEditor");
-			prototype->DrawImGui(); // inline prototype editing
+			prototype->DrawImGui();
 			ImGui::PopID();
+
+			ImGui::Dummy(ImVec2(0, 4));
+
+			// --- Action Buttons ---
+			if (ImGui::Button("Regenerate Children", ImVec2(-FLT_MIN, 0))) {
+				RegenerateChildren();
+			}
+
+			if (ImGui::Button("Remove Prototype", ImVec2(-FLT_MIN, 0))) {
+				prototype.reset();
+				children.clear();
+			}
+
+			ImGui::TreePop();
 		}
 	}
 }
@@ -75,4 +137,20 @@ void UIRepeatContainer::RegenerateChildren() {
 		// AddChild should take ownership and set parent properly
 		AddChild(std::move(item));
 	}
+}
+
+void UIRepeatContainer::Serialize(std::ostream& out) const{
+	out << "[UIElement " << this->GetType() << "]\n";
+	registry->Serialize(out);
+
+	// Serialize elements here
+	for (auto& elem : children) {
+		elem->Serialize(out);
+	}
+
+	out << "[/UIElement]\n";
+}
+
+void UIRepeatContainer::Deserialize(std::istream& in) {
+
 }

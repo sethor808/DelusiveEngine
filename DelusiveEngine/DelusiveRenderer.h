@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <memory>
 #include <vector>
+#include <stack>
 #include "Shader.h"
 #include "Font.h"
 
@@ -40,6 +41,11 @@ public:
 	Shader* GetDefaultUIShader();
 
 	//Drawing tools
+	void PushAlpha(float);
+	void PopAlpha();
+	void SetAlpha(float alpha);
+	float GetAlpha() const { return currentAlpha; }
+
 	void DebugDrawLine(glm::vec2, glm::vec2, glm::vec4);
 	void DebugDrawRect(glm::vec2, float, glm::vec4);
 	void DrawText(const std::string&, glm::vec2, float, glm::vec4, const glm::mat4&);
@@ -61,6 +67,9 @@ private:
 	glm::mat4 view;
 	int width = 800;
 	int height = 600;
+
+	float currentAlpha = 1.0f;
+	std::stack<float> alphaStack;
 
 	//Text stuff
 	GLuint textVAO = 0;

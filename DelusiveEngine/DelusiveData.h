@@ -298,3 +298,8 @@ struct DelusiveUIElement {
     UUID* id;
     UIElement* link = nullptr;
 };
+
+struct DelusiveUIPrototype {
+    std::string type;
+    std::unique_ptr<UIElement> element;
+};

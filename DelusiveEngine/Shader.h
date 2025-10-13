@@ -17,6 +17,7 @@ public:
     void SetVec4(const std::string&, const glm::vec4&) const;
     void SetVec2(const std::string&, const glm::vec2&) const;
     void SetInt(const std::string&, int) const;
+	void SetFloat(const std::string&, float) const;
 
     void CheckCompileErrors(GLuint, const std::string&);
     void CheckLinkErrors(GLuint);

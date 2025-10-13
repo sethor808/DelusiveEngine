@@ -85,6 +85,11 @@ void Shader::SetVec2(const std::string& name, const glm::vec2& value) const {
     glUniform2fv(location, 1, glm::value_ptr(value));
 }
 
+void Shader::SetFloat(const std::string& name, float value) const {
+    GLint location = glGetUniformLocation(shaderProgram, name.c_str());
+	glUniform1f(location, value);
+}
+
 
 // Helper error checking
 void Shader::CheckCompileErrors(GLuint shader, const std::string& type) {

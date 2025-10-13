@@ -19,4 +19,14 @@ stringSpacing=0.2
 [/UICanvas]
 [UICanvas]
 name=Equip Screen
+[UIElement UIRepeatContainer]
+id=84a241db48e7fac7-ac6f9f1ae5abc839
+name=New UIRepeatContainer
+enabled=1
+position=0 0
+size=1 1
+count=3
+rows=1
+spacing=3.2
+[/UIElement]
 [/UICanvas]

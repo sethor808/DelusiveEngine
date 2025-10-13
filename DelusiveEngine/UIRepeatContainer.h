@@ -1,6 +1,8 @@
 #pragma once
 #include "UIElement.h"
 
+struct DelusiveUIPrototype;
+
 class UIRepeatContainer : public UIElement {
 public:
 	UIRepeatContainer(DelusiveRenderer&);
@@ -10,6 +12,7 @@ public:
 	std::unique_ptr<UIElement> Clone() const override;
 
 	void RegisterProperties() override;
+	void Draw(const glm::mat4&) override;
 	void DrawImGui() override;
 
 	void SetPrototype(std::unique_ptr<UIElement>);
@@ -23,10 +26,13 @@ public:
 
 	void RegenerateChildren();
 
+	void Serialize(std::ostream&) const;
+	void Deserialize(std::istream&);
 private:
-	int count = 0;
+	int count = 1;
 	int rows = 1;
 	float spacing = 0.0f;
 
-	std::unique_ptr<UIElement> prototype = nullptr;
+
+	std::unique_ptr<DelusiveUIPrototype> prototype;
 };

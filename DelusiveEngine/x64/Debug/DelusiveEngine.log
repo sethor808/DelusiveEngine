@@ -1,3 +1,48 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  Agent.cpp
+  AnimatorComponent.cpp
+  CameraAgent.cpp
+  ColliderComponent.cpp
+  ColliderRenderer.cpp
+  Component.cpp
+  DelusiveAnimatorComponent.cpp
+  DelusiveEngine.cpp
+  DelusiveRegistry.cpp
+  DelusiveRenderer.cpp
+  DelusiveScriptAgent.cpp
+  DelusiveUI.cpp
+  DelusiveUtils.cpp
+  EnemyAgent.cpp
+  EngineUI.cpp
+  EnvironmentAgent.cpp
+  GameManager.cpp
+  HitboxCollider.cpp
+  HurtboxCollider.cpp
+  PathfindingSystem.cpp
+  Generating Code...
+  Compiling...
+  PhysicsSystem.cpp
+  PlayerAgent.cpp
+  Scene.cpp
+  SceneSystem.cpp
+  ScriptComponent.cpp
+  Shader.cpp
+  SolidCollider.cpp
+  Sprite.cpp
+  SpriteComponent.cpp
+  TriggerCollider.cpp
+  UIButton.cpp
+  UICanvas.cpp
   UIElement.cpp
+  UIEquipScreen.cpp
+  UIImage.cpp
+  UILabel.cpp
+  UIManager.cpp
+  UIPanel.cpp
+  UIRepeatContainer.cpp
+  UITalismanButton.cpp
+  Generating Code...
+  Compiling...
+  UITalismanDisplay.cpp
+  Generating Code...
   DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\debug_lib\DelusiveEngine.lib

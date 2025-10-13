@@ -134,6 +134,35 @@ Shader* DelusiveRenderer::GetDefaultShader() {
 	return defaultShader.get();
 }
 
+void DelusiveRenderer::PushAlpha(float alpha) {
+	alphaStack.push(currentAlpha);
+	currentAlpha *= alpha;  // multiply for cumulative fade (e.g. parent and child transparency)
+	SetAlpha(currentAlpha);
+}
+
+void DelusiveRenderer::PopAlpha() {
+	if (!alphaStack.empty()) {
+		currentAlpha = alphaStack.top();
+		alphaStack.pop();
+		SetAlpha(currentAlpha);
+	}
+	else {
+		// Safety fallback
+		currentAlpha = 1.0f;
+		SetAlpha(currentAlpha);
+	}
+}
+
+// Example of how SetAlpha might work depending on your renderer
+void DelusiveRenderer::SetAlpha(float alpha) {
+	// If you have a current color or shader uniform for tint:
+	// color.a = baseColor.a * alpha;
+	// shader->SetUniform("u_Alpha", alpha);
+
+	// If you use OpenGL directly:
+	glColor4f(1.0f, 1.0f, 1.0f, alpha);
+}
+
 void DelusiveRenderer::Submit(const RenderCommand& cmd) {
 	commands.push_back(cmd);
 }
@@ -148,6 +177,7 @@ void DelusiveRenderer::Flush() {
 
 	Shader* shader = GetDefaultShader();
 	shader->Use();
+	shader->SetFloat("uAlpha", currentAlpha); // initialize base alpha
 	GLint loc = glGetUniformLocation(shader->GetID(), "tex");
 	if (loc >= 0) glUniform1i(loc, 0);
 
