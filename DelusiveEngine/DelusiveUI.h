@@ -1,12 +1,11 @@
 #pragma once
-#include "DelusiveRenderer.h"
-#include "UILabel.h"
-#include "UIButton.h"
-#include "UIImage.h"
-#include "UIPanel.h"
-#include "UITalismanDisplay.h"
-#include "UITalismanButton.h"
-#include "UIEquipScreen.h"
-#include "UIRepeatContainer.h"
+#include <string>
+#include <memory>
 
-std::unique_ptr<UIElement> CreateUIElementByType(const std::string&, DelusiveRenderer&);
+class UIElement;
+class DelusiveRenderer;
+
+namespace DelusiveUI {
+	std::string DrawUIElementAddMenu();
+	std::unique_ptr<UIElement> CreateUIElementByType(const std::string&, DelusiveRenderer&);
+}

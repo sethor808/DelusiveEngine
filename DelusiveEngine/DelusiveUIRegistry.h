@@ -1,5 +1,6 @@
 #pragma once
 #include "UICanvas.h"
+#include "DelusiveMacros.h"
 #include <unordered_map>
 #include <memory>
 #include <string>

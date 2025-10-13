@@ -56,6 +56,7 @@ public:
 	T* AddChild(Args&&... args) {
 		auto child = std::make_unique<T>(renderer, std::forward<Args>(args)...);
 		T* ptr = child.get();
+		child->LinkCanvas(parentCanvas);
 		children.push_back(std::move(child));
 		return ptr;
 	}

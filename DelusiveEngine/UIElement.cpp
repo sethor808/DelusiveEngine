@@ -17,7 +17,6 @@ UIElement::~UIElement() {
 	}
 }
 
-
 void UIElement::LinkCanvas(UICanvas* canvas) {
     parentCanvas = canvas;
     for (auto& child : children) {
@@ -53,14 +52,79 @@ std::vector<UIElement*> UIElement::GetChildren() {
 }
 
 void UIElement::DrawImGui() {
-	registry->DrawImGui();
+    // --- Base Properties ---
+    registry->DrawImGui();
 
-    for(auto& child : children) {
-        ImGui::Separator();
-        if (child) {
-            child->DrawImGui();
+    ImGui::SeparatorText("Children");
+
+    // Handle child removal outside the loop to avoid iterator invalidation
+    int removeIndex = -1;
+
+    // --- Draw Each Child ---
+    for (size_t i = 0; i < children.size(); ++i) {
+        auto& child = children[i];
+        if (!child) continue;
+
+        // Unique ID scope for ImGui elements
+        ImGui::PushID(static_cast<int>(i));
+
+        // A bordered area for each child (gives a visual boundary)
+        ImGui::BeginChild(
+            "ChildElement",
+            ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 10), // height scales to content
+            true,
+            ImGuiWindowFlags_MenuBar
+        );
+
+        // Optional header bar inside each child block
+        if (ImGui::BeginMenuBar()) {
+            ImGui::TextUnformatted(child->GetType().c_str());
+            ImGui::SameLine(ImGui::GetContentRegionAvail().x - 60);
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.25f, 0.25f, 1.0f));
+            if (ImGui::Button("Remove")) {
+                removeIndex = static_cast<int>(i);
+            }
+            ImGui::PopStyleColor();
+            ImGui::EndMenuBar();
         }
-	}
+
+        // Add padding to separate header from content
+        ImGui::Dummy(ImVec2(0, 4));
+
+        // Draw the child’s own inspector
+        child->DrawImGui();
+
+        ImGui::EndChild();
+        ImGui::PopID();
+
+        // Add spacing between child blocks
+        ImGui::Dummy(ImVec2(0, 5));
+    }
+
+    // --- Handle Child Removal ---
+    if (removeIndex >= 0 && removeIndex < (int)children.size()) {
+        children.erase(children.begin() + removeIndex);
+    }
+
+    // --- Add Child Button ---
+    ImGui::Separator();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+    if (ImGui::Button("+ Add Child Element", ImVec2(-FLT_MIN, 0))) {
+        ImGui::OpenPopup("AddUIElementPopup");
+    }
+
+    if (ImGui::BeginPopup("AddUIElementPopup")) {
+        std::string type = DelusiveUI::DrawUIElementAddMenu();
+        if (!type.empty()) {
+            auto newElement = DelusiveUI::CreateUIElementByType(type, renderer);
+            if (newElement) {
+                newElement->LinkCanvas(parentCanvas);
+                children.push_back(std::move(newElement));
+            }
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
 void UIElement::Serialize(std::ostream& out) const{
@@ -95,15 +159,7 @@ void UIElement::Deserialize(std::istream& in) {
             iss >> discard >> typeToken;
             if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
-            std::unique_ptr<UIElement> child;
-            if (typeToken == "UILabel")       child = std::make_unique<UILabel>(renderer);
-            else if (typeToken == "UIImage")  child = std::make_unique<UIImage>(renderer);
-            else if (typeToken == "UIButton") child = std::make_unique<UIButton>(renderer);
-            else if (typeToken == "UIPanel")  child = std::make_unique<UIPanel>(renderer);
-            else if (typeToken == "UITalismanDisplay") child = std::make_unique<UITalismanDisplay>(renderer);
-            else if (typeToken == "UITalismanButton") child = std::make_unique<UITalismanButton>(renderer);
-            else if (typeToken == "UIEquipScreen") child = std::make_unique<UIEquipScreen>(renderer);
-            else if (typeToken == "UIRepeatContainer") child = std::make_unique<UIRepeatContainer>(renderer);
+			std::unique_ptr<UIElement> child = DelusiveUI::CreateUIElementByType(typeToken, renderer);
 
             if (child) {
                 child->Deserialize(in);

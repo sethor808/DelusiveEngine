@@ -7,6 +7,8 @@
 #include "Font.h"
 #include "BehaviourScript.h"
 #include "ScriptManager.h"
+#include "UUID.h"
+#include "UIElement.h"
 #include <memory>
 #include <iostream>
 #include <glm/glm.hpp>
@@ -289,4 +291,10 @@ struct DelusiveScript {
 	std::string scriptName;
     std::unique_ptr<BehaviourScript> script;
 	ScriptManager* manager = nullptr;
+};
+
+struct DelusiveUIElement {
+    std::string name;
+    UUID* id;
+    UIElement* link = nullptr;
 };

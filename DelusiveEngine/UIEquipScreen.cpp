@@ -3,6 +3,8 @@
 #include "DelusiveRenderer.h"
 #include "DelusiveTalismans.h"
 #include "DelusiveInventory.h"
+#include "UIRepeatContainer.h"
+#include "UITalismanButton.h"
 #include "DelusiveUI.h"
 
 UIEquipScreen::UIEquipScreen(DelusiveRenderer& renderer) : UIElement(renderer) {

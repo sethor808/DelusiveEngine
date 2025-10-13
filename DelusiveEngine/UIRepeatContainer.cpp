@@ -33,6 +33,21 @@ void UIRepeatContainer::RegisterProperties() {
 	registry->Register("spacing", &spacing);
 }
 
+void UIRepeatContainer::DrawImGui() {
+	UIElement::DrawImGui();
+	// --- Prototype editing section ---
+	if (ImGui::CollapsingHeader("Prototype", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (!prototype) {
+			ImGui::TextDisabled("No prototype assigned.");
+		}
+		else {
+			ImGui::PushID("PrototypeEditor");
+			prototype->DrawImGui(); // inline prototype editing
+			ImGui::PopID();
+		}
+	}
+}
+
 void UIRepeatContainer::SetPrototype(std::unique_ptr<UIElement> element) {
 	prototype = std::move(element);
 }

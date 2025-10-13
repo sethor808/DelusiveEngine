@@ -10,6 +10,7 @@ public:
 	std::unique_ptr<UIElement> Clone() const override;
 
 	void RegisterProperties() override;
+	void DrawImGui() override;
 
 	void SetPrototype(std::unique_ptr<UIElement>);
 

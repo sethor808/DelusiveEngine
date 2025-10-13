@@ -1,4 +1,5 @@
 #include "UICanvas.h"
+#include "DelusiveUI.h"
 #include "DelusiveRegistry.h"
 #include "DelusiveRenderer.h"
 #include "UIManager.h"
@@ -98,36 +99,16 @@ void UICanvas::DrawImGui() {
 	}
 
 	if (ImGui::Button("Add Element")) {
-		ImGui::OpenPopup("AddElementPopup");
+		ImGui::OpenPopup("AddUIElementPopup");
 	}
 
-	if (ImGui::BeginPopup("AddElementPopup")) {
-		if (ImGui::MenuItem("UILabel")) {
-			AddElement(std::make_unique<UILabel>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::MenuItem("UIImage")) {
-			AddElement(std::make_unique<UIImage>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::MenuItem("UIButton")) {
-			AddElement(std::make_unique<UIButton>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::MenuItem("UIPanel")) {
-			AddElement(std::make_unique<UIPanel>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if(ImGui::MenuItem("UIRepeatContainer")) {
-			AddElement(std::make_unique<UIRepeatContainer>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::MenuItem("UITalismanDisplay")) {
-			AddElement(std::make_unique<UITalismanDisplay>(renderer));
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::MenuItem("UIEquipScreen")) {
-			AddElement(std::make_unique<UIEquipScreen>(renderer));
+	if (ImGui::BeginPopup("AddUIElementPopup")) {
+		std::string type = DelusiveUI::DrawUIElementAddMenu();
+		if (!type.empty()) {
+			auto newElement = DelusiveUI::CreateUIElementByType(type, renderer);
+			if (newElement) {
+				AddElement(std::move(newElement));
+			}
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
@@ -186,26 +167,18 @@ void UICanvas::Deserialize(std::istream& in) {
 			// strip trailing ']' if present
 			if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
-			std::unique_ptr<UIElement> elem;
-
-			if (typeToken == "UILabel")       elem = std::make_unique<UILabel>(renderer);
-			else if (typeToken == "UIImage")  elem = std::make_unique<UIImage>(renderer);
-			else if (typeToken == "UIButton") elem = std::make_unique<UIButton>(renderer);
-			else if (typeToken == "UIPanel")  elem = std::make_unique<UIPanel>(renderer);
-			else if (typeToken == "UITalismanDisplay") elem = std::make_unique<UITalismanDisplay>(renderer);
-			else if (typeToken == "UIEquipScreen")    elem = std::make_unique<UIEquipScreen>(renderer);
-			else if (typeToken == "UIRepeatContainer") elem = std::make_unique<UIRepeatContainer>(renderer);
-			else {
-				// Unknown type; skip until [/UIElement]
-				while (std::getline(in, line)) {
-					if (line == "[/UIElement]") break;
-				}
-			}
+			std::unique_ptr<UIElement> elem = DelusiveUI::CreateUIElementByType(typeToken, renderer);
 
 			if (elem) {
 				// Let the element deserialize itself (it will consume until [/UIElement])
 				elem->Deserialize(in);
 				AddElement(std::move(elem));
+			}
+			else {
+				// Unknown type; skip until [/UIElement]
+				while (std::getline(in, line)) {
+					if (line == "[/UIElement]") break;
+				}
 			}
 		}
 		else {

@@ -53,9 +53,6 @@
     <Filter Include="engine\ui">
       <UniqueIdentifier>{c535c558-7540-4957-8825-5c53df2f3111}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\ui\Headers">
-      <UniqueIdentifier>{dc2be865-bd83-4135-b271-bdccc9b5b11d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\ui\Source Files">
       <UniqueIdentifier>{50235631-d64c-45e4-8747-f6308ffbd1ba}</UniqueIdentifier>
     </Filter>
@@ -118,6 +115,9 @@
     </Filter>
     <Filter Include="engine\ui\UIScripts">
       <UniqueIdentifier>{2af7e258-80b3-48db-a430-27c05bfcd28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\ui\Header Files">
+      <UniqueIdentifier>{dc2be865-bd83-4135-b271-bdccc9b5b11d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -303,6 +303,9 @@
     <ClCompile Include="DelusiveInventory.cpp">
       <Filter>engine\inventory system\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UIScriptContainer.cpp">
+      <Filter>engine\ui\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -387,13 +390,13 @@
       <Filter>engine\agents</Filter>
     </ClInclude>
     <ClInclude Include="UIElement.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UILabel.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIManager.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DelusiveUI.h">
       <Filter>engine\ui</Filter>
@@ -417,19 +420,19 @@
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIButton.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneSystem.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIImage.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIPanel.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UICanvas.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>engine\render\Header Files</Filter>
@@ -450,7 +453,7 @@
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DelusiveUIRegistry.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DelusiveData.h">
       <Filter>engine\core</Filter>
@@ -511,16 +514,16 @@
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UITalismanDisplay.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIEquipScreen.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIRepeatContainer.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UITalismanButton.h">
       <Filter>engine\ui\Buttons\Header Files</Filter>
@@ -532,13 +535,13 @@
       <Filter>engine\ui\UIScripts</Filter>
     </ClInclude>
     <ClInclude Include="UIScriptContainer.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UUID.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UIUUIDManager.h">
-      <Filter>engine\ui\Headers</Filter>
+      <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

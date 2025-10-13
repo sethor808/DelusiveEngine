@@ -18,6 +18,15 @@
     <Filter Include="BehaviourScripts\Header Files">
       <UniqueIdentifier>{fd00ffcf-9c49-4a2e-bf23-69ae44f59809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UIScripts">
+      <UniqueIdentifier>{f7489cc8-69d0-4cd6-bfc5-044214ee87fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UIScripts\Header Files">
+      <UniqueIdentifier>{dac9fb77-0499-4fc8-b722-62fe640d5f4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UIScripts\Source Files">
+      <UniqueIdentifier>{6e89699d-d9ce-43e5-b36c-79053d01eaf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicFollow.h">

@@ -4,7 +4,6 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "DelusiveUtils.h"
-#include "DelusiveUI.h"
 #include "UIUUIDManager.h"
 
 class UIManager;
