@@ -229,10 +229,12 @@
     <ClInclude Include="DelusiveAnimatorComponent.h" />
     <ClInclude Include="DelusiveComponent.h" />
     <ClInclude Include="DelusiveData.h" />
+    <ClInclude Include="DelusiveDeserializer.h" />
     <ClInclude Include="DelusiveEngine.h" />
     <ClInclude Include="DelusiveInventory.h" />
     <ClInclude Include="DelusiveMacros.h" />
     <ClInclude Include="DelusivePathfindingComponent.h" />
+    <ClInclude Include="DelusiveSerializer.h" />
     <ClInclude Include="DelusiveTalismans.h" />
     <ClInclude Include="DelusiveSystems.h" />
     <ClInclude Include="DelusiveUI.h" />

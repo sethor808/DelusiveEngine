@@ -1,5 +1,6 @@
 #pragma once
 #include "DelusiveData.h"
+#include "DelusiveUI.h"
 #include "UUID.h"
 #include <type_traits>
 #include <glm/glm.hpp>
@@ -35,6 +36,7 @@ class Property : public PropertyBase {
         std::is_same_v<T, UUID> ||
         std::is_same_v<T, DelusiveTexture> ||
         std::is_same_v<T, DelusiveFont> ||
+        std::is_same_v<T, DelusiveUIPrototype> ||
         std::is_same_v<T, DelusiveScript>;
 
     static_assert(
@@ -93,6 +95,13 @@ public:
             }
             else if constexpr (std::is_same_v<T, UUID>) {
                 out << value->ToString();
+            }
+            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
+                // Write the type name and (optionally) UUID of the element
+                out << value->type;
+                if (value->element) {
+                    out << " " << value->element->GetUUID().ToString();
+                }
             }
         }
     }
@@ -156,6 +165,29 @@ public:
                 in >> uuidStr;
                 value->FromString(uuidStr);
 			}
+            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
+                std::string type;
+                in >> type;
+                value->type = type;
+
+                // Optionally read UUID if present
+                std::string uuidStr;
+                if (in >> uuidStr) {
+                    // Try parsing as UUID (will fail silently if invalid)
+                    UUID potentialUUID;
+                    potentialUUID.FromString(uuidStr);
+                    value->prototypeUUID = potentialUUID;
+                }
+
+                // Recreate the prototype element (deferred linking allowed)
+                if (!type.empty()) {
+                    value->Create(type, DelusiveRenderer::Get(), nullptr);
+                    if (value->element) {
+                        // Assign stored UUID back if needed
+                        value->element->SetUUID(value->prototypeUUID);
+                    }
+                }
+            }
         }
     }
 
@@ -318,6 +350,40 @@ public:
                             ImGui::SetItemDefaultFocus();
                     }
                     ImGui::EndCombo();
+                }
+            }
+            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
+                ImGui::SeparatorText(name.c_str());
+                if (!value->element) {
+                    ImGui::TextDisabled("No prototype assigned.");
+                    if (ImGui::Button(("Create Prototype##" + name).c_str())) {
+                        ImGui::OpenPopup(("AddPrototypePopup##" + name).c_str());
+                    }
+
+                    if (ImGui::BeginPopup(("AddPrototypePopup##" + name).c_str())) {
+                        std::string type = DelusiveUI::DrawUIElementAddMenu();
+                        if (!type.empty()) {
+                            value->Create(type, DelusiveRenderer::Get(), nullptr);
+                            ImGui::CloseCurrentPopup();
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+                else {
+                    if (ImGui::TreeNodeEx(("Prototype##" + name).c_str(),
+                        ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed))
+                    {
+                        ImGui::Text("Type: %s", value->type.c_str());
+                        ImGui::Text("UUID: %s", value->element->GetUUID().ToString().c_str());
+
+                        if (ImGui::Button(("Edit##" + name).c_str())) {
+                            value->element->DrawImGui();
+                        }
+                        if (ImGui::Button(("Remove##" + name).c_str())) {
+                            value->element.reset();
+                        }
+                        ImGui::TreePop();
+                    }
                 }
             }
             else if constexpr (std::is_same_v<T, UUID>) {

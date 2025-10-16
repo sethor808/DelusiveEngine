@@ -25,14 +25,10 @@ public:
 	float GetSpacing() { return spacing; }
 
 	void RegenerateChildren();
-
-	void Serialize(std::ostream&) const;
-	void Deserialize(std::istream&);
 private:
 	int count = 1;
 	int rows = 1;
 	float spacing = 0.0f;
-
 
 	std::unique_ptr<DelusiveUIPrototype> prototype;
 };

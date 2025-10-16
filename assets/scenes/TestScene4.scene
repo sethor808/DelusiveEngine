@@ -91,6 +91,6 @@ name=New PathfindingSystem
 [System UIManager]
 name=NewUIManager
 activeCanvasName=Equip Screen
-canvasList=2 HP Equip Screen
+canvasList=2 Equip Screen HP Display
 [/System]
 [/Scene]

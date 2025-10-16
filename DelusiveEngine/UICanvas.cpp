@@ -208,8 +208,10 @@ void UICanvas::Deserialize(std::istream& in) {
 				}
 			}
 			if (handled) continue;
+			// If we get here, it's an unexpected line inside canvas; ignore or log.
+			std::cerr << "Unexpected value within [UICanvas]: " << value << std::endl;
 		}
-		// If we get here, it's an unexpected line inside canvas; ignore or log.
+		
 	}
 }
 

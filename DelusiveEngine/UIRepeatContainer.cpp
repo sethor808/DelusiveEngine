@@ -49,7 +49,7 @@ void UIRepeatContainer::Draw(const glm::mat4& projection) {
 	}
 
 #ifdef DELUSIVE_EDITOR_MODE
-	if (prototype) {
+	if (prototype && prototype->element) {
 		renderer.PushAlpha(0.3f);
 		prototype->element->Draw(projection);
 		renderer.PopAlpha();
@@ -63,7 +63,7 @@ void UIRepeatContainer::DrawImGui() {
 	// --- Prototype Management Section ---
 	ImGui::SeparatorText("Prototype");
 
-	if (!prototype) {
+	if (!prototype->element) {
 		ImGui::TextDisabled("No prototype assigned.");
 
 		if (ImGui::Button("Create Prototype", ImVec2(-FLT_MIN, 0))) {
@@ -76,7 +76,7 @@ void UIRepeatContainer::DrawImGui() {
 				auto newProto = DelusiveUI::CreateUIElementByType(type, renderer);
 				if (newProto) {
 					newProto->LinkCanvas(parentCanvas);
-					prototype = std::move(newProto);
+					prototype->element = std::move(newProto);
 				}
 				ImGui::CloseCurrentPopup();
 			}
@@ -90,7 +90,7 @@ void UIRepeatContainer::DrawImGui() {
 		{
 			// --- Inline prototype editing ---
 			ImGui::PushID("PrototypeEditor");
-			prototype->DrawImGui();
+			prototype->element->DrawImGui();
 			ImGui::PopID();
 
 			ImGui::Dummy(ImVec2(0, 4));
@@ -111,7 +111,7 @@ void UIRepeatContainer::DrawImGui() {
 }
 
 void UIRepeatContainer::SetPrototype(std::unique_ptr<UIElement> element) {
-	prototype = std::move(element);
+	prototype->element = std::move(element);
 }
 
 void UIRepeatContainer::RegenerateChildren() {
@@ -125,7 +125,7 @@ void UIRepeatContainer::RegenerateChildren() {
 
 	// Use spacing.x for horizontal, spacing.y for vertical
 	for (int idx = 0; idx < count; ++idx) {
-		auto item = prototype->Clone();
+		auto item = prototype->element->Clone();
 		if (!item) continue;
 
 		int r = (rowsToUse == 1) ? 0 : (idx / cols);   // row index
@@ -137,20 +137,4 @@ void UIRepeatContainer::RegenerateChildren() {
 		// AddChild should take ownership and set parent properly
 		AddChild(std::move(item));
 	}
-}
-
-void UIRepeatContainer::Serialize(std::ostream& out) const{
-	out << "[UIElement " << this->GetType() << "]\n";
-	registry->Serialize(out);
-
-	// Serialize elements here
-	for (auto& elem : children) {
-		elem->Serialize(out);
-	}
-
-	out << "[/UIElement]\n";
-}
-
-void UIRepeatContainer::Deserialize(std::istream& in) {
-
 }
