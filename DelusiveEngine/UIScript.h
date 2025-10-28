@@ -1,4 +1,8 @@
 #pragma once
+#include <string>
+#include <memory>
+#include <functional>
+#include <unordered_map>
 
 class UIElement;
 
@@ -13,8 +17,13 @@ public:
 	virtual void OnEvent() {}
 	virtual void OnClick(UIElement* clicked) {}
 
-	void Link(UIElement* root) { rootElement = root; }
+	virtual void Link(UIElement* root) { rootElement = root; }
+	UIElement* GetRoot() const { return rootElement; }
 
+	virtual std::string GetType() const = 0;
+
+	virtual void Serialize(std::ostream& os) const;
+	virtual void Deserialize(std::istream& is);
 private:
 	UIElement* rootElement = nullptr;
 };

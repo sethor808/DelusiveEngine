@@ -321,7 +321,7 @@ public:
                 }
 
                 std::vector<std::string> scriptNames;
-                value->manager->GetAvailableScripts(scriptNames);
+                value->manager->GetAvailableEnemyLogicScripts(scriptNames);
 
                 // Find currently selected index
                 int currentIndex = -1;
@@ -342,7 +342,7 @@ public:
 
                             // Recreate the script instance
                             if (value->manager) {
-                                value->script.reset(value->manager->CreateScript(scriptNames[i], nullptr));
+                                //value->script.reset(value->manager->CreateEnemyLogicScript(scriptNames[i]));
                                 // ScriptComponent can later patch in the owner
                             }
                         }

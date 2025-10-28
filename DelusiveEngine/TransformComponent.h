@@ -1,5 +1,5 @@
 #pragma once
-#include <Delusive/Transform.h>
+#include <DelusiveExternal/Transform.h>
 #include "DelusiveRegistry.h"
 
 struct TransformComponent : public Transform {

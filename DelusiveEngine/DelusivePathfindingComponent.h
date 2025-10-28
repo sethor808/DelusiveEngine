@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "DelusiveComponent.h"
-#include <Delusive/Transform.h>
+#include <DelusiveExternal/Transform.h>
 
 class PathfindingComponent;
 

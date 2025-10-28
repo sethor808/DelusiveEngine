@@ -1,19 +1,29 @@
+// ScriptManager.h
 #pragma once
-#include <Delusive/ScriptRegistry.h>
-#include "DelusiveScriptAPI.h"
-#include <string>
+#include <DelusiveExternal/ScriptRegistry.h>
+#include <memory>
+
 
 class ScriptManager {
 public:
-	void Initialize() {
-		InitializeScripts(registry);
-	}
-	BehaviourScript* CreateScript(const std::string& name, DelusiveScriptAgent* owner) {
-		return registry.Create(name, owner);
-	}
-	void GetAvailableScripts(std::vector<std::string>& out) {
-		registry.GetAllNames(out);
-	}
+    void Init() {} //TODO: implement if needed
+
+    std::unique_ptr<BehaviourScript> CreateEnemyLogicScript(const std::string& name) {
+        return registry.CreateEnemyLogic(name);
+    }
+
+    std::unique_ptr<UIScript> CreateUIScript(const std::string& name) {
+        return registry.CreateUIScript(name);
+    }
+
+    void GetAvailableEnemyLogicScripts(std::vector<std::string>& out) {
+        registry.GetAllEnemyLogicNames(out);
+    }
+
+    void GetAvailableUIScripts(std::vector<std::string>& out) {
+        registry.GetAllUINames(out);
+    }
+
 private:
-	ScriptRegistry registry;
+    ScriptRegistry registry;
 };

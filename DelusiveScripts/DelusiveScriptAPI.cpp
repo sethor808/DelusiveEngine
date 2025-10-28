@@ -1,18 +1,24 @@
-#include <Delusive/DelusiveScriptAPI.h>
+#include <DelusiveExternal/DelusiveScriptAPI.h>
 #include "DelusiveScripts.h"
 #include <iostream>
 
 // Macro to simplify registration
-#define REGISTER_SCRIPT(REGISTRY, CLASS_NAME) \
+#define REGISTER_ENEMYLOGIC(REGISTRY, CLASS_NAME) \
     do { \
         REGISTRY.Register(#CLASS_NAME, [](DelusiveScriptAgent* owner) -> BehaviourScript* { \
             return new CLASS_NAME(owner); \
         }); \
     } while(0)
 
+#define REGISTER_UISCRIPT(REGISTRY, CLASS_NAME) \
+    do { \
+        REGISTRY.Register(#CLASS_NAME, [](UIScript* owner) -> UIScript* { \
+            return new CLASS_NAME(owner); \
+        }); \
+    } while(0)
+
 extern "C" DS_API void InitializeScripts(ScriptRegistry& registry) {
-    REGISTER_SCRIPT(registry, BasicFollow);
-    // Add more scripts here as you implement them
+
 }
 
 void UpdateScripts(float deltaTime) {

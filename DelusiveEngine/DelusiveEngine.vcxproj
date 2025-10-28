@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include\Delusive;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -134,7 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)include\Delusive;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -145,6 +145,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\imgui\backend\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="..\include\imgui\imgui.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimatorComponent.cpp" />
@@ -172,12 +179,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="HitboxCollider.cpp" />
     <ClCompile Include="HurtboxCollider.cpp" />
-    <ClCompile Include="imgui.cpp" />
-    <ClCompile Include="include\imgui\backend\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="include\imgui\backend\imgui_impl_sdl3.cpp" />
-    <ClCompile Include="include\imgui\imgui_draw.cpp" />
-    <ClCompile Include="include\imgui\imgui_tables.cpp" />
-    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="PathfindingComponent.cpp" />
     <ClCompile Include="PathfindingSystem.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
@@ -186,6 +188,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
+    <ClCompile Include="ScriptRegistry.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SolidCollider.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
@@ -210,10 +213,16 @@
     <ClCompile Include="UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Delusive\BehaviourScript.h" />
-    <ClInclude Include="..\include\Delusive\DelusiveScriptAgent.h" />
-    <ClInclude Include="..\include\Delusive\DelusiveScriptAPI.h" />
-    <ClInclude Include="..\include\Delusive\ScriptRegistry.h" />
+    <ClInclude Include="..\include\DelusiveExternal\Agent.h" />
+    <ClInclude Include="..\include\DelusiveExternal\BehaviourScript.h" />
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveAgents.h" />
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveComponents.h" />
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveEngine.h" />
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAgent.h" />
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAPI.h" />
+    <ClInclude Include="..\include\DelusiveExternal\ScriptFactoryBase.h" />
+    <ClInclude Include="..\include\DelusiveExternal\ScriptRegistry.h" />
+    <ClInclude Include="..\include\DelusiveExternal\Transform.h" />
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentTypes.h" />
     <ClInclude Include="Animation.h" />
@@ -226,14 +235,11 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="ColliderRenderer.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="DelusiveAnimatorComponent.h" />
-    <ClInclude Include="DelusiveComponent.h" />
     <ClInclude Include="DelusiveData.h" />
     <ClInclude Include="DelusiveDeserializer.h" />
     <ClInclude Include="DelusiveEngine.h" />
     <ClInclude Include="DelusiveInventory.h" />
     <ClInclude Include="DelusiveMacros.h" />
-    <ClInclude Include="DelusivePathfindingComponent.h" />
     <ClInclude Include="DelusiveSerializer.h" />
     <ClInclude Include="DelusiveTalismans.h" />
     <ClInclude Include="DelusiveSystems.h" />
@@ -275,7 +281,6 @@
     <ClInclude Include="Talisman.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriggerCollider.h" />
     <ClInclude Include="UIButton.h" />

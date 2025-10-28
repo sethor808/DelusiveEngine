@@ -5,7 +5,7 @@
 #include "DelusiveMacros.h"
 #include "Shader.h"
 #include "Font.h"
-#include "BehaviourScript.h"
+#include <DelusiveExternal/BehaviourScript.h>
 #include "ScriptManager.h"
 #include "UUID.h"
 #include "UIElement.h"
@@ -26,107 +26,6 @@ struct DelusiveTexture {
 	std::string texturePath = "";
     GLuint textureID = 0;
 };
-
-//Depreciated structure
-/*
-struct DelusiveTexture {
-    std::string texturePath = "";
-    std::string previousTexturePath = "";
-    GLuint VAO = 0, VBO = 0;
-    Texture* texture = nullptr;
-    Shader* shader = nullptr;
-
-    DelusiveTexture() = default;
-
-    ~DelusiveTexture() {
-        Cleanup();
-    }
-
-    void Cleanup() {
-        if (VAO) glDeleteVertexArrays(1, &VAO);
-        if (VBO) glDeleteBuffers(1, &VBO);
-        if (texture) delete texture;
-        if (shader) delete shader;
-        VAO = VBO = 0;
-        texture = nullptr;
-        shader = nullptr;
-    }
-
-    // Copy values and re-init GPU objects
-    void CloneFrom(const DelusiveTexture& other) {
-        texturePath = other.texturePath;
-        previousTexturePath = other.previousTexturePath;
-        Cleanup();
-        Init(); // rebuild VAO/VBO/shader/texture
-    }
-
-    void Init(
-        const std::string& shaderVert = DEFAULT_VERT,
-        const std::string& shaderFrag = DEFAULT_FRAG)
-    {
-        shader = new Shader(shaderVert.c_str(), shaderFrag.c_str());
-        if (!texturePath.empty()) {
-            texture = new Texture(texturePath.c_str());
-        }
-
-        float vertices[] = {
-            // pos       // tex
-            -0.5f, -0.5f,  0.0f, 0.0f,
-             0.5f, -0.5f,  1.0f, 0.0f,
-             0.5f,  0.5f,  1.0f, 1.0f,
-
-             0.5f,  0.5f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.0f, 0.0f
-        };
-
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-        glBindVertexArray(0);
-    }
-
-    void SetTexture(const std::string& path) {
-        texturePath = path;
-        if (texture) { delete texture; texture = nullptr; }
-        texture = new Texture(path.c_str());
-    }
-
-    void Draw(const glm::mat4& model,
-        const glm::mat4& view,
-        const glm::mat4& projection) const
-    {
-        if (!shader || !texture) return;
-
-        shader->Use();
-
-        glActiveTexture(GL_TEXTURE0);
-        texture->Bind();
-
-        GLint loc = glGetUniformLocation(shader->GetID(), "tex");
-        if (loc >= 0) glUniform1i(loc, 0);
-
-        shader->SetMat4("model", glm::value_ptr(model));
-        shader->SetMat4("view", glm::value_ptr(view));
-        shader->SetMat4("projection", glm::value_ptr(projection));
-
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
-    }
-};
-*/
-
 
 struct DelusiveFont {
     std::string fontPath = "";

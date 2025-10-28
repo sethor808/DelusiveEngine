@@ -24,8 +24,7 @@ public:
     Scene& GetEditorScene();
     void SetEditorScene(const Scene&);
 
-	ScriptManager& GetScriptManager() { return scriptManager; }
-
+    ScriptManager& GetScriptManager() { return scriptManager; }
 private:
     DelusiveRenderer& renderer;
     ScriptManager scriptManager;

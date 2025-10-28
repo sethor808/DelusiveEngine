@@ -119,24 +119,18 @@
     <Filter Include="engine\ui\Header Files">
       <UniqueIdentifier>{dc2be865-bd83-4135-b271-bdccc9b5b11d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\registry systems">
+      <UniqueIdentifier>{99e5d424-5014-4ab7-8ae6-b4189554bd61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\registry systems\Header Files">
+      <UniqueIdentifier>{9e339fe7-5827-45b3-b27f-8fa1e061c7d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\registry systems\Source Files">
+      <UniqueIdentifier>{fb645da7-8a48-4486-b9b3-64bb928e956f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imgui.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\backend\imgui_impl_opengl3.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\backend\imgui_impl_sdl3.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_draw.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_tables.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_widgets.cpp">
+    <ClCompile Include="src\imgui\imgui.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
@@ -306,6 +300,16 @@
     <ClCompile Include="UIScriptContainer.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptRegistry.cpp">
+      <Filter>External Files\Internal Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\include\imgui\backend\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -471,38 +475,14 @@
     <ClInclude Include="DelusiveMacros.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Delusive\DelusiveScriptAgent.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Delusive\ScriptRegistry.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Delusive\BehaviourScript.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptManager.h">
       <Filter>engine\behaviour scripts\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Delusive\DelusiveScriptAPI.h">
-      <Filter>External Files\External Headers</Filter>
     </ClInclude>
     <ClInclude Include="ScriptComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AgentTypes.h">
       <Filter>engine\agents</Filter>
-    </ClInclude>
-    <ClInclude Include="DelusivePathfindingComponent.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="DelusiveAnimatorComponent.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="DelusiveComponent.h">
-      <Filter>External Files\External Headers</Filter>
     </ClInclude>
     <ClInclude Include="PlayerStats.h">
       <Filter>engine\core\Header Files</Filter>
@@ -542,6 +522,38 @@
     </ClInclude>
     <ClInclude Include="UIUUIDManager.h">
       <Filter>engine\ui\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelusiveDeserializer.h" />
+    <ClInclude Include="DelusiveSerializer.h" />
+    <ClInclude Include="..\include\DelusiveExternal\Agent.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\BehaviourScript.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveAgents.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveComponents.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveEngine.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAgent.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAPI.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\ScriptFactoryBase.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\ScriptRegistry.h">
+      <Filter>External Files\External Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DelusiveExternal\Transform.h">
+      <Filter>External Files\External Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

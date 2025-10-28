@@ -1,7 +1,6 @@
 #include "GameManager.h"
 
 
-
 GameManager::GameManager(DelusiveRenderer& _renderer)
 	: renderer(_renderer), editorScene(_renderer), playScene(_renderer)
 {
@@ -9,11 +8,12 @@ GameManager::GameManager(DelusiveRenderer& _renderer)
 }
 
 void GameManager::Init() {
-    scriptManager.Initialize();
+    scriptManager.Init();
     isPlaying = false;
     activeScene = &editorScene;
     editorScene.SetGameManager(this);
 	playScene.SetGameManager(this);
+
 }
 
 void GameManager::Play() {

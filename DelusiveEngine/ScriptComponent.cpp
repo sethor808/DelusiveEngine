@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "Scene.h"
 #include "DelusiveData.h"
+#include <DelusiveExternal/DelusiveScriptAgent.h>
 #include <iostream>
 
 ScriptComponent::ScriptComponent(DelusiveRenderer& renderer, ScriptManager& scriptManager)
@@ -59,7 +60,7 @@ void ScriptComponent::RegisterProperties()
 void ScriptComponent::AttachScript() {
 	std::cout << "[ScriptComponent] Attempting to attach script." << std::endl;
 	if (!scriptContainer->scriptName.empty() && !scriptContainer->script) {
-		scriptContainer->script.reset(scriptManager.CreateScript(scriptContainer->scriptName, scriptAgent.get()));
+		//scriptContainer->script.reset(scriptManager.CreateScript(scriptContainer->scriptName, scriptAgent.get()));
 		std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
 	}
 }

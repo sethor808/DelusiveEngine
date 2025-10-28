@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "ScriptManager.h"
-#include "BehaviourScript.h"
+#include <DelusiveExternal/BehaviourScript.h>
 
 struct DelusiveScript;
 class DelusiveScriptAgent;
