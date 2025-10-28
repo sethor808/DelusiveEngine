@@ -1,4 +1,4 @@
-#include "Agent.h"
+#include <DelusiveInternal/Agents/Agent.h>
 #include "Component.h"
 #include "Scene.h"
 #include "DelusiveRegistry.h"
