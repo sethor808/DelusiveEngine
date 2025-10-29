@@ -1,0 +1,50 @@
+#pragma once
+#include <DelusiveInternal/Core/DelusiveData.h>
+#include <DelusiveInternal/Components/Component.h>
+#include <DelusiveInternal/Editor/EditorInterface.h>
+#include <glm/glm.hpp>
+#include <GL/glew.h>
+#include <vector>
+
+class SpriteComponent : public Component {
+public:
+    bool isForeground = false;
+
+    SpriteComponent(DelusiveRenderer& renderer);
+    SpriteComponent() = delete;
+
+    SpriteComponent(const SpriteComponent&) = delete;
+    SpriteComponent& operator=(const SpriteComponent&) = delete;
+    SpriteComponent(SpriteComponent&&) noexcept = default;
+    SpriteComponent& operator=(SpriteComponent&&) noexcept = default;
+
+    void Init();
+
+    void RegisterProperties() override;
+    std::unique_ptr<Component> Clone() const override;
+
+    void SetTexturePath(const std::string&);
+    void SetPosition(float x, float y);
+    void SetScale(float sx, float sy);
+    void SetRotation(float angle);
+    void Draw(const glm::mat4& projection) const override;
+    void DrawImGui() override;
+    bool DrawAnimatorImGui(ComponentMod&) override;
+    void SetVelocity(float x, float y);
+    void Update(float) override;
+    void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) override;
+    void HandleMouse(const glm::vec2&, bool) override;
+
+    const char* GetType() const override {
+        return "SpriteComponent";
+    }
+
+    //void Serialize(std::ofstream& out) const override;
+    void Deserialize(std::istream& in) override;
+private:
+    InteractionState interaction;
+	DelusiveTexture textureData;
+    
+    int renderOrder = 0;
+    glm::vec2 velocity = { 0.0f, 0.0f };
+};

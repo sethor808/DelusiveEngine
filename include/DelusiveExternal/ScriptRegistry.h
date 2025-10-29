@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "UIScript.h"
+#include <DelusiveExternal/UIScript.h>
 #include <DelusiveExternal/BehaviourScript.h>
 
 class BehaviourScript;

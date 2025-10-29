@@ -133,174 +133,171 @@
     <ClCompile Include="src\imgui\imgui.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="src\DelusiveInternal\Scene\Scene.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
+    <ClCompile Include="src\DelusiveInternal\Collision\Collider.cpp">
       <Filter>engine\physics\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveRenderer.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\DelusiveRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderRenderer.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\ColliderRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\Shader.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>engine\render\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteData.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\SpriteData.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\Texture.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerAgent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Agents\PlayerAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\Component.cpp">
       <Filter>engine\components</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\SpriteComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatorComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\AnimatorComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatsComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\StatsComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\ColliderComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HitboxCollider.cpp">
+    <ClCompile Include="src\DelusiveInternal\Collision\HitboxCollider.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HurtboxCollider.cpp">
+    <ClCompile Include="src\DelusiveInternal\Collision\HurtboxCollider.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerCollider.cpp">
+    <ClCompile Include="src\DelusiveInternal\Collision\TriggerCollider.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SolidCollider.cpp">
+    <ClCompile Include="src\DelusiveInternal\Collision\SolidCollider.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveUtils.cpp">
+    <ClCompile Include="src\DelusiveInternal\Utils\DelusiveUtils.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Agent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Agents\Agent.cpp">
       <Filter>engine\agents</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
+    <ClCompile Include="src\DelusiveInternal\Animation\Animation.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraAgent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Agents\CameraAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UILabel.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UILabel.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsSystem.cpp">
+    <ClCompile Include="src\DelusiveInternal\Core\PhysicsSystem.cpp">
       <Filter>engine\physics\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyAgent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Agents\EnemyAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PathfindingComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\PathfindingComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PathfindingSystem.cpp">
+    <ClCompile Include="src\DelusiveInternal\Scene\PathfindingSystem.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnvironmentAgent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Agents\EnvironmentAgent.cpp">
       <Filter>engine\agents\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
+    <ClCompile Include="src\DelusiveInternal\Core\GameManager.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIButton.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIButton.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIImage.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIImage.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIPanel.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIPanel.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UICanvas.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UICanvas.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\Font.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIManager.cpp">
+    <ClCompile Include="src\DelusiveInternal\Scene\UIManager.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveUI.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\DelusiveUI.cpp">
       <Filter>engine\ui</Filter>
     </ClCompile>
-    <ClCompile Include="Talisman.cpp">
+    <ClCompile Include="src\DelusiveInternal\Talismans\Talisman.cpp">
       <Filter>engine\healthsystem</Filter>
     </ClCompile>
-    <ClCompile Include="BasicTalisman.cpp">
+    <ClCompile Include="src\DelusiveInternal\Talismans\BasicTalisman.cpp">
       <Filter>engine\healthsystem\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneSystem.cpp">
+    <ClCompile Include="src\DelusiveInternal\Scene\SceneSystem.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveUIRegistry.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\DelusiveUIRegistry.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIElement.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIElement.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditorRegistry.cpp" />
-    <ClCompile Include="DelusiveEngine.cpp" />
-    <ClCompile Include="EditorInterface.cpp">
+    <ClCompile Include="src\DelusiveInternal\Editor\EditorRegistry.cpp" />
+    <ClCompile Include="src\DelusiveInternal\DelusiveEngine.cpp" />
+    <ClCompile Include="src\DelusiveInternal\Editor\EditorInterface.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EngineUI.cpp">
+    <ClCompile Include="src\DelusiveInternal\Editor\EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveScriptAgent.cpp">
+    <ClCompile Include="src\DelusiveInternal\External\DelusiveScriptAgent.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\ScriptComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveRegistry.cpp">
+    <ClCompile Include="src\DelusiveInternal\Core\DelusiveRegistry.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveAnimatorComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\DelusiveAnimatorComponent.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="DelusivePathfindingComponent.cpp">
+    <ClCompile Include="src\DelusiveInternal\Components\DelusivePathfindingComponent.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="UITalismanDisplay.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UITalismanDisplay.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="src\DelusiveInternal\Rendering\TextureManager.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIEquipScreen.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIEquipScreen.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIRepeatContainer.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIRepeatContainer.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UITalismanButton.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UITalismanButton.cpp">
       <Filter>engine\ui\Buttons\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DelusiveInventory.cpp">
+    <ClCompile Include="src\DelusiveInternal\Player\DelusiveInventory.cpp">
       <Filter>engine\inventory system\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIScriptContainer.cpp">
+    <ClCompile Include="src\DelusiveInternal\UI\UIScriptContainer.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptRegistry.cpp">
+    <ClCompile Include="src\DelusiveInternal\Scripting\ScriptRegistry.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
     <ClCompile Include="..\include\imgui\imgui.cpp" />
@@ -312,234 +309,216 @@
     <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
+    <ClInclude Include="include\DelusiveInternal\Collision\Collider.h">
       <Filter>engine\physics\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveRenderer.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\DelusiveRenderer.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\Texture.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>engine\render\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteData.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\SpriteData.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\Shader.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="include\DelusiveInternal\Core\Camera.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderRenderer.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\ColliderRenderer.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\TransformComponent.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerAgent.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\PlayerAgent.h">
       <Filter>engine\agents\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
+    <ClInclude Include="include\DelusiveInternal\Components\Component.h">
       <Filter>engine\components</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\SpriteComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatorComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\AnimatorComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatsComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\StatsComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\ColliderComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HitboxCollider.h">
+    <ClInclude Include="include\DelusiveInternal\Collision\HitboxCollider.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HurtboxCollider.h">
+    <ClInclude Include="include\DelusiveInternal\Collision\HurtboxCollider.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerCollider.h">
+    <ClInclude Include="include\DelusiveInternal\Collision\TriggerCollider.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SolidCollider.h">
+    <ClInclude Include="include\DelusiveInternal\Collision\SolidCollider.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveComponents.h">
+    <ClInclude Include="include\DelusiveInternal\Components\DelusiveComponents.h">
       <Filter>engine\components</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveUtils.h">
+    <ClInclude Include="include\DelusiveInternal\Utils\DelusiveUtils.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatorData.h">
+    <ClInclude Include="include\DelusiveInternal\Animation\AnimatorData.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Agent.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\Agent.h">
       <Filter>engine\agents</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
+    <ClInclude Include="include\DelusiveInternal\Animation\Animation.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraAgent.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\CameraAgent.h">
       <Filter>engine\agents\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveAgents.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\DelusiveAgents.h">
       <Filter>engine\agents</Filter>
     </ClInclude>
-    <ClInclude Include="UIElement.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIElement.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UILabel.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UILabel.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIManager.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\UIManager.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveUI.h">
+    <ClInclude Include="include\DelusiveInternal\UI\DelusiveUI.h">
       <Filter>engine\ui</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsSystem.h">
+    <ClInclude Include="include\DelusiveInternal\Core\PhysicsSystem.h">
       <Filter>engine\physics\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyAgent.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\EnemyAgent.h">
       <Filter>engine\agents\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PathfindingComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\PathfindingComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PathfindingSystem.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\PathfindingSystem.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnvironmentAgent.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\EnvironmentAgent.h">
       <Filter>engine\agents\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="include\DelusiveInternal\Core\GameManager.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIButton.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIButton.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneSystem.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\SceneSystem.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIImage.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIImage.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIPanel.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIPanel.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UICanvas.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UICanvas.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\Font.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveSystems.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\DelusiveSystems.h">
       <Filter>engine\core</Filter>
     </ClInclude>
-    <ClInclude Include="Talisman.h">
+    <ClInclude Include="include\DelusiveInternal\Talismans\Talisman.h">
       <Filter>engine\healthsystem</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveTalismans.h">
+    <ClInclude Include="include\DelusiveInternal\Talismans\DelusiveTalismans.h">
       <Filter>engine\healthsystem</Filter>
     </ClInclude>
-    <ClInclude Include="BasicTalisman.h">
+    <ClInclude Include="include\DelusiveInternal\Talismans\BasicTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveRegistry.h">
+    <ClInclude Include="include\DelusiveInternal\Core\DelusiveRegistry.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveUIRegistry.h">
+    <ClInclude Include="include\DelusiveInternal\UI\DelusiveUIRegistry.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveData.h">
+    <ClInclude Include="include\DelusiveInternal\Core\DelusiveData.h">
       <Filter>engine\core</Filter>
     </ClInclude>
-    <ClInclude Include="EditorInput.h" />
-    <ClInclude Include="EditorRegistry.h" />
-    <ClInclude Include="ISelectable.h" />
-    <ClInclude Include="DelusiveEngine.h" />
-    <ClInclude Include="EditorInferface.h">
+    <ClInclude Include="include\DelusiveInternal\Editor\EditorInput.h" />
+    <ClInclude Include="include\DelusiveInternal\Editor\EditorRegistry.h" />
+    <ClInclude Include="include\DelusiveInternal\Scene\ISelectable.h" />
+    <ClInclude Include="include\DelusiveInternal\DelusiveEngine.h" />
+    <ClInclude Include="include\DelusiveInternal\Editor\EditorInterface.h">
       <Filter>engine\editor\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineUI.h">
+    <ClInclude Include="include\DelusiveInternal\Editor\EngineUI.h">
       <Filter>engine\editor\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveMacros.h">
+    <ClInclude Include="include\DelusiveInternal\Utils\DelusiveMacros.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptManager.h">
+    <ClInclude Include="include\DelusiveInternal\Scripting\ScriptManager.h">
       <Filter>engine\behaviour scripts\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptComponent.h">
+    <ClInclude Include="include\DelusiveInternal\Components\ScriptComponent.h">
       <Filter>engine\components\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AgentTypes.h">
+    <ClInclude Include="include\DelusiveInternal\Agents\AgentTypes.h">
       <Filter>engine\agents</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStats.h">
+    <ClInclude Include="include\DelusiveInternal\Player\PlayerStats.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpeedTalisman.h">
+    <ClInclude Include="include\DelusiveInternal\Talismans\SpeedTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MajorSpeedTalisman.h">
+    <ClInclude Include="include\DelusiveInternal\Talismans\MajorSpeedTalisman.h">
       <Filter>engine\healthsystem\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UITalismanDisplay.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UITalismanDisplay.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="include\DelusiveInternal\Rendering\TextureManager.h">
       <Filter>engine\render\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIEquipScreen.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIEquipScreen.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIRepeatContainer.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIRepeatContainer.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UITalismanButton.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UITalismanButton.h">
       <Filter>engine\ui\Buttons\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveInventory.h">
+    <ClInclude Include="include\DelusiveInternal\Player\DelusiveInventory.h">
       <Filter>engine\inventory system\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIScript.h">
+    <ClInclude Include="include\DelusiveInternal\Scripting\UIScript.h">
       <Filter>engine\ui\UIScripts</Filter>
     </ClInclude>
-    <ClInclude Include="UIScriptContainer.h">
+    <ClInclude Include="include\DelusiveInternal\UI\UIScriptContainer.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UUID.h">
+    <ClInclude Include="include\DelusiveInternal\Utils\UUID.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIUUIDManager.h">
+    <ClInclude Include="include\DelusiveInternal\Scene\UIUUIDManager.h">
       <Filter>engine\ui\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelusiveDeserializer.h" />
-    <ClInclude Include="DelusiveSerializer.h" />
-    <ClInclude Include="..\include\DelusiveExternal\Agent.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\DelusiveExternal\BehaviourScript.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\DelusiveExternal\DelusiveAgents.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\DelusiveExternal\DelusiveComponents.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\DelusiveExternal\DelusiveEngine.h">
-      <Filter>External Files\External Headers</Filter>
-    </ClInclude>
+    <ClInclude Include="include\DelusiveInternal\Utils\DelusiveDeserializer.h" />
+    <ClInclude Include="include\DelusiveInternal\Utils\DelusiveSerializer.h" />
     <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAgent.h">
       <Filter>External Files\External Headers</Filter>
     </ClInclude>
@@ -557,6 +536,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Property.inl" />
+    <None Include="include\DelusiveInternal\Utils\Property.inl" />
   </ItemGroup>
 </Project>

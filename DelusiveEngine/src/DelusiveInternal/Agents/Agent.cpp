@@ -1,10 +1,10 @@
 #include <DelusiveInternal/Agents/Agent.h>
-#include "Component.h"
-#include "Scene.h"
-#include "DelusiveRegistry.h"
-#include "DelusiveMacros.h"
-#include "DelusiveComponents.h"
-#include "DelusiveRenderer.h"
+#include <DelusiveInternal/Components/Component.h>
+#include <DelusiveInternal/Scene/Scene.h>
+#include <DelusiveInternal/Core/DelusiveRegistry.h>
+#include <DelusiveInternal/Utils/DelusiveMacros.h>
+#include <DelusiveInternal/Components/DelusiveComponents.h>
+#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
 #include <limits>
 #include <sstream>
 

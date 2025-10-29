@@ -1,5 +1,5 @@
 #include <DelusiveExternal/ScriptFactoryBase.h>
-#include "UIScript.h"
+#include <DelusiveExternal/UIScript.h>
 #include "BehaviourScript.h"
 #include <filesystem>
 #include <unordered_map>

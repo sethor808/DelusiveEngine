@@ -1,5 +1,5 @@
 #pragma once
-#include "TransformComponent.h"
+#include <DelusiveInternal/Components/TransformComponent.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <memory>
@@ -8,8 +8,8 @@
 #include <string>
 #include <fstream>
 #include <SDL3/SDL.h>
-#include "DelusiveUtils.h"
-#include "EditorInferface.h"
+#include <DelusiveInternal/Utils/DelusiveUtils.h>
+#include <DelusiveInternal/Editor/EditorInterface.h>
 
 class Component;
 class PropertyRegistry;
