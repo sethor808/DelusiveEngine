@@ -1,0 +1,50 @@
+[Scene]
+name Seamus Test Grounds
+agents 3
+[Agent PlayerAgent]
+name=Player
+position=0 0
+scale=1 1
+rotation=0
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=../assets/sprites/BasicDude\BasicDude1.jpg
+[/Component]
+[/Agent]
+[Agent CameraAgent]
+name=New Camera
+position=0 0
+scale=1 1
+rotation=0
+[/Agent]
+[Agent EnemyAgent]
+name=Enemy
+position=-7.6875 0.593751
+scale=1 1
+rotation=0
+scriptName=
+moveSpeed=10
+damping=0.9
+[Component SpriteComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New Sprite
+enabled=1
+textureData=../assets/sprites/BasicDude\BasicDude4.png
+[/Component]
+[Component ScriptComponent]
+position=0 0
+scale=1 1
+rotation=0
+name=New ScriptComponent
+enabled=1
+script=
+[/Component]
+[/Agent]
+systems 0
+[/Scene]
