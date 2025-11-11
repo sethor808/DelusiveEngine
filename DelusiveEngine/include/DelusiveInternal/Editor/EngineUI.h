@@ -81,16 +81,21 @@ public:
 	~EngineUI();
 	std::vector<std::string> LoadSceneList();
 	ImTextureID GetFramePreviewTexture(AnimationFrame&, Agent&);
+    void MoveEditorCameraTo(Agent* agent);
 	void SetRenderer(const DelusiveRenderer&);
+
 	void Render(Scene& scene);
 	void RenderTopBar(Scene& scene);
 	void RenderSceneEditor(Scene& scene);
 	void RenderAgentEditor(Scene& scene);
 	void RenderAnimatorEditor(Scene& scene);
 	void RenderGameView(Scene& scene);
+
+    void LinkEditorCamera(CameraAgent* cam) { editorCamera = cam; }
 private:
 	GameManager& gameManager;
 	DelusiveRenderer& renderer;
+    CameraAgent* editorCamera;
 
 	EditorMode currentMode = EditorMode::SceneEditor;
 	std::string selectedAsset = "None";
@@ -111,6 +116,7 @@ private:
 	//Scene editor specifics
     Selection selected;
 	int agentToDeleteIndex = -1;
+    Agent* focusRequested = nullptr;
 
 	//Agent editor specifics
 	bool isDraggingCollider = false;

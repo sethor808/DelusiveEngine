@@ -146,6 +146,15 @@ std::string EngineUI::GetPath(std::string fileName) {
     }
 }
 
+void EngineUI::MoveEditorCameraTo(Agent* agent) {
+    if (!agent || !editorCamera) return;
+
+    glm::vec2 pos = agent->transform.position;
+
+    // Smooth or instant?
+    editorCamera->SetPosition(pos);
+}
+
 void EngineUI::RenderTopBar(Scene& scene) {
     if (ImGui::BeginMainMenuBar()) {
         ImGui::Text("View");
@@ -467,11 +476,17 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                     (selected.Is(Selection::AgentObject, agent) ? ImGuiTreeNodeFlags_Selected : 0);
 
                 bool agentOpen = ImGui::TreeNodeEx(agentName.c_str(), flags);
-                if (ImGui::IsItemClicked()) {
+                if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                    bool doubleClicked = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+
 					selected.SetEditorMode(false); // Deselect previous
 					selected.kind = Selection::AgentObject;
                     selected.ptr = agent;
 					selected.SetEditorMode(true); // Enable editor mode for new selection
+
+                    if (doubleClicked) {
+                        focusRequested = agent;
+                    }
                 }
 
 
@@ -499,27 +514,49 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                 if (agentOpen) {
                     auto& comps = agent->GetComponents();
                     for (size_t c = 0; c < comps.size(); ++c) {
+
                         Component* comp = comps[c].get();
                         ImGui::PushID((int)c);
 
                         bool compSelected = selected.Is(Selection::ComponentObject, comp);
-                        if (ImGui::Selectable(comp->GetName().c_str(), compSelected)) {
+
+                        // Draw the selectable row
+                        ImGui::Selectable(comp->GetName().c_str(), compSelected);
+
+                        // Check hover event
+                        bool isHovered = ImGui::IsItemHovered();
+
+                        // Left click event
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
                             selected.SetEditorMode(false);
                             selected.kind = Selection::ComponentObject;
                             selected.ptr = comp;
-							selected.SetEditorMode(true);
+                            selected.SetEditorMode(true);
                         }
 
-                        if (ImGui::BeginPopupContextItem(("ComponentContextMenu##" + std::to_string(i) + "_" + std::to_string(c)).c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+                        // Double click event
+                        if (isHovered && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+                            focusRequested = comp->GetOwner();
+                        }
+
+                        // Right click event
+                        if (ImGui::BeginPopupContextItem(
+                            ("ComponentContextMenu##" +
+                                std::to_string(i) + "_" + std::to_string(c)).c_str(),
+                            ImGuiPopupFlags_MouseButtonRight))
+                        {
                             if (ImGui::MenuItem("Delete Component")) {
-                                // deletion deferred to avoid invalidating iteration
                                 agent->RemoveComponentByPointer(comp);
-                                if (selected.Is(Selection::ComponentObject, comp)) selected.Reset();
+
+                                if (selected.Is(Selection::ComponentObject, comp))
+                                    selected.Reset();
                             }
                             ImGui::EndPopup();
                         }
+
                         ImGui::PopID();
                     }
+
                     ImGui::TreePop();
                 }
 
@@ -548,6 +585,12 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         selected.Draw();
     }
     ImGui::EndChild();
+
+    //Move camera to focused target
+    if (focusRequested) {
+        MoveEditorCameraTo(focusRequested);
+        focusRequested = nullptr;
+    }
 
     ImGui::End();
 }

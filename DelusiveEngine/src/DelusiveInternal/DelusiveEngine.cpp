@@ -79,6 +79,7 @@ namespace DelusiveEngine {
         uint64_t lastTicks = SDL_GetTicks();
 
         EngineUI ui(game, renderer);
+        ui.LinkEditorCamera(editorCamPtr);
 
         while (running) {
             scrollDelta = 0.0f;
