@@ -34,7 +34,6 @@ name=NewEnemy
 position=-7.5 0
 scale=1 1
 rotation=0
-scriptName=BasicFollow
 moveSpeed=10
 damping=0.9
 [Component SpriteComponent]
@@ -91,6 +90,6 @@ name=New PathfindingSystem
 [System UIManager]
 name=NewUIManager
 activeCanvasName=Equip Screen
-canvasList=2 Equip Screen HP Display
+canvasList=2 Equip Screen
 [/System]
 [/Scene]

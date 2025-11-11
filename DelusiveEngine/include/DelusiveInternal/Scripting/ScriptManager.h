@@ -1,12 +1,12 @@
 // ScriptManager.h
 #pragma once
 #include <DelusiveExternal/ScriptRegistry.h>
+#include <DelusiveExternal/DelusiveScriptAPI.h>
 #include <memory>
-
 
 class ScriptManager {
 public:
-    void Init() {} //TODO: implement if needed
+    void Init() { InitializeScripts(registry); }
 
     std::unique_ptr<BehaviourScript> CreateEnemyLogicScript(const std::string& name) {
         return registry.CreateEnemyLogic(name);

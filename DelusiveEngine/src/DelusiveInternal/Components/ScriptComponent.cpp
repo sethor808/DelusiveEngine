@@ -59,10 +59,12 @@ void ScriptComponent::RegisterProperties()
 
 void ScriptComponent::AttachScript() {
 	std::cout << "[ScriptComponent] Attempting to attach script." << std::endl;
-	if (!scriptContainer->scriptName.empty() && !scriptContainer->script) {
-		//scriptContainer->script.reset(scriptManager.CreateScript(scriptContainer->scriptName, scriptAgent.get()));
-		std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
-	}
+    auto newScript = scriptManager.CreateEnemyLogicScript(scriptContainer->scriptName);
+    if (newScript) {
+        scriptContainer->script = std::move(newScript);
+        scriptContainer->script->SetOwner(scriptAgent.get());
+        std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
+    }
 }
 
 void ScriptComponent::Update(float deltaTime) {

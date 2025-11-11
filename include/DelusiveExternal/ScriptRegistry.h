@@ -7,6 +7,7 @@
 #include <vector>
 #include <DelusiveExternal/UIScript.h>
 #include <DelusiveExternal/BehaviourScript.h>
+#include <iostream>
 
 class BehaviourScript;
 
@@ -19,10 +20,18 @@ public:
 
     void RegisterBehaviour(const std::string& name, BehaviourFactory factory) {
         enemyLogicFactories[name] = std::move(factory);
+        
+        if (loggingEnabled) {
+            std::cout << "[ScriptRegistry] Registered BehaviourScript: " << name << "\n";
+        }
     }
 
     void RegisterUIScript(const std::string& name, UIFactory factory) {
         uiFactories[name] = std::move(factory);
+
+        if (loggingEnabled) {
+            std::cout << "[ScriptRegistry] Registered UIScript: " << name << "\n";
+        }
     }
 
     std::unique_ptr<BehaviourScript> CreateEnemyLogic(const std::string& name) const;
@@ -45,4 +54,5 @@ public:
 private:
     std::unordered_map<std::string, BehaviourFactory> enemyLogicFactories;
     std::unordered_map<std::string, UIFactory> uiFactories;
+    bool loggingEnabled = true; //TODO: centralize this for a debug switch somewhere
 };

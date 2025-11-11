@@ -10,20 +10,18 @@ public:
 
 	//Overrides
 	std::unique_ptr<Agent> Clone(Scene*) const override;
-	void Update(float deltaTime) override;
+	void Update(float deltaTime);
 	void Draw(const glm::mat4& projection) const override;
-	void DrawImGui() override;
+	void DrawImGui() ;
 	void OnHit() override;
 	std::string GetType() const override;
 	void RegisterProperties() override;
 
 	//EnemyAgent logic
-	void SetScript(const std::string&);
 	void SetTarget(Agent*);
 
 private:
 	Agent* target = nullptr;
-	std::string scriptName;
 	
 
 	glm::vec2 velocity = { 0.0f, 0.0f };

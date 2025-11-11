@@ -14,7 +14,6 @@ EnemyAgent::EnemyAgent(DelusiveRenderer& renderer)
 void EnemyAgent::RegisterProperties() {
     Agent::RegisterProperties();
 
-    registry->Register("scriptName", &scriptName);
     registry->Register("moveSpeed", &moveSpeed);
     registry->Register("damping", &damping);
 }
@@ -69,10 +68,6 @@ void EnemyAgent::DrawImGui() {
 
 void EnemyAgent::OnHit() {
 
-}
-
-void EnemyAgent::SetScript(const std::string& _scriptName) {
-    scriptName = _scriptName;
 }
 
 void EnemyAgent::SetTarget(Agent* target) {

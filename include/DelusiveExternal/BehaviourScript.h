@@ -13,6 +13,7 @@ public:
 
 	//Getters and Setters
 	virtual DelusiveScriptAgent* GetOwner() const { return owner; }
+    virtual void SetOwner(DelusiveScriptAgent* scriptAgent) { owner = scriptAgent; }
 	virtual DelusiveScriptAgent* GetTarget() const { return target; }
 	virtual void SetTarget(DelusiveScriptAgent* _target) { target = _target; }
 	virtual void SetMovementSpeed(float speed) { movementSpeed = speed; }
