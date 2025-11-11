@@ -11,7 +11,7 @@ public:
 	UIEquipScreen(DelusiveRenderer&);
 
 	std::unique_ptr<UIElement> Clone() const override;
-	const std::string GetType() const override { return "UIEquipScreen"; }
+	const std::string GetType() const override { return "s"; }
 
 	void Draw(const glm::mat4&) override;
 

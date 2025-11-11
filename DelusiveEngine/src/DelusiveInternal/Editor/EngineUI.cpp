@@ -178,6 +178,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
         ImGui::SetNextItemWidth(200.0f);
         ImGui::SameLine();
         if (ImGui::BeginCombo("##AssetSelector", selectedAsset.c_str())) {
+            selected.Reset();
+
             if (ImGui::Selectable("Add New...")) {
                 newAssetPopup = true;
             }

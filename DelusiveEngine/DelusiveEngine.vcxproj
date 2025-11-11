@@ -155,6 +155,7 @@
     <ClCompile Include="src\DelusiveInternal\Agents\Agent.cpp" />
     <ClCompile Include="src\DelusiveInternal\Animation\Animation.cpp" />
     <ClCompile Include="src\DelusiveInternal\Components\AnimatorComponent.cpp" />
+    <ClCompile Include="src\DelusiveInternal\External\UIScript.cpp" />
     <ClCompile Include="src\DelusiveInternal\Talismans\BasicTalisman.cpp" />
     <ClCompile Include="src\DelusiveInternal\Agents\CameraAgent.cpp" />
     <ClCompile Include="src\DelusiveInternal\Collision\Collider.cpp" />

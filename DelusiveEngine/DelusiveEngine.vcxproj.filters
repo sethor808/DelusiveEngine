@@ -307,6 +307,7 @@
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\include\imgui\backend\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="src\DelusiveInternal\External\UIScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">

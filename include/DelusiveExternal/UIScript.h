@@ -22,8 +22,9 @@ public:
 
 	virtual std::string GetType() const = 0;
 
-	virtual void Serialize(std::ostream& os) const;
-	virtual void Deserialize(std::istream& is);
+    //TODO: Make sure de/serialation works later
+    virtual void Serialize(std::ostream& os) const {};
+    virtual void Deserialize(std::istream& is) {};
 private:
 	UIElement* rootElement = nullptr;
 };
