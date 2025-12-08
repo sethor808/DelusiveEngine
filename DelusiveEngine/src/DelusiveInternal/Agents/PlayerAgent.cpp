@@ -59,7 +59,7 @@ void PlayerAgent::Update(float deltaTime) {
         HandleMovement(deltaTime);
     }
 
-    std::cout << "[PlayerAgent] Current Position: " << transform.position.x << ", " << transform.position.y << std::endl;
+    //std::cout << "[PlayerAgent] Current Position: " << transform.position.x << ", " << transform.position.y << std::endl;
 
     // If dodging, override with dodge impulse
     glm::vec2 finalVelocity = velocity + impulse;

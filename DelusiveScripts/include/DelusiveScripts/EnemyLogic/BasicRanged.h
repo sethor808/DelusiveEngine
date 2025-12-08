@@ -1,5 +1,6 @@
 #pragma once
 #include <DelusiveScripts/EnemyLogic/BasicFollow.h>
+#include <random>
 
 class BasicRanged : public BasicFollow {
 public:
@@ -54,6 +55,8 @@ private:
     float orbitRadius = 5.0f; // Radius for orbiting behavior
     float transitionBuffer = 0.5f; // Buffer to prevent rapid state changes
     float transitionTimer = 0.0f; // Timer to track time spent in current state
+    float attackCooldown = 2.0f; // Time between attacks
+    float attackTimer = 0.0f; // Timer to track time since last attack
     bool isTransitioning = false; // Flag to indicate if currently transitioning between states to avoid rewriting variable each frame
 
 #pragma endregion

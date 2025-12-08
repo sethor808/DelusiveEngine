@@ -1,9 +1,9 @@
 [Scene]
-name Seamus Test Grounds
+name New Scene
 agents 3
 [Agent PlayerAgent]
 name=Player
-position=0 0
+position=-1.81201 -0.341525
 scale=1 1
 rotation=0
 [Component SpriteComponent]
@@ -23,10 +23,9 @@ rotation=0
 [/Agent]
 [Agent EnemyAgent]
 name=Enemy
-position=-7.6875 0.593751
+position=-8.24235 0.581075
 scale=1 1
 rotation=0
-scriptName=
 moveSpeed=10
 damping=0.9
 [Component SpriteComponent]
@@ -43,7 +42,7 @@ scale=1 1
 rotation=0
 name=New ScriptComponent
 enabled=1
-script=
+script=BasicRanged
 [/Component]
 [/Agent]
 systems 0

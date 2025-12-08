@@ -23,6 +23,9 @@ void BasicRanged::Update(float deltaTime) {
     if (currentState != bufferState) { // If Currently transitioning between states
         transitionTimer += deltaTime; // Increment timer
     }
+    if (attackTimer < attackCooldown) {
+        attackTimer += deltaTime; // Increment attack timer when not attacking
+    }
 
     
 #pragma region Determine Buffered State
@@ -37,14 +40,27 @@ void BasicRanged::Update(float deltaTime) {
         bufferState = Chasing; // Buffer chasing state
         
     }
-    else { //TODO: Add logic to determine whether attack should start or orbit
-        bufferState = Orbiting;
+    else if (attackTimer >= attackCooldown){ //TODO: Add logic to determine whether attack should start or orbit
+        bufferState = Attacking; // Buffer attacking state
+    }
+    else
+    {
+        bufferState = Orbiting; // Buffer orbiting state
     }
 
 #pragma endregion
 
 #pragma region Handle State Transition
-
+    if (bufferState == Attacking) { //TODO: Add Attack logic
+        currentState = Attacking; // Immediate transition to attacking
+        isTransitioning = false; // Reset transitioning flag
+        transitionTimer = 0.0f; // Reset timer
+        attackTimer = 0.0f; // Reset attack timer
+        return; // Skip movement when attacking
+    }
+    else {
+        attackTimer += deltaTime; // Increment attack timer when not attacking
+    }
     if (bufferState != currentState) {
         if (!isTransitioning) {
             isTransitioning = true;
@@ -72,22 +88,28 @@ void BasicRanged::Update(float deltaTime) {
     switch (currentState) { //movement based on state
     case Retreating:
         if (distance > 0.0001f) { // avoid normalize(0)
+            std::cout << "[Enemy] Retreating" << std::endl;
             glm::vec2 moveDir = -direction / distance; // Move away from target
             owner->transform->position += moveDir * movementSpeed * deltaTime; // Move away
         }
         break;
 
     case Chasing:
+        std::cout << "[Enemy] Chasing" << std::endl;
         if (distance > 0.0001f) { // avoid normalize(0)
             glm::vec2 moveDir = direction / distance; // Move towards target
             owner->transform->position += moveDir * movementSpeed * deltaTime;
         }
         break;
     case Orbiting:
-        // Orbiting logic can be added here
+        std::cout << "[Enemy] Orbiting" << std::endl;
+        int angle = rand() % 360; // Random angle for orbiting
+        glm::vec2 orbitPoint = targetPos + glm::vec2(cos(glm::radians((float)angle)), sin(glm::radians((float)angle))) * orbitRadius; // Calculate orbit point
+        owner->transform->position += (orbitPoint - ownerPos) * movementSpeed * deltaTime; // Move towards orbit point
         break;
 
     }
+
 
 #pragma endregion
 
