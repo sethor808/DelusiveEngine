@@ -3,3 +3,4 @@
 std::string EquipScreen::GetType() const {
     return "EquipScreen";
 }
+

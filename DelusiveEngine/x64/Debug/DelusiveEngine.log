@@ -1,5 +1,5 @@
-﻿C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1129,5): warning MSB8027: Two or more files with the name of imgui.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are ..\include\imgui\imgui.cpp, src\imgui\imgui.cpp.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1129,5): warning MSB8027: Two or more files with the name of imgui.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are ..\include\imgui\imgui.cpp, src\imgui\imgui.cpp.
   imgui_impl_opengl3.cpp
   imgui_impl_sdl3.cpp
   imgui.cpp
@@ -8,72 +8,72 @@ C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Microsoft\VC\v170\M
   imgui_tables.cpp
   imgui_widgets.cpp
   Agent.cpp
-  Animation.cpp
-  AnimatorComponent.cpp
-  UIScript.cpp
-  BasicTalisman.cpp
   CameraAgent.cpp
-  Collider.cpp
-  ColliderComponent.cpp
-  ColliderRenderer.cpp
-  Component.cpp
-  DelusiveAnimatorComponent.cpp
-  DelusiveEngine.cpp
-  DelusiveInventory.cpp
-  Generating Code...
-  Compiling...
-  DelusivePathfindingComponent.cpp
-  DelusiveRegistry.cpp
-  DelusiveScriptAgent.cpp
-  DelusiveUI.cpp
-  DelusiveUIRegistry.cpp
-  DelusiveUtils.cpp
-  EditorInterface.cpp
-  EditorRegistry.cpp
   EnemyAgent.cpp
-  EngineUI.cpp
   EnvironmentAgent.cpp
-  Font.cpp
-K:\Delusive Engine\DelusiveEngine\DelusiveEngine\src\DelusiveInternal\Rendering\Font.cpp(67,22): warning C4838: conversion from 'float' to 'GLuint' requires a narrowing conversion
-K:\Delusive Engine\DelusiveEngine\DelusiveEngine\src\DelusiveInternal\Rendering\Font.cpp(67,22): warning C4244: 'initializing': conversion from 'float' to 'GLuint', possible loss of data
-  GameManager.cpp
+  PlayerAgent.cpp
+  Animation.cpp
+  Collider.cpp
   HitboxCollider.cpp
   HurtboxCollider.cpp
-  imgui.cpp
-  PathfindingComponent.cpp
-  PathfindingSystem.cpp
-  PhysicsSystem.cpp
-  PlayerAgent.cpp
+  SolidCollider.cpp
+  TriggerCollider.cpp
+  AnimatorComponent.cpp
+  ColliderComponent.cpp
   Generating Code...
   Compiling...
-  DelusiveRenderer.cpp
-  Scene.cpp
-  SceneSystem.cpp
+  Component.cpp
+  DelusiveAnimatorComponent.cpp
+  DelusivePathfindingComponent.cpp
+  PathfindingComponent.cpp
   ScriptComponent.cpp
-  ScriptRegistry.cpp
-  Shader.cpp
-  SolidCollider.cpp
   SpriteComponent.cpp
-  SpriteData.cpp
   StatsComponent.cpp
-  Talisman.cpp
+  DelusiveRegistry.cpp
+  GameManager.cpp
+  PhysicsSystem.cpp
+  DelusiveEngine.cpp
+  EditorInterface.cpp
+  EditorRegistry.cpp
+  EngineUI.cpp
+  DelusiveScriptAgent.cpp
+  UIScript.cpp
+  DelusiveInventory.cpp
+  ColliderRenderer.cpp
+  DelusiveRenderer.cpp
+  Font.cpp
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\DelusiveInternal\Rendering\Font.cpp(67,22): warning C4838: conversion from 'float' to 'GLuint' requires a narrowing conversion
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\DelusiveInternal\Rendering\Font.cpp(67,22): warning C4244: 'initializing': conversion from 'float' to 'GLuint', possible loss of data
+  Generating Code...
+  Compiling...
+  Shader.cpp
+  SpriteData.cpp
   Texture.cpp
   TextureManager.cpp
-  TriggerCollider.cpp
+  PathfindingSystem.cpp
+  Scene.cpp
+  SceneSystem.cpp
+  UIManager.cpp
+  ScriptRegistry.cpp
+  BasicTalisman.cpp
+  Talisman.cpp
+  DelusiveUI.cpp
+  DelusiveUIRegistry.cpp
   UIButton.cpp
   UICanvas.cpp
   UIElement.cpp
   UIEquipScreen.cpp
   UIImage.cpp
   UILabel.cpp
+  UIPanel.cpp
   Generating Code...
   Compiling...
-  UIManager.cpp
-  UIPanel.cpp
   UIRepeatContainer.cpp
   UIScriptContainer.cpp
   UITalismanButton.cpp
   UITalismanDisplay.cpp
+  DelusiveUtils.cpp
+  imgui.cpp
   Generating Code...
 x64\Debug\imgui.obj : warning LNK4042: object specified more than once; extras ignored
-  DelusiveEngine.vcxproj -> K:\Delusive Engine\DelusiveEngine\debug_lib\DelusiveEngine.lib
+  DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\debug_lib\DelusiveEngine.lib
