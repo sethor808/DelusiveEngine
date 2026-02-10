@@ -1,9 +1,9 @@
-#include <DelusiveInternal/UI/UIElement.h>
-#include <DelusiveInternal/UI/DelusiveUI.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/UI/UICanvas.h>
+#include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
 
 UIElement::UIElement(DelusiveRenderer& _renderer)
     : renderer(_renderer), registry(std::make_unique<PropertyRegistry>()), id(UUID::GenerateRandom())
@@ -52,6 +52,22 @@ std::vector<UIElement*> UIElement::GetChildren() {
 }
 
 void UIElement::DrawImGui() {
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+        UUID payload = id;
+
+        ImGui::SetDragDropPayload(
+            "DELUISIVE_UI_UUID",
+            &payload,
+            sizeof(UUID)
+        );
+
+        ImGui::Text("UI Element");
+        ImGui::Text("Type: %s", GetType().c_str());
+        ImGui::Text("ID: %s", id.ToString().c_str());
+
+        ImGui::EndDragDropSource();
+    }
+
     // --- Base Properties ---
     registry->DrawImGui();
 

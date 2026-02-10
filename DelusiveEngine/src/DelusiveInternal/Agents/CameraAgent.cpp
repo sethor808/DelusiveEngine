@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Agents/CameraAgent.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Agents/CameraAgent.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <imgui/imgui.h>
 
 CameraAgent::CameraAgent(DelusiveRenderer& renderer)
@@ -17,7 +17,7 @@ std::unique_ptr<Agent> CameraAgent::Clone(Scene* scene) const {
 	cam->SetName(GetName());
 	cam->SetZoom(zoom);
 	cam->panOffset = panOffset;
-	cam->SetScene(scene);
+	cam->LinkScene(scene);
 	return cam;
 }
 

@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Agents/EnvironmentAgent.h>
+#include <Delusive/Runtime/Agents/EnvironmentAgent.h>
 
 EnvironmentAgent::EnvironmentAgent(DelusiveRenderer& renderer)
     : Agent(renderer)

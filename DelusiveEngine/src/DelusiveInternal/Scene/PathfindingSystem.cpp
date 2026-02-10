@@ -1,7 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <DelusiveInternal/Scene/PathfindingSystem.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Core/DelusiveData.h>
+#include <Delusive/Runtime/Scene/PathfindingSystem.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
 #include <imgui/imgui.h>
 #include <limits>
 #include <algorithm>

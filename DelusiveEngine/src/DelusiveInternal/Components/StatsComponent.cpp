@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Components/StatsComponent.h>
+#include <Delusive/Runtime/Components/StatsComponent.h>
 #include <fstream>
 
 StatsComponent::StatsComponent(DelusiveRenderer& renderer)

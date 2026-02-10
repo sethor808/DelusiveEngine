@@ -1,4 +1,4 @@
-#include <DelusiveInternal/UI/DelusiveUIRegistry.h>
+#include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <fstream>
 #include <iostream>
 

@@ -1,9 +1,10 @@
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Rendering/TextureManager.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Internal/Rendering/TextureManager.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Core/DelusiveData.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Runtime/Agents/Agent.h>
 #include <algorithm>
 
 DelusiveRenderer::DelusiveRenderer() 
@@ -362,4 +363,98 @@ void DelusiveRenderer::DrawRect(const glm::vec2& pos, const glm::vec2& size, con
 	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+}
+
+GLuint RenderAgentToTexture(Agent& agent, int width, int height) {
+    GLuint framebuffer = 0;
+    GLuint textureColorbuffer = 0;
+    GLuint rbo = 0;
+
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Create texture
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGB,
+        width,
+        height,
+        0,
+        GL_RGB,
+        GL_UNSIGNED_BYTE,
+        nullptr
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        textureColorbuffer,
+        0
+    );
+
+    // Depth buffer (optional but safe)
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(
+        GL_RENDERBUFFER,
+        GL_DEPTH24_STENCIL8,
+        width,
+        height
+    );
+    glFramebufferRenderbuffer(
+        GL_FRAMEBUFFER,
+        GL_DEPTH_STENCIL_ATTACHMENT,
+        GL_RENDERBUFFER,
+        rbo
+    );
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "[DelusiveRenderer] Framebuffer incomplete!" << std::endl;
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return 0;
+    }
+
+    // Save previous viewport
+    GLint prevViewport[4];
+    glGetIntegerv(GL_VIEWPORT, prevViewport);
+
+    glViewport(0, 0, width, height);
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    float halfWidthUnits = width / (2.0f * DELUSIVE_PIXEL_SCALE);
+    float halfHeightUnits = height / (2.0f * DELUSIVE_PIXEL_SCALE);
+
+    glm::mat4 projection = glm::ortho(
+        -halfWidthUnits, halfWidthUnits,
+        -halfHeightUnits, halfHeightUnits,
+        -1.0f, 1.0f
+    );
+
+    agent.Draw(projection);
+
+    // Restore state
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(
+        prevViewport[0],
+        prevViewport[1],
+        prevViewport[2],
+        prevViewport[3]
+    );
+
+    glEnable(GL_BLEND);
+
+    glDeleteRenderbuffers(1, &rbo);
+    glDeleteFramebuffers(1, &framebuffer);
+
+    return textureColorbuffer;
 }

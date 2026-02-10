@@ -1,6 +1,6 @@
-#include <DelusiveInternal/UI/UITalismanButton.h>
-#include <DelusiveInternal/Talismans/DelusiveTalismans.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/UI/UITalismanButton.h>
+#include <Delusive/Runtime/Talismans/DelusiveTalismans.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 
 UITalismanButton::UITalismanButton(DelusiveRenderer& renderer)
 	: UIButton(renderer) 

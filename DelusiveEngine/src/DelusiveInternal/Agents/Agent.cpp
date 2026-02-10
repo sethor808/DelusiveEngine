@@ -1,10 +1,10 @@
-#include <DelusiveInternal/Agents/Agent.h>
-#include <DelusiveInternal/Components/Component.h>
-#include <DelusiveInternal/Scene/Scene.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Components/DelusiveComponents.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Components/Component.h>
+#include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Components/DelusiveComponents.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <limits>
 #include <sstream>
 
@@ -23,11 +23,24 @@ void Agent::RegisterProperties() {
 	transform.RegisterProperties(*registry);
 }
 
+void Agent::Update(float deltaTime) {
+    for (auto& c : components) {
+        c->Update(deltaTime);
+    }
+}
+
+void Agent::Draw(const glm::mat4& projection) const{
+    for (auto& c : components) {
+        c->Draw(projection);
+    }
+}
+
 void Agent::SetEditorMode(bool selected) {
 	editorMode = selected;
 	if (selected) {}
 }
 
+//TODO: Rip out interaction handling and move almost all of this into the editor itself
 void Agent::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
 	if (editorMode) {
 		if (editorMode) {
@@ -74,10 +87,16 @@ void Agent::SetRotation(const float rotation) {
 	transform.rotation = rotation;
 }
 
-void Agent::SetScale(const glm::vec2 scale) {
+void Agent::SetScale(const glm::vec2& scale) {
 	transform.scale = scale;
 }
 
+void Agent::SetTransform(TransformComponent& newTransform) {
+    transform = newTransform;
+}
+
+//TODO: Move this into the renderer itself
+/*
 GLuint Agent::RenderAgentToTexture(int width, int height) {
 	GLuint framebuffer, textureColorbuffer;
 	glGenFramebuffers(1, &framebuffer);
@@ -134,11 +153,80 @@ GLuint Agent::RenderAgentToTexture(int width, int height) {
 
 	return textureColorbuffer;
 }
+*/
 
 void Agent::AddRawComponent(std::unique_ptr<Component> component) {
 	component->SetOwner(this);
 	component->SetID(nextComponentID++);
 	components.push_back(std::move(component));
+}
+
+template<typename T>
+T* Agent::GetComponentOfType() {
+    for (auto& comp : components) {
+        if (T* casted = dynamic_cast<T*>(comp.get()))
+            return casted;
+    }
+    return nullptr;
+}
+
+template<typename T>
+std::vector<T*> Agent::GetComponentsOfType() {
+    static_assert(std::is_base_of<Component, T>::value, "T must be derived from Component");
+
+    std::vector<T*> result;
+
+    for (auto& comp : components) {
+        if (T* casted = dynamic_cast<T*>(comp.get())) {
+            result.push_back(casted);
+        }
+    }
+
+    return result;
+}
+
+// Add a component of type T and forward any constructor arguments
+template<typename T, typename... Args>
+T* Agent::AddComponent(Args&&... args) {
+    static_assert(std::is_base_of<Component, T>::value,
+        "T must derive from Component");
+
+    // Inject the renderer reference before forwarded args
+    auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
+    component->SetOwner(this);
+    component->SetID(nextComponentID++);
+    component->RegisterProperties();
+
+    T* ptr = component.get();
+    components.push_back(std::move(component));
+    return ptr;
+}
+
+// Get a component of type T, returns nullptr if not found
+template<typename T>
+T* Agent::GetComponent() const {
+    for (const auto& c : components) {
+        if (auto ptr = dynamic_cast<T*>(c.get())) {
+            return ptr;
+        }
+    }
+    return nullptr;
+}
+
+// Remove the first component of type T
+// TODO: Make more robust removal around ID
+template<typename T>
+void Agent::RemoveComponent() {
+    components.erase(
+        std::remove_if(
+            components.begin(),
+            components.end(),
+            [](const std::unique_ptr<Component>& c) {
+                return dynamic_cast<T*>(c.get()) != nullptr;
+            }
+        ),
+        components.end()
+    );
 }
 
 Component* Agent::GetComponentByName(const std::string & name) {
@@ -159,12 +247,12 @@ Component* Agent::GetComponentByID(uint64_t id) {
 	return nullptr;
 }
 
-Transform& Agent::GetTransform() {
+TransformComponent& Agent::GetTransform() {
 	return transform;
 }
 
-const Transform& Agent::GetTransform() const {
-	return transform;
+TransformComponent& Agent::GetTransform() const {
+    return const_cast<TransformComponent&>(transform);
 }
 
 void Agent::Serialize(std::ofstream& out) const {
@@ -208,7 +296,7 @@ void Agent::Deserialize(std::ifstream& in) {
 			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>();
 			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>();
 			else if (type == "ScriptComponent") {
-				ScriptManager& scriptManager = this->scene->GetScriptManager();
+				ScriptManager& scriptManager = this->sceneLink->GetScriptManager();
 				comp = AddComponent<ScriptComponent>(scriptManager);
 			}
 			if (comp) {
@@ -289,7 +377,7 @@ void Agent::DrawImGui() {
 		}
 		if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
 		if (ImGui::MenuItem("ScriptComponent")) {
-			ScriptManager& scriptManager = this->scene->GetScriptManager();
+			ScriptManager& scriptManager = this->sceneLink->GetScriptManager();
 			AddComponent<ScriptComponent>(scriptManager);
 		}
 		if (ImGui::MenuItem("Stats")) AddComponent<StatsComponent>();
@@ -343,7 +431,7 @@ void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
 	copy->SetRotation(GetTransform().rotation);
 	copy->SetScale(GetTransform().scale);
 	copy->SetName(GetName());
-	copy->SetScene(scene);
+	copy->LinkScene(sceneLink);
 
 	// Deep copy components
 	for (const auto& comp : GetComponents()) {

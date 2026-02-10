@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Rendering/Font.h>
+#include <Delusive/Internal/Rendering/Font.h>
 #include <vector>
 #include <fstream>
 #include <iostream>

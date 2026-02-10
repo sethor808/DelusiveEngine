@@ -1,5 +1,5 @@
 #include <DelusiveExternal/DelusivePathfindingComponent.h>
-#include <DelusiveInternal/Components/PathfindingComponent.h>
+#include <Delusive/Runtime/Components/PathfindingComponent.h>
 
 void DelusivePathfindingComponent::Update(float deltaTime) {
 	comp->Update(deltaTime);

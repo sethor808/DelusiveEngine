@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Rendering/Shader.h>
+#include <Delusive/Internal/Rendering/Shader.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>

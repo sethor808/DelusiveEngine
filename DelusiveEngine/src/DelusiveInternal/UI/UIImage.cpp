@@ -1,7 +1,7 @@
-#include <DelusiveInternal/UI/UIImage.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/UI/UIImage.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>

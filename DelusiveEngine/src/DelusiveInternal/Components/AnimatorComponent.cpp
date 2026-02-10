@@ -1,8 +1,8 @@
-#include <DelusiveInternal/Components/AnimatorComponent.h>
-#include <DelusiveInternal/Agents/Agent.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Components/TransformComponent.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Components/AnimatorComponent.h>
+#include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Components/TransformComponent.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <imgui/imgui.h>
 #include <fstream>
 #include <iostream>

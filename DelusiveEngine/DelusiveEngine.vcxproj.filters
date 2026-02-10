@@ -261,9 +261,6 @@
     <ClCompile Include="src\DelusiveInternal\Editor\EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DelusiveInternal\External\DelusiveScriptAgent.cpp">
-      <Filter>External Files\Internal Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="src\DelusiveInternal\Components\ScriptComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
@@ -307,7 +304,19 @@
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\include\imgui\backend\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
-    <ClCompile Include="src\DelusiveInternal\External\UIScript.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveUIElement.cpp" />
+    <ClCompile Include="src\DelusiveExternal\TalismanData.cpp" />
+    <ClCompile Include="src\DelusiveExternal\UIScript.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveScriptAgent.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveUICanvas.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveInventoryData.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiiveScriptPlayer.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveTalismanData.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveUIRepeatContainer.cpp" />
+    <ClCompile Include="src\DelusiveInternal\Talismans\TalismanFactory.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveUIButton.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveUIScriptContainer.cpp" />
+    <ClCompile Include="src\DelusiveExternal\DelusiveScriptPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">
@@ -464,9 +473,6 @@
     <ClInclude Include="include\DelusiveInternal\Editor\EditorInterface.h">
       <Filter>engine\editor\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DelusiveInternal\Editor\EngineUI.h">
-      <Filter>engine\editor\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\DelusiveInternal\Utils\DelusiveMacros.h">
       <Filter>engine\core\Header Files</Filter>
     </ClInclude>
@@ -535,8 +541,95 @@
     <ClInclude Include="..\include\DelusiveExternal\Transform.h">
       <Filter>External Files\External Headers</Filter>
     </ClInclude>
+    <ClInclude Include="include\DelusiveInternal\Talismans\TalismanFactory.h" />
+    <ClInclude Include="include\DelusiveInternal\Agents\AgentTemp.h" />
+    <ClInclude Include="include\DelusiveInternal\Player\PlayerInputState.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\ColliderRenderer.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\DelusiveRenderer.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\Font.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\Shader.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\SpriteData.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\Texture.h" />
+    <ClInclude Include="include\Delusive\Internal\Rendering\TextureManager.h" />
+    <ClInclude Include="include\Delusive\Internal\DelusiveEngine.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\Agent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\AgentTemp.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\AgentTypes.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\CameraAgent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\DelusiveAgents.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\EnemyAgent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\EnvironmentAgent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Agents\PlayerAgent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Animation\Animation.h" />
+    <ClInclude Include="include\Delusive\Runtime\Animation\AnimatorData.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\Collider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\HitboxCollider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\HurtboxCollider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\SolidCollider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\TriggerCollider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\AnimatorComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\ColliderComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\Component.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\DelusiveComponents.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\PathfindingComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\ScriptComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\SpriteComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\StatsComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\TransformComponent.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\Camera.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveData.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveRegistry.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\GameManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\PhysicsSystem.h" />
+    <ClInclude Include="include\Delusive\Runtime\Editor\EditorInput.h" />
+    <ClInclude Include="include\Delusive\Runtime\Editor\EditorInterface.h" />
+    <ClInclude Include="include\Delusive\Runtime\Editor\EditorRegistry.h" />
+    <ClInclude Include="include\Delusive\Runtime\Editor\EngineUI.h" />
+    <ClInclude Include="include\Delusive\Runtime\Player\DelusiveInventory.h" />
+    <ClInclude Include="include\Delusive\Runtime\Player\PlayerInputState.h" />
+    <ClInclude Include="include\Delusive\Runtime\Player\PlayerStats.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\ColliderRenderer.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\DelusiveRenderer.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\Font.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\Shader.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\SpriteData.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\Texture.h" />
+    <ClInclude Include="include\Delusive\Runtime\Rendering\TextureManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\DelusiveSystems.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\ISelectable.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\PathfindingSystem.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\Scene.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\SceneSystem.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\UIManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scene\UIUUIDManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Scripting\ScriptManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\BasicTalisman.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\DelusiveTalismans.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\MajorSpeedTalisman.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\SpeedTalisman.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\Talisman.h" />
+    <ClInclude Include="include\Delusive\Runtime\Talismans\TalismanFactory.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\DelusiveUI.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\DelusiveUIRegistry.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIButton.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UICanvas.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIElement.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIEquipScreen.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIImage.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UILabel.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIRepeatContainer.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UIScriptContainer.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanButton.h" />
+    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanDisplay.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveDeserializer.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveSerializer.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveUtils.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\DelusiveInternal\Utils\Property.inl" />
+    <None Include="include\Delusive\Runtime\Utils\Property.inl" />
   </ItemGroup>
 </Project>

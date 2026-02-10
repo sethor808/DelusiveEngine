@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Collision/HitboxCollider.h>
+#include <Delusive/Runtime/Collision/HitboxCollider.h>
 
 HitboxCollider::HitboxCollider(DelusiveRenderer& renderer) 
 	: ColliderComponent(renderer)

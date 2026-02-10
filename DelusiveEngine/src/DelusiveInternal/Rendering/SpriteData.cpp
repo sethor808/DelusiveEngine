@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Rendering/SpriteData.h>
+#include <Delusive/Internal/Rendering/SpriteData.h>
 #include <fstream>
 #include <sstream>
 

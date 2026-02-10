@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Rendering/TextureManager.h>
-#include <DelusiveInternal/Rendering/Texture.h>
+#include <Delusive/Internal/Rendering/TextureManager.h>
+#include <Delusive/Internal/Rendering/Texture.h>
 #include <cassert>
 #include <filesystem>
 

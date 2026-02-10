@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Collision/TriggerCollider.h>
+#include <Delusive/Runtime/Collision/TriggerCollider.h>
 
 TriggerCollider::TriggerCollider(DelusiveRenderer& renderer) 
     : ColliderComponent(renderer)

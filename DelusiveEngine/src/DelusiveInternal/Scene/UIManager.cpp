@@ -1,6 +1,6 @@
-#include <DelusiveInternal/Scene/UIManager.h>
-#include <DelusiveInternal/UI/DelusiveUIRegistry.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
+#include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <iostream>
 #include <imgui/imgui.h>
 #include <fstream>

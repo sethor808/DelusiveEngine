@@ -2,14 +2,14 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 #include <DelusiveExternal/DelusiveEngine.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Core/GameManager.h>
-#include <DelusiveInternal/Editor/EngineUI.h>
-#include <DelusiveInternal/Agents/DelusiveAgents.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/GameManager.h>
+#include <Delusive/Runtime/Editor/EngineUI.h>
+#include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <imgui/imgui.h>
 #include <imgui/backend/imgui_impl_sdl3.h>
 #include <imgui/backend/imgui_impl_opengl3.h>
-#include <DelusiveInternal/Agents/CameraAgent.h>
+#include <Delusive/Runtime/Agents/CameraAgent.h>
 #include <crtdbg.h>
 #include <iostream>
 #include <glm/glm.hpp>
@@ -145,7 +145,7 @@ namespace DelusiveEngine {
             int width, height;
             renderer.GetWindowSize(width, height);
             glm::mat4 projection = cam->GetViewProjectionFromWindow(window);
-            glm::mat4 view = glm::inverse(cam->transform.ToMatrix());
+            glm::mat4 view = glm::inverse(cam->GetTransform().ToMatrix());
             renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);
 

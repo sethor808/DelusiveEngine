@@ -1,9 +1,9 @@
-#include <DelusiveInternal/Rendering/ColliderRenderer.h>
-#include <DelusiveInternal/Agents/Agent.h>
+#include <Delusive/Internal/Rendering/ColliderRenderer.h>
+#include <Delusive/Runtime/Agents/Agent.h>
 #include <gl/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <iostream>
 
 ColliderRenderer::ColliderRenderer() {

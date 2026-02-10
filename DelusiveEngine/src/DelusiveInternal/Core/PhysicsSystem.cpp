@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Core/PhysicsSystem.h>
-#include <DelusiveInternal/Components/DelusiveComponents.h>
+#include <Delusive/Runtime/Core/PhysicsSystem.h>
+#include <Delusive/Runtime/Components/DelusiveComponents.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -54,7 +54,7 @@ void PhysicsSystem::ResolveSolidCollision(ColliderComponent* solid, ColliderComp
 		? glm::vec2((mMin.x < sMin.x) ? -overlap.x : overlap.x, 0.0f)
 		: glm::vec2(0.0f, (mMin.y < sMin.y) ? -overlap.y : overlap.y);
 
-	solid->GetOwner()->transform.position -= delta;
+	solid->GetOwner()->GetTransform().position -= delta;
 }
 
 bool PhysicsSystem::CheckAABBCollision(ColliderComponent* a, ColliderComponent* b) {

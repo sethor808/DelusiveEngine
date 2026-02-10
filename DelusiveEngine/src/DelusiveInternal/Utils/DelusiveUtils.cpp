@@ -1,8 +1,8 @@
-#include <DelusiveInternal/Utils/DelusiveUtils.h>
+#include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 #include <imgui/imgui.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 
 glm::vec2 ScreenToWorld2D(int mouseX, int mouseY, glm::mat4 projection) {
     ImVec2 display = ImGui::GetIO().DisplaySize;

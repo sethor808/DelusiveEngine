@@ -1,5 +1,5 @@
 #include <DelusiveExternal/DelusiveAnimatorComponent.h>
-#include <DelusiveInternal/Components/AnimatorComponent.h>
+#include <Delusive/Runtime/Components/AnimatorComponent.h>
 
 DelusiveAnimatorComponent::DelusiveAnimatorComponent(AnimatorComponent* animator)
 	: comp(animator) {

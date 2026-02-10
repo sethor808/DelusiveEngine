@@ -1,12 +1,12 @@
-#include <DelusiveInternal/Scene/Scene.h>
-#include <DelusiveInternal/Core/GameManager.h>
-#include <DelusiveInternal/Agents/DelusiveAgents.h>
+#include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/GameManager.h>
+#include <Delusive/Runtime/Agents/DelusiveAgents.h>
 
 //TODO: If there is no camera, handle properly
 Scene::Scene(DelusiveRenderer& _renderer)
 	: renderer(_renderer), name("New Scene"), camera(nullptr)
 {
-
+    inventoryLink = gameManager->GetInventoryLink();
 }
 
 Scene::~Scene() {
@@ -82,7 +82,7 @@ ScriptManager& Scene::GetScriptManager() const {
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
 	_agent->SetID(nextAgentID);
-	_agent->SetScene(this);
+	_agent->LinkScene(this);
 	agents.push_back(std::move(_agent));
 	nextAgentID++;
 }

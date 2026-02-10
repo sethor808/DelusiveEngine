@@ -1,6 +1,6 @@
-#include <DelusiveInternal/Scene/SceneSystem.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Scene/Scene.h>
+#include <Delusive/Runtime/Scene/SceneSystem.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Scene/Scene.h>
 #include <memory>
 
 SceneSystem::SceneSystem(DelusiveRenderer& _renderer)

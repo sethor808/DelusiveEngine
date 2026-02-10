@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Core/GameManager.h>
+#include <Delusive/Runtime/Core/GameManager.h>
 
 
 GameManager::GameManager(DelusiveRenderer& _renderer)
@@ -13,7 +13,7 @@ void GameManager::Init() {
     activeScene = &editorScene;
     editorScene.SetGameManager(this);
 	playScene.SetGameManager(this);
-
+    inventory.Link(this);
 }
 
 void GameManager::Play() {

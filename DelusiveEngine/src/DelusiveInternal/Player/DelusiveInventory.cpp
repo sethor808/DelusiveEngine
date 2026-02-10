@@ -1,7 +1,12 @@
-#include <DelusiveInternal/Player/DelusiveInventory.h>
-#include <DelusiveInternal/Talismans/Talisman.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/Talismans/Talisman.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Talismans/DelusiveTalismans.h>
 #include <unordered_map>
+
+DelusiveInventory::DelusiveInventory() {
+    RegisterTalismans();
+}
 
 std::vector<Talisman*> DelusiveInventory::GetAvailableTalismans() {
 	std::vector<Talisman*> result;
@@ -29,14 +34,35 @@ void DelusiveInventory::EquipTalisman(int index, std::unique_ptr<Talisman> talis
 	equippedTalismans[index] = std::move(talisman);
 }
 
+void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
+    auto it = std::find_if(
+        availableTalismans.begin(),
+        availableTalismans.end(),
+        [&](const std::unique_ptr<Talisman>& ptr) {
+            return ptr.get() == t;
+        }
+    );
+
+    if (it == availableTalismans.end()) return;
+
+    //Exit out early, unsure if I want to remove talismans from available ones
+    return;
+
+    equippedTalismans[slot] = std::move(*it);
+    availableTalismans.erase(it);
+}
+
 void DelusiveInventory::UnequipTalisman(int index) {
 	if (index < 0 || index >= slotCount) return;
 	equippedTalismans[index].reset();
 }
 
-void DelusiveInventory::AddTalisman(std::unique_ptr<Talisman> talisman) {
-	if (!talisman) return;
-	availableTalismans.push_back(std::move(talisman));
+void DelusiveInventory::AddTalisman(const std::string& type) {
+    auto talisman = factory.Create(type);
+    if (!talisman) return;
+
+    talisman->Link(this);
+    availableTalismans.push_back(std::move(talisman));
 }
 
 // --- Persistence ---
@@ -80,4 +106,11 @@ void DelusiveInventory::Deserialize(std::istream& in, const std::unordered_map<s
                 equippedTalismans[i] = it->second();
         }
     }
+}
+
+//Presently this needs to be manually updated
+void DelusiveInventory::RegisterTalismans() {
+    factory.Register("BasicTalisman", []() {
+        return std::make_unique<BasicTalisman>();
+        });
 }

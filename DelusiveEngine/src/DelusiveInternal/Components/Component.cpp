@@ -1,8 +1,9 @@
-#include <DelusiveInternal/Components/Component.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Components/TransformComponent.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <memory>
+#include <Delusive/Runtime/Components/Component.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Components/TransformComponent.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
 #include <sstream>
 

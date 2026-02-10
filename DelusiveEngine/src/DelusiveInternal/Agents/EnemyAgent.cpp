@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Agents/EnemyAgent.h>
-#include <DelusiveInternal/Components/DelusiveComponents.h>
+#include <Delusive/Runtime/Agents/EnemyAgent.h>
+#include <Delusive/Runtime/Components/DelusiveComponents.h>
 
 EnemyAgent::EnemyAgent(DelusiveRenderer& renderer)
     : Agent(renderer)

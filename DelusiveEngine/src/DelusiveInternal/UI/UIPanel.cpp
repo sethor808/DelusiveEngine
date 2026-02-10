@@ -1,6 +1,6 @@
-#include <DelusiveInternal/UI/UIPanel.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Rendering/Shader.h>
+#include <Delusive/Runtime/UI/UIPanel.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Internal/Rendering/Shader.h>
 #include <imgui/imgui.h>
 
 UIPanel::UIPanel(DelusiveRenderer& _renderer)

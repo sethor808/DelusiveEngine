@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Collision/SolidCollider.h>
+#include <Delusive/Runtime/Collision/SolidCollider.h>
 
 SolidCollider::SolidCollider(DelusiveRenderer& renderer)
 	: ColliderComponent(renderer)

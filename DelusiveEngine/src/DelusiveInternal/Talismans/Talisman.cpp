@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Talismans/Talisman.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Talismans/Talisman.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 
 bool Talisman::TakeDamage() {
 	hp -= 1;

@@ -1,9 +1,10 @@
-#include <DelusiveInternal/UI/UITalismanDisplay.h>
-#include <DelusiveInternal/Agents/PlayerAgent.h>
-#include <DelusiveInternal/Core/DelusiveData.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Talismans/Talisman.h>
-#include <DelusiveInternal/UI/UICanvas.h>
+#include <Delusive/Runtime/UI/UITalismanDisplay.h>
+#include <Delusive/Runtime/Agents/PlayerAgent.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Talismans/Talisman.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
 
 UITalismanDisplay::UITalismanDisplay(DelusiveRenderer& _renderer)
 	: UIElement(_renderer), player(nullptr)

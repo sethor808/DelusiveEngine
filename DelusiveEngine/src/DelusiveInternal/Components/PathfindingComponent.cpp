@@ -1,5 +1,5 @@
-#include <DelusiveInternal/Components/PathfindingComponent.h>
-#include <DelusiveInternal/Scene/PathfindingSystem.h>
+#include <Delusive/Runtime/Components/PathfindingComponent.h>
+#include <Delusive/Runtime/Scene/PathfindingSystem.h>
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -4,7 +4,7 @@
 #include <functional>
 #include <unordered_map>
 
-class UIElement;
+class DelusiveUIScriptContainer;
 
 class UIScript
 {
@@ -12,19 +12,20 @@ public:
 	virtual ~UIScript() = default;
 
 	virtual void OnInit() {}
+    virtual void OnEnable() {}
 	virtual void OnUpdate(float) {}
 	virtual void OnDraw() {}
 	virtual void OnEvent() {}
-	virtual void OnClick(UIElement* clicked) {}
+	virtual void OnClick(DelusiveUIScriptContainer* clicked) {}
 
-	virtual void Link(UIElement* root) { rootElement = root; }
-	UIElement* GetRoot() const { return rootElement; }
+	virtual void Link(DelusiveUIScriptContainer* root) { rootElement = root; }
+    DelusiveUIScriptContainer* GetRoot() const { return rootElement; }
 
 	virtual std::string GetType() const = 0;
 
     //TODO: Make sure de/serialation works later
     virtual void Serialize(std::ostream& os) const {};
     virtual void Deserialize(std::istream& is) {};
-private:
-	UIElement* rootElement = nullptr;
+protected:
+    DelusiveUIScriptContainer* rootElement = nullptr;
 };

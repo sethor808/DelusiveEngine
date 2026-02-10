@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Rendering/Texture.h>
+#include <Delusive/Internal/Rendering/Texture.h>
 #include <GL/glew.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>

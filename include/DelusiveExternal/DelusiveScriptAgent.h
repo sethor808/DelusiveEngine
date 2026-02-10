@@ -9,6 +9,7 @@ class DelusiveScriptAgent {
 public:
 	Transform* transform;
 
+    DelusiveScriptAgent() = default;
 	DelusiveScriptAgent(Agent* engineAgent);
 
 	uint64_t GetID() const;

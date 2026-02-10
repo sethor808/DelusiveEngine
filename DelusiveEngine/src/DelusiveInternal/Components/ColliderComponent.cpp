@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Components/ColliderComponent.h>
+#include <Delusive/Runtime/Components/ColliderComponent.h>
 #include <iostream>
 
 template<typename T>

@@ -1,12 +1,12 @@
 #include <filesystem>
-#include <DelusiveInternal/Editor/EngineUI.h>
-#include <DelusiveInternal/Agents/DelusiveAgents.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Components/DelusiveComponents.h>
-#include <DelusiveInternal/Utils/DelusiveUtils.h>
-#include <DelusiveInternal/Scene/DelusiveSystems.h>
-#include <DelusiveInternal/Components/TransformComponent.h>
+#include <Delusive/Runtime/Editor/EngineUI.h>
+#include <Delusive/Runtime/Agents/DelusiveAgents.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Components/DelusiveComponents.h>
+#include <Delusive/Runtime/Utils/DelusiveUtils.h>
+#include <Delusive/Runtime/Scene/DelusiveSystems.h>
+#include <Delusive/Runtime/Components/TransformComponent.h>
 #include <glm/gtc/type_ptr.hpp>
 
 EngineUI::EngineUI(GameManager& _game, DelusiveRenderer& _renderer)
@@ -76,7 +76,7 @@ ImTextureID EngineUI::GetFramePreviewTexture(AnimationFrame& frame, Agent& baseA
     if (frame.previewTexture != 0)
         glDeleteTextures(1, &frame.previewTexture);
 
-    frame.previewTexture = tempAgent->RenderAgentToTexture(256, 256);
+    frame.previewTexture = renderer.RenderAgentToTexture(*tempAgent, 256, 256);
     frame.dirty = false;
 
     return (ImTextureID)(intptr_t)frame.previewTexture;
@@ -149,9 +149,9 @@ std::string EngineUI::GetPath(std::string fileName) {
 void EngineUI::MoveEditorCameraTo(Agent* agent) {
     if (!agent || !editorCamera) return;
 
-    glm::vec2 pos = agent->transform.position;
+    glm::vec2 pos = agent->GetTransform().position;
 
-    // Smooth or instant?
+    // TODO: Make this smooth if needed
     editorCamera->SetPosition(pos);
 }
 
@@ -1089,7 +1089,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                 baseAgent->LoadFromFile(currentAnimation.data.defaultAgentPath);
             }
 
-            previewTex = baseAgent->RenderAgentToTexture(256, 256);
+            previewTex = renderer.RenderAgentToTexture(*baseAgent, 256, 256);
         }
         float texAspect = (float)regionSize.x / (float)regionSize.y;
 

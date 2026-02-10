@@ -1,7 +1,7 @@
-#include <DelusiveInternal/UI/UILabel.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h> // for Renderer::DrawText
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Rendering/Font.h>
+#include <Delusive/Runtime/UI/UILabel.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h> // for Renderer::DrawText
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Internal/Rendering/Font.h>
 
 UILabel::UILabel(DelusiveRenderer& _renderer)
 	: UIElement(_renderer), text("New Text"), color({1, 1, 1, 1})

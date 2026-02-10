@@ -1,8 +1,8 @@
-#include <DelusiveInternal/UI/UICanvas.h>
-#include <DelusiveInternal/UI/DelusiveUI.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Scene/UIManager.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
 #include <imgui/imgui.h>
 #include <fstream>
 #include <sstream>

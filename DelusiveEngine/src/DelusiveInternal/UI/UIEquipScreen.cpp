@@ -1,11 +1,11 @@
-#include <DelusiveInternal/UI/UIEquipScreen.h>
-#include <DelusiveInternal/Agents/PlayerAgent.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Talismans/DelusiveTalismans.h>
-#include <DelusiveInternal/Player/DelusiveInventory.h>
-#include <DelusiveInternal/UI/UIRepeatContainer.h>
-#include <DelusiveInternal/UI/UITalismanButton.h>
-#include <DelusiveInternal/UI/DelusiveUI.h>
+#include <Delusive/Runtime/UI/UIEquipScreen.h>
+#include <Delusive/Runtime/Agents/PlayerAgent.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Talismans/DelusiveTalismans.h>
+#include <Delusive/Runtime/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/UI/UIRepeatContainer.h>
+#include <Delusive/Runtime/UI/UITalismanButton.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
 
 UIEquipScreen::UIEquipScreen(DelusiveRenderer& renderer) : UIElement(renderer) {
 	name = "New UIEquipScreen";

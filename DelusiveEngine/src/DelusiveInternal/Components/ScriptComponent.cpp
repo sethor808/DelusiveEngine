@@ -1,7 +1,7 @@
-#include <DelusiveInternal/Components/ScriptComponent.h>
-#include <DelusiveInternal/Agents/Agent.h>
-#include <DelusiveInternal/Scene/Scene.h>
-#include <DelusiveInternal/Core/DelusiveData.h>
+#include <Delusive/Runtime/Components/ScriptComponent.h>
+#include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
 #include <DelusiveExternal/DelusiveScriptAgent.h>
 #include <iostream>
 

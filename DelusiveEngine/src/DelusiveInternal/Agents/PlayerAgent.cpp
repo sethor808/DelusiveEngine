@@ -1,10 +1,11 @@
-#include <DelusiveInternal/Agents/PlayerAgent.h>
-#include <DelusiveInternal/Talismans/DelusiveTalismans.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/Agents/PlayerAgent.h>
+#include <Delusive/Runtime/Talismans/DelusiveTalismans.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/Scene/Scene.h>
 
 PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
-    : Agent(renderer), inventory(std::make_unique<DelusiveInventory>())
+    : Agent(renderer)
 {
     SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});
@@ -14,6 +15,8 @@ PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
     for (int i = 0; i < numTalismans; ++i) {
         talismans.push_back(std::make_unique<BasicTalisman>());
     }
+
+    inventoryLink = sceneLink->GetInventoryLink();
 }
 
 std::string PlayerAgent::GetType() const{
@@ -67,10 +70,7 @@ void PlayerAgent::Update(float deltaTime) {
     // Move player
     transform.position += finalVelocity * deltaTime;
 
-    // Update all components
-    for (auto& comp : components) {
-        comp->Update(deltaTime);
-    }
+    Agent::Update(deltaTime);
 }
 
 void PlayerAgent::HandleMovement(float deltaTime) {
@@ -149,12 +149,6 @@ std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
     auto copy = std::make_unique<PlayerAgent>(renderer);
     CloneBaseProperties(copy.get(), scene);
     return copy;
-}
-
-void PlayerAgent::Draw(const glm::mat4& projection) const {
-	for (const auto& comp : this->GetComponents()) {
-		comp->Draw(projection);
-	}
 }
 
 void PlayerAgent::TriggerInvul(float duration) {

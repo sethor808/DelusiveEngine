@@ -1,9 +1,9 @@
-#include <DelusiveInternal/Components/SpriteComponent.h>
-#include <DelusiveInternal/Agents/Agent.h>
-#include <DelusiveInternal/Utils/DelusiveMacros.h>
-#include <DelusiveInternal/Components/TransformComponent.h>
-#include <DelusiveInternal/Rendering/TextureManager.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Components/SpriteComponent.h>
+#include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Components/TransformComponent.h>
+#include <Delusive/Internal/Rendering/TextureManager.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <filesystem>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

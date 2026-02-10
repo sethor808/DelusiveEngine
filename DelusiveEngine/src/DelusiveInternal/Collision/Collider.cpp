@@ -1,4 +1,4 @@
-#include <DelusiveInternal/Collision/Collider.h>
+#include <Delusive/Runtime/Collision/Collider.h>
 
 glm::vec2 Collider::GetPosition() {
 	return position;

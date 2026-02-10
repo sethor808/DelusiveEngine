@@ -1,9 +1,9 @@
 #define DELUSIVE_EDITOR_MODE
-#include <DelusiveInternal/UI/UIRepeatContainer.h>
-#include <DelusiveInternal/Core/DelusiveRegistry.h>
-#include <DelusiveInternal/Rendering/DelusiveRenderer.h>
-#include <DelusiveInternal/UI/DelusiveUI.h>
-#include <DelusiveInternal/Core/DelusiveData.h>
+#include <Delusive/Runtime/UI/UIRepeatContainer.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
 
 UIRepeatContainer::UIRepeatContainer(DelusiveRenderer& renderer)
 	: UIElement(renderer)

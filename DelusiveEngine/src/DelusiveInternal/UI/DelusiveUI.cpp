@@ -1,13 +1,13 @@
-#include <DelusiveInternal/UI/DelusiveUI.h>
-#include <DelusiveInternal/UI/UILabel.h>
-#include <DelusiveInternal/UI/UIButton.h>
-#include <DelusiveInternal/UI/UIImage.h>
-#include <DelusiveInternal/UI/UIPanel.h>
-#include <DelusiveInternal/UI/UITalismanDisplay.h>
-#include <DelusiveInternal/UI/UITalismanButton.h>
-#include <DelusiveInternal/UI/UIEquipScreen.h>
-#include <DelusiveInternal/UI/UIRepeatContainer.h>
-#include <DelusiveInternal/UI/UIScriptContainer.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
+#include <Delusive/Runtime/UI/UILabel.h>
+#include <Delusive/Runtime/UI/UIButton.h>
+#include <Delusive/Runtime/UI/UIImage.h>
+#include <Delusive/Runtime/UI/UIPanel.h>
+#include <Delusive/Runtime/UI/UITalismanDisplay.h>
+#include <Delusive/Runtime/UI/UITalismanButton.h>
+#include <Delusive/Runtime/UI/UIEquipScreen.h>
+#include <Delusive/Runtime/UI/UIRepeatContainer.h>
+#include <Delusive/Runtime/UI/UIScriptContainer.h>
 #include <imgui/imgui.h>
 
 std::string DelusiveUI::DrawUIElementAddMenu() {
