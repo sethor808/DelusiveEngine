@@ -7,7 +7,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
 #include <imgui/imgui.h>
-#include <DelusiveExternal/UUID.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 
 class DelusiveRenderer;
 class PropertyRegistry;
@@ -21,6 +21,8 @@ public:
 	UIElement(UIElement&&) noexcept = default;
 	UIElement& operator=(UIElement&&) noexcept = default;
 	UIElement(DelusiveRenderer&);
+    
+    DelusiveRenderer& GetRenderer();
 
 	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
@@ -70,6 +72,7 @@ public:
 	}
 
 	std::vector<UIElement*> GetChildren();
+    void ClearChildren() { children.clear(); }
 	
 	const UUID& GetID() const { return id; }
 	void SetName(const std::string& _name) { name = _name; }

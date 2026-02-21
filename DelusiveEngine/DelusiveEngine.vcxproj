@@ -134,7 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -152,76 +152,63 @@
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiiveScriptPlayer.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveInventoryData.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveScriptAgent.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveScriptPlayer.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveTalismanData.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveUIButton.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveUICanvas.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveUIElement.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveUIRepeatContainer.cpp" />
-    <ClCompile Include="src\DelusiveExternal\DelusiveUIScriptContainer.cpp" />
-    <ClCompile Include="src\DelusiveExternal\TalismanData.cpp" />
-    <ClCompile Include="src\DelusiveExternal\UIScript.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Agents\Agent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Animation\Animation.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\AnimatorComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Talismans\BasicTalisman.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Agents\CameraAgent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Collision\Collider.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\ColliderComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\ColliderRenderer.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\Component.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\DelusiveAnimatorComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\DelusiveEngine.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Player\DelusiveInventory.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\DelusivePathfindingComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Core\DelusiveRegistry.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Talismans\TalismanFactory.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\DelusiveUI.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\DelusiveUIRegistry.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Utils\DelusiveUtils.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Editor\EditorInterface.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Editor\EditorRegistry.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Agents\EnemyAgent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Editor\EngineUI.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Agents\EnvironmentAgent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\Font.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Core\GameManager.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Collision\HitboxCollider.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Collision\HurtboxCollider.cpp" />
+    <ClCompile Include="src\Delusive\Scripting\UIScript.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Agents\Agent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Animation\Animation.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\AnimatorComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Talismans\BasicTalisman.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Agents\CameraAgent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Collision\Collider.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\ColliderComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\ColliderRenderer.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\Component.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\DelusiveEngine.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Player\DelusiveInventory.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Core\DelusiveRegistry.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Talismans\TalismanFactory.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\DelusiveUI.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\DelusiveUIRegistry.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Utils\DelusiveUtils.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Editor\EditorInterface.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Editor\EditorRegistry.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Agents\EnemyAgent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Editor\EngineUI.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Agents\EnvironmentAgent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\Font.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Core\GameManager.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Collision\HitboxCollider.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Collision\HurtboxCollider.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\PathfindingComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Scene\PathfindingSystem.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Core\PhysicsSystem.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Agents\PlayerAgent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\DelusiveRenderer.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Scene\Scene.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Scene\SceneSystem.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\ScriptComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Scripting\ScriptRegistry.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\Shader.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Collision\SolidCollider.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\SpriteComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\SpriteData.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Components\StatsComponent.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Talismans\Talisman.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\Texture.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Rendering\TextureManager.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Collision\TriggerCollider.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIButton.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UICanvas.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIElement.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIEquipScreen.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIImage.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UILabel.cpp" />
-    <ClCompile Include="src\DelusiveInternal\Scene\UIManager.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIPanel.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIRepeatContainer.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UIScriptContainer.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UITalismanButton.cpp" />
-    <ClCompile Include="src\DelusiveInternal\UI\UITalismanDisplay.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\PathfindingComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Scene\PathfindingSystem.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Core\PhysicsSystem.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Agents\PlayerAgent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\DelusiveRenderer.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Scene\Scene.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Scene\SceneSystem.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\ScriptComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Scripting\ScriptRegistry.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\Shader.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Collision\SolidCollider.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\SpriteComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\SpriteData.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\StatsComponent.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Talismans\Talisman.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\Texture.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Rendering\TextureManager.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Collision\TriggerCollider.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIButton.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UICanvas.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIElement.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIEquipScreen.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIImage.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UILabel.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Scene\UIManager.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIPanel.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UIScriptContainer.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanButton.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\DelusiveExternal\DelusiveScriptAgent.h" />
@@ -388,6 +375,11 @@
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveSerializer.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveUtils.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\UUID.h" />
+    <ClInclude Include="include\Delusive\Scripting\BehaviourScript.h" />
+    <ClInclude Include="include\Delusive\Scripting\ScriptFactoryBase.h" />
+    <ClInclude Include="include\Delusive\Scripting\ScriptRegistry.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\Transform.h" />
+    <ClInclude Include="include\Delusive\Scripting\UIScript.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\DelusiveInternal\Utils\Property.inl" />

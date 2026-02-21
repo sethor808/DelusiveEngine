@@ -60,21 +60,69 @@ public:
     void AddRawComponent(std::unique_ptr<Component> component);
 
     template<typename T>
-    T* GetComponentOfType();
+    T* GetComponentOfType() {
+        for (auto& comp : components) {
+            if (T* casted = dynamic_cast<T*>(comp.get()))
+                return casted;
+        }
+        return nullptr;
+    }
 
     template<typename T>
-    std::vector<T*> GetComponentsOfType();
+    std::vector<T*> GetComponentsOfType() {
+        static_assert(std::is_base_of<Component, T>::value, "T must be derived from Component");
+
+        std::vector<T*> result;
+
+        for (auto& comp : components) {
+            if (T* casted = dynamic_cast<T*>(comp.get())) {
+                result.push_back(casted);
+            }
+        }
+
+        return result;
+    }
 
     template<typename T, typename... Args>
-    T* AddComponent(Args&&... args);
+    T* AddComponent(Args&&... args) {
+        static_assert(std::is_base_of<Component, T>::value,
+            "T must derive from Component");
+
+        // Inject the renderer reference before forwarded args
+        auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
+        component->SetOwner(this);
+        component->SetID(nextComponentID++);
+        component->RegisterProperties();
+
+        T* ptr = component.get();
+        components.push_back(std::move(component));
+        return ptr;
+    }
 
     template<typename T>
-    T* GetComponent() const;
+    T* GetComponent() const {
+        for (const auto& c : components) {
+            if (auto ptr = dynamic_cast<T*>(c.get())) {
+                return ptr;
+            }
+        }
+        return nullptr;
+    }
 
     template<typename T>
-    void RemoveComponent();
+    void RemoveComponent() {
+        components.erase(
+            std::remove_if(
+                components.begin(),
+                components.end(),
+                [](const std::unique_ptr<Component>& c) {
+                    return dynamic_cast<T*>(c.get()) != nullptr;
+                }
+            ),
+            components.end()
+        );
+    }
 
-    Component* GetComponentByName(const std::string&);
     Component* GetComponentByID(uint64_t);
     const std::vector<std::unique_ptr<Component>>& GetComponents() const;
     void RemoveComponentByPointer(Component*);

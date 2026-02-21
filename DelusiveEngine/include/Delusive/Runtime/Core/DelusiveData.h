@@ -4,9 +4,9 @@
 #include <Delusive/Internal/Rendering/Shader.h>
 #include <Delusive/Internal/Rendering/Font.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
-#include <DelusiveExternal/BehaviourScript.h>
+#include <Delusive/Scripting/BehaviourScript.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
-#include <DelusiveExternal/UUID.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 #include <Delusive/Runtime/UI/UIElement.h>
 #include <memory>
 #include <iostream>

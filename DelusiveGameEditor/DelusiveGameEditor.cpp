@@ -1,6 +1,6 @@
 // DelusiveGameEditor.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#include <DelusiveExternal/DelusiveEngine.h>
+#include <Delusive/Internal/DelusiveEngine.h>
 #include <SDL3/SDL.h>
 #include <iostream>
 

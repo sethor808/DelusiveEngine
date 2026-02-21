@@ -1,41 +1,37 @@
-#include <DelusiveScripts/UI/EquipScreen.h>
-#include <DelusiveExternal/DelusiveTalismanData.h>
-#include <DelusiveExternal/DelusiveScriptPlayer.h>
-#include <DelusiveExternal/DelusiveUICanvas.h>
-#include <DelusiveExternal/DelusiveUIScriptContainer.h>
-#include <DelusiveExternal/DelusiveUIButton.h>
+#include <Scripts/UI/EquipScreen.h>
+#include <Delusive/Runtime/UI/UIScriptContainer.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/Agents/PlayerAgent.h>
+#include <Delusive/Runtime/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/UI/UIRepeatContainer.h>
+#include <Delusive/Runtime/UI/UIImage.h>
 
 bool EquipScreen::ReadyCheck() {
     //Make sure element is linked
     if (!rootElement) return false;
 
     //Make sure that player is findable
-    auto canvas = rootElement->GetCanvas();
-    auto player = canvas.GetPlayer();
-    if (!player.IsValid()) return false;
+    UICanvas* canvas = rootElement->GetCanvas();
+    PlayerAgent* player = canvas->FetchPlayer();
+    if (!player) return false;
 
     //Make sure link to Inventory works
-    if (!inventoryData.IsValid()) {
-        inventoryData = player.GetInventory();
-        if (!inventoryData.IsValid()) {
+    if (!inventoryData) {
+        inventoryData = player->GetInventory();
+        if (!inventoryData) {
             return false;
         }
     }
-
-    
-    
     
     //Check UUIDs for Necessary UI Elements
-    DelusiveUIElement availableLink = canvas.FindElementByUUID(availableContainerID);
-    if (availableLink.IsValid()) {
-        availableContainer.Link(availableLink.GetLink());
+    if (!availableContainer) {
+        availableContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID));
+        if (!availableContainer) return false;
     }
-    else { return false; }
-    DelusiveUIElement equippedLink = canvas.FindElementByUUID(equippedContainerID);
-    if (equippedLink.IsValid()) {
-        equippedContainer.Link(equippedLink.GetLink());
+    if (!equippedContainer) {
+        equippedContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID));
+        if (!equippedContainer) return false;
     }
-    else { return false; }
 
     if (!rootElement->HasBinding("AvailableList")) {
         rootElement->SetBinding("AvailableList", availableContainerID);
@@ -44,29 +40,72 @@ bool EquipScreen::ReadyCheck() {
         rootElement->SetBinding("EquippedSlots", equippedContainerID);
     }
 
-    if (!availableContainer.IsValid()) return false;
-    if (!equippedContainer.IsValid()) return false;
-
     return true;
 }
 
 void EquipScreen::OnInit() {
-    DelusiveScriptPlayer player = rootElement->GetCanvas().GetPlayer();
+    //DelusiveScriptPlayer player = rootElement->GetCanvas().FetchPlayer();
+}
+
+void EquipScreen::BuildTalismanVisual(UIElement* root, Talisman* talisman) {
+    if (!root || !talisman) return;
+
+    root->ClearChildren();
+    
+
+    //Build base
+    auto* base = root->AddChild<UIImage>();
+    base->SetName("TalismanBase");
+    base->SetTexturePath(talisman->GetBaseTexture());
+    base->SetSize({ iconSize, iconSize });
+    base->SetPosition({ 0.0f, 0.0f });
+
+    //Build glyph
+    auto* glyph = base->AddChild<UIImage>();
+    glyph->SetName("TalismanGlyph");
+    glyph->SetTexturePath(talisman->GetGlyphTexture());
+    glyph->SetSize({ iconSize, iconSize });
+    glyph->SetPosition({ 0.0f, 0.0f }); // centered relative to base
+
+    //Build strings
+    int currentHP = talisman->GetCurrentHP();
+    int maxHP = talisman->GetMaxHP();
+
+    if (currentHP <= 0 || maxHP <= 0)
+        return;
+
+    float stringXStart = (stringSpacing * 2.0f) / maxHP;
+
+    for (int i = 0; i < currentHP; ++i)
+    {
+        auto* stringImg = base->AddChild<UIImage>();
+
+        stringImg->SetName("TalismanString_" + std::to_string(i));
+        stringImg->SetTexturePath(talisman->GetStringTexture());
+        stringImg->SetSize({ stringSize, stringSize });
+
+        float offsetX = -stringXStart + (stringSpacing * i + stringXOffset);
+        float offsetY = stringYOffset;
+
+        stringImg->SetPosition({ offsetX, offsetY });
+    }
 }
 
 void EquipScreen::BuildAvailableList() {
-    auto talismans = inventoryData.GetAvailableTalismans();
+    auto talismans = inventoryData->GetAvailableTalismans();
 
-    availableContainer.SetCount((int)talismans.size());
-    availableContainer.Regenerate();
+    availableContainer->SetCount((int)talismans.size());
+    availableContainer->RegenerateChildren();
 
-    auto children = availableContainer.GetChildren();
+    auto children = availableContainer->GetChildren();
     for (size_t i = 0; i < children.size(); ++i) {
-        DelusiveTalismanData talisman = talismans[i];
-        DelusiveUIElement child(children[i]);
+        Talisman* talisman = talismans[i];
+        UIElement* child = children[i];
 
-        if (child.SupportsClick()) {
-            child.SetOnClick([this, talisman]() {
+        BuildTalismanVisual(child, talisman);
+
+        if (child->SupportsClick()) {
+            child->SetOnClick([this, talisman]() {
                 EquipToFirstOpenSlot(talisman);
                 });
         }
@@ -77,22 +116,24 @@ void EquipScreen::BuildAvailableList() {
 }
 
 void EquipScreen::BuildEquippedSlots() {
-    int slots = inventoryData.GetSlotCount();
-    auto equipped = inventoryData.GetEquippedTalismans();
+    int slots = inventoryData->GetSlotCount();
+    auto equipped = inventoryData->GetEquippedTalismans();
 
-    equippedContainer.SetCount(slots);
-    equippedContainer.Regenerate();
+    equippedContainer->SetCount(slots);
+    equippedContainer->RegenerateChildren();
 
-    auto children = equippedContainer.GetChildren();
+    auto children = equippedContainer->GetChildren();
 
     for (int i = 0; i < slots; ++i) {
-        DelusiveUIElement child(children[i]);
+        UIElement* child(children[i]);
 
-        if (equipped[i].IsValid()) {
-            if (child.SupportsClick()) {
+        if (equipped[i]) {
+            BuildTalismanVisual(child, equipped[i]);
+
+            if (child->SupportsClick()) {
                 const int slotIndex = i;
-                child.SetOnClick([this, slotIndex]() {
-                    inventoryData.UnequipTalisman(slotIndex);
+                child->SetOnClick([this, slotIndex]() {
+                    inventoryData->UnequipTalisman(slotIndex);
 
                     // Refresh UI
                     BuildAvailableList();
@@ -102,22 +143,22 @@ void EquipScreen::BuildEquippedSlots() {
         }
         else {
             // Maybe disable click here
-            if (child.SupportsClick()) {
+            if (child->SupportsClick()) {
                 //child.ClearOnClick();
             }
         }
     }
 }
 
-void EquipScreen::EquipToFirstOpenSlot(const DelusiveTalismanData& talisman) {
-    if (!inventoryData.IsValid() || !talisman.IsValid()) return;
+void EquipScreen::EquipToFirstOpenSlot(Talisman* talisman) {
+    if (!inventoryData || !talisman) return;
     
-    auto equipped = inventoryData.GetEquippedTalismans();
-    int slotCount = inventoryData.GetSlotCount();
+    auto equipped = inventoryData->GetEquippedTalismans();
+    int slotCount = inventoryData->GetSlotCount();
 
     for (int i = 0; i < slotCount; ++i) {
-        if (!equipped[i].IsValid()) {
-            inventoryData.EquipTalisman(i, talisman);
+        if (!equipped[i]) {
+            inventoryData->EquipTalisman(i, talisman);
 
             // Refresh UI
             BuildAvailableList();

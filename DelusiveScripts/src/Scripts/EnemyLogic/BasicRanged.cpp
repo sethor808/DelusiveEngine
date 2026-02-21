@@ -1,16 +1,17 @@
-#include <DelusiveScripts/EnemyLogic/BasicRanged.h>
-#include <DelusiveExternal/Transform.h>
+#include <Scripts/EnemyLogic/BasicRanged.h>
+#include <Delusive/Runtime/Core/Transform.h>
+#include <Delusive/Runtime/Agents/Agent.h>
 #include <iostream>
 #include <glm/glm.hpp>
 
-BasicRanged::BasicRanged(DelusiveScriptAgent* owner) : BasicFollow(owner) { // Call base class constructor
+BasicRanged::BasicRanged(Agent* owner) : BasicFollow(owner) { // Call base class constructor
     this->owner = owner;
 }
 
 void BasicRanged::Update(float deltaTime) {
     if (!owner || !target) return;
-    glm::vec2 ownerPos = owner->transform->position;
-    glm::vec2 targetPos = target->transform->position;
+    glm::vec2 ownerPos = owner->GetTransform().position;
+    glm::vec2 targetPos = target->GetTransform().position;
     glm::vec2 direction = targetPos - ownerPos;
     
     float distance = glm::length(direction);
@@ -90,7 +91,7 @@ void BasicRanged::Update(float deltaTime) {
         if (distance > 0.0001f) { // avoid normalize(0)
             std::cout << "[Enemy] Retreating" << std::endl;
             glm::vec2 moveDir = -direction / distance; // Move away from target
-            owner->transform->position += moveDir * movementSpeed * deltaTime; // Move away
+            owner->GetTransform().position += moveDir * movementSpeed * deltaTime; // Move away
         }
         break;
 
@@ -98,14 +99,14 @@ void BasicRanged::Update(float deltaTime) {
         std::cout << "[Enemy] Chasing" << std::endl;
         if (distance > 0.0001f) { // avoid normalize(0)
             glm::vec2 moveDir = direction / distance; // Move towards target
-            owner->transform->position += moveDir * movementSpeed * deltaTime;
+            owner->GetTransform().position += moveDir * movementSpeed * deltaTime;
         }
         break;
     case Orbiting:
         std::cout << "[Enemy] Orbiting" << std::endl;
         int angle = rand() % 360; // Random angle for orbiting
         glm::vec2 orbitPoint = targetPos + glm::vec2(cos(glm::radians((float)angle)), sin(glm::radians((float)angle))) * orbitRadius; // Calculate orbit point
-        owner->transform->position += (orbitPoint - ownerPos) * movementSpeed * deltaTime; // Move towards orbit point
+        owner->GetTransform().position += (orbitPoint - ownerPos) * movementSpeed * deltaTime; // Move towards orbit point
         break;
 
     }

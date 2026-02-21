@@ -2,7 +2,7 @@
 [UICanvas]
 name=HP Display
 [UIElement UITalismanDisplay]
-id=d5a07768a82f20ba-8d8385ef7854a98a
+id=d74b4123efb497eb-20995fffb8ce8349
 name=Test
 enabled=1
 position=0 0
@@ -19,11 +19,4 @@ stringSpacing=0.2
 [/UICanvas]
 [UICanvas]
 name=Equip Screen
-[UIElement UIScriptContainer]
-id=76739dacea63c2ae-8feb2748a91858d7
-name=ScriptContainer
-enabled=1
-position=0 0
-size=1 1
-[/UIElement]
 [/UICanvas]

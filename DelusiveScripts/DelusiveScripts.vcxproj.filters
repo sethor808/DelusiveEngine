@@ -41,6 +41,24 @@
     <ClInclude Include="include\DelusiveScripts\EnemyLogic\BasicRanged.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Delusive\Scripts\EnemyLogic\BasicFollow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Delusive\Scripts\EnemyLogic\BasicRanged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Delusive\Scripts\UI\EquipScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scripts\EnemyLogic\BasicFollow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scripts\EnemyLogic\BasicRanged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scripts\UI\EquipScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DelusiveScripts.cpp">

@@ -13,6 +13,8 @@ public:
 	PlayerAgent() = delete;
 	std::unique_ptr<Agent> Clone(Scene*) const override;
 
+    void LinkScene(Scene* scene) override;
+
 	void Update(float deltaTime) override;
 	void HandleInput(const PlayerInputState&);
 	std::string GetType() const override;
@@ -53,7 +55,7 @@ private:
 	PlayerInputState prevInput;
 
 	//Inventory Management
-	DelusiveInventory* inventoryLink;
+	DelusiveInventory* inventoryLink = nullptr;
 
 	//PlayerState Helpers
 	bool CheckIfDead();

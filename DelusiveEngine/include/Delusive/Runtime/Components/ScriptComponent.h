@@ -1,10 +1,10 @@
 #pragma once
 #include <Delusive/Runtime/Components/Component.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
-#include <DelusiveExternal/BehaviourScript.h>
+#include <Delusive/Scripting/BehaviourScript.h>
 
 struct DelusiveScript;
-class DelusiveScriptAgent;
+class Agent;
 
 class ScriptComponent : public Component {
 public:
@@ -20,6 +20,7 @@ public:
 
     void RegisterProperties() override;
 
+    void SetOwner(Agent* agent) override;
     const char* GetType() const override { return "ScriptComponent"; }
     std::unique_ptr<Component> Clone() const override;
 
@@ -39,7 +40,6 @@ public:
     void Deserialize(std::istream& in) override;
 private:
     ScriptManager& scriptManager;
-	std::unique_ptr<DelusiveScriptAgent> scriptAgent;
-    std::unique_ptr<DelusiveScriptAgent> target;
+    Agent* target;
     std::unique_ptr<DelusiveScript> scriptContainer;
 };

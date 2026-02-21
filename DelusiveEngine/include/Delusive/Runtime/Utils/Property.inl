@@ -1,7 +1,7 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
-#include <DelusiveExternal/UUID.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 #include <type_traits>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
