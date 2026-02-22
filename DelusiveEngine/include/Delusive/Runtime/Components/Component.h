@@ -1,6 +1,7 @@
 #pragma once
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Animation/AnimatorData.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 #include <glm/glm.hpp>
 #include <string>
 #include <memory>
@@ -51,8 +52,8 @@ public:
 	virtual bool ToDelete() const { return toDelete; }
 	void MarkToDelete() { toDelete = true; }
 
-	virtual uint64_t GetID() const { return componentID; }
-	void SetID(uint64_t id) { componentID = id; }
+    const UUID GetID() const {return id; }
+	void SetID(UUID id) { this->id = id; }
 
 	// Save/Load
 	virtual void Serialize(std::ostream& out) const;
@@ -63,7 +64,7 @@ protected:
 	Agent* owner = nullptr;
 	bool editorMode = false;
 	std::string name;
-	uint64_t componentID = 0;
+	UUID id;
 	bool enabled = true;
 	bool isDragging = false;
 	bool toDelete = false;

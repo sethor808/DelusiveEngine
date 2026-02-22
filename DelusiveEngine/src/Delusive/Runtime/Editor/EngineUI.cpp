@@ -1170,7 +1170,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
 
             for (int i = 0; i < frame.componentOverrides.size(); ++i) {
                 auto& mod = frame.componentOverrides[i];
-                ImGui::PushID((int)mod.componentID);
+                ImGui::PushID((int)mod.componentID.ToString().c_str());
 
                 if (Component* comp = baseAgent->GetComponentByID(mod.componentID)) {
                     const std::string& compName = comp->GetName();

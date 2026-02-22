@@ -7,6 +7,7 @@
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Runtime/Editor/EditorInterface.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 
 class Component;
 class PropertyRegistry;
@@ -36,8 +37,8 @@ public:
     virtual void DrawImGui();
 
     //Identity Handles
-    uint64_t GetID() const { return id; }
-    void SetID(uint64_t newID) { id = newID; }
+    UUID GetID() const { return id; }
+    void SetID(UUID newID) { id = newID; }
 
     //Links
     virtual void LinkScene(Scene* scene) { sceneLink = scene; }
@@ -91,11 +92,40 @@ public:
         // Inject the renderer reference before forwarded args
         auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
         component->SetOwner(this);
-        component->SetID(nextComponentID++);
-        component->RegisterProperties();
+        if (!component->GetID().IsValid()) {
+            component->SetID(UUID::GenerateRandom());
+        }
+        
+        T* ptr = component.get();
+        components.push_back(std::move(component));
+        componentLookup[ptr->GetID()] = ptr;
+
+        return ptr;
+    }
+
+    template<typename T, typename... Args>
+    T* AddComponent(std::ifstream& in, Args&&... args) {
+        static_assert(std::is_base_of<Component, T>::value,
+            "T must derive from Component");
+
+        auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
 
         T* ptr = component.get();
         components.push_back(std::move(component));
+        if (ptr) {
+            ptr->SetOwner(this);
+            ptr->Deserialize(in);
+
+            // Ensure component has a valid UUID after deserialization.
+            // If the serialized data did not include an ID (or included an invalid one),
+            // generate a new UUID so we don't end up with many zero-UUIDs.
+            if (!ptr->GetID().IsValid()) {
+                ptr->SetID(UUID::GenerateRandom());
+            }
+
+            componentLookup[ptr->GetID()] = ptr;
+        }
+
         return ptr;
     }
 
@@ -123,7 +153,7 @@ public:
         );
     }
 
-    Component* GetComponentByID(uint64_t);
+    Component* GetComponentByID(UUID);
     const std::vector<std::unique_ptr<Component>>& GetComponents() const;
     void RemoveComponentByPointer(Component*);
 
@@ -147,12 +177,14 @@ protected:
     TransformComponent transform;
     DelusiveRenderer& renderer;
     Scene* sceneLink = nullptr;
-    uint64_t id = 0;
+    //uint64_t id = 0; REMOVED FOR UUID SYSTEM
+    UUID id;
 
     bool editorMode = false;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;
+    std::unordered_map<UUID, Component*, UUID::Hash> componentLookup;
 
     std::string name;
     std::string type;

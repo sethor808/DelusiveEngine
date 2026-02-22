@@ -152,6 +152,7 @@
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
     <ClCompile Include="src\Delusive\Scripting\UIScript.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Agents\Agent.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Animation\Animation.cpp" />

@@ -3,6 +3,118 @@
   "WorkspaceRootPath": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\BEHAVIOURSCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\BEHAVIOURSCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\UISCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\UISCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -17,10 +129,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Scripting\\ScriptRegistry.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -39,36 +147,8 @@
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Talismans\\Talisman.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Talismans\\Talisman.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIButton.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -81,10 +161,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\UI\\EquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\src\\Scripts\\UI\\EquipScreen.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\USERS\\DEMON TEDDY\\DOCUMENTS\\PROGRAMS\\DELUSIVEENGINE\\DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\UISCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\UISCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIImage.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -105,14 +181,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UITalismanDisplay.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UITalismanDisplay.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Editor\\EngineUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -139,20 +207,8 @@
       "RelativeMoniker": "D:0:0:{F3828AC7-F06E-4BDE-A79C-C67FEF832FA7}|DelusiveGameEditor\\DelusiveGameEditor.vcxproj|solutionrelative:DelusiveGameEditor\\DelusiveGameEditor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicRanged.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicRanged.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\BEHAVIOURSCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|solutionrelative:DELUSIVEENGINE\\INCLUDE\\DELUSIVE\\SCRIPTING\\BEHAVIOURSCRIPT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{52525237-AF54-4C76-B671-3DF5E0673AD1}|DelusiveScripts\\DelusiveScripts.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicRanged.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -161,22 +217,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Player\\DelusiveInventory.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Player\\DelusiveInventory.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|solutionrelative:DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{86F6F630-A225-40C0-8F1C-C2CE8F040DEF}|DelusiveEngine\\DelusiveEngine.vcxproj|C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\TransformComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -201,12 +241,164 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 183,
-          "SelectedChildIndex": 4,
+          "DockedWidth": 197,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BasicFollow.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
+              "RelativeDocumentMoniker": "DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
+              "RelativeToolTip": "DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-10T23:57:23.819Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UUID.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-10T23:26:27.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ScriptComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-10T23:32:47.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Agent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
+              "ViewState": "AgIAAF4BAAAAAAAAAAAawHEBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-13T03:21:08.585Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "Scene.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Scene\\Scene.cpp",
+              "ViewState": "AgIAADAAAAAAAAAAAAAawEAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-21T22:55:52.675Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GameManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAawBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-13T03:45:36.994Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EngineUI.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAawGUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-13T16:47:45.378Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BehaviourScript.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Scripting\\BehaviourScript.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-21T23:34:52.998Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Component.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\Component.cpp",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAvwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-21T23:06:05.787Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Animation.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Animation\\Animation.cpp",
+              "ViewState": "AgIAAHoAAAAAAAAAAAAAAIwAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-22T00:54:34.031Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DelusiveEngine.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAawJsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-13T17:02:19.034Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "AnimatorData.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\AnimatorData.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-22T00:50:58.665Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
               "Title": "UIEquipScreen.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp",
               "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp",
@@ -214,64 +406,23 @@
               "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIEquipScreen.cpp",
               "ViewState": "AgIAADkAAAAAAAAAAAAAAEoAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-20T19:04:12.743Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-20T19:04:12.743Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "AutoGeneratedScripts.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
-              "RelativeDocumentMoniker": "DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
-              "RelativeToolTip": "DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 24,
+              "Title": "PlayerAgent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAAAJYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-10T23:55:56.32Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-20T18:12:22.086Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ScriptRegistryGenerator.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveTools\\ScriptRegistryGenerator.cpp",
-              "RelativeDocumentMoniker": "DelusiveTools\\ScriptRegistryGenerator.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveTools\\ScriptRegistryGenerator.cpp",
-              "RelativeToolTip": "DelusiveTools\\ScriptRegistryGenerator.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-10T23:45:36.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ScriptManager.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:27:31.29Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UIScriptContainer.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-10T23:28:26.153Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 32,
               "Title": "ScriptRegistry.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Scripting\\ScriptRegistry.cpp",
               "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Scripting\\ScriptRegistry.cpp",
@@ -279,25 +430,59 @@
               "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Scripting\\ScriptRegistry.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-20T18:44:34.105Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-20T18:44:34.105Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "GameManager.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Core\\GameManager.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAWAAAAAAAAAA==",
+              "DocumentIndex": 29,
+              "Title": "UIScriptContainer.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIScriptContainer.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-13T03:45:36.994Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-10T23:28:26.153Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 33,
+              "Title": "AutoGeneratedScripts.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
+              "RelativeDocumentMoniker": "DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
+              "RelativeToolTip": "DelusiveScripts\\src\\Generated\\AutoGeneratedScripts.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-10T23:55:56.32Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "ScriptManager.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Scripting\\ScriptManager.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-10T23:27:31.29Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "ScriptRegistryGenerator.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveTools\\ScriptRegistryGenerator.cpp",
+              "RelativeDocumentMoniker": "DelusiveTools\\ScriptRegistryGenerator.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveTools\\ScriptRegistryGenerator.cpp",
+              "RelativeToolTip": "DelusiveTools\\ScriptRegistryGenerator.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-10T23:45:36.364Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
               "Title": "UITalismanDisplay.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UITalismanDisplay.cpp",
               "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UITalismanDisplay.cpp",
@@ -309,7 +494,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 37,
               "Title": "UIButton.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIButton.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIButton.h",
@@ -317,12 +502,11 @@
               "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIButton.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-15T19:26:13.592Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-15T19:26:13.592Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 36,
               "Title": "Talisman.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Talismans\\Talisman.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Talismans\\Talisman.h",
@@ -330,76 +514,11 @@
               "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Talismans\\Talisman.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-18T01:55:42.949Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T01:55:42.949Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "DelusiveEngine.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\DelusiveEngine.cpp",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAAAAoAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-13T17:02:19.034Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "EngineUI.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Editor\\EngineUI.cpp",
-              "ViewState": "AgIAANMBAAAAAAAAAAAkwAsDAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-13T16:47:45.378Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "PlayerAgent.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\PlayerAgent.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-20T18:12:22.086Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Scene.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAAC4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-20T18:10:08.487Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Agent.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Agents\\Agent.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-13T03:21:08.585Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 39,
               "Title": "EquipScreen.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\UI\\EquipScreen.cpp",
               "RelativeDocumentMoniker": "DelusiveScripts\\src\\Scripts\\UI\\EquipScreen.cpp",
@@ -407,12 +526,11 @@
               "RelativeToolTip": "DelusiveScripts\\src\\Scripts\\UI\\EquipScreen.cpp",
               "ViewState": "AgIAAEQAAAAAAAAAAAAuwFMAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-11T00:01:50.506Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-11T00:01:50.506Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 49,
               "Title": "GameManager.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\GameManager.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\GameManager.h",
@@ -424,7 +542,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 48,
               "Title": "DelusiveScripts.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\DelusiveScripts.h",
               "RelativeDocumentMoniker": "DelusiveScripts\\DelusiveScripts.h",
@@ -436,7 +554,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 50,
               "Title": "DelusiveGameEditor.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveGameEditor\\DelusiveGameEditor.cpp",
               "RelativeDocumentMoniker": "DelusiveGameEditor\\DelusiveGameEditor.cpp",
@@ -448,7 +566,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 51,
               "Title": "BasicRanged.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicRanged.cpp",
               "RelativeDocumentMoniker": "DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicRanged.cpp",
@@ -457,76 +575,16 @@
               "ViewState": "AgIAAGMAAAAAAAAAAAAAAF4AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-10T23:59:57.297Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "BehaviourScript.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:33:40.152Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "BasicFollow.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
-              "RelativeDocumentMoniker": "DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
-              "RelativeToolTip": "DelusiveScripts\\src\\Scripts\\EnemyLogic\\BasicFollow.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-10T23:57:23.819Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "ScriptComponent.cpp",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
-              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
-              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\ScriptComponent.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-10T23:32:47.646Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "UUID.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\UUID.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:26:27.526Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "DelusiveData.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T22:13:38.646Z"
             }
           ]
         },
         {
-          "DockedWidth": 216,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 202,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 45,
               "Title": "EngineUI.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Editor\\EngineUI.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Editor\\EngineUI.h",
@@ -539,59 +597,159 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ScriptRegistry.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
-              "ViewState": "AgIAAAQAAAAAAAAAAADwvyUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "Agent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAqwHUAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-20T18:44:32.621Z",
+              "WhenOpened": "2026-02-13T03:21:31.23Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "UIScriptContainer.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAACAAAAAAAAAA==",
+              "DocumentIndex": 14,
+              "Title": "DelusiveRegistry.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveRegistry.h",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACIAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T21:47:52.163Z",
+              "WhenOpened": "2026-02-22T00:43:55.644Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "EquipScreen.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
-              "RelativeDocumentMoniker": "DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
-              "RelativeToolTip": "DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
-              "ViewState": "AgIAAAsAAAAAAAAAAADwvw4AAAAaAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "ScriptComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAcwCoAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-11T00:02:03.229Z",
+              "WhenOpened": "2026-02-10T23:35:17.563Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "UITalismanDisplay.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "DelusiveData.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Core\\DelusiveData.h",
+              "ViewState": "AgIAALIAAAAAAAAAAAAawL0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-18T01:56:23.363Z",
+              "WhenOpened": "2026-02-10T22:13:38.646Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Component.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
+              "ViewState": "AgIAACoAAAAAAAAAAAAawDYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-13T16:54:01.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "SpriteComponent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\SpriteComponent.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAgAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-22T04:55:41.893Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Property.inl",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Utils\\Property.inl",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACMAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-02-22T00:44:14.058Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "BasicFollow.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
+              "RelativeDocumentMoniker": "DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
+              "RelativeToolTip": "DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-10T23:00:00.707Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AnimatorComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp",
+              "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp",
+              "RelativeToolTip": "DelusiveEngine\\src\\Delusive\\Runtime\\Components\\AnimatorComponent.cpp",
+              "ViewState": "AgIAACcAAAAAAAAAAAAcwDUAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-22T00:50:23.458Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "BehaviourScript.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Scripting\\BehaviourScript.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-10T23:33:40.152Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 20,
+              "Title": "Scene.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\Scene.h",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-20T18:10:08.487Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "UIUUIDManager.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Scene\\UIUUIDManager.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-21T23:58:52.866Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
               "Title": "UIScript.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\UIScript.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Scripting\\UIScript.h",
@@ -599,12 +757,23 @@
               "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Scripting\\UIScript.h",
               "ViewState": "AgIAAAIAAAAAAAAAAAAgwBIAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:29:46.591Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-10T23:29:46.591Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 26,
+              "Title": "PlayerAgent.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-20T18:15:34.831Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
               "Title": "DelusiveInventory.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Player\\DelusiveInventory.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Player\\DelusiveInventory.h",
@@ -616,33 +785,43 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "PlayerAgent.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\PlayerAgent.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 28,
+              "Title": "UIScriptContainer.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIScriptContainer.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-20T18:15:34.831Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-21T21:47:52.163Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Agent.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\Agent.h",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAAACoAAAAMAAAAAAAAAA==",
+              "DocumentIndex": 38,
+              "Title": "UITalismanDisplay.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UITalismanDisplay.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-13T03:21:31.23Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T01:56:23.363Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 31,
+              "Title": "EquipScreen.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
+              "RelativeDocumentMoniker": "DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
+              "RelativeToolTip": "DelusiveScripts\\include\\Scripts\\UI\\EquipScreen.h",
+              "ViewState": "AgIAAAsAAAAAAAAAAADwvw4AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-11T00:02:03.229Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
               "Title": "UIImage.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIImage.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIImage.h",
@@ -654,7 +833,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 30,
+              "Title": "ScriptRegistry.h",
+              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
+              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
+              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
+              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Scripting\\ScriptRegistry.h",
+              "ViewState": "AgIAAAQAAAAAAAAAAADwvyUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-20T18:44:32.621Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
               "Title": "UIRepeatContainer.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIRepeatContainer.cpp",
               "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\UI\\UIRepeatContainer.cpp",
@@ -666,19 +857,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "BasicFollow.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
-              "RelativeDocumentMoniker": "DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
-              "RelativeToolTip": "DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicFollow.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:00:00.707Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 41,
               "Title": "UIElement.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIElement.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIElement.h",
@@ -690,7 +869,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 43,
               "Title": "UIRepeatContainer.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIRepeatContainer.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\UI\\UIRepeatContainer.h",
@@ -702,19 +881,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "Component.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\Component.h",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-13T16:54:01.293Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 46,
               "Title": "DelusiveRenderer.cpp",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\src\\Delusive\\Runtime\\Rendering\\DelusiveRenderer.cpp",
               "RelativeDocumentMoniker": "DelusiveEngine\\src\\Delusive\\Runtime\\Rendering\\DelusiveRenderer.cpp",
@@ -726,7 +893,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 52,
               "Title": "BasicRanged.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicRanged.h",
               "RelativeDocumentMoniker": "DelusiveScripts\\include\\Scripts\\EnemyLogic\\BasicRanged.h",
@@ -738,19 +905,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "ScriptComponent.h",
-              "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
-              "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
-              "ToolTip": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
-              "RelativeToolTip": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\ScriptComponent.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-10T23:35:17.563Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 47,
               "Title": "DelusiveRenderer.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Internal\\Rendering\\DelusiveRenderer.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Internal\\Rendering\\DelusiveRenderer.h",
@@ -762,7 +917,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 54,
               "Title": "TransformComponent.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Components\\TransformComponent.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Components\\TransformComponent.h",
@@ -774,7 +929,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 55,
               "Title": "EnemyAgent.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\EnemyAgent.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Agents\\EnemyAgent.h",
@@ -786,7 +941,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 56,
               "Title": "Animation.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\Animation.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Runtime\\Animation\\Animation.h",
@@ -798,7 +953,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 57,
               "Title": "DelusiveEngine.h",
               "DocumentMoniker": "C:\\Users\\Demon Teddy\\Documents\\Programs\\DelusiveEngine\\DelusiveEngine\\include\\Delusive\\Internal\\DelusiveEngine.h",
               "RelativeDocumentMoniker": "DelusiveEngine\\include\\Delusive\\Internal\\DelusiveEngine.h",

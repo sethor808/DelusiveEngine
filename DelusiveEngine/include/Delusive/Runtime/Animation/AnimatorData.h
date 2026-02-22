@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include <Delusive/Runtime/Utils/UUID.h>
 
 struct FlagChange {
     std::string flag;
@@ -9,7 +10,7 @@ struct FlagChange {
 };
 
 struct ComponentMod {
-    uint64_t componentID = 0;
+    UUID componentID;
     bool enabled = true;
     glm::vec2 positionOffset = { 0, 0 };
     glm::vec2 scale = { 1, 1 };

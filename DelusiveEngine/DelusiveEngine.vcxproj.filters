@@ -300,6 +300,7 @@
     <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
     <ClCompile Include="src\Delusive\Scripting\UIScript.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Talismans\TalismanFactory.cpp" />
+    <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">

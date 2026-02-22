@@ -43,7 +43,7 @@ bool Animation::SaveToFile(const std::string& path) const {
             }
 
             for (const auto& mod : frame.componentOverrides) {
-                out << "compmod " << mod.componentID << " " << mod.enabled << " "
+                out << "compmod " << mod.componentID.ToString() << " " << mod.enabled << " "
                     << mod.positionOffset.x << " " << mod.positionOffset.y << " "
                     << mod.scale.x << " " << mod.scale.y << " " << mod.rotation << " "
                     << mod.texturePath << "\n";
@@ -127,9 +127,12 @@ bool Animation::LoadFromFile(const std::string& path) {
         }
         else if (word == "compmod") {
             ComponentMod mod;
-            iss >> mod.componentID >> mod.enabled
+            std::string uuidStr;
+            iss >> uuidStr >> mod.enabled
                 >> mod.positionOffset.x >> mod.positionOffset.y
                 >> mod.scale.x >> mod.scale.y >> mod.rotation;
+
+            mod.componentID.FromString(uuidStr);
 
             if (!(iss >> mod.texturePath)) {
                 mod.texturePath = ""; // Safe fallback

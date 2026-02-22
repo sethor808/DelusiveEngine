@@ -22,6 +22,7 @@ Component::Component(DelusiveRenderer& renderer)
 Component::~Component() = default;
 
 void Component::RegisterProperties() {
+    registry->Register("id", &id);
 	transform->RegisterProperties(*registry);
 	registry->Register("name", &name);
 	registry->Register("enabled", &enabled);

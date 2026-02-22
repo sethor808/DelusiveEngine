@@ -81,10 +81,21 @@ ScriptManager& Scene::GetScriptManager() const {
 }
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
-	_agent->SetID(nextAgentID);
-	_agent->LinkScene(this);
-	agents.push_back(std::move(_agent));
-	nextAgentID++;
+    if (!_agent->GetID().IsValid()) {
+        _agent->SetID(UUID::GenerateRandom());
+    }
+    _agent->LinkScene(this);
+    agentLookup[_agent->GetID()] = _agent.get();
+    agents.push_back(std::move(_agent));
+}
+    
+
+Agent* Scene::FindAgentByUUID(UUID targetID) {
+    auto it = agentLookup.find(targetID);
+    if (it != agentLookup.end()) {
+        return it->second;
+    }
+    return nullptr;
 }
 
 PlayerAgent* Scene::FetchPlayer() {
@@ -115,6 +126,7 @@ std::vector<std::unique_ptr<Agent>>& Scene::GetAgents() {
 
 void Scene::ClearAgents() {
 	agents.clear();
+    agentLookup.clear();
 }
 
 void Scene::AddSystem(std::unique_ptr<SceneSystem> sys) {
@@ -298,9 +310,9 @@ bool Scene::LoadFromFile(const std::string& path) {
 			// Let the agent load its block (until [/Agent])
 			//There has to be a better way to do this
 			Agent* link = agent.get();
-			AddAgent(std::move(agent));
+            agent->LinkScene(this);
 			link->LoadFromFile(in);
-			
+            AddAgent(std::move(agent));
 		}
 		else if (token == "systems"){
 			int count;

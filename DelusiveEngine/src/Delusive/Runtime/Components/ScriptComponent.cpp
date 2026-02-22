@@ -14,7 +14,11 @@ ScriptComponent::ScriptComponent(DelusiveRenderer& renderer, ScriptManager& scri
 }
 
 void ScriptComponent::SetOwner(Agent* agent) {
-    owner = agent;
+    if (agent) {
+        owner = agent;
+        AttachScript();
+        SetTarget();
+    }
 }
 
 void ScriptComponent::InitScript() {
@@ -27,15 +31,8 @@ std::unique_ptr<Component> ScriptComponent::Clone() const {
 	auto copy = std::make_unique<ScriptComponent>(renderer, scriptManager);
 	copy->SetName(GetName());
 	copy->scriptContainer->scriptName = scriptContainer->scriptName;
+    copy->scriptContainer->script = scriptContainer->script->Clone();
 	return copy;
-}
-
-void ScriptComponent::SetOwner(Agent* agent) {
-	if (agent) {
-		owner = agent;
-		AttachScript();
-		SetTarget();
-	}
 }
 
 void ScriptComponent::SetTarget() {

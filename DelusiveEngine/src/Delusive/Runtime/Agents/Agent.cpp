@@ -19,6 +19,7 @@ Agent::~Agent() {
 }
 
 void Agent::RegisterProperties() {
+    registry->Register("id", &id);
 	registry->Register("name", &name);
 	transform.RegisterProperties(*registry);
 }
@@ -157,16 +158,20 @@ GLuint Agent::RenderAgentToTexture(int width, int height) {
 
 void Agent::AddRawComponent(std::unique_ptr<Component> component) {
 	component->SetOwner(this);
-	component->SetID(nextComponentID++);
+
+    if (!component->GetID().IsValid()) {
+        component->SetID(UUID::GenerateRandom());
+    }
+    componentLookup[component->GetID()] = component.get();
+
 	components.push_back(std::move(component));
 }
 
-Component* Agent::GetComponentByID(uint64_t id)
+Component* Agent::GetComponentByID(UUID targetID)
 {
-    for (auto& comp : components)
-    {
-        if (comp->GetID() == id)
-            return comp.get();
+    auto it = componentLookup.find(targetID);
+    if (it != componentLookup.end()) {
+        return it->second;
     }
     return nullptr;
 }
@@ -212,19 +217,16 @@ void Agent::Deserialize(std::ifstream& in) {
 			}
 
 			Component* comp = nullptr;
-			if (type == "SpriteComponent")        comp = AddComponent<SpriteComponent>();
-			else if (type == "SolidCollider")     comp = AddComponent<SolidCollider>();
-			else if (type == "TriggerCollider")   comp = AddComponent<TriggerCollider>();
-			else if (type == "HurtboxCollider")   comp = AddComponent<HurtboxCollider>();
-			else if (type == "HitboxCollider")    comp = AddComponent<HitboxCollider>();
-			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>();
-			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>();
+			if (type == "SpriteComponent")        comp = AddComponent<SpriteComponent>(in);
+			else if (type == "SolidCollider")     comp = AddComponent<SolidCollider>(in);
+			else if (type == "TriggerCollider")   comp = AddComponent<TriggerCollider>(in);
+			else if (type == "HurtboxCollider")   comp = AddComponent<HurtboxCollider>(in);
+			else if (type == "HitboxCollider")    comp = AddComponent<HitboxCollider>(in);
+			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>(in);
+			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>(in);
 			else if (type == "ScriptComponent") {
 				ScriptManager& scriptManager = this->sceneLink->GetScriptManager();
-				comp = AddComponent<ScriptComponent>(scriptManager);
-			}
-			if (comp) {
-				comp->Deserialize(in); // consumes until [/Component]
+				comp = AddComponent<ScriptComponent>(in, scriptManager);
 			}
 		}
 		else {
@@ -355,6 +357,7 @@ void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
 	copy->SetRotation(GetTransform().rotation);
 	copy->SetScale(GetTransform().scale);
 	copy->SetName(GetName());
+    copy->SetID(id);
 	copy->LinkScene(sceneLink);
 
 	// Deep copy components

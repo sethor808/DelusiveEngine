@@ -8,6 +8,7 @@
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
+#include <Delusive/Runtime/Utils/UUID.h>
 
 //Forward declarations
 class Agent;
@@ -40,7 +41,8 @@ public:
 
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
-	std::vector<std::unique_ptr<Agent>>& GetAgents();
+    std::vector<std::unique_ptr<Agent>>& GetAgents();
+    Agent* FindAgentByUUID(UUID targetID);
 	PlayerAgent* FetchPlayer();
 	Agent* FetchPlayerRaw();
 	void ClearAgents();
@@ -71,8 +73,8 @@ private:
 	DelusiveRenderer& renderer;
 	std::string name;
 	CameraAgent* camera;
+    std::unordered_map<UUID, Agent*, UUID::Hash> agentLookup;
 	static PhysicsSystem physicsSystem;
-	uint16_t nextAgentID = 0;
 	std::vector<std::unique_ptr<Agent>> agents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 };
