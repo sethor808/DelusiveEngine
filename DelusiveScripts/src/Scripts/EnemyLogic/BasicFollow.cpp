@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/Transform.h>
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <Delusive/Runtime/Core/Transform.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <iostream>
 #include <glm/glm.hpp>
 
@@ -27,7 +28,7 @@ void BasicFollow::Update(float deltaTime) {
 }
 
 std::unique_ptr<BehaviourScript> BasicFollow::Clone() const {
-    auto copy = std::make_unique<BasicFollow>(*this);
+    auto copy = std::make_unique<BasicFollow>();
     //Do custom copy
 
     //Do basic copy - INCLUDE IN ALL COPY CALLS UNLESS SPECIFICALLY NEEDED

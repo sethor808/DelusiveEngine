@@ -5,6 +5,7 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_demo.
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_draw.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_draw.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_tables.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_tables.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_widgets.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_widgets.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Utils\PropertyDraw.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PropertyDraw.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Scripting\BehaviourScript.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\BehaviourScript.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Scripting\UIScript.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UIScript.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Agents\Agent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Agent.obj

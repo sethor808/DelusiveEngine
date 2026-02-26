@@ -152,6 +152,7 @@
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Utils\PropertyDraw.cpp" />
     <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
     <ClCompile Include="src\Delusive\Scripting\UIScript.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Agents\Agent.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveData.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveRegistry.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\GameManager.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\IDLink.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\PhysicsSystem.h" />
     <ClInclude Include="include\Delusive\Runtime\Editor\EditorInput.h" />
     <ClInclude Include="include\Delusive\Runtime\Editor\EditorInterface.h" />
@@ -375,6 +377,7 @@
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveSerializer.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveUtils.h" />
+    <ClInclude Include="include\Delusive\Runtime\Utils\PropertyDraw.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\UUID.h" />
     <ClInclude Include="include\Delusive\Scripting\BehaviourScript.h" />
     <ClInclude Include="include\Delusive\Scripting\ScriptFactoryBase.h" />

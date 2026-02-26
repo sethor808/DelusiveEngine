@@ -1,14 +1,22 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/IDLink.h>
 
 class Agent;
+class PropertyRegistry;
 
 class BehaviourScript {
 public:
-	BehaviourScript() = default;
-	virtual ~BehaviourScript() = default;
+    BehaviourScript();
+	virtual ~BehaviourScript();
+
+    BehaviourScript(const BehaviourScript&) = delete;
+    BehaviourScript& operator=(const BehaviourScript&) = delete;
+    BehaviourScript(BehaviourScript&&) noexcept = default;
+    BehaviourScript& operator=(BehaviourScript&&) noexcept = default;
+
+    void DrawImGui();
 	virtual void Update(float deltaTime) = 0;
 	virtual std::unique_ptr<BehaviourScript> Clone() const = 0;
     void CopyCore(const BehaviourScript*);
@@ -16,16 +24,23 @@ public:
 
 	//Getters and Setters
 	virtual Agent* GetOwner() const { return owner; }
-    virtual void SetOwner(Agent* scriptAgent) { owner = scriptAgent; }
+    virtual void SetOwner(Agent*);
 	virtual Agent* GetTarget() const { return target; }
-    UUID GetTargetID() const { return targetID; }
+    UUID GetTargetID() const;
     virtual void SetTarget(Agent* _target);
 	virtual void SetMovementSpeed(float speed) { movementSpeed = speed; }
 	virtual float GetMovementSpeed() const { return movementSpeed; }
+
+    //Serialization
+    void Serialize(std::ostream&) const;
+    void Deserialize(std::istream&);
+
+    virtual void RegisterProperties();
 protected:
     Agent* owner = nullptr;
     Agent* target = nullptr;
-    UUID targetID;
+    DelusiveIDLink targetID;
+    //UUID targetID;
     std::unique_ptr<PropertyRegistry> registry;
 	glm::vec2 direction = { 0,0 };
 	float movementSpeed = 1.0f;

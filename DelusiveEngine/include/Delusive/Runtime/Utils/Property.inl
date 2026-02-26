@@ -1,7 +1,9 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Runtime/Core/IDLink.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <type_traits>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,9 +36,11 @@ class Property : public PropertyBase {
 
     static constexpr bool is_custom =
         std::is_same_v<T, UUID> ||
+        std::is_same_v<T, DelusiveIDLink> ||
         std::is_same_v<T, DelusiveTexture> ||
         std::is_same_v<T, DelusiveFont> ||
         std::is_same_v<T, DelusiveUIPrototype> ||
+        std::is_same_v<T, DelusiveIDLink> ||
         std::is_same_v<T, DelusiveScript>;
 
     static_assert(
@@ -92,9 +96,17 @@ public:
             }
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
                 out << value->scriptName;
+
+                if (value->script) {
+                    out << "\n";
+                    value->script->Serialize(out);
+                }
             }
             else if constexpr (std::is_same_v<T, UUID>) {
                 out << value->ToString();
+            }
+            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
+                out << value->id.ToString();
             }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
                 // Write the type name and (optionally) UUID of the element
@@ -159,12 +171,27 @@ public:
             }
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
                 in >> value->scriptName;
+
+                if (value->manager && !value->scriptName.empty()) {
+
+                    value->script =
+                        value->manager->CreateEnemyLogicScript(value->scriptName);
+
+                    if (value->script) {
+                        value->script->Deserialize(in);
+                    }
+                }
             }
             else if constexpr (std::is_same_v<T, UUID>) {
                 std::string uuidStr;
                 in >> uuidStr;
                 value->FromString(uuidStr);
 			}
+            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
+                std::string uuidStr;
+                in >> uuidStr;
+                value->id.FromString(uuidStr);
+            }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
                 std::string type;
                 in >> type;
@@ -351,6 +378,13 @@ public:
                     }
                     ImGui::EndCombo();
                 }
+
+                if (value->script) {
+                    ImGui::Separator();
+                    ImGui::Text("Script Parameters");
+
+                    value->script->DrawImGui();
+                }
             }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
                 ImGui::SeparatorText(name.c_str());
@@ -389,6 +423,9 @@ public:
             else if constexpr (std::is_same_v<T, UUID>) {
                 ImGui::Text("UUID: %s", value->ToString().c_str());
 			}
+            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
+                DrawIDLinkUI(value, name, value->sceneLink);
+            }
         }
     }
 };

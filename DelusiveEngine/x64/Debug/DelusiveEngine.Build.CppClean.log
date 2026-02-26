@@ -1,4 +1,3 @@
-c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveregistry.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveinventory.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveengine.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\component.obj
@@ -11,6 +10,7 @@ c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\animation.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\agent.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uiscript.obj
+c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\behaviourscript.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui_widgets.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui_tables.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui_draw.obj
@@ -18,7 +18,6 @@ c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui_impl_sdl3.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\imgui_impl_opengl3.obj
-c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\scene.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiverenderer.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\playeragent.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\physicssystem.obj
@@ -37,7 +36,7 @@ c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveuiregistry.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveui.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\talismanfactory.obj
-c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uipanel.obj
+c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveregistry.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uimanager.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uilabel.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uiimage.obj
@@ -57,10 +56,12 @@ c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\scriptregistry.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\scriptcomponent.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\scenesystem.obj
+c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\scene.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uitalismandisplay.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uitalismanbutton.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uiscriptcontainer.obj
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uirepeatcontainer.obj
+c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\uipanel.obj
 c:\users\demon teddy\documents\programs\delusiveengine\debug_lib\delusiveengine.pdb
 c:\users\demon teddy\documents\programs\delusiveengine\debug_lib\delusiveengine.lib
 c:\users\demon teddy\documents\programs\delusiveengine\delusiveengine\x64\debug\delusiveengine.tlog\cl.command.1.tlog

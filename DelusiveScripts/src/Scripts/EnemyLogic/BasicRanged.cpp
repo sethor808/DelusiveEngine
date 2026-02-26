@@ -1,6 +1,7 @@
 #include <Scripts/EnemyLogic/BasicRanged.h>
 #include <Delusive/Runtime/Core/Transform.h>
 #include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <iostream>
 #include <glm/glm.hpp>
 
@@ -119,5 +120,12 @@ void BasicRanged::Update(float deltaTime) {
 
 
 std::unique_ptr<BehaviourScript> BasicRanged::Clone() const {  // unique_ptr Clone method
-    return std::make_unique<BasicRanged>(*this);
+    std::unique_ptr<BehaviourScript> copy = std::make_unique<BasicRanged>();
+    
+    //return std::make_unique<BasicRanged>(*this);
+    
+    //Do basic copy - INCLUDE IN ALL COPY CALLS UNLESS SPECIFICALLY NEEDED
+    copy->CopyCore(this);
+
+    return copy;
 }
