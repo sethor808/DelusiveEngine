@@ -28,7 +28,7 @@ public:
 
 	virtual void RegisterProperties();
 
-	virtual void Update(float) = 0;
+    virtual void Update(float) {};
 	virtual void Draw(const glm::mat4& projection) const {};
 	virtual void DrawImGui();
 	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }

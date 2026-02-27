@@ -31,6 +31,7 @@ public:
     void AttachScript();
 
     void Update(float) override;
+    void DrawImGui() override;
 
     DelusiveScript* GetScriptContainer() { return scriptContainer.get(); }
 

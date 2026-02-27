@@ -98,8 +98,9 @@ public:
                 out << value->scriptName;
 
                 if (value->script) {
-                    out << "\n";
+                    out << "\n{\n";
                     value->script->Serialize(out);
+                    out << "}\n";
                 }
             }
             else if constexpr (std::is_same_v<T, UUID>) {
@@ -170,16 +171,20 @@ public:
                 in >> value->fontSize >> std::quoted(value->fontPath);
             }
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
-                in >> value->scriptName;
 
-                if (value->manager && !value->scriptName.empty()) {
+                // If script not yet created, this is the inline call
+                if (!value->script) {
 
-                    value->script =
-                        value->manager->CreateEnemyLogicScript(value->scriptName);
+                    in >> value->scriptName;
 
-                    if (value->script) {
-                        value->script->Deserialize(in);
+                    if (value->manager && !value->scriptName.empty()) {
+                        value->script =
+                            value->manager->CreateEnemyLogicScript(value->scriptName);
                     }
+                }
+                else {
+                    // Script already exists then this is the block
+                    value->script->Deserialize(in);
                 }
             }
             else if constexpr (std::is_same_v<T, UUID>) {
@@ -191,6 +196,7 @@ public:
                 std::string uuidStr;
                 in >> uuidStr;
                 value->id.FromString(uuidStr);
+                value->dirty = true;
             }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
                 std::string type;
@@ -369,8 +375,10 @@ public:
 
                             // Recreate the script instance
                             if (value->manager) {
-                                //value->script.reset(value->manager->CreateEnemyLogicScript(scriptNames[i]));
-                                // ScriptComponent can later patch in the owner
+                                value->script =
+                                    value->manager->CreateEnemyLogicScript(scriptNames[i]);
+                                value->newScript = true;
+                                //ScriptComponent can later patch in the owner
                             }
                         }
                         if (isSelected)

@@ -3,18 +3,18 @@
 name=HP Display
 [UIElement UITalismanDisplay]
 id=d74b4123efb497eb-20995fffb8ce8349
-name=Test
+name=
 enabled=1
 position=0 0
 size=1 1
-leftOffset=40.3
-topOffset=78
-iconSize=1.8
-spacing=0.8
-stringSize=6.2
-stringXOffset=0
-stringYOffset=-0.9
-stringSpacing=0.2
+leftOffset=0
+topOffset=0
+iconSize=32
+spacing=8
+stringSize=5
+stringXOffset=1
+stringYOffset=16
+stringSpacing=2
 [/UIElement]
 [/UICanvas]
 [UICanvas]

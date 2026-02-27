@@ -64,15 +64,25 @@ void ScriptComponent::RegisterProperties()
 	registry->Register("script", scriptContainer.get());
 }
 
+//PROBABLY RIP THIS OUT REWRITING OVER EXISTING SCRIPT
 void ScriptComponent::AttachScript() {
-	std::cout << "[ScriptComponent] Attempting to attach script." << std::endl;
-    auto newScript = scriptManager.CreateEnemyLogicScript(scriptContainer->scriptName);
-    if (newScript) {
-        scriptContainer->script = std::move(newScript);
+    if (!scriptContainer->script) {
+        std::cout << "[ScriptComponent] Attempting to attach script: " << scriptContainer->scriptName << std::endl;
+        auto newScript = scriptManager.CreateEnemyLogicScript(scriptContainer->scriptName);
+        if (newScript) {
+            scriptContainer->script = std::move(newScript);
+            scriptContainer->script->SetOwner(owner);
+            scriptContainer->script->RelocateReferences();
+            std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
+        }
+    }
+    else {
+        std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
         scriptContainer->script->SetOwner(owner);
         scriptContainer->script->RelocateReferences();
-        std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
     }
+
+    scriptContainer->newScript = false;
 }
 
 void ScriptComponent::Update(float deltaTime) {
@@ -81,7 +91,16 @@ void ScriptComponent::Update(float deltaTime) {
 	}
 }
 
+void ScriptComponent::DrawImGui() {
+    Component::DrawImGui();
+
+    if (scriptContainer->newScript) {
+        AttachScript();
+    }
+}
+
 void ScriptComponent::Deserialize(std::istream& in) {
 	Component::Deserialize(in);
+    //if (!scriptContainer->script) return;
 	AttachScript();
 }

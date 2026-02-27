@@ -28,6 +28,17 @@ void PropertyRegistry::Deserialize(std::istream& in) {
             break;
         }
 
+        // Ignore stray closing braces
+        if (line == "}") {
+            break;
+        }
+
+        // Handle block start
+        if (line == "{") {
+            // This should never appear alone at top level
+            continue;
+        }
+
         auto pos = line.find('=');
         if (pos == std::string::npos) continue;
 
@@ -40,8 +51,40 @@ void PropertyRegistry::Deserialize(std::istream& in) {
 
         for (auto& prop : properties) {
             if (prop->GetName() == key) {
+
                 std::istringstream iss(value);
                 prop->Deserialize(iss);
+
+                // Check for block
+                std::streampos blockStart = in.tellg();
+                std::string nextLine;
+
+                nextLine.erase(0, nextLine.find_first_not_of(" \t\r\n"));
+                nextLine.erase(nextLine.find_last_not_of(" \t\r\n") + 1);
+                if (std::getline(in, nextLine)) {
+                    if (nextLine == "{") {
+
+                        std::stringstream buffer;
+                        int depth = 1;
+
+                        while (std::getline(in, nextLine)) {
+                            if (nextLine == "{") depth++;
+                            else if (nextLine == "}") {
+                                depth--;
+                                if (depth == 0) break;
+                            }
+
+                            buffer << nextLine << "\n";
+                        }
+
+                        std::istringstream blockStream(buffer.str());
+                        prop->Deserialize(blockStream);
+                    }
+                    else {
+                        in.seekg(blockStart);
+                    }
+                }
+
                 break;
             }
         }

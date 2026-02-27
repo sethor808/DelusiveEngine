@@ -187,6 +187,7 @@ struct DelusiveFont {
 
 struct DelusiveScript {
 	std::string scriptName;
+    bool newScript = true;
     std::unique_ptr<BehaviourScript> script;
 	ScriptManager* manager = nullptr;
 };
