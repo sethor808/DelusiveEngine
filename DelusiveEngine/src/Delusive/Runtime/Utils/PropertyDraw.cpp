@@ -15,4 +15,29 @@ void DrawIDLinkUI(DelusiveIDLink* link, const std::string& name, Scene* scene)
         : (link->id.IsValid() ? "<Missing Agent>" : "<None>");
 
     ImGui::Button((name + ": " + displayName).c_str());
+
+    //Allows drop payload
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload =
+            ImGui::AcceptDragDropPayload("DND_AGENT_UUID"))
+        {
+            UUID droppedUUID =
+                *reinterpret_cast<const UUID*>(payload->Data);
+
+            link->id = droppedUUID;
+        }
+
+        ImGui::EndDragDropTarget();
+    }
+
+    //Right-click to clear
+    if (ImGui::BeginPopupContextItem())
+    {
+        if (ImGui::MenuItem("Clear"))
+        {
+            link->id = UUID{};
+        }
+        ImGui::EndPopup();
+    }
 }

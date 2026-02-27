@@ -1,51 +1,15 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
 C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1129,5): warning MSB8027: Two or more files with the name of imgui.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are ..\include\imgui\imgui.cpp, src\imgui\imgui.cpp.
-  PropertyDraw.cpp
-  BehaviourScript.cpp
-  Agent.cpp
-  AnimatorComponent.cpp
-  CameraAgent.cpp
-  ColliderComponent.cpp
-  ColliderRenderer.cpp
-  Component.cpp
-  DelusiveEngine.cpp
-  DelusiveRegistry.cpp
-  EnemyAgent.cpp
   EngineUI.cpp
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4311: 'type cast': pointer truncation from 'const _Elem *' to 'int'
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4311:         with
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4311:         [
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4311:             _Elem=char
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4311:         ]
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4302: 'type cast': truncation from 'const _Elem *' to 'int'
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4302:         with
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4302:         [
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4302:             _Elem=char
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1173,31): warning C4302:         ]
-  EnvironmentAgent.cpp
-  GameManager.cpp
-  HitboxCollider.cpp
-  HurtboxCollider.cpp
-  PhysicsSystem.cpp
-  PlayerAgent.cpp
-  DelusiveRenderer.cpp
-  Scene.cpp
-  Generating Code...
-  Compiling...
-  SceneSystem.cpp
-  ScriptComponent.cpp
-  SolidCollider.cpp
-  SpriteComponent.cpp
-  TriggerCollider.cpp
-  UIButton.cpp
-  UICanvas.cpp
-  UIElement.cpp
-  UIEquipScreen.cpp
-  UIImage.cpp
-  UILabel.cpp
-  UIManager.cpp
-  UIRepeatContainer.cpp
-  UITalismanDisplay.cpp
-  Generating Code...
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4311: 'type cast': pointer truncation from 'const _Elem *' to 'int'
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4311:         with
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4311:         [
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4311:             _Elem=char
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4311:         ]
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4302: 'type cast': truncation from 'const _Elem *' to 'int'
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4302:         with
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4302:         [
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4302:             _Elem=char
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1190,31): warning C4302:         ]
 x64\Debug\imgui.obj : warning LNK4042: object specified more than once; extras ignored
   DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\debug_lib\DelusiveEngine.lib

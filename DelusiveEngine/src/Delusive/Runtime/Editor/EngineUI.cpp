@@ -476,17 +476,34 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                     (selected.Is(Selection::AgentObject, agent) ? ImGuiTreeNodeFlags_Selected : 0);
 
                 bool agentOpen = ImGui::TreeNodeEx(agentName.c_str(), flags);
-                if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-                    bool doubleClicked = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 
-					selected.SetEditorMode(false); // Deselect previous
-					selected.kind = Selection::AgentObject;
+                //Enable drag payload
+                if (ImGui::BeginDragDropSource())
+                {
+                    UUID uuid = agent->GetID();
+                    ImGui::SetDragDropPayload("DND_AGENT_UUID", &uuid, sizeof(UUID));
+                    ImGui::Text("Assign %s", agent->GetName().c_str());
+                    ImGui::EndDragDropSource();
+                }
+
+                // Selection on release
+                if (ImGui::IsItemHovered() &&
+                    ImGui::IsMouseReleased(ImGuiMouseButton_Left) &&
+                    ImGui::GetIO().MouseDragMaxDistanceSqr[0] < 4.0f)
+                {
+                    selected.SetEditorMode(false);
+                    selected.kind = Selection::AgentObject;
                     selected.ptr = agent;
-					selected.SetEditorMode(true); // Enable editor mode for new selection
+                    selected.SetEditorMode(true);
+                }
 
-                    if (doubleClicked) {
-                        focusRequested = agent;
-                    }
+                // ---------------------
+                // Double Click Focus
+                // ---------------------
+                if (ImGui::IsItemHovered() &&
+                    ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    focusRequested = agent;
                 }
 
 
