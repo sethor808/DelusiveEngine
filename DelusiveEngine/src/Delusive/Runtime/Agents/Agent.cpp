@@ -358,7 +358,7 @@ void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
 	copy->SetScale(GetTransform().scale);
 	copy->SetName(GetName());
     copy->SetID(id);
-	copy->LinkScene(sceneLink);
+	copy->LinkScene(scene);
 
 	// Deep copy components
 	for (const auto& comp : GetComponents()) {

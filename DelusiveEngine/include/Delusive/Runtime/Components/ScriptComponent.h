@@ -32,6 +32,8 @@ public:
 
     void Update(float) override;
 
+    DelusiveScript* GetScriptContainer() { return scriptContainer.get(); }
+
     // --- Serialization helpers ---
     std::string GetScriptName() const { return name; }
     void SetScriptName(const std::string& scriptName) { name = scriptName; }

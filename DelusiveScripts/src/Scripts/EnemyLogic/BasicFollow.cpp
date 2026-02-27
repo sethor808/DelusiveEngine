@@ -11,6 +11,8 @@ BasicFollow::BasicFollow(Agent* owner) {
 }
 
 void BasicFollow::Update(float deltaTime) {
+    BehaviourScript::Update(deltaTime);
+
     if (!owner || !target) return;
 
     glm::vec2 ownerPos = owner->GetTransform().position;

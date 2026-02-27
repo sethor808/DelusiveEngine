@@ -17,7 +17,7 @@ public:
     BehaviourScript& operator=(BehaviourScript&&) noexcept = default;
 
     void DrawImGui();
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime);
 	virtual std::unique_ptr<BehaviourScript> Clone() const = 0;
     void CopyCore(const BehaviourScript*);
     virtual void RelocateReferences();

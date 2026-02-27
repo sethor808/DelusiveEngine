@@ -9,4 +9,5 @@ struct DelusiveIDLink {
 
     UUID id;
     Scene* sceneLink = nullptr;
+    bool dirty = false;
 };

@@ -16,8 +16,16 @@ ScriptComponent::ScriptComponent(DelusiveRenderer& renderer, ScriptManager& scri
 void ScriptComponent::SetOwner(Agent* agent) {
     if (agent) {
         owner = agent;
-        AttachScript();
-        SetTarget();
+
+        if (scriptContainer && scriptContainer->script) {
+            scriptContainer->script->SetOwner(owner);
+            scriptContainer->script->RelocateReferences();
+        }
+        else {
+            AttachScript();
+        }
+
+        //SetTarget();
     }
 }
 
@@ -40,7 +48,7 @@ void ScriptComponent::SetTarget() {
 
 	Agent* player = owner->GetScene()->FetchPlayerRaw();
 	if (player) {
-		SetTarget(player);
+		//SetTarget(player);
 	}
 }
 
@@ -62,6 +70,7 @@ void ScriptComponent::AttachScript() {
     if (newScript) {
         scriptContainer->script = std::move(newScript);
         scriptContainer->script->SetOwner(owner);
+        scriptContainer->script->RelocateReferences();
         std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
     }
 }

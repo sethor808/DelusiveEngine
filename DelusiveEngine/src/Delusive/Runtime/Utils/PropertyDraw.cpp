@@ -26,6 +26,7 @@ void DrawIDLinkUI(DelusiveIDLink* link, const std::string& name, Scene* scene)
                 *reinterpret_cast<const UUID*>(payload->Data);
 
             link->id = droppedUUID;
+            link->dirty = true;
         }
 
         ImGui::EndDragDropTarget();

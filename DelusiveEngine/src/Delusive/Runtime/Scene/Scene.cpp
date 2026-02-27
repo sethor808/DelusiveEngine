@@ -1,6 +1,7 @@
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
+#include <Delusive/Runtime/Core/DelusiveData.h>
 
 //TODO: If there is no camera, handle properly
 Scene::Scene(DelusiveRenderer& _renderer)
@@ -22,7 +23,7 @@ std::unique_ptr<Scene> Scene::Clone() {
 	}
 
 	for (const auto& agent : agents) {
-		cloned->AddAgent(agent->Clone(this));
+		cloned->AddAgent(agent->Clone(cloned.get()));
 	}
 
 	for (const auto& sys : systems) {
@@ -46,6 +47,19 @@ void Scene::CloneInto(Scene& container) const {
 			container.AddAgent(agent->Clone(&container));
 		}
 	}
+
+    // After all agents are added
+    for (auto& agent : container.agents) {
+        for (auto& comp : agent->GetComponents()) {
+            if (auto* scriptComp = dynamic_cast<ScriptComponent*>(comp.get())) {
+                if (auto* container = scriptComp->GetScriptContainer()) {
+                    if (container->script) {
+                        container->script->RelocateReferences();
+                    }
+                }
+            }
+        }
+    }
 
 	// Clone Systems
 	for (const auto& system : systems) {
@@ -235,6 +249,7 @@ void Scene::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
 void Scene::Clear() {
 	agents.clear();
 	systems.clear();
+    agentLookup.clear();
 	name = "New Scene";
 }
 

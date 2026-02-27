@@ -15,6 +15,12 @@ void BehaviourScript::RegisterProperties() {
     registry->Register("movementSpeed", &movementSpeed);
 }
 
+void BehaviourScript::Update(float deltaTime) {
+    if (targetID.dirty) {
+        RelocateReferences();
+    }
+}
+
 void BehaviourScript::SetOwner(Agent* owner) {
     this->owner = owner;
 
@@ -26,6 +32,7 @@ void BehaviourScript::SetOwner(Agent* owner) {
 void BehaviourScript::SetTarget(Agent* agent) {
     target = agent;
     targetID.id = agent ? agent->GetID() : UUID{};
+    targetID.dirty = true;
 }
 
 UUID BehaviourScript::GetTargetID() const {
@@ -50,8 +57,7 @@ void BehaviourScript::RelocateReferences() {
 
 void BehaviourScript::DrawImGui() {
     if (!owner) {
-        //Draw fallback?
-        return;
+
     }
 
     registry->DrawImGui();
