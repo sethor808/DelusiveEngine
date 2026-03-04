@@ -202,7 +202,6 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UIButton.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UICanvas.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIElement.cpp" />
-    <ClCompile Include="src\Delusive\Runtime\UI\UIEquipScreen.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIImage.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UILabel.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Scene\UIManager.cpp" />
@@ -365,7 +364,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIButton.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UICanvas.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIElement.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UIEquipScreen.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIImage.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UILabel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />

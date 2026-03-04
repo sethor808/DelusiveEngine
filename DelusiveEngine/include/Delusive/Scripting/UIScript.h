@@ -5,11 +5,13 @@
 #include <unordered_map>
 
 class UIScriptContainer;
+class PropertyRegistry;
 
 class UIScript
 {
 public:
-	virtual ~UIScript() = default;
+    UIScript();
+    virtual ~UIScript();
 
 	virtual void OnInit() {}
     virtual void OnEnable() {}
@@ -18,14 +20,17 @@ public:
 	virtual void OnEvent() {}
 	virtual void OnClick(UIScriptContainer* clicked) {}
 
+    virtual void RegisterProperties() {}
 	virtual void Link(UIScriptContainer* root) { rootElement = root; }
     UIScriptContainer* GetRoot() const { return rootElement; }
 
 	virtual std::string GetType() const = 0;
 
     //TODO: Make sure de/serialation works later
-    virtual void Serialize(std::ostream& os) const {};
-    virtual void Deserialize(std::istream& is) {};
+    virtual void Serialize(std::ostream&) const;
+    virtual void Deserialize(std::istream&);
+    virtual void DrawImGui();
 protected:
     UIScriptContainer* rootElement = nullptr;
+    std::unique_ptr<PropertyRegistry> registry;
 };

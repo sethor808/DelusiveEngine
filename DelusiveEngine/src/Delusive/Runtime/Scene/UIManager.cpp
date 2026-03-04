@@ -1,6 +1,8 @@
 #include <Delusive/Runtime/Scene/UIManager.h>
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Scripting/ScriptManager.h>
 #include <iostream>
 #include <imgui/imgui.h>
 #include <fstream>
@@ -12,6 +14,7 @@ UIManager::UIManager(DelusiveRenderer& _renderer)
 	name = "NewUIManager";
 	activeCanvasName = "";
 	activeCanvas = nullptr;
+    uiRegistry.LinkManager(this);
 	RegisterProperties();
 }
 
@@ -19,6 +22,24 @@ UIManager::~UIManager() {
     if (activeCanvas) {
 		activeCanvas->DelinkManager();
     }
+}
+
+void UIManager::Init() {
+    uiRegistry.LoadAll();
+}
+
+void UIManager::LinkScene(Scene* _scene) {
+    scene = _scene;
+}
+
+ScriptManager& UIManager::GetScriptManager() const {
+    if (!scene)
+        throw std::runtime_error("UIManager: scene null");
+
+    if (!scene->HasGameManager())   // add this function
+        throw std::runtime_error("UIManager: gameManager null");
+
+    return scene->GetScriptManager();
 }
 
 void UIManager::RegisterProperties() {
@@ -167,7 +188,6 @@ void UIManager::SaveToFile(std::ofstream& out) const {
 
 void UIManager::Serialize(std::ostream& out) const {
     SceneSystem::Serialize(out);
-    uiRegistry.SaveAll();
 }
 
 void UIManager::Deserialize(std::istream& in) {

@@ -1,9 +1,9 @@
 2
 [UICanvas]
-name=HP Display
+name="HP Display"
 [UIElement UITalismanDisplay]
 id=d74b4123efb497eb-20995fffb8ce8349
-name=
+name=""
 enabled=1
 position=0 0
 size=1 1
@@ -18,5 +18,12 @@ stringSpacing=2
 [/UIElement]
 [/UICanvas]
 [UICanvas]
-name=Equip Screen
+name="Equip Screen"
+[UIElement UIScriptContainer]
+id=b778b0deba32b58e-4bd2b3cb48cb6117
+name=""
+enabled=1
+position=0 0
+size=1 1
+[/UIElement]
 [/UICanvas]

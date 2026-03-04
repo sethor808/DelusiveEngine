@@ -3,12 +3,18 @@
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 
+class ScriptManager;
+
 class UIManager : public SceneSystem {
 public:
 	UIManager(DelusiveRenderer&);
 
 	~UIManager();
 
+    ScriptManager& GetScriptManager() const;
+    void Init() override;
+
+    virtual void LinkScene(Scene*) override;
 	std::string GetType() const { return "UIManager"; }
 	void RegisterProperties() override;
 

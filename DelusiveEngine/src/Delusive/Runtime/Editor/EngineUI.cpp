@@ -369,6 +369,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
     }
 }
 
+#pragma region SceneEditor
 void EngineUI::RenderSceneEditor(Scene& scene) {
     float topBarHeight = ImGui::GetFrameHeight();
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
@@ -497,9 +498,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                     selected.SetEditorMode(true);
                 }
 
-                // ---------------------
                 // Double Click Focus
-                // ---------------------
                 if (ImGui::IsItemHovered() &&
                     ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
                 {
@@ -599,6 +598,7 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
     ImGui::SameLine();
 
     if (ImGui::BeginChild("Inspector", ImVec2(0, 0), true)) {
+        ImGui::Text("Ptr: %p", selected.ptr);
         selected.Draw();
     }
     ImGui::EndChild();
@@ -611,6 +611,8 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
 
     ImGui::End();
 }
+
+#pragma endregion
 
 void EngineUI::RenderAgentEditor(Scene& scene) {
     //Mouse stuff

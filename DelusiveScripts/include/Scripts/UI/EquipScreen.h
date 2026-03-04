@@ -2,6 +2,7 @@
 #include <Delusive/Scripting/UIScript.h>
 #include <Delusive/Runtime/Utils/UUID.h>
 #include <Delusive/Runtime/Talismans/Talisman.h>
+#include <Delusive/Runtime/Core/IDLink.h>
 #include <optional>
 
 class UIElement;
@@ -10,6 +11,8 @@ class DelusiveInventory;
 
 class EquipScreen : public UIScript {
 public:
+    void RegisterProperties() override;
+
     std::string GetType() const override { return "EquipScreen"; }
 
     void OnInit() override;
@@ -19,9 +22,9 @@ public:
     void OnClick(UIScriptContainer* clicked) override {}; //idk what this is supposed to be
 
 private:
-    UUID availableContainerID;
+    DelusiveIDLink availableContainerID;
     UIRepeatContainer* availableContainer = nullptr;
-    UUID equippedContainerID;
+    DelusiveIDLink equippedContainerID;
     UIRepeatContainer* equippedContainer = nullptr;
     DelusiveInventory* inventoryData = nullptr;
 

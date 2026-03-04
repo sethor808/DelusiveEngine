@@ -273,9 +273,6 @@
     <ClCompile Include="src\Delusive\Runtime\Rendering\TextureManager.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\UI\UIEquipScreen.cpp">
-      <Filter>engine\ui\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
@@ -599,7 +596,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIButton.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UICanvas.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIElement.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UIEquipScreen.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIImage.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UILabel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />

@@ -1,7 +1,9 @@
 #pragma once
 #include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/Scripting/ScriptManager.h>
 
 class UIScript;
+struct DelusiveUIScript;
 
 class UIScriptContainer : public UIElement {
 public:
@@ -10,22 +12,18 @@ public:
     UIScriptContainer& operator=(const UIScriptContainer&) = delete;
     UIScriptContainer(UIScriptContainer&&) noexcept = default;
     UIScriptContainer& operator=(UIScriptContainer&&) noexcept = default;
-    UIScriptContainer(DelusiveRenderer&);
+
+    UIScriptContainer(DelusiveRenderer&, ScriptManager&);
 
     void SetScript(std::unique_ptr<UIScript>);
-    UIScript* GetScript() const { return script.get(); }
+    DelusiveUIScript* GetScriptContainer() const { return scriptContainer.get(); }
     void Update(float) override;
-
-    //For scripts
-    void SetBinding(const std::string& name, const UUID& id);
-    bool HasBinding(const std::string& name) const;
-    UUID GetBinding(const std::string& name) const;
 
 	std::unique_ptr<UIElement> Clone() const;
 	const std::string GetType() const { return "UIScriptContainer"; }
     void DrawImGui() override;
-
 private:
-    std::unordered_map<std::string, UUID> bindings;
-    std::unique_ptr<UIScript> script;
+    ScriptManager& scriptManager;
+    std::unique_ptr<DelusiveUIScript> scriptContainer;
+    //std::unique_ptr<UIScript> script;
 };

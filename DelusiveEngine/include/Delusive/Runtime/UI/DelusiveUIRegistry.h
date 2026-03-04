@@ -5,12 +5,17 @@
 #include <memory>
 #include <string>
 
+class UIManager;
+
 class DelusiveUIRegistry {
 public:
 	DelusiveUIRegistry(const DelusiveUIRegistry&) = delete;
 	DelusiveUIRegistry() = delete;
 	DelusiveUIRegistry(DelusiveRenderer&);
 	~DelusiveUIRegistry() { SaveAll(); }
+
+    void LinkManager(UIManager* manager) { owner = manager; }
+    UIManager* GetManager() { return owner; }
 
 	void LoadAll() { LoadFromFile(registryFile); }
 	void SaveAll() const {SaveToFile(registryFile);}
@@ -27,6 +32,7 @@ public:
 
 private:
 	DelusiveRenderer& renderer;
+    UIManager* owner;
 	inline static const std::string registryFile = CANVAS_DATA;
 	std::unordered_map<std::string, std::unique_ptr<UICanvas>> canvases;
 };

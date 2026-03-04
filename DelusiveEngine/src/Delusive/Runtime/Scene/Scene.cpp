@@ -7,11 +7,16 @@
 Scene::Scene(DelusiveRenderer& _renderer)
 	: renderer(_renderer), name("New Scene"), camera(nullptr)
 {
-    inventoryLink = gameManager->GetInventoryLink();
+    //inventoryLink = gameManager->GetInventoryLink();
 }
 
 Scene::~Scene() {
 
+}
+
+void Scene::LinkGameManager(GameManager* gm) {
+    gameManager = gm;
+    inventoryLink = gameManager->GetInventoryLink();
 }
 
 std::unique_ptr<Scene> Scene::Clone() {
@@ -145,6 +150,7 @@ void Scene::ClearAgents() {
 
 void Scene::AddSystem(std::unique_ptr<SceneSystem> sys) {
 	sys->LinkScene(this);
+    sys->Init();
 	systems.push_back(std::move(sys));
 }
 
@@ -346,8 +352,9 @@ bool Scene::LoadFromFile(const std::string& path) {
 			if (type == "PathfindingSystem") sys = std::make_unique<PathfindingSystem>(renderer);
 			else if (type == "UIManager") sys = std::make_unique<UIManager>(renderer);
 
-			sys->Deserialize(in);
-			AddSystem(std::move(sys));
+            SceneSystem* link = sys.get();
+            AddSystem(std::move(sys));
+			link->Deserialize(in);
 		}
 	}
 

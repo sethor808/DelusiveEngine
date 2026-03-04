@@ -1,10 +1,18 @@
 #include <Scripts/UI/EquipScreen.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/UI/UIScriptContainer.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Agents/PlayerAgent.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/UI/UIImage.h>
+
+void EquipScreen::RegisterProperties() {
+    UIScript::RegisterProperties();
+
+    registry->Register("availableContainerID", &availableContainerID);
+    registry->Register("equippedContainerID", &equippedContainerID);
+}
 
 bool EquipScreen::ReadyCheck() {
     //Make sure element is linked
@@ -25,19 +33,12 @@ bool EquipScreen::ReadyCheck() {
     
     //Check UUIDs for Necessary UI Elements
     if (!availableContainer) {
-        availableContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID));
+        availableContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID.id));
         if (!availableContainer) return false;
     }
     if (!equippedContainer) {
-        equippedContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID));
+        equippedContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID.id));
         if (!equippedContainer) return false;
-    }
-
-    if (!rootElement->HasBinding("AvailableList")) {
-        rootElement->SetBinding("AvailableList", availableContainerID);
-    }
-    if (!rootElement->HasBinding("EquippedSlots")) {
-        rootElement->SetBinding("EquippedSlots", equippedContainerID);
     }
 
     return true;

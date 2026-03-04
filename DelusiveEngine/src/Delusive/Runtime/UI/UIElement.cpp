@@ -136,7 +136,7 @@ void UIElement::DrawImGui() {
     if (ImGui::BeginPopup("AddUIElementPopup")) {
         std::string type = DelusiveUI::DrawUIElementAddMenu();
         if (!type.empty()) {
-            auto newElement = DelusiveUI::CreateUIElementByType(type, renderer);
+            auto newElement = DelusiveUI::CreateUIElementByType(type, renderer, parentCanvas->GetScriptManager());
             if (newElement) {
                 newElement->LinkCanvas(parentCanvas);
                 children.push_back(std::move(newElement));
@@ -179,13 +179,16 @@ void UIElement::Deserialize(std::istream& in) {
             iss >> discard >> typeToken;
             if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
-			std::unique_ptr<UIElement> child = DelusiveUI::CreateUIElementByType(typeToken, renderer);
+            if (parentCanvas) {
+                std::unique_ptr<UIElement> child = DelusiveUI::CreateUIElementByType(typeToken, renderer, parentCanvas->GetScriptManager());
 
-            if (child) {
-                child->Deserialize(in);
-                child->LinkCanvas(parentCanvas);
-                children.push_back(std::move(child));
+                if (child) {
+                    child->Deserialize(in);
+                    child->LinkCanvas(parentCanvas);
+                    children.push_back(std::move(child));
+                }
             }
+
             continue;
         }
     }

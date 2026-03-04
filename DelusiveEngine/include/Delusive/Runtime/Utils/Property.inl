@@ -14,9 +14,9 @@
 #include <iomanip>
 #include <algorithm>
 
-// ----------------------
+#pragma region Property declaration
+
 // Property<T> Template
-// ----------------------
 template<typename T>
 class Property : public PropertyBase {
     static constexpr bool is_scalar =
@@ -41,7 +41,8 @@ class Property : public PropertyBase {
         std::is_same_v<T, DelusiveFont> ||
         std::is_same_v<T, DelusiveUIPrototype> ||
         std::is_same_v<T, DelusiveIDLink> ||
-        std::is_same_v<T, DelusiveScript>;
+        std::is_same_v<T, DelusiveScript> ||
+        std::is_same_v<T, DelusiveUIScript>;
 
     static_assert(
         is_scalar || is_vector || is_custom,
@@ -49,11 +50,15 @@ class Property : public PropertyBase {
         );
 
     T* value;
+
+#pragma endregion
+
 public:
     Property(const std::string& n, T* val) : value(val) {
         name = n;
     }
 
+#pragma region Serialize
     void Serialize(std::ostream& out) const override {
         if constexpr (is_scalar) {
             if constexpr (std::is_same<T, glm::vec2>::value) {
@@ -66,7 +71,7 @@ public:
                 out << value->x << " " << value->y << " " << value->z << " " << value->w;
             }
             else if constexpr (std::is_same_v<T, std::string>) {
-                out << *value;
+                out << std::quoted(*value);
             }
             else if constexpr (std::is_same_v<T, bool>) {
                 out << (*value ? 1 : 0);
@@ -82,6 +87,9 @@ public:
                 if constexpr (std::is_same_v<typename T::value_type, bool>) {
                     out << ((*value)[i] ? 1 : 0);
                 }
+                else if constexpr (std::is_same_v<typename T::value_type, std::string>) {
+                    out << std::quoted((*value)[i]);
+                }
                 else {
                     out << (*value)[i];
                 }
@@ -95,6 +103,15 @@ public:
                 out << value->fontSize << " " << std::quoted(value->fontPath);
             }
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
+                out << value->scriptName;
+
+                if (value->script) {
+                    out << "\n{\n";
+                    value->script->Serialize(out);
+                    out << "}\n";
+                }
+            }
+            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
                 out << value->scriptName;
 
                 if (value->script) {
@@ -118,7 +135,9 @@ public:
             }
         }
     }
+#pragma endregion
 
+#pragma region Deserialize
     void Deserialize(std::istream& in) override {
         if constexpr (is_scalar) {
             if constexpr (std::is_same<T, glm::vec2>::value) {
@@ -131,10 +150,12 @@ public:
                 in >> value->x >> value->y >> value->z >> value->w;
             }
             else if constexpr (std::is_same_v<T, std::string>) {
-                std::string temp;
-                std::getline(in, temp);
-                if (!temp.empty() && temp[0] == ' ') temp.erase(0, 1);
-                *value = temp;
+                if (in.peek() == '"') {
+                    in >> std::quoted(*value);
+                }
+                else {
+                    in >> *value; // backward compatibility
+                }
             }
             else if constexpr (std::is_same_v<T, bool>) {
                 int tmp;
@@ -156,7 +177,7 @@ public:
                     (*value)[i] = (tmp != 0);
                 }
                 else if constexpr (std::is_same_v<typename T::value_type, std::string>) {
-                    in >> (*value)[i];
+                    in >> std::quoted((*value)[i]);
                 }
                 else {
                     in >> (*value)[i];
@@ -171,10 +192,8 @@ public:
                 in >> value->fontSize >> std::quoted(value->fontPath);
             }
             else if constexpr (std::is_same_v<T, DelusiveScript>) {
-
                 // If script not yet created, this is the inline call
                 if (!value->script) {
-
                     in >> value->scriptName;
 
                     if (value->manager && !value->scriptName.empty()) {
@@ -184,6 +203,19 @@ public:
                 }
                 else {
                     // Script already exists then this is the block
+                    value->script->Deserialize(in);
+                }
+            }
+            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
+                if (!value->script) {
+                    in >> value->scriptName;
+
+                    if (value->manager && !value->scriptName.empty()) {
+                        value->script =
+                            value->manager->CreateUIScript(value->scriptName);
+                    }
+                }
+                else {
                     value->script->Deserialize(in);
                 }
             }
@@ -224,6 +256,9 @@ public:
         }
     }
 
+#pragma endregion
+
+#pragma region DrawImGui
     void DrawImGui() override {
         if constexpr (is_scalar) {
             if constexpr (std::is_same<T, float>::value) {
@@ -394,6 +429,54 @@ public:
                     value->script->DrawImGui();
                 }
             }
+            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
+                if (!value->manager) {
+                    ImGui::Text("No ScriptManager available");
+                    return;
+                }
+                //TODO: Ensure this works with UI Scripts not behaviour Scripts
+                std::vector<std::string> scriptNames;
+                value->manager->GetAvailableUIScripts(scriptNames);
+
+                // Find currently selected index
+                int currentIndex = -1;
+                for (int i = 0; i < (int)scriptNames.size(); i++) {
+                    if (scriptNames[i] == value->scriptName) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+
+                if (ImGui::BeginCombo(name.c_str(),
+                    currentIndex >= 0 ? scriptNames[currentIndex].c_str() : "<None>"))
+                {
+                    for (int i = 0; i < (int)scriptNames.size(); i++) {
+                        bool isSelected = (i == currentIndex);
+                        if (ImGui::Selectable(scriptNames[i].c_str(), isSelected)) {
+                            value->scriptName = scriptNames[i];
+
+                            // Recreate the script instance
+                            if (value->manager) {
+                                value->script =
+                                    value->manager->CreateEnemyLogicScript(scriptNames[i]);
+                                value->newScript = true;
+                                //ScriptComponent can later patch in the owner
+                            }
+                        }
+                        if (isSelected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+
+                if (value->script) {
+                    ImGui::Separator();
+                    ImGui::Text("Script Parameters");
+
+                    value->script->DrawImGui();
+                }
+
+            }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
                 ImGui::SeparatorText(name.c_str());
                 if (!value->element) {
@@ -437,10 +520,9 @@ public:
         }
     }
 };
+#pragma endregion
 
-// ----------------------
 // Registry::Register<T>
-// ----------------------
 template<typename T>
 void PropertyRegistry::Register(const std::string& name, T* var) {
     for (auto& prop : properties) {

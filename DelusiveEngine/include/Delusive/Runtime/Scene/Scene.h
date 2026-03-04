@@ -34,7 +34,8 @@ public:
 	bool HasCamera() const;
 
 	//Ownership methods
-	void SetGameManager(GameManager* gm) { gameManager = gm; }
+    void LinkGameManager(GameManager*);
+    bool HasGameManager() const { if (gameManager) return true; return false; }
 	GameManager* GetGameManager() const { return gameManager; }
 	ScriptManager& GetScriptManager() const;
     DelusiveInventory* GetInventoryLink() { return inventoryLink; }

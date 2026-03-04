@@ -11,6 +11,7 @@ class UIManager;
 class PropertyRegistry;
 class DelusiveRenderer;
 class PlayerAgent;
+class ScriptManager;
 
 class UICanvas {
 public:
@@ -31,6 +32,7 @@ public:
 
 	void LinkManager(UIManager* manager) { uiManager = manager; }
 	void DelinkManager() { uiManager = nullptr; }
+    ScriptManager& GetScriptManager() const;
 	PlayerAgent* FetchPlayer() const;
 	void Update(float);
 	void Draw(const glm::mat4&);

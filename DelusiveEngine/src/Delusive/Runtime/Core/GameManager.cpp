@@ -11,8 +11,8 @@ void GameManager::Init() {
     scriptManager.Init();
     isPlaying = false;
     activeScene = &editorScene;
-    editorScene.SetGameManager(this);
-	playScene.SetGameManager(this);
+    editorScene.LinkGameManager(this);
+	playScene.LinkGameManager(this);
     inventory.Link(this);
 }
 

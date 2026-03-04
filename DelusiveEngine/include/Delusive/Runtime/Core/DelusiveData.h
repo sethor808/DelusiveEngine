@@ -6,6 +6,7 @@
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Scripting/BehaviourScript.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
+#include <Delusive/Scripting/UIScript.h>
 #include <Delusive/Runtime/Utils/UUID.h>
 #include <Delusive/Runtime/UI/UIElement.h>
 #include <memory>
@@ -190,6 +191,13 @@ struct DelusiveScript {
     bool newScript = true;
     std::unique_ptr<BehaviourScript> script;
 	ScriptManager* manager = nullptr;
+};
+
+struct DelusiveUIScript {
+    std::string scriptName;
+    bool newScript = true;
+    std::unique_ptr<UIScript> script;
+    ScriptManager* manager = nullptr;
 };
 
 struct DelusiveUIElement {

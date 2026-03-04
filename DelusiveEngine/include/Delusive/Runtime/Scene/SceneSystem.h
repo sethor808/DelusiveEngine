@@ -12,11 +12,13 @@ class SceneSystem {
 public:
 	SceneSystem() = delete;
 	SceneSystem(DelusiveRenderer&);
+    SceneSystem(DelusiveRenderer&, Scene*);
 	virtual ~SceneSystem();
 
 	virtual void LinkScene(Scene* _scene) { scene = _scene; }
 	virtual Scene* GetScene() const { return scene; }
 	virtual PlayerAgent* FetchPlayer() const;
+    virtual void Init() {}
 
 	virtual void RegisterProperties();
 

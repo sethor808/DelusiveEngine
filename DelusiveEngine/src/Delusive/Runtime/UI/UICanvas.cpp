@@ -38,6 +38,13 @@ std::unique_ptr<UICanvas> UICanvas::Clone() const {
 	return copy;
 }
 
+ScriptManager& UICanvas::GetScriptManager() const {
+    if (uiManager != nullptr) {
+        return uiManager->GetScriptManager();
+    }
+    throw std::runtime_error("UICanvas::GetScriptManager() - UIManager is null");
+}
+
 void UICanvas::Update(float deltaTime) {
 	if (!active) return;
 	for (auto& element : elements) {
@@ -105,7 +112,7 @@ void UICanvas::DrawImGui() {
 	if (ImGui::BeginPopup("AddUIElementPopup")) {
 		std::string type = DelusiveUI::DrawUIElementAddMenu();
 		if (!type.empty()) {
-			auto newElement = DelusiveUI::CreateUIElementByType(type, renderer);
+			auto newElement = DelusiveUI::CreateUIElementByType(type, renderer, uiManager->GetScriptManager());
 			if (newElement) {
 				AddElement(std::move(newElement));
 			}
@@ -167,7 +174,7 @@ void UICanvas::Deserialize(std::istream& in) {
 			// strip trailing ']' if present
 			if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
 
-			std::unique_ptr<UIElement> elem = DelusiveUI::CreateUIElementByType(typeToken, renderer);
+			std::unique_ptr<UIElement> elem = DelusiveUI::CreateUIElementByType(typeToken, renderer, uiManager->GetScriptManager());
 
 			if (elem) {
 				// Let the element deserialize itself (it will consume until [/UIElement])

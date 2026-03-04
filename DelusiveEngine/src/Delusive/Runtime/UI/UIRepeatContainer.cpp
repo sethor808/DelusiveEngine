@@ -3,6 +3,7 @@
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 
 UIRepeatContainer::UIRepeatContainer(DelusiveRenderer& renderer)
@@ -73,7 +74,7 @@ void UIRepeatContainer::DrawImGui() {
 		if (ImGui::BeginPopup("AddPrototypePopup")) {
 			std::string type = DelusiveUI::DrawUIElementAddMenu();
 			if (!type.empty()) {
-				auto newProto = DelusiveUI::CreateUIElementByType(type, renderer);
+				auto newProto = DelusiveUI::CreateUIElementByType(type, renderer, parentCanvas->GetScriptManager());
 				if (newProto) {
 					newProto->LinkCanvas(parentCanvas);
 					prototype->element = std::move(newProto);

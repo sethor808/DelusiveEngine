@@ -9,6 +9,12 @@ SceneSystem::SceneSystem(DelusiveRenderer& _renderer)
     RegisterProperties();
 }
 
+SceneSystem::SceneSystem(DelusiveRenderer& _renderer, Scene* _scene)
+    : SceneSystem(_renderer)
+{
+    this->scene = _scene;
+}
+
 SceneSystem::~SceneSystem() = default;
 
 void SceneSystem::RegisterProperties() {

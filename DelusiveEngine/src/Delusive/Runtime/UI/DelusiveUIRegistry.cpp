@@ -5,7 +5,7 @@
 DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer) 
 	: renderer(_renderer)
 {
-	LoadAll();
+
 }
 
 void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
@@ -26,6 +26,7 @@ void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
 			if (line == "[UICanvas]") break;
 		}
 		auto canvas = std::make_unique<UICanvas>(renderer);
+        canvas->LinkManager(owner);
 		canvas->Deserialize(in);
 		canvases[canvas->GetName()] = std::move(canvas);
 	}
