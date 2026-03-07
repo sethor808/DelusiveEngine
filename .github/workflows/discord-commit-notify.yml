@@ -1,0 +1,30 @@
+name: Notify Discord on push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get commit info
+      id: commit
+      run: |
+        echo "COMMITS<<EOF" >> $GITHUB_ENV
+        git log -1 --pretty=format:'**%h** - %an: %s%n<%H>' >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Post to Discord
+      uses: actions/http-client@v2
+      with:
+        url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        method: POST
+        headers: |
+          Content-Type: application/json
+        body: |
+          {
+            "content": "New commit pushed to **${GITHUB_REF#refs/heads/}** branch!\n$COMMITS"
+          }
