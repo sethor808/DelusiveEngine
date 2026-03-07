@@ -12,7 +12,7 @@ public:
 	DelusiveUIRegistry(const DelusiveUIRegistry&) = delete;
 	DelusiveUIRegistry() = delete;
 	DelusiveUIRegistry(DelusiveRenderer&);
-	~DelusiveUIRegistry() { SaveAll(); }
+    ~DelusiveUIRegistry() = default;
 
     void LinkManager(UIManager* manager) { owner = manager; }
     UIManager* GetManager() { return owner; }

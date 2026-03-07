@@ -59,6 +59,7 @@ namespace DelusiveEngine {
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         (void)io;
+
         io.Fonts->AddFontDefault()->Scale = 1.5f;
         ImGui::StyleColorsDark();
 
@@ -124,7 +125,8 @@ namespace DelusiveEngine {
             else
                 cam = editorCamPtr;
 
-            if (cam) {
+            ImGuiIO& io = ImGui::GetIO();
+            if (cam && !io.WantCaptureMouse) {
                 cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, scrollDelta);
             }
 

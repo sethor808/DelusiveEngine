@@ -18,6 +18,7 @@ public:
 	std::string GetType() const { return "UIManager"; }
 	void RegisterProperties() override;
 
+    void GrabCanvasNames();
 	void SetCanvasActive(const std::string&);
 
 	void Update(float) override;
@@ -37,4 +38,5 @@ private:
 	UICanvas* activeCanvas = nullptr;
 	std::string activeCanvasName;
 	std::vector<std::string> canvasList;
+    std::vector<UICanvas*> canvases;
 };

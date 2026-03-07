@@ -105,7 +105,7 @@ name="NewPathfindingSystem"
 [/System]
 [System UIManager]
 name="NewUIManager"
-activeCanvasName="Canvas_1"
-canvasList=2 "HP Display" "Canvas_1"
+activeCanvasName="Equip Screen"
+canvasList=1 "Equip Screen"
 [/System]
 [/Scene]

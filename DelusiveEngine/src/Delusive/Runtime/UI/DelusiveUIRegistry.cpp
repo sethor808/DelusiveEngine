@@ -3,8 +3,8 @@
 #include <fstream>
 #include <iostream>
 
-DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer) 
-	: renderer(_renderer)
+DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer)
+    : renderer(_renderer), owner(nullptr)
 {
 
 }

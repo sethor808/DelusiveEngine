@@ -1,12 +1,37 @@
-1
+2
 [UICanvas]
-name="Test Canvas"
-[UIElement UIImage]
-id=3729e890bbfdfc34-415c7c243a0c317e
-name="UIImage"
+name="Equip Screen"
+[UIElement UIRepeatContainer]
+id=dbf682c90514dbaa-c3bfd59e606e87d0
+name="New UIRepeatContainer"
 enabled=1
 position=0 0
 size=1 1
+count=1
+rows=1
+spacing=0
+[UIElement UIButton]
+id=c451a0daf5348f84-6e5aa164b92d9c50
+name=""
+enabled=1
+position=0 0
+size=1 1
+Label=""
+ButtonTexture=../assets/ui/default_button.png
+Font=16 "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
+FontColor=1 1 1 1
+TextOffset=8 8
+[/UIElement]
+[UIElement UIImage]
+id=9a2c62e38d758b50-b263704f7d31c402
+name="UIImage"
+enabled=1
+position=-3.9 0
+size=1 1
 textureData=../assets/sprites/star.jpg
 [/UIElement]
+[/UIElement]
+[/UICanvas]
+[UICanvas]
+name="Health Display"
 [/UICanvas]

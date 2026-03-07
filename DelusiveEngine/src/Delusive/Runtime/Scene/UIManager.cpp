@@ -80,75 +80,102 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 }
 
 void UIManager::DrawImGui() {
-    ImGui::Text("UIManager");
+    ImGui::Text("UI Manager");
     ImGui::Separator();
 
-    // Active canvas selection
-    auto allNames = uiRegistry.GetAllNames();
-    if (!canvasList.empty()) {
-        if (ImGui::BeginCombo("Active Canvas", activeCanvasName.empty() ? "<none>" : activeCanvasName.c_str())) {
-            for (const auto& name : canvasList) {
-                bool isSelected = (activeCanvasName == name);
-                if (ImGui::Selectable(name.c_str(), isSelected)) {
-                    SetCanvasActive(name);
-                }
-                if (isSelected) ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
+    // ACTIVE CANVAS COMBO
+    if (ImGui::BeginCombo("Active Canvas",
+        activeCanvas ? activeCanvas->GetName().c_str() : "<none>"))
+    {
+        for (auto canvas : canvases)
+        {
+            bool selected = (canvas == activeCanvas);
+
+            if (ImGui::Selectable(canvas->GetName().c_str(), selected))
+                activeCanvas = canvas;
+
+            if (selected)
+                ImGui::SetItemDefaultFocus();
         }
-    }
-    else {
-        ImGui::TextDisabled("No canvases assigned.");
+
+        ImGui::EndCombo();
     }
 
     ImGui::Separator();
 
-    // List assigned canvases
-    ImGui::Text("Canvas List:");
-    for (size_t i = 0; i < canvasList.size(); ++i) {
-        ImGui::PushID(static_cast<int>(i));
-        ImGui::Text("%s", canvasList[i].c_str());
-        ImGui::SameLine();
-        if (ImGui::Button("Remove")) {
-            if (activeCanvasName == canvasList[i]) {
-                Reset(); // active cleared
+    // CANVAS TABLE
+    if (ImGui::BeginTable("CanvasTable", 2))
+    {
+        for (size_t i = 0; i < canvases.size(); i++)
+        {
+            UICanvas* canvas = canvases[i];
+
+            ImGui::TableNextRow();
+
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("%s", canvas->GetName().c_str());
+
+            ImGui::TableSetColumnIndex(1);
+            if (ImGui::SmallButton(("Remove##" + std::to_string(i)).c_str()))
+            {
+                canvases.erase(canvases.begin() + i);
+                break;
             }
-            canvasList.erase(canvasList.begin() + i);
-            ImGui::PopID();
-            break;
         }
-        ImGui::PopID();
+
+        ImGui::EndTable();
     }
 
-    // Add canvases (from registry or new)
-    if (ImGui::Button("Add Canvas")) {
+    ImGui::Separator();
+
+    // ADD CANVAS
+    if (ImGui::Button("Add Canvas"))
         ImGui::OpenPopup("AddCanvasPopup");
-    }
-    if (ImGui::BeginPopup("AddCanvasPopup")) {
-        for (const auto& name : allNames) {
-            if (std::find(canvasList.begin(), canvasList.end(), name) == canvasList.end()) {
-                if (ImGui::MenuItem(name.c_str())) {
-                    canvasList.push_back(name);
-                    ImGui::CloseCurrentPopup();
-                }
+
+    if (ImGui::BeginPopup("AddCanvasPopup"))
+    {
+        auto names = uiRegistry.GetAllNames();
+
+        // ADD EXISTING
+        for (auto& name : names)
+        {
+            if (ImGui::MenuItem(name.c_str()))
+            {
+                if (auto canvas = uiRegistry.Get(name))
+                    canvases.push_back(canvas);
+
+                ImGui::CloseCurrentPopup();
             }
         }
-        if (ImGui::MenuItem("New Canvas")) {
-            std::string newName = "Canvas_" + std::to_string(allNames.size());
+
+        // CREATE NEW
+        if (ImGui::MenuItem("New Canvas"))
+        {
+            std::string newName =
+                "Canvas_" + std::to_string(names.size());
+
             auto newCanvas = std::make_unique<UICanvas>(renderer);
             newCanvas->SetName(newName);
+
+            UICanvas* ptr = newCanvas.get();
+
             uiRegistry.Register(std::move(newCanvas));
-            canvasList.push_back(newName);
+
+            canvases.push_back(ptr);
+
             ImGui::CloseCurrentPopup();
         }
+
         ImGui::EndPopup();
     }
 
     ImGui::Separator();
 
-    // Show the active canvas inspector
-    if (activeCanvas) {
-        if (ImGui::CollapsingHeader("Active Canvas Inspector")) {
+    // INSPECTOR
+    if (activeCanvas)
+    {
+        if (ImGui::CollapsingHeader("Canvas Inspector"))
+        {
             activeCanvas->DrawImGui();
         }
     }
@@ -173,17 +200,31 @@ std::unique_ptr<SceneSystem> UIManager::Clone() const {
 
 void UIManager::SaveToFile(std::ofstream& out) const {
     uiRegistry.SaveAll();
-	out << "[UIManager]\n";
 
-	out << "ActiveCanvas=" << activeCanvasName << "\n";
-	out << "CanvasList=";
-	for (size_t i = 0; i < canvasList.size(); ++i) {
-		out << canvasList[i];
-		if (i < canvasList.size() - 1) out << ",";
-	}
-	out << "\n";
+    // sync runtime pointers serialized names
+    const_cast<UIManager*>(this)->GrabCanvasNames();
 
-	out << "[/UIManager]\n";
+    out << "[UIManager]\n";
+
+    out << "ActiveCanvas=" << activeCanvasName << "\n";
+
+    out << "CanvasList=";
+    for (size_t i = 0; i < canvasList.size(); ++i) {
+        out << canvasList[i];
+        if (i < canvasList.size() - 1) out << ",";
+    }
+
+    out << "\n";
+    out << "[/UIManager]\n";
+}
+
+void UIManager::GrabCanvasNames() {
+    canvasList.clear();
+    for (auto* canvas : canvases) {
+        if (canvas) {
+            canvasList.push_back(canvas->GetName());
+        }
+    }
 }
 
 void UIManager::Serialize(std::ostream& out) const {
@@ -192,11 +233,19 @@ void UIManager::Serialize(std::ostream& out) const {
 
 void UIManager::Deserialize(std::istream& in) {
 	canvasList.clear();
+    canvases.clear();
 	activeCanvasName.clear();
 
 	SceneSystem::Deserialize(in);
 
-	if (!activeCanvasName.empty() || activeCanvasName != "") {
+    // rebuild pointer list
+    for (const auto& name : canvasList) {
+        if (auto canvas = uiRegistry.Get(name)) {
+            canvases.push_back(canvas);
+        }
+    }
+
+	if (!activeCanvasName.empty()) {
 		SetCanvasActive(activeCanvasName);
 	}
 }

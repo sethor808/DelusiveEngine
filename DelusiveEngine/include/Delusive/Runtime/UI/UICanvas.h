@@ -47,9 +47,7 @@ public:
 
 	//Serialize
 	void SerializeToFile() const;
-	std::unique_ptr<UICanvas> LoadFromFile(const std::string&);
 	void Serialize(std::ostream&) const;
-	void Deserialize(std::istream&); //OLD TO BE REMOVED
     void Deserialize(DelusiveParser::DataBlock&);
 
 	void Reset();

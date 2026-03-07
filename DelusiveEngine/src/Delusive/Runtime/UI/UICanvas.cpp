@@ -83,7 +83,11 @@ PlayerAgent* UICanvas::FetchPlayer() const {
 }
 
 void UICanvas::DrawImGui() {
+    ImGui::SeparatorText("Canvas");
+
 	registry->DrawImGui();
+
+    ImGui::SeparatorText("Elements");
 
 	for (size_t i = 0; i < elements.size(); ++i) {
 		ImGui::PushID(static_cast<int>(i));
@@ -122,26 +126,6 @@ void UICanvas::DrawImGui() {
 	}
 }
 
-void UICanvas::SerializeToFile() const {
-	return;
-	/*
-	if (filePath.empty()) return;
-	std::ofstream out(filePath, std::ios::binary);
-	if (out) {
-		Serialize(out);
-	}
-	*/
-}
-
-std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path) {
-	std::ifstream in(path, std::ios::binary);
-	if (!in) return nullptr;
-
-	auto canvas = std::make_unique<UICanvas>(renderer);
-	canvas->Deserialize(in);
-	return canvas;
-}
-
 void UICanvas::Serialize(std::ostream& out) const {
 	out << "[UICanvas]\n";
 	registry->Serialize(out);
@@ -176,75 +160,6 @@ void UICanvas::Deserialize(DelusiveParser::DataBlock& block) {
             elements.push_back(std::move(element));
         }
     }
-}
-
-void UICanvas::Deserialize(std::istream& in) {
-    //possibly old code
-	//std::string line;
-	//while (std::getline(in, line)) {
-	//	if (line.empty()) continue;
-
-	//	if (line == "[/uicanvas]") {
-	//		break;
-	//	}
-
-	//	// expecting line like: [uielement uilabel]
-	//	if (line.rfind("[uielement", 0) == 0) {
-	//		std::istringstream iss(line);
-	//		std::string discard, typetoken;
-	//		iss >> discard >> typetoken; // discard == "[uielement", typetoken == "uilabel]"
-
-	//		// strip trailing ']' if present
-	//		if (!typetoken.empty() && typetoken.back() == ']') typetoken.pop_back();
-
-	//		std::unique_ptr<uielement> elem = delusiveui::createuielementbytype(typetoken, renderer, uimanager->getscriptmanager());
-
-	//		if (elem) {
-	//			// let the element deserialize itself (it will consume until [/uielement])
- //               uielement* link = elem.get();
- //               addelement(std::move(elem));
-	//			link->deserialize(in);
-	//			
-	//		}
-	//		else {
-	//			// unknown type; skip until [/uielement]
-	//			while (std::getline(in, line)) {
-	//				if (line == "[/uielement]") break;
-	//			}
-	//		}
-	//	}
-	//	else {
-	//		std::string key, value;
-	//		auto pos = line.find('=');
-	//		if (pos != std::string::npos) {
-	//			key = line.substr(0, pos);
-	//			value = line.substr(pos + 1);
-	//		}
-	//		else {
-	//			std::istringstream iss(line);
-	//			iss >> key;
-	//			std::getline(iss, value);
-	//			if (!value.empty() && value[0] == ' ') value.erase(0, 1); // trim leading space
-	//		}
-
-	//		if (key.empty()) continue;
-
-	//		// try registry first
-	//		std::istringstream valstream(value);
-	//		bool handled = false;
-	//		for (auto& p : registry->properties) {
-	//			if (p->name == key) {
-	//				p->deserialize(valstream);
-	//				handled = true;
-	//				break;
-	//			}
-	//		}
-	//		if (handled) continue;
-	//		// if we get here, it's an unexpected line inside canvas; ignore or log.
-	//		std::cerr << "unexpected value within [uicanvas]: " << value << std::endl;
-	//	}
-	//	
-	//}
 }
 
 void UICanvas::Reset() {
