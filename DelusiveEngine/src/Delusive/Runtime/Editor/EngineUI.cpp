@@ -372,9 +372,12 @@ void EngineUI::RenderTopBar(Scene& scene) {
 #pragma region SceneEditor
 void EngineUI::RenderSceneEditor(Scene& scene) {
     float topBarHeight = ImGui::GetFrameHeight();
+    /*
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.3f, ImGui::GetIO().DisplaySize.y - topBarHeight), ImGuiCond_Always);
     ImGui::Begin("Scene Editor Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    */
+    ImGui::Begin("SceneEditorPanel");
 
     if (ImGui::BeginChild("Hierarchy", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0), true)) {
         ImGui::Text("%s Hierarchy", scene.GetName().c_str());
@@ -632,9 +635,14 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
     }
 
     float topBarHeight = ImGui::GetFrameHeight();
+    /*
+    * OLD BEFORE REDOCKABLES
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.3f, ImGui::GetIO().DisplaySize.y - topBarHeight), ImGuiCond_Always);
     ImGui::Begin("Agent Editor Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    */
+
+    ImGui::Begin("Scene Editor Panel");
 
     auto& agents = scene.GetAgents();
     if (agents.empty()) {

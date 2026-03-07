@@ -58,7 +58,17 @@ namespace DelusiveEngine {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
-        (void)io;
+
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+        ImGui::StyleColorsDark();
+        ImGuiStyle& style = ImGui::GetStyle();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            style.WindowRounding = 0.0f;
+            style.Colors[ImGuiCol_WindowBg].w = 1.0f; // opaque
+        }
 
         io.Fonts->AddFontDefault()->Scale = 1.5f;
         ImGui::StyleColorsDark();
@@ -86,9 +96,15 @@ namespace DelusiveEngine {
             scrollDelta = 0.0f;
 
             // --- Event Polling ---
+            Uint32 mainWindowID = SDL_GetWindowID(window);
             while (SDL_PollEvent(&e)) {
                 ImGui_ImplSDL3_ProcessEvent(&e);
                 if (e.type == SDL_EVENT_QUIT) running = false;
+                if (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
+                    if (e.window.windowID == mainWindowID) {
+                        running = false;
+                    }
+                }
                 else if (e.type == SDL_EVENT_WINDOW_RESIZED) {
                     int newWidth = e.window.data1;
                     int newHeight = e.window.data2;
@@ -142,6 +158,43 @@ namespace DelusiveEngine {
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
+            // --- Docking Root Window (transparent + passthrough) ---
+            ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(main_viewport->Pos);
+            ImGui::SetNextWindowSize(main_viewport->Size);
+            ImGui::SetNextWindowViewport(main_viewport->ID);
+
+            //Building docking windows
+            ImGuiWindowFlags window_flags =
+                ImGuiWindowFlags_MenuBar |
+                ImGuiWindowFlags_NoDocking |
+                ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoBringToFrontOnFocus |
+                ImGuiWindowFlags_NoNavFocus|
+                ImGuiWindowFlags_NoBackground;
+
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(0, 0, 0, 0)); // transparent
+
+            ImGui::Begin("DockSpaceRoot", nullptr, window_flags);
+
+            ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+            ImGui::End();
+
+            ImGui::PopStyleColor();
+            ImGui::PopStyleVar(2);
+
             game.Update(deltaTime);
 
             int width, height;
@@ -161,7 +214,18 @@ namespace DelusiveEngine {
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault(); // safely renders detached windows
+                SDL_GL_MakeCurrent(window, glctx); // restore main context
+            }
+
             SDL_GL_SwapWindow(window);
+        }
+
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            ImGui::DestroyPlatformWindows();
         }
 
         ImGui_ImplOpenGL3_Shutdown();
