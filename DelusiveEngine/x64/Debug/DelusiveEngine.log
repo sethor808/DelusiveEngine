@@ -1,10 +1,37 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(524,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
 C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1129,5): warning MSB8027: Two or more files with the name of imgui.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are ..\include\imgui\imgui.cpp, src\imgui\imgui.cpp.
+  imgui_impl_opengl3.cpp
+  imgui_impl_sdl3.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  DelusiveParser.cpp
+  PropertyDraw.cpp
+  BehaviourScript.cpp
+  UIScript.cpp
   Agent.cpp
-  PlayerAgent.cpp
-  ScriptComponent.cpp
-  GameManager.cpp
+  Animation.cpp
+  AnimatorComponent.cpp
+  BasicTalisman.cpp
+  CameraAgent.cpp
+  Collider.cpp
+  ColliderComponent.cpp
+  ColliderRenderer.cpp
+  Component.cpp
+  Generating Code...
+  Compiling...
   DelusiveEngine.cpp
+  DelusiveInventory.cpp
+  DelusiveRegistry.cpp
+  TalismanFactory.cpp
+  DelusiveUI.cpp
+  DelusiveUIRegistry.cpp
+  DelusiveUtils.cpp
+  EditorInterface.cpp
+  EditorRegistry.cpp
+  EnemyAgent.cpp
   EngineUI.cpp
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1192,31): warning C4311: 'type cast': pointer truncation from 'const _Elem *' to 'int'
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1192,31): warning C4311:         with
@@ -16,12 +43,47 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusi
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1192,31): warning C4302:         [
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1192,31): warning C4302:             _Elem=char
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp(1192,31): warning C4302:         ]
+  EnvironmentAgent.cpp
+  Font.cpp
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Rendering\Font.cpp(67,22): warning C4838: conversion from 'float' to 'GLuint' requires a narrowing conversion
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Rendering\Font.cpp(67,22): warning C4244: 'initializing': conversion from 'float' to 'GLuint', possible loss of data
+  GameManager.cpp
+  HitboxCollider.cpp
+  HurtboxCollider.cpp
+  imgui.cpp
+  PathfindingComponent.cpp
+  PathfindingSystem.cpp
+  PhysicsSystem.cpp
+  Generating Code...
+  Compiling...
+  PlayerAgent.cpp
+  DelusiveRenderer.cpp
   Scene.cpp
   SceneSystem.cpp
-  UIManager.cpp
+  ScriptComponent.cpp
+  ScriptRegistry.cpp
+  Shader.cpp
+  SolidCollider.cpp
+  SpriteComponent.cpp
+  SpriteData.cpp
+  StatsComponent.cpp
+  Talisman.cpp
+  Texture.cpp
+  TextureManager.cpp
+  TriggerCollider.cpp
+  UIButton.cpp
   UICanvas.cpp
-  PropertyDraw.cpp
-  BehaviourScript.cpp
+  UIElement.cpp
+  UIImage.cpp
+  UILabel.cpp
+  Generating Code...
+  Compiling...
+  UIManager.cpp
+  UIPanel.cpp
+  UIRepeatContainer.cpp
+  UIScriptContainer.cpp
+  UITalismanButton.cpp
+  UITalismanDisplay.cpp
   Generating Code...
 x64\Debug\imgui.obj : warning LNK4042: object specified more than once; extras ignored
   DelusiveEngine.vcxproj -> C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\debug_lib\DelusiveEngine.lib

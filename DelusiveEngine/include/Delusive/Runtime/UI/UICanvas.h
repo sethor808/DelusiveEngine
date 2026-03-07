@@ -46,7 +46,6 @@ public:
     UIElement* FindElementByUUID(const UUID& id) { return idManager.Find(id); }
 
 	//Serialize
-	void SerializeToFile() const;
 	void Serialize(std::ostream&) const;
     void Deserialize(DelusiveParser::DataBlock&);
 
