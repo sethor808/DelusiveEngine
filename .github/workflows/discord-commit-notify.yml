@@ -9,6 +9,12 @@ jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
+      - name: Get commit info
+        id: commit
+        run: |
+          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          git log -1 --pretty=format:'**%h** - %an: %s%n<%H>' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Discord notification
         run: |
           curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
@@ -22,7 +28,6 @@ jobs:
                   {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
                   {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
                   {"name": "Commit", "value": "`${{ github.sha }}`", "inline": false},
-                  {"name": "Comment", "value": "`${{github.event"
                 ],
                 "footer": {"text": "Triggered by ${{ github.actor }}"},
                 "timestamp": "${{ github.event.head_commit.timestamp }}"
