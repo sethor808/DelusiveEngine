@@ -9,18 +9,21 @@ jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Get commits
+      - name: Discord notification
         run: |
-          echo "COMMITS<<EOF" >> $GITHUB_ENV
-          git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:'**%h** - %an: %s%n<%H>' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Send Discord notification
-        run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"New commit(s) on **${GITHUB_REF#refs/heads/}**:\n$COMMITS\"}" \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "Deployment Status",
+                "description": "Deployment to production completed!",
+                "color": 3066993,
+                "fields": [
+                  {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+                  {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
+                  {"name": "Commit", "value": "`${{ github.sha }}`", "inline": false}
+                ],
+                "footer": {"text": "Triggered by ${{ github.actor }}"},
+                "timestamp": "${{ github.event.head_commit.timestamp }}"
+              }]
+            }'
