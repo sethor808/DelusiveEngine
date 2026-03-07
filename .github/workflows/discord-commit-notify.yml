@@ -9,22 +9,62 @@ jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Discord notification
+      #Checkout the repository so we can inspect commits
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #Gather all commit info
+      - name: Prepare commit info
+        id: commit_info
         run: |
-          curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "embeds": [{
-                "title": "Deployment Status",
-                "description": "Deployment to production completed!",
-                "color": 3066993,
-                "fields": [
-                  {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
-                  {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
-                  {"name": "Commit", "value": "`${{ github.sha }}`", "inline": false},
-                  {"name": "Message", "value": "`${{ github.event.commits.message }}`", "inline": false}
+          push_count=${{ github.event.commits | length }}
+          echo "push_count=$push_count" >> $GITHUB_OUTPUT
+
+          total_commits=$(git rev-list --count HEAD)
+          echo "total_commits=$total_commits" >> $GITHUB_OUTPUT
+
+          # Collect all commit titles and descriptions
+          commits_summary=""
+          for sha in $(jq -r '.commits[].id' $GITHUB_EVENT_PATH); do
+            full_message=$(git log -1 --pretty=%B $sha)
+            title=$(echo "$full_message" | head -n1)
+            desc=$(echo "$full_message" | tail -n +2 | sed '/^\s*$/d')
+            if [ -z "$desc" ]; then
+              commits_summary+="- $title\n"
+            else
+              commits_summary+="- $title: $desc\n"
+            fi
+          done
+          echo "commits_summary=$commits_summary" >> $GITHUB_OUTPUT
+
+      #Send the Discord notification
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          payload=$(jq -n \
+            --arg summary "${{ steps.commit_info.outputs.commits_summary }}" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg push_count "${{ steps.commit_info.outputs.push_count }}" \
+            --arg total_commits "${{ steps.commit_info.outputs.total_commits }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg timestamp "${{ github.event.head_commit.timestamp }}" \
+            '{
+              embeds: [{
+                title: "Push to branch \($branch)",
+                description: $summary,
+                color: 3066993,
+                fields: [
+                  {name: "Repository", value: $repo, inline: true},
+                  {name: "Commits in push", value: $push_count, inline: true},
+                  {name: "Total commits", value: $total_commits, inline: true}
                 ],
-                "footer": {"text": "Triggered by ${{ github.actor }}"},
-                "timestamp": "${{ github.event.head_commit.timestamp }}"
+                footer: {text: "Triggered by " + $actor},
+                timestamp: $timestamp
               }]
-            }'
+            }')
+          
+          curl -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$payload"
