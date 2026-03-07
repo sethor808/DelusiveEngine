@@ -8,23 +8,19 @@ on:
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Get commit info
-      id: commit
-      run: |
-        echo "COMMITS<<EOF" >> $GITHUB_ENV
-        git log -1 --pretty=format:'**%h** - %an: %s%n<%H>' >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Post to Discord
-      uses: actions/http-client@v2
-      with:
-        url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        method: POST
-        headers: |
-          Content-Type: application/json
-        body: |
-          {
-            "content": "New commit pushed to **${GITHUB_REF#refs/heads/}** branch!\n$COMMITS"
-          }
+      - name: Get commits
+        run: |
+          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:'**%h** - %an: %s%n<%H>' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send Discord notification
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"New commit(s) on **${GITHUB_REF#refs/heads/}**:\n$COMMITS\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
