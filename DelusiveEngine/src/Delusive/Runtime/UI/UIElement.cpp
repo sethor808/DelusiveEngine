@@ -159,7 +159,34 @@ void UIElement::Serialize(std::ostream& out) const{
 	out << "[/UIElement]\n";
 }
 
+void UIElement::Deserialize(DelusiveParser::DataBlock& block) {
+    children.clear();
+
+    if (!parentCanvas) {
+        std::cerr << "[UIElement]::Deserialize called without linking UICanvas." << std::endl;
+        return;
+    }
+
+    registry->Deserialize(block);
+
+    for (auto& child : block.children)
+    {
+        if (child.category == "UIElement")
+        {
+            auto element = DelusiveUI::CreateUIElementByType(child.type, renderer, parentCanvas->GetScriptManager());
+
+            element->LinkCanvas(parentCanvas);
+            element->Deserialize(child);
+
+            children.push_back(std::move(element));
+        }
+    }
+}
+
 void UIElement::Deserialize(std::istream& in) {
+
+    //Possible old code
+    /*
     registry->Deserialize(in); // will stop at first header
 
     if (parentCanvas) {
@@ -192,4 +219,5 @@ void UIElement::Deserialize(std::istream& in) {
             continue;
         }
     }
+    */
 }

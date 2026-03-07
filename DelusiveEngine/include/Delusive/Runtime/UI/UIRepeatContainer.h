@@ -25,6 +25,9 @@ public:
 	float GetSpacing() { return spacing; }
 
 	void RegenerateChildren();
+
+    void Serialize(std::ostream& out) const override;
+    void Deserialize(std::istream& in) override;
 private:
 	int count = 1;
 	int rows = 1;

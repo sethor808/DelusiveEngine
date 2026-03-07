@@ -1,4 +1,5 @@
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <fstream>
 #include <iostream>
 
@@ -9,27 +10,23 @@ DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer)
 }
 
 void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
-	std::ifstream in(path);
-	if (!in) return;
+	std::ifstream file(path);
+    if (!file) {
+        std::cerr << "[DelusiveUIRegistry] Error opening canvas data file." << std::endl;
+        return;
+    }
 
-	size_t count;
-	if (!(in >> count)) return;
-	std::string dummy;
-	std::getline(in, dummy); // consume the rest of the line reliably
+    auto blocks = DelusiveParser::ParseFile(file);
 
-	canvases.clear();
-	for (size_t i = 0; i < count; i++) {
-		std::string line;
-		// Skip until the [UICanvas] header
-		while (std::getline(in, line)) {
-			if (line.empty()) continue;
-			if (line == "[UICanvas]") break;
-		}
-		auto canvas = std::make_unique<UICanvas>(renderer);
-        canvas->LinkManager(owner);
-		canvas->Deserialize(in);
-		canvases[canvas->GetName()] = std::move(canvas);
-	}
+    canvases.clear();
+    for (auto& block : blocks) {
+        if (block.category == "UICanvas") {
+            auto canvas = std::make_unique<UICanvas>(renderer);
+            canvas->LinkManager(owner);
+            canvas->Deserialize(block);
+            canvases[canvas->GetName()] = std::move(canvas);
+        }
+    }
 }
 
 void DelusiveUIRegistry::SaveToFile(const std::string& path) const {

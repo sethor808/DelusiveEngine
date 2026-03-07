@@ -1,7 +1,5 @@
 #pragma once
-#include <string>
-#include <memory>
-#include <vector>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 
 class PropertyBase {
 public:
@@ -18,9 +16,7 @@ public:
 template<typename T>
 class Property;
 
-// ----------------------
 // Registry
-// ----------------------
 class PropertyRegistry {
 public:
     std::vector<std::unique_ptr<PropertyBase>> properties;
@@ -36,6 +32,7 @@ public:
 
     void Serialize(std::ostream& out) const;
     void Deserialize(std::istream& in);
+    void Deserialize(const DelusiveParser::DataBlock&);
     void DrawImGui();
 };
 

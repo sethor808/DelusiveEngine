@@ -2,9 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-// ----------------------
 // Registry Definitions
-// ----------------------
 void PropertyRegistry::Serialize(std::ostream& out) const {
     for (const auto& prop : properties) {
         out << prop->GetName() << "=";
@@ -88,6 +86,19 @@ void PropertyRegistry::Deserialize(std::istream& in) {
                 break;
             }
         }
+    }
+}
+
+void PropertyRegistry::Deserialize(const DelusiveParser::DataBlock& block) {
+    for (auto& prop : properties)
+    {
+        auto it = block.properties.find(prop->GetName());
+
+        if (it == block.properties.end())
+            continue;
+
+        std::istringstream ss(it->second);
+        prop->Deserialize(ss);
     }
 }
 

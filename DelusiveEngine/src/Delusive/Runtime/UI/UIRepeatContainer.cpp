@@ -139,3 +139,25 @@ void UIRepeatContainer::RegenerateChildren() {
 		AddChild(std::move(item));
 	}
 }
+
+void UIRepeatContainer::Serialize(std::ostream& out) const {
+    out << "[UIElement " << this->GetType() << "]\n";
+    registry->Serialize(out);
+
+    // Serialize elements here
+    for (auto& elem : children) {
+        elem->Serialize(out);
+    }
+
+    if (prototype && prototype->element) {
+        out << "[Prototype]\n";
+        prototype->element->Serialize(out);
+        out << "[/Prototype]\n";
+    }
+
+    out << "[/UIElement]\n";
+}
+
+void UIRepeatContainer::Deserialize(std::istream& in) {
+    
+}

@@ -1,29 +1,12 @@
-2
+1
 [UICanvas]
-name="HP Display"
-[UIElement UITalismanDisplay]
-id=d74b4123efb497eb-20995fffb8ce8349
-name=""
+name="Test Canvas"
+[UIElement UIImage]
+id=3729e890bbfdfc34-415c7c243a0c317e
+name="UIImage"
 enabled=1
 position=0 0
 size=1 1
-leftOffset=0
-topOffset=0
-iconSize=32
-spacing=8
-stringSize=5
-stringXOffset=1
-stringYOffset=16
-stringSpacing=2
-[/UIElement]
-[/UICanvas]
-[UICanvas]
-name="Equip Screen"
-[UIElement UIScriptContainer]
-id=b778b0deba32b58e-4bd2b3cb48cb6117
-name=""
-enabled=1
-position=0 0
-size=1 1
+textureData=../assets/sprites/star.jpg
 [/UIElement]
 [/UICanvas]

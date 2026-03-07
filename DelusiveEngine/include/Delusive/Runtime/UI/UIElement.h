@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <vector>
 #include <memory>
@@ -87,7 +88,8 @@ public:
 	
 	virtual void DrawImGui();
 	virtual void Serialize(std::ostream& out) const;
-	virtual void Deserialize(std::istream& in);
+    virtual void Deserialize(DelusiveParser::DataBlock&);
+	virtual void Deserialize(std::istream& in); //OLD TO BE REMOVED
 protected:
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy

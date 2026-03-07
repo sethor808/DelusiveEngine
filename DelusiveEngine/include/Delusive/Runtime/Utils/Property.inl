@@ -127,10 +127,14 @@ public:
                 out << value->id.ToString();
             }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
-                // Write the type name and (optionally) UUID of the element
                 out << value->type;
+
                 if (value->element) {
-                    out << " " << value->element->GetUUID().ToString();
+                    out << "\n{\n";
+
+                    value->element->Serialize(out);
+
+                    out << "}\n";
                 }
             }
         }
@@ -231,26 +235,17 @@ public:
                 value->dirty = true;
             }
             else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
+                if (!value->parentCanvas) return;
+
                 std::string type;
                 in >> type;
+
                 value->type = type;
 
-                // Optionally read UUID if present
-                std::string uuidStr;
-                if (in >> uuidStr) {
-                    // Try parsing as UUID (will fail silently if invalid)
-                    UUID potentialUUID;
-                    potentialUUID.FromString(uuidStr);
-                    value->prototypeUUID = potentialUUID;
-                }
-
-                // Recreate the prototype element (deferred linking allowed)
-                if (!type.empty()) {
-                    value->Create(type, DelusiveRenderer::Get(), nullptr);
-                    if (value->element) {
-                        // Assign stored UUID back if needed
-                        value->element->SetUUID(value->prototypeUUID);
-                    }
+                value->element = DelusiveUI::CreateUIElementByType(value->type, value->parentCanvas->GetRenderer(), value->parentCanvas->GetScriptManager());
+                value->element->LinkCanvas(value->parentCanvas);
+                if (value->element) {
+                    value->element->Deserialize(in);
                 }
             }
         }

@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <vector>
 #include <memory>
@@ -6,6 +7,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Scene/UIUUIDManager.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
+
 
 class UIManager;
 class PropertyRegistry;
@@ -47,7 +49,8 @@ public:
 	void SerializeToFile() const;
 	std::unique_ptr<UICanvas> LoadFromFile(const std::string&);
 	void Serialize(std::ostream&) const;
-	void Deserialize(std::istream&);
+	void Deserialize(std::istream&); //OLD TO BE REMOVED
+    void Deserialize(DelusiveParser::DataBlock&);
 
 	void Reset();
 	void SetName(const std::string& _name) { name = _name; }

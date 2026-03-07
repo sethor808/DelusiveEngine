@@ -299,6 +299,7 @@
     <ClCompile Include="src\Delusive\Runtime\Talismans\TalismanFactory.cpp" />
     <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Utils\PropertyDraw.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Core\DelusiveParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">
@@ -615,6 +616,7 @@
     <ClInclude Include="include\Delusive\Scripting\UIScript.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\IDLink.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\PropertyDraw.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveParser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\DelusiveInternal\Utils\Property.inl" />

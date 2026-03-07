@@ -152,6 +152,7 @@
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Core\DelusiveParser.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Utils\PropertyDraw.cpp" />
     <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
     <ClCompile Include="src\Delusive\Scripting\UIScript.cpp" />
@@ -327,6 +328,7 @@
     <ClInclude Include="include\Delusive\Runtime\Components\TransformComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\Camera.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveData.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveParser.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveRegistry.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\GameManager.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\IDLink.h" />

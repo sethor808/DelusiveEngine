@@ -207,6 +207,7 @@ struct DelusiveUIElement {
 };
 
 struct DelusiveUIPrototype {
+    UICanvas* parentCanvas = nullptr;
     std::string type;
     std::unique_ptr<UIElement> element;
 };
