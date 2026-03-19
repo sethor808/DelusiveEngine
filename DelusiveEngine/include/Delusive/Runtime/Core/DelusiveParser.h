@@ -11,10 +11,13 @@ namespace DelusiveParser {
         std::string type;
 
         std::unordered_map<std::string, std::string> properties;
-
-        std::vector<DataBlock> children;
+        std::unordered_map<std::string, DataBlock> registryProperty;
     };
 
     std::vector<DataBlock> ParseFile(std::istream&);
     bool ReadDataBlock(std::istream&, DataBlock&);
+
+    //Helpers
+    std::string Trim(const std::string&);
+    bool PeekNextIsBlock(std::istream& in);
 }

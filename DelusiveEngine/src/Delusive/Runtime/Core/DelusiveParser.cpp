@@ -16,6 +16,39 @@ std::vector<DelusiveParser::DataBlock> DelusiveParser::ParseFile(std::istream& i
     return blocks;
 }
 
+std::string Trim(const std::string& s)
+{
+    const char* ws = " \t\r\n";
+
+    size_t start = s.find_first_not_of(ws);
+    if (start == std::string::npos)
+        return "";
+
+    size_t end = s.find_last_not_of(ws);
+
+    return s.substr(start, end - start + 1);
+}
+
+bool DelusiveParser::PeekNextIsBlock(std::istream& in) {
+    std::streampos pos = in.tellg();
+
+    std::string line;
+
+    while (std::getline(in, line))
+    {
+        line = Trim(line);
+
+        if (line.empty())
+            continue;
+
+        in.seekg(pos);
+        return line.front() == '[';
+    }
+
+    in.seekg(pos);
+    return false;
+}
+
 bool DelusiveParser::ReadDataBlock(std::istream& in, DataBlock& block) {
     std::string line;
 
@@ -44,22 +77,22 @@ bool DelusiveParser::ReadDataBlock(std::istream& in, DataBlock& block) {
         if (line.empty()) continue;
         if (line == endTag) break;
 
-        if (line.front() == '[' && line[1] != '/')
-        {
-            in.seekg(pos);
-
-            DataBlock child;
-            if (ReadDataBlock(in, child))
-                block.children.push_back(std::move(child));
-
-            continue;
-        }
-
         auto eq = line.find('=');
         if (eq != std::string::npos)
         {
             std::string key = line.substr(0, eq);
             std::string value = line.substr(eq + 1);
+
+            if (value.empty() && PeekNextIsBlock(in))
+            {
+                DataBlock child;
+
+                if (ReadDataBlock(in, child))
+                {
+                    block.registryProperty[key] = std::move(child);
+                }
+                continue;
+            }
 
             block.properties[key] = value;
         }
