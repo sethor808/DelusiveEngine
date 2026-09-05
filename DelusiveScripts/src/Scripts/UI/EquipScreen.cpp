@@ -7,11 +7,44 @@
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/UI/UIImage.h>
 
+EquipScreen::EquipScreen()
+    : UIScript()
+{
+    RegisterProperties();
+}
+
 void EquipScreen::RegisterProperties() {
     UIScript::RegisterProperties();
 
     registry->Register("availableContainerID", &availableContainerID);
     registry->Register("equippedContainerID", &equippedContainerID);
+}
+
+void EquipScreen::Link(UIScriptContainer* root) {
+    UIScript::Link(root);
+    availableContainerID.canvasLink = root->GetCanvas();
+    equippedContainerID.canvasLink = root->GetCanvas();
+}
+
+void EquipScreen::RelocateReferences() {
+    UIScript::RelocateReferences();
+
+    availableContainer = nullptr;
+    equippedContainer = nullptr;
+
+    if (availableContainerID.id.IsValid() && rootElement) {
+        availableContainer = dynamic_cast<UIRepeatContainer*>(rootElement->GetCanvas()->FindElementByUUID(availableContainerID.id));
+    }
+    else {
+        availableContainer = nullptr;
+    }
+
+    if (equippedContainerID.id.IsValid() && rootElement) {
+        equippedContainer = dynamic_cast<UIRepeatContainer*>(rootElement->GetCanvas()->FindElementByUUID(equippedContainerID.id));
+    }
+    else {
+        equippedContainer = nullptr;
+    }
 }
 
 bool EquipScreen::ReadyCheck() {

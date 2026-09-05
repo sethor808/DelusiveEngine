@@ -1,9 +1,9 @@
 #include <Delusive/Runtime/Agents/CameraAgent.h>
-#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <imgui/imgui.h>
 
-CameraAgent::CameraAgent(DelusiveRenderer& renderer)
-	: Agent(renderer)
+CameraAgent::CameraAgent(DelusiveInstance& instance)
+	: Agent(instance)
 {
 	SetName("New Camera");
 }
@@ -13,7 +13,7 @@ std::string CameraAgent::GetType() const{
 }
 
 std::unique_ptr<Agent> CameraAgent::Clone(Scene* scene) const {
-	auto cam = std::make_unique<CameraAgent>(renderer);
+	auto cam = std::make_unique<CameraAgent>(instance);
 	cam->SetName(GetName());
 	cam->SetZoom(zoom);
 	cam->panOffset = panOffset;

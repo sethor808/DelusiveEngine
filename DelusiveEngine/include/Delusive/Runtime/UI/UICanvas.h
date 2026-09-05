@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <vector>
@@ -11,7 +12,6 @@
 
 class UIManager;
 class PropertyRegistry;
-class DelusiveRenderer;
 class PlayerAgent;
 class ScriptManager;
 
@@ -24,7 +24,7 @@ public:
 	UICanvas& operator=(const UICanvas&) = delete;
 	UICanvas(UICanvas&&) noexcept = default;
 	UICanvas& operator=(UICanvas&&) noexcept = default;
-	UICanvas(DelusiveRenderer&);
+	UICanvas(DelusiveInstance&);
 	
 	~UICanvas();
 
@@ -44,10 +44,7 @@ public:
 
 	void AddElement(std::unique_ptr<UIElement>);
     UIElement* FindElementByUUID(const UUID& id) { return idManager.Find(id); }
-
-	//Serialize
-	void Serialize(std::ostream&) const;
-    void Deserialize(DelusiveParser::DataBlock&);
+	std::vector<UIElement*> GetElements() const;
 
 	void Reset();
 	void SetName(const std::string& _name) { name = _name; }
@@ -56,7 +53,7 @@ public:
 	void SetActive(bool);
 private:
 	UIManager* uiManager = nullptr;
-	DelusiveRenderer& renderer;
+    DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;
 	std::string name;
 	bool active = false;

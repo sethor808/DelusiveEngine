@@ -4,12 +4,12 @@
 
 class TriggerCollider : public ColliderComponent {
 public:
-	TriggerCollider(DelusiveRenderer&);
+	TriggerCollider(DelusiveInstance&);
 	TriggerCollider() = delete;
 
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<TriggerCollider>(renderer);
+		return std::make_unique<TriggerCollider>(instance);
 	}
 
 	ColliderType GetColliderType() const override {
@@ -22,8 +22,5 @@ public:
 	const char* GetType() const override {
 		return "TriggerCollider";
 	}
-
-	//void Serialize(std::ofstream& out) const override;
-	//void Deserialize(std::ifstream& in) override;
 private:
 };

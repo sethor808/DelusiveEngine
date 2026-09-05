@@ -1,5 +1,6 @@
 #pragma once
 #include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <SDL3/SDL.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -7,7 +8,7 @@
 
 class CameraAgent : public Agent {
 public:
-	CameraAgent(DelusiveRenderer&);
+	CameraAgent(DelusiveInstance&);
 	CameraAgent() = delete;
 
 	void Update(float) override;

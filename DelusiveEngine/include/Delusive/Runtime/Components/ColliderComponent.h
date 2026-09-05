@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Components/Component.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Internal/Rendering/ColliderRenderer.h>
@@ -45,7 +46,7 @@ class ColliderRenderer;
 
 class ColliderComponent : public Component{
 public:
-	ColliderComponent(DelusiveRenderer&);
+	ColliderComponent(DelusiveInstance&);
 	ColliderComponent() = delete;
 
 	ColliderComponent(const ColliderComponent&) = delete;

@@ -5,7 +5,7 @@
 
 class EnemyAgent : public Agent {
 public:
-	EnemyAgent(DelusiveRenderer&);
+	EnemyAgent(DelusiveInstance&);
 	EnemyAgent() = delete;
 
 	//Overrides

@@ -1,4 +1,6 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Animation/AnimatorData.h>
 #include <Delusive/Runtime/Utils/UUID.h>
@@ -8,14 +10,12 @@
 
 class Agent;
 class PropertyRegistry;
-class DelusiveRenderer;
 struct TransformComponent;
 
 class Component {
 public:
 	std::unique_ptr<TransformComponent> transform;
-
-	Component(DelusiveRenderer&);
+	Component(DelusiveInstance&); // new overload
 	Component() = delete;
 
 	Component(const Component&) = delete;
@@ -54,12 +54,8 @@ public:
 
     const UUID GetID() const {return id; }
 	void SetID(UUID id) { this->id = id; }
-
-	// Save/Load
-	virtual void Serialize(std::ostream& out) const;
-	virtual void Deserialize(std::istream& in);
 protected:
-	DelusiveRenderer& renderer;
+	DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;
 	Agent* owner = nullptr;
 	bool editorMode = false;

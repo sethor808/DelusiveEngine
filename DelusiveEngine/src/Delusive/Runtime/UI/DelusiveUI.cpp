@@ -4,7 +4,6 @@
 #include <Delusive/Runtime/UI/UIImage.h>
 #include <Delusive/Runtime/UI/UIPanel.h>
 #include <Delusive/Runtime/UI/UITalismanDisplay.h>
-#include <Delusive/Runtime/UI/UITalismanButton.h>
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/UI/UIScriptContainer.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
@@ -33,27 +32,27 @@ std::string DelusiveUI::DrawUIElementAddMenu() {
     return selectedType;
 }
 
-std::unique_ptr<UIElement> DelusiveUI::CreateUIElementByType(const std::string& type, DelusiveRenderer& renderer, ScriptManager& scriptManager) {
+std::unique_ptr<UIElement> DelusiveUI::CreateUIElementByType(const std::string& type, DelusiveInstance& instance) {
      if (type == "UILabel") {
-         return std::make_unique<UILabel>(renderer);
+         return std::make_unique<UILabel>(instance);
      }
      else if (type == "UIButton") {
-         return std::make_unique<UIButton>(renderer);
+         return std::make_unique<UIButton>(instance);
      }
      else if (type == "UIImage") {
-         return std::make_unique<UIImage>(renderer);
+         return std::make_unique<UIImage>(instance);
      }
      else if (type == "UIPanel") {
-         return std::make_unique<UIPanel>(renderer);
+         return std::make_unique<UIPanel>(instance);
      }
      else if (type == "UITalismanDisplay") {
-         return std::make_unique<UITalismanDisplay>(renderer);
+         return std::make_unique<UITalismanDisplay>(instance);
      }
      else if (type == "UIRepeatContainer") {
-         return std::make_unique<UIRepeatContainer>(renderer);
+         return std::make_unique<UIRepeatContainer>(instance);
      }
      else if (type == "UIScriptContainer") {
-         return std::make_unique<UIScriptContainer>(renderer, scriptManager);
+         return std::make_unique<UIScriptContainer>(instance);
      }
 
      // Unknown type fallback

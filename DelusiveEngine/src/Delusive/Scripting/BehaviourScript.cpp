@@ -11,6 +11,9 @@ BehaviourScript::BehaviourScript() :
 BehaviourScript::~BehaviourScript() = default;
 
 void BehaviourScript::RegisterProperties() {
+    registry->category = "BehaviourScript";
+    registry->type = GetType();
+
     registry->Register("targetID", &targetID);
     registry->Register("movementSpeed", &movementSpeed);
 }
@@ -26,7 +29,7 @@ void BehaviourScript::SetOwner(Agent* owner) {
 
     if (!owner) return;
 
-    targetID.sceneLink = owner->GetScene();
+    targetID.id = owner->GetID();
 }
 
 void BehaviourScript::SetTarget(Agent* agent) {
@@ -67,6 +70,6 @@ void BehaviourScript::Serialize(std::ostream& out) const {
     registry->Serialize(out);
 }
 
-void BehaviourScript::Deserialize(std::istream& in) {
+void BehaviourScript::Deserialize(DelusiveParser::DataBlock& in) {
     registry->Deserialize(in);
 }

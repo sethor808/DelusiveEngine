@@ -1,9 +1,10 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
@@ -21,7 +22,7 @@ class DelusiveInventory;
 class Scene {
 public:
 	Scene() = delete;
-	Scene(DelusiveRenderer&);
+	Scene(DelusiveInstance&);
 	~Scene();
 
 	Scene(Scene&&) noexcept = default;
@@ -65,13 +66,12 @@ public:
 	std::string GetName() { return name; }
 	void SetName(const std::string& _name) { name = _name; }
 
-	bool SaveToFile(const std::string& path) const;
-	bool LoadFromFile(const std::string& path);
-
+    template<typename T>
+    bool ResolveID(DelusiveLink<T>&);
 private:
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
-	DelusiveRenderer& renderer;
+    DelusiveInstance& instance;
 	std::string name;
 	CameraAgent* camera;
     std::unordered_map<UUID, Agent*, UUID::Hash> agentLookup;

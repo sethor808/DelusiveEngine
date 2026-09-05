@@ -29,7 +29,7 @@ namespace std {
 
 class PathfindingSystem : public SceneSystem {
 public:
-	PathfindingSystem(DelusiveRenderer&);
+	PathfindingSystem(DelusiveInstance&);
 
 	void RegisterProperties() override;
 	std::string GetType() const override { return "PathfindingSystem"; }

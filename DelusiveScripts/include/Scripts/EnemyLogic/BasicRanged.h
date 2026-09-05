@@ -6,6 +6,8 @@ class BasicRanged : public BasicFollow {
 public:
     BasicRanged() = default; // Default constructor
     BasicRanged(Agent* owner); // Constructor with owner
+    std::string GetType() override { return "BasicRanged"; }
+
     std::unique_ptr<BehaviourScript> Clone() const override; // unique_ptr Clone method
     void Update(float deltaTime) override; // Update method needs to be different since target position is not the agent, but a point around the agent
     

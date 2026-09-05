@@ -4,8 +4,8 @@
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 
-PlayerAgent::PlayerAgent(DelusiveRenderer& renderer)
-    : Agent(renderer)
+PlayerAgent::PlayerAgent(DelusiveInstance& instance)
+    : Agent(instance)
 {
     SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});
@@ -149,7 +149,7 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
 }
 
 std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<PlayerAgent>(renderer);
+    auto copy = std::make_unique<PlayerAgent>(instance);
     CloneBaseProperties(copy.get(), scene);
     return copy;
 }

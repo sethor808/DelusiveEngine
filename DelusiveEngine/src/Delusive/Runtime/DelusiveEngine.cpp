@@ -81,7 +81,7 @@ namespace DelusiveEngine {
         
 
         // --- Editor Camera ---
-        auto editorCamera = std::make_unique<CameraAgent>(renderer);
+        auto editorCamera = std::make_unique<CameraAgent>(game.GetInstance());
         CameraAgent* editorCamPtr = editorCamera.get();
 
         float scrollDelta = 0.0f;
@@ -89,7 +89,7 @@ namespace DelusiveEngine {
         SDL_Event e;
         uint64_t lastTicks = SDL_GetTicks();
 
-        EngineUI ui(game, renderer);
+        EngineUI ui(game);
         ui.LinkEditorCamera(editorCamPtr);
 
         while (running) {

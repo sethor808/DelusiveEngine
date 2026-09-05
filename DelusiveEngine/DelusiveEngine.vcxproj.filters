@@ -261,6 +261,9 @@
     <ClCompile Include="src\Delusive\Runtime\Editor\EngineUI.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Delusive\Runtime\Editor\EngineUI_UIBuilder.cpp">
+      <Filter>engine\editor\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Components\ScriptComponent.cpp">
       <Filter>engine\components\Source Files</Filter>
     </ClCompile>
@@ -276,9 +279,6 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanButton.cpp">
-      <Filter>engine\ui\Buttons\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Player\DelusiveInventory.cpp">
       <Filter>engine\inventory system\Source Files</Filter>
     </ClCompile>
@@ -288,7 +288,6 @@
     <ClCompile Include="src\Delusive\Runtime\Scripting\ScriptRegistry.cpp">
       <Filter>External Files\Internal Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\imgui\imgui.cpp" />
     <ClCompile Include="..\include\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
@@ -300,6 +299,8 @@
     <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Utils\PropertyDraw.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Core\DelusiveParser.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\DelusiveComponentFactory.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\UUIDManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DelusiveInternal\Scene\Scene.h">
@@ -602,7 +603,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIRepeatContainer.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIScriptContainer.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanButton.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UITalismanDisplay.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveDeserializer.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />
@@ -617,6 +617,11 @@
     <ClInclude Include="include\Delusive\Runtime\Core\IDLink.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\PropertyDraw.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveParser.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\DelusiveComponentFactory.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveInstance.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveCoreIncludes.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveVar.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\UUIDManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\DelusiveInternal\Utils\Property.inl" />

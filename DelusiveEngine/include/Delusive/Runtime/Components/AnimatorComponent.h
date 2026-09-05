@@ -1,12 +1,13 @@
 #pragma once
 #include <Delusive/Runtime/Components/Component.h>
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Components/SpriteComponent.h>
 #include <Delusive/Runtime/Animation/Animation.h>
 #include <Delusive/Runtime/Animation/AnimatorData.h>
 
 class AnimatorComponent : public Component {
 public:
-    AnimatorComponent(DelusiveRenderer&);
+    AnimatorComponent(DelusiveInstance&);
     AnimatorComponent() = delete;
 
     void Update(float deltaTime) override;

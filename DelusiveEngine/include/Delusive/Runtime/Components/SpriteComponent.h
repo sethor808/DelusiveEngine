@@ -10,7 +10,7 @@ class SpriteComponent : public Component {
 public:
     bool isForeground = false;
 
-    SpriteComponent(DelusiveRenderer& renderer);
+    SpriteComponent(DelusiveInstance&);
     SpriteComponent() = delete;
 
     SpriteComponent(const SpriteComponent&) = delete;
@@ -38,9 +38,6 @@ public:
     const char* GetType() const override {
         return "SpriteComponent";
     }
-
-    //void Serialize(std::ofstream& out) const override;
-    void Deserialize(std::istream& in) override;
 private:
     InteractionState interaction;
 	DelusiveTexture textureData;

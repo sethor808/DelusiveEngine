@@ -7,7 +7,7 @@ class ScriptManager;
 
 class UIManager : public SceneSystem {
 public:
-	UIManager(DelusiveRenderer&);
+	UIManager(DelusiveInstance&);
 
 	~UIManager();
 
@@ -28,11 +28,6 @@ public:
 
 	void Reset() override;
 	std::unique_ptr<SceneSystem> Clone() const override;
-
-	void SaveToFile(std::ofstream&) const override;
-
-	void Serialize(std::ostream&) const override;
-	void Deserialize(std::istream&) override;
 private:
 	DelusiveUIRegistry uiRegistry;
 	UICanvas* activeCanvas = nullptr;

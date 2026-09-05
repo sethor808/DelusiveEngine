@@ -9,7 +9,7 @@ class DelusiveInventory;
 
 class PlayerAgent : public Agent {
 public:
-	explicit PlayerAgent(DelusiveRenderer&);
+	explicit PlayerAgent(DelusiveInstance&);
 	PlayerAgent() = delete;
 	std::unique_ptr<Agent> Clone(Scene*) const override;
 

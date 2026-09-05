@@ -5,7 +5,7 @@ class PlayerAgent;
 
 class UITalismanDisplay : public UIElement {
 public:
-	UITalismanDisplay(DelusiveRenderer&);
+	UITalismanDisplay(DelusiveInstance&);
 
 	const std::string GetType() const override { return "UITalismanDisplay"; }
 	std::unique_ptr<UIElement> Clone() const override;

@@ -4,12 +4,12 @@
 
 class HitboxCollider : public ColliderComponent {
 public:
-	HitboxCollider(DelusiveRenderer&);
+	HitboxCollider(DelusiveInstance&);
 	HitboxCollider() = delete;
 
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly deep copy values
-		return std::make_unique<HitboxCollider>(renderer);
+		return std::make_unique<HitboxCollider>(instance);
 	}
 
 	ColliderType GetColliderType() const override {
@@ -22,7 +22,4 @@ public:
 	const char* GetType() const override {
 		return "HitboxCollider";
 	}
-
-	//void Serialize(std::ofstream& out) const override;
-	//void Deserialize(std::ifstream& in) override;
 };

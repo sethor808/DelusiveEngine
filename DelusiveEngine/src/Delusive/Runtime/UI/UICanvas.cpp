@@ -8,8 +8,8 @@
 #include <sstream>
 #include <iostream>
 
-UICanvas::UICanvas(DelusiveRenderer& _renderer)
-	: renderer(_renderer), registry(std::make_unique<PropertyRegistry>())
+UICanvas::UICanvas(DelusiveInstance& instance)
+	: instance(instance), registry(std::make_unique<PropertyRegistry>())
 {
 	RegisterProperties();
 }
@@ -18,12 +18,13 @@ UICanvas::~UICanvas() = default;
 
 void UICanvas::RegisterProperties()
 {
+    registry->category = "Canvas";
 	registry->Register("name", &name);
 }
 
 std::unique_ptr<UICanvas> UICanvas::Clone() const {
 	// Create a new canvas with the same name
-	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(renderer);
+	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(instance);
 	copy->name = this->name;
 	copy->SetActive(this->IsActive());
 
@@ -73,8 +74,23 @@ void UICanvas::HandleInput(const PlayerInputState& input) {
 	}
 }
 
+std::vector<UIElement*> UICanvas::GetElements() const {
+	std::vector<UIElement*> refs;
+	refs.reserve(elements.size());
+
+	for (auto& element : elements) {
+		refs.push_back(element.get());
+	}
+
+	return refs;
+}
+
 void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
 	element->LinkCanvas(this);
+
+    UUID id = element->GetID();
+    idManager.Register(element.get(), id);
+
 	elements.push_back(std::move(element));
 }
 
@@ -90,21 +106,32 @@ void UICanvas::DrawImGui() {
     ImGui::SeparatorText("Elements");
 
 	for (size_t i = 0; i < elements.size(); ++i) {
+        UIElement* element = elements[i].get();
+
 		ImGui::PushID(static_cast<int>(i));
 
-		if (ImGui::TreeNodeEx("##element", ImGuiTreeNodeFlags_DefaultOpen,
-			"[%s] %zu", elements[i]->GetType().c_str(), i)) {
-			elements[i]->DrawImGui();
+        bool open = ImGui::TreeNodeEx(
+            "##element",
+            ImGuiTreeNodeFlags_DefaultOpen,
+            "[%s] %s",
+            element->GetType().c_str(),
+            element->GetName().c_str()
+        );
 
-			if (ImGui::Button("Remove Element")) {
-				elements.erase(elements.begin() + i);
-				ImGui::TreePop();
-				ImGui::PopID();
-				break;
-			}
+        if (open)
+        {
+            element->DrawImGui();
 
-			ImGui::TreePop();
-		}
+            if (ImGui::Button("Remove Element"))
+            {
+                elements.erase(elements.begin() + i);
+                ImGui::TreePop();
+                ImGui::PopID();
+                break;
+            }
+
+            ImGui::TreePop();
+        }
 
 		ImGui::PopID();
 	}
@@ -116,7 +143,7 @@ void UICanvas::DrawImGui() {
 	if (ImGui::BeginPopup("AddUIElementPopup")) {
 		std::string type = DelusiveUI::DrawUIElementAddMenu();
 		if (!type.empty()) {
-			auto newElement = DelusiveUI::CreateUIElementByType(type, renderer, uiManager->GetScriptManager());
+			auto newElement = DelusiveUI::CreateUIElementByType(type, instance);
 			if (newElement) {
 				AddElement(std::move(newElement));
 			}
@@ -124,42 +151,6 @@ void UICanvas::DrawImGui() {
 		}
 		ImGui::EndPopup();
 	}
-}
-
-void UICanvas::Serialize(std::ostream& out) const {
-	out << "[UICanvas]\n";
-	registry->Serialize(out);
-
-	// Serialize elements here
-	for (auto& elem : elements) {
-		elem->Serialize(out);
-	}
-
-	out << "[/UICanvas]\n";
-}
-
-void UICanvas::Deserialize(DelusiveParser::DataBlock& block) {
-    elements.clear();
-
-    if (!uiManager) {
-        std::cerr << "[UICanvas]::Deserialize called without linking UIManager" << std::endl;
-        return;
-    }
-
-    registry->Deserialize(block);
-
-    for (auto& child : block.children)
-    {
-        if (child.category == "UIElement")
-        {
-            auto element = DelusiveUI::CreateUIElementByType(child.type, renderer, uiManager->GetScriptManager());
-
-            element->LinkCanvas(this);
-            element->Deserialize(child);
-
-            elements.push_back(std::move(element));
-        }
-    }
 }
 
 void UICanvas::Reset() {

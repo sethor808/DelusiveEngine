@@ -1,18 +1,27 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/IDLink.h>
-#include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/Utils/UUID.h>
 #include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <type_traits>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
-#include <filesystem>
-#include <sstream>
 #include <iostream>
 #include <iomanip>
-#include <algorithm>
+
+//==== [ZONE: link trait — matches any DelusiveLink<T>] ====
+template<typename>   struct is_delusive_link : std::false_type {};
+template<typename U> struct is_delusive_link<DelusiveLink<U>> : std::true_type {};
+template<typename T> inline constexpr bool is_delusive_link_v = is_delusive_link<T>::value;
+//==== [/ZONE: link trait] ====
+
+//==== [ZONE: link trait — matches any DelusiveLink<T>] ====
+template<typename>   struct is_delusive_object : std::false_type {};
+template<typename U> struct is_delusive_object<DelusiveObject<U>> : std::true_type {};
+template<typename T> inline constexpr bool is_delusive_object_v = is_delusive_object<T>::value;
+//==== [/ZONE: link trait] ====
+
 
 #pragma region Property declaration
 
@@ -36,14 +45,11 @@ class Property : public PropertyBase {
 
     static constexpr bool is_custom =
         std::is_same_v<T, UUID> ||
-        std::is_same_v<T, DelusiveIDLink> ||
+        is_delusive_link_v<T> || //[CLAUDE: trait, DelusiveLink is templated]
+        is_delusive_object_v<T> ||
         std::is_same_v<T, DelusiveTexture> ||
         std::is_same_v<T, DelusiveFont> ||
-        std::is_same_v<T, DelusiveUIPrototype> ||
-        std::is_same_v<T, DelusiveIDLink> ||
-        std::is_same_v<T, DelusiveScript> ||
-        std::is_same_v<T, DelusiveUIScript>;
-
+        std::is_same_v<T, DelusiveUILink>;
     static_assert(
         is_scalar || is_vector || is_custom,
         "Property<T>: Unsupported type"
@@ -102,40 +108,11 @@ public:
             else if constexpr (std::is_same_v<T, DelusiveFont>) {
                 out << value->fontSize << " " << std::quoted(value->fontPath);
             }
-            else if constexpr (std::is_same_v<T, DelusiveScript>) {
-                out << value->scriptName;
-
-                if (value->script) {
-                    out << "\n{\n";
-                    value->script->Serialize(out);
-                    out << "}\n";
-                }
-            }
-            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
-                out << value->scriptName;
-
-                if (value->script) {
-                    out << "\n{\n";
-                    value->script->Serialize(out);
-                    out << "}\n";
-                }
-            }
             else if constexpr (std::is_same_v<T, UUID>) {
                 out << value->ToString();
             }
-            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
+            else if constexpr (is_delusive_link_v<T>) { //[CLAUDE: trait swap]
                 out << value->id.ToString();
-            }
-            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
-                out << value->type;
-
-                if (value->element) {
-                    out << "\n{\n";
-
-                    value->element->Serialize(out);
-
-                    out << "}\n";
-                }
             }
         }
     }
@@ -195,58 +172,16 @@ public:
             else if constexpr (std::is_same_v<T, DelusiveFont>) {
                 in >> value->fontSize >> std::quoted(value->fontPath);
             }
-            else if constexpr (std::is_same_v<T, DelusiveScript>) {
-                // If script not yet created, this is the inline call
-                if (!value->script) {
-                    in >> value->scriptName;
-
-                    if (value->manager && !value->scriptName.empty()) {
-                        value->script =
-                            value->manager->CreateEnemyLogicScript(value->scriptName);
-                    }
-                }
-                else {
-                    // Script already exists then this is the block
-                    value->script->Deserialize(in);
-                }
-            }
-            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
-                if (!value->script) {
-                    in >> value->scriptName;
-
-                    if (value->manager && !value->scriptName.empty()) {
-                        value->script =
-                            value->manager->CreateUIScript(value->scriptName);
-                    }
-                }
-                else {
-                    value->script->Deserialize(in);
-                }
-            }
             else if constexpr (std::is_same_v<T, UUID>) {
                 std::string uuidStr;
                 in >> uuidStr;
                 value->FromString(uuidStr);
 			}
-            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
+            else if constexpr (is_delusive_link_v<T>) { //[CLAUDE: trait swap]
                 std::string uuidStr;
                 in >> uuidStr;
+
                 value->id.FromString(uuidStr);
-                value->dirty = true;
-            }
-            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
-                if (!value->parentCanvas) return;
-
-                std::string type;
-                in >> type;
-
-                value->type = type;
-
-                value->element = DelusiveUI::CreateUIElementByType(value->type, value->parentCanvas->GetRenderer(), value->parentCanvas->GetScriptManager());
-                value->element->LinkCanvas(value->parentCanvas);
-                if (value->element) {
-                    value->element->Deserialize(in);
-                }
             }
         }
     }
@@ -322,196 +257,23 @@ public:
             }
         }
         else if constexpr (is_custom) {
+            //==== [ZONE: custom draws — bodies in PropertyDraw.cpp] ====
             if constexpr (std::is_same_v<T, DelusiveTexture>) {
-                ImGui::Text("Texture: %s", std::filesystem::path(value->texturePath).filename().string().c_str());
-                if (ImGui::Button(("Change Texture##" + name).c_str())) {
-                    ImGui::OpenPopup(("TextureBrowser##" + name).c_str());
-                }
-                if (ImGui::BeginPopup(("TextureBrowser##" + name).c_str())) {
-                    std::function<void(const std::filesystem::path&)> DrawDirectory;
-                    DrawDirectory = [&](const std::filesystem::path& path) {
-                        for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                            if (entry.is_directory()) {
-                                if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
-                                    DrawDirectory(entry.path());
-                                    ImGui::EndMenu();
-                                }
-                            }
-                            else if (entry.is_regular_file()) {
-                                std::string ext = entry.path().extension().string();
-                                std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                                if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-                                    std::string filename = entry.path().filename().string();
-                                    if (ImGui::Selectable(filename.c_str())) {
-                                        value->texturePath = entry.path().string();
-                                        ImGui::CloseCurrentPopup();
-                                    }
-                                }
-                            }
-                        }
-                        };
-                    DrawDirectory(SPRITE_FOLDER);
-                    ImGui::EndPopup();
-                }
+                DrawTextureUI(*value, name);
             }
             else if constexpr (std::is_same_v<T, DelusiveFont>) {
-                ImGui::Text("Font: %s", std::filesystem::path(value->fontPath).filename().string().c_str());
-                ImGui::DragFloat(("Size##" + name).c_str(), &value->fontSize, 1.0f, 6.0f, 128.0f);
-                if (ImGui::Button(("Change Font##" + name).c_str())) {
-                    ImGui::OpenPopup(("FontBrowser##" + name).c_str());
-                }
-                if (ImGui::BeginPopup(("FontBrowser##" + name).c_str())) {
-                    for (auto& entry : std::filesystem::recursive_directory_iterator(FONT_FOLDER)) {
-                        if (entry.is_regular_file()) {
-                            std::string ext = entry.path().extension().string();
-                            std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                            if (ext == ".ttf" || ext == ".otf") {
-                                std::string filename = entry.path().filename().string();
-                                if (ImGui::Selectable(filename.c_str())) {
-                                    value->fontPath = entry.path().string();
-                                    ImGui::CloseCurrentPopup();
-                                }
-                            }
-                        }
-                    }
-                    ImGui::EndPopup();
-                }
+                DrawFontUI(*value, name);
             }
-            else if constexpr (std::is_same_v<T, DelusiveScript>) {
-                if (!value->manager) {
-                    ImGui::Text("No ScriptManager available");
-                    return;
-                }
-
-                std::vector<std::string> scriptNames;
-                value->manager->GetAvailableEnemyLogicScripts(scriptNames);
-
-                // Find currently selected index
-                int currentIndex = -1;
-                for (int i = 0; i < (int)scriptNames.size(); i++) {
-                    if (scriptNames[i] == value->scriptName) {
-                        currentIndex = i;
-                        break;
-                    }
-                }
-
-                if (ImGui::BeginCombo(name.c_str(),
-                    currentIndex >= 0 ? scriptNames[currentIndex].c_str() : "<None>"))
-                {
-                    for (int i = 0; i < (int)scriptNames.size(); i++) {
-                        bool isSelected = (i == currentIndex);
-                        if (ImGui::Selectable(scriptNames[i].c_str(), isSelected)) {
-                            value->scriptName = scriptNames[i];
-
-                            // Recreate the script instance
-                            if (value->manager) {
-                                value->script =
-                                    value->manager->CreateEnemyLogicScript(scriptNames[i]);
-                                value->newScript = true;
-                                //ScriptComponent can later patch in the owner
-                            }
-                        }
-                        if (isSelected)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    ImGui::EndCombo();
-                }
-
-                if (value->script) {
-                    ImGui::Separator();
-                    ImGui::Text("Script Parameters");
-
-                    value->script->DrawImGui();
-                }
+            else if constexpr (is_delusive_link_v<T>) {
+                DrawLinkUI(*value, name);
             }
-            else if constexpr (std::is_same_v<T, DelusiveUIScript>) {
-                if (!value->manager) {
-                    ImGui::Text("No ScriptManager available");
-                    return;
-                }
-                //TODO: Ensure this works with UI Scripts not behaviour Scripts
-                std::vector<std::string> scriptNames;
-                value->manager->GetAvailableUIScripts(scriptNames);
-
-                // Find currently selected index
-                int currentIndex = -1;
-                for (int i = 0; i < (int)scriptNames.size(); i++) {
-                    if (scriptNames[i] == value->scriptName) {
-                        currentIndex = i;
-                        break;
-                    }
-                }
-
-                if (ImGui::BeginCombo(name.c_str(),
-                    currentIndex >= 0 ? scriptNames[currentIndex].c_str() : "<None>"))
-                {
-                    for (int i = 0; i < (int)scriptNames.size(); i++) {
-                        bool isSelected = (i == currentIndex);
-                        if (ImGui::Selectable(scriptNames[i].c_str(), isSelected)) {
-                            value->scriptName = scriptNames[i];
-
-                            // Recreate the script instance
-                            if (value->manager) {
-                                value->script =
-                                    value->manager->CreateEnemyLogicScript(scriptNames[i]);
-                                value->newScript = true;
-                                //ScriptComponent can later patch in the owner
-                            }
-                        }
-                        if (isSelected)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    ImGui::EndCombo();
-                }
-
-                if (value->script) {
-                    ImGui::Separator();
-                    ImGui::Text("Script Parameters");
-
-                    value->script->DrawImGui();
-                }
-
-            }
-            else if constexpr (std::is_same_v<T, DelusiveUIPrototype>) {
-                ImGui::SeparatorText(name.c_str());
-                if (!value->element) {
-                    ImGui::TextDisabled("No prototype assigned.");
-                    if (ImGui::Button(("Create Prototype##" + name).c_str())) {
-                        ImGui::OpenPopup(("AddPrototypePopup##" + name).c_str());
-                    }
-
-                    if (ImGui::BeginPopup(("AddPrototypePopup##" + name).c_str())) {
-                        std::string type = DelusiveUI::DrawUIElementAddMenu();
-                        if (!type.empty()) {
-                            value->Create(type, DelusiveRenderer::Get(), nullptr);
-                            ImGui::CloseCurrentPopup();
-                        }
-                        ImGui::EndPopup();
-                    }
-                }
-                else {
-                    if (ImGui::TreeNodeEx(("Prototype##" + name).c_str(),
-                        ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed))
-                    {
-                        ImGui::Text("Type: %s", value->type.c_str());
-                        ImGui::Text("UUID: %s", value->element->GetUUID().ToString().c_str());
-
-                        if (ImGui::Button(("Edit##" + name).c_str())) {
-                            value->element->DrawImGui();
-                        }
-                        if (ImGui::Button(("Remove##" + name).c_str())) {
-                            value->element.reset();
-                        }
-                        ImGui::TreePop();
-                    }
-                }
+            else if constexpr (std::is_same_v<T, DelusiveUILink>) {
+                DrawUILinkUI(*value, name);
             }
             else if constexpr (std::is_same_v<T, UUID>) {
                 ImGui::Text("UUID: %s", value->ToString().c_str());
-			}
-            else if constexpr (std::is_same_v<T, DelusiveIDLink>) {
-                DrawIDLinkUI(value, name, value->sceneLink);
             }
+            //==== [/ZONE: custom draws] ====
         }
     }
 };
@@ -522,9 +284,11 @@ template<typename T>
 void PropertyRegistry::Register(const std::string& name, T* var) {
     for (auto& prop : properties) {
         if (prop->GetName() == name) {
-            // skip or log warning instead of adding duplicate
+            std::cerr << "[PropertyRegistry] Attempt to duplicate value: " << name << std::endl;
             return;
         }
     }
-    properties.emplace_back(std::make_unique<Property<T>>(name, var));
+    
+    auto newProp = std::make_unique<Property<T>>(name, var);
+    properties.emplace_back(std::move(newProp)); //[CLAUDE: unique_ptr must move]
 }

@@ -1,37 +1,40 @@
 2
 [UICanvas]
+name="Health Display"
+[/UICanvas]
+[UICanvas]
 name="Equip Screen"
 [UIElement UIRepeatContainer]
 id=dbf682c90514dbaa-c3bfd59e606e87d0
-name="New UIRepeatContainer"
+name="Equipped Talismans"
 enabled=1
 position=0 0
 size=1 1
 count=1
 rows=1
 spacing=0
-[UIElement UIButton]
-id=c451a0daf5348f84-6e5aa164b92d9c50
-name=""
+[/UIElement]
+[UIElement UIRepeatContainer]
+id=4e3cad7c418f0cd1-9cf49e6c52b69feb
+name="Available Talismans"
 enabled=1
 position=0 0
 size=1 1
-Label=""
-ButtonTexture=../assets/ui/default_button.png
-Font=16 "../assets/fonts/pixel_arial_11/PIXEARG_.TTF"
-FontColor=1 1 1 1
-TextOffset=8 8
+count=1
+rows=1
+spacing=0
 [/UIElement]
-[UIElement UIImage]
-id=9a2c62e38d758b50-b263704f7d31c402
-name="UIImage"
+[UIElement UIScriptContainer]
+id=0ebd1541dfcf03ec-358395f050dd222d
+name="InventoryManager"
 enabled=1
-position=-3.9 0
+position=0 0
 size=1 1
-textureData=../assets/sprites/star.jpg
+scriptContainer=EquipScreen
+{
+availableContainerID=4e3cad7c418f0cd1-9cf49e6c52b69feb
+equippedContainerID=dbf682c90514dbaa-c3bfd59e606e87d0
+}
+
 [/UIElement]
-[/UIElement]
-[/UICanvas]
-[UICanvas]
-name="Health Display"
 [/UICanvas]

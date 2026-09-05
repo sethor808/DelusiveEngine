@@ -1,8 +1,8 @@
 #include <Delusive/Runtime/Agents/EnemyAgent.h>
 #include <Delusive/Runtime/Components/DelusiveComponents.h>
 
-EnemyAgent::EnemyAgent(DelusiveRenderer& renderer)
-    : Agent(renderer)
+EnemyAgent::EnemyAgent(DelusiveInstance& instance)
+    : Agent(instance)
 {
     SetName("New EnemyAgent");
     SetScale({ 1.0f, 1.0f });
@@ -23,7 +23,7 @@ std::string EnemyAgent::GetType() const{
 }
 
 std::unique_ptr<Agent> EnemyAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<EnemyAgent>(renderer);
+    auto copy = std::make_unique<EnemyAgent>(instance);
     copy->name = GetName();
     CloneBaseProperties(copy.get(), scene);
     return copy;

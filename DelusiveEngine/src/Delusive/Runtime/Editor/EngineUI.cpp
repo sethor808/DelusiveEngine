@@ -7,10 +7,11 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
+#include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <glm/gtc/type_ptr.hpp>
 
-EngineUI::EngineUI(GameManager& _game, DelusiveRenderer& _renderer)
-    : gameManager(_game), renderer(_renderer)
+EngineUI::EngineUI(GameManager& game)
+    : gameManager(game), instance(game.GetInstance())
 {
     currentMode = EditorMode::SceneEditor;
     loadedAssets = LoadSceneList();
@@ -32,6 +33,7 @@ const char* ViewModeToString(EditorMode mode) {
     case EditorMode::SceneEditor: return "Scene Editor";
     case EditorMode::AgentEditor: return "Agent Editor";
     case EditorMode::AnimatorEditor: return "Animator";
+    case EditorMode::UIBuilder: return "UI Builder";
     case EditorMode::GameView: return "Game View";
     }
     return "Unknown";
@@ -76,7 +78,7 @@ ImTextureID EngineUI::GetFramePreviewTexture(AnimationFrame& frame, Agent& baseA
     if (frame.previewTexture != 0)
         glDeleteTextures(1, &frame.previewTexture);
 
-    frame.previewTexture = renderer.RenderAgentToTexture(*tempAgent, 256, 256);
+    frame.previewTexture = instance.renderer.RenderAgentToTexture(*tempAgent, 256, 256);
     frame.dirty = false;
 
     return (ImTextureID)(intptr_t)frame.previewTexture;
@@ -94,6 +96,9 @@ void EngineUI::Render(Scene& scene) {
         break;
     case EditorMode::AnimatorEditor:
         RenderAnimatorEditor(scene);
+        break;
+    case EditorMode::UIBuilder:
+        RenderUIBuilder(scene);
         break;
     case EditorMode::GameView:
         RenderGameView(scene);
@@ -124,6 +129,10 @@ void EngineUI::SwitchMode(Scene& scene, EditorMode mode) {
         break;
     case EditorMode::AnimatorEditor:
         scene.SetName("Animator");
+        break;
+    case EditorMode::UIBuilder:
+        scene.SetName("UI Builder");
+        selectedUIElement = nullptr;
         break;
     default:
         scene.SetName("New Scene");
@@ -170,6 +179,9 @@ void EngineUI::RenderTopBar(Scene& scene) {
             if (ImGui::Selectable("Animator", currentMode == EditorMode::AnimatorEditor)) {
                 SwitchMode(scene, EditorMode::AnimatorEditor);
             }
+            if (ImGui::Selectable("UI Builder", currentMode == EditorMode::UIBuilder)) {
+                SwitchMode(scene, EditorMode::UIBuilder);
+            }
             if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
                 currentMode = EditorMode::GameView;
             }
@@ -201,7 +213,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
                     std::string fullPath = GetPath(asset);
                     switch (currentMode) {
                     case EditorMode::SceneEditor: {
-                        scene.LoadFromFile(fullPath);
+                        //TODO: Broken, old file saving/loading path doesn't exist
+                        //scene.LoadFromFile(fullPath);
                         break;
                     }
                     case EditorMode::AgentEditor: {
@@ -210,8 +223,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
                         std::ifstream in(fullPath);
                         if (in.is_open()) {
-                            auto agent = std::make_unique<PlayerAgent>(renderer);
-                            agent->LoadFromFile(in);
+                            auto agent = std::make_unique<PlayerAgent>(instance);
+                            //TODO: USED TO LOAD FROM FILE
                             scene.AddAgent(std::move(agent));
                         }
                         break;
@@ -254,14 +267,16 @@ void EngineUI::RenderTopBar(Scene& scene) {
             std::string savePath = GetPath(selectedAsset);
             switch (currentMode) {
             case EditorMode::SceneEditor: {
-                scene.SaveToFile(savePath);
+                //TODO: Broken, old file saving/loading path doesn't exist
+                //scene.SaveToFile(savePath);
                 break;
             }
             case EditorMode::AgentEditor: {
                 if (!scene.GetAgents().empty()) {
                     std::ofstream out(savePath);
                     if (out.is_open()) {
-                        scene.GetAgents().front()->SaveToFile(out);  // Save the first (and only) agent
+                        //TODO: Broken, old file saving/loading path doesn't exist
+                        //scene.GetAgents().front()->SaveToFile(out);  // Save the first (and only) agent
                         out.close();
                     }
                 }
@@ -384,16 +399,16 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
         if (ImGui::BeginPopupContextWindow("SceneRightClick", ImGuiPopupFlags_MouseButtonRight)) {
             if (ImGui::BeginMenu("Add Agent")) {
                 if (ImGui::MenuItem("Player Agent")) {
-                    scene.AddAgent(std::make_unique<PlayerAgent>(renderer));
+                    scene.AddAgent(std::make_unique<PlayerAgent>(instance));
                 }
                 if (ImGui::MenuItem("Camera Agent")) {
-                    scene.AddAgent(std::make_unique<CameraAgent>(renderer));
+                    scene.AddAgent(std::make_unique<CameraAgent>(instance));
                 }
                 if (ImGui::MenuItem("Enemy Agent")) {
-                    scene.AddAgent(std::make_unique<EnemyAgent>(renderer));
+                    scene.AddAgent(std::make_unique<EnemyAgent>(instance));
                 }
                 if (ImGui::MenuItem("Environment Agent")) {
-                    scene.AddAgent(std::make_unique<EnvironmentAgent>(renderer));
+                    scene.AddAgent(std::make_unique<EnvironmentAgent>(instance));
                 }
                 ImGui::EndMenu();
             }
@@ -453,10 +468,10 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
             if (ImGui::BeginPopupContextItem("AddSystemPopup", ImGuiPopupFlags_MouseButtonRight)) {
                 if (ImGui::BeginMenu("Add System")) {
                     if (ImGui::MenuItem("PathfindingSystem")) {
-                        scene.AddSystem(std::make_unique<PathfindingSystem>(renderer));
+                        scene.AddSystem(std::make_unique<PathfindingSystem>(instance));
                     }
                     if (ImGui::MenuItem("UIManager")) {
-                        scene.AddSystem(std::make_unique<UIManager>(renderer));
+                        scene.AddSystem(std::make_unique<UIManager>(instance));
                     }
                     ImGui::EndMenu();
                 }
@@ -518,8 +533,8 @@ void EngineUI::RenderSceneEditor(Scene& scene) {
                         for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
                             if (entry.path().extension() == ".agent") {
                                 if (ImGui::MenuItem(entry.path().filename().string().c_str())) {
-                                    auto loaded = std::make_unique<PlayerAgent>(renderer);
-                                    loaded->LoadFromFile(entry.path().string());
+                                    auto loaded = std::make_unique<PlayerAgent>(instance);
+                                    //loaded->LoadFromFile(entry.path().string());
                                     scene.AddAgent(std::move(loaded));
                                 }
                             }
@@ -622,7 +637,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
     if (!ImGui::GetIO().WantCaptureMouse) {
         float mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
-        glm::vec2 worldMouse = ScreenToWorld2D((int)mouseX, (int)mouseY, renderer.GetProjection());
+        glm::vec2 worldMouse = ScreenToWorld2D((int)mouseX, (int)mouseY, instance.renderer.GetProjection());
         bool mouseDown = SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_LMASK;
 
         Agent& agent = *scene.GetAgents().front();
@@ -646,7 +661,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
 
     auto& agents = scene.GetAgents();
     if (agents.empty()) {
-        scene.AddAgent(std::make_unique<PlayerAgent>(renderer));
+        scene.AddAgent(std::make_unique<PlayerAgent>(instance));
     }
 
     Agent& agent = *scene.GetAgents().front();
@@ -841,11 +856,11 @@ void EngineUI::ResetOverrides() {
 }
 
 void EngineUI::SetupAnimation(const std::string pendingAgentFile) {
-    baseAgent = std::make_unique<PlayerAgent>(renderer);
-    baseAgent->LoadFromFile(pendingAgentFile);
+    baseAgent = std::make_unique<PlayerAgent>(instance);
+    //baseAgent->LoadFromFile(pendingAgentFile);
 
-    pureAgent = std::make_unique<PlayerAgent>(renderer);
-    pureAgent->LoadFromFile(pendingAgentFile);
+    pureAgent = std::make_unique<PlayerAgent>(instance);
+    //pureAgent->LoadFromFile(pendingAgentFile);
 
     currentBaseAgentFile = pendingAgentFile;
     currentAnimation.data.defaultAgentPath = pendingAgentFile;
@@ -1112,11 +1127,11 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
         }
         else {
             if (!baseAgent && !currentAnimation.data.defaultAgentPath.empty()) {
-                baseAgent = std::make_unique<PlayerAgent>(renderer);
-                baseAgent->LoadFromFile(currentAnimation.data.defaultAgentPath);
+                baseAgent = std::make_unique<PlayerAgent>(instance);
+                //TODO: USED TO LOAD FROM FILE
             }
 
-            previewTex = renderer.RenderAgentToTexture(*baseAgent, 256, 256);
+            previewTex = instance.renderer.RenderAgentToTexture(*baseAgent, 256, 256);
         }
         float texAspect = (float)regionSize.x / (float)regionSize.y;
 
@@ -1143,7 +1158,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
 
             // Convert to world space assuming ortho space from -256 to +256
             constexpr float pixelsPerUnit = 64.0f;
-            float orthoScale = 1.0f / pixelsPerUnit; // world units per screen pixel (since it’s square)
+            float orthoScale = 1.0f / pixelsPerUnit; // world units per screen pixel (since itï¿½s square)
             glm::vec2 worldMouse = {
                 relativeX * orthoScale,
                 -relativeY * orthoScale
@@ -1197,7 +1212,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
 
             for (int i = 0; i < frame.componentOverrides.size(); ++i) {
                 auto& mod = frame.componentOverrides[i];
-                ImGui::PushID((int)mod.componentID.ToString().c_str());
+                ImGui::PushID(mod.componentID.ToString().c_str());
 
                 if (Component* comp = baseAgent->GetComponentByID(mod.componentID)) {
                     const std::string& compName = comp->GetName();
@@ -1231,7 +1246,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
                 ImGui::PopID();
             }
 
-            // Outside the loop — erase if needed
+            // Outside the loop ï¿½ erase if needed
             if (indexToDelete >= 0 && indexToDelete < frame.componentOverrides.size()) {
                 frame.componentOverrides.erase(frame.componentOverrides.begin() + indexToDelete);
                 frame.dirty = true;

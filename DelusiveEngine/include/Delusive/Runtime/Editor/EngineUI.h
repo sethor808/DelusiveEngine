@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Animation/AnimatorData.h>
 #include <Delusive/Runtime/Animation/Animation.h>
@@ -14,8 +15,13 @@ enum class EditorMode {
 	SceneEditor,
 	AgentEditor,
 	AnimatorEditor,
+	UIBuilder,
 	GameView
 };
+
+class DelusiveUIRegistry;
+class UICanvas;
+class UIElement;
 
 struct Selection {
     enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
@@ -77,7 +83,7 @@ struct Selection {
 
 class EngineUI {
 public:
-	EngineUI(GameManager&, DelusiveRenderer&);
+	EngineUI(GameManager&);
 	~EngineUI();
 	std::vector<std::string> LoadSceneList();
 	ImTextureID GetFramePreviewTexture(AnimationFrame&, Agent&);
@@ -89,12 +95,13 @@ public:
 	void RenderSceneEditor(Scene& scene);
 	void RenderAgentEditor(Scene& scene);
 	void RenderAnimatorEditor(Scene& scene);
+	void RenderUIBuilder(Scene& scene);
 	void RenderGameView(Scene& scene);
 
     void LinkEditorCamera(CameraAgent* cam) { editorCamera = cam; }
 private:
 	GameManager& gameManager;
-	DelusiveRenderer& renderer;
+	DelusiveInstance& instance;
     CameraAgent* editorCamera;
 
 	EditorMode currentMode = EditorMode::SceneEditor;
@@ -132,6 +139,14 @@ private:
 	std::string currentBaseAgentFile;
 	bool confirmAgentSwitch = false;
 	std::string pendingAgentFile;
+
+	//UI builder specifics
+	std::unique_ptr<DelusiveUIRegistry> uiRegistry;
+	UICanvas* editingCanvas = nullptr;
+	UIElement* selectedUIElement = nullptr;
+	char uiCanvasNameBuffer[64] = "";
+
+	void DrawUIElementNode(UIElement* element);
 
 	//Helper functions
 	void SwitchMode(Scene&, EditorMode);

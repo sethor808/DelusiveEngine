@@ -1,18 +1,17 @@
 #include <Delusive/Scripting/UIScript.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 
-UIScript::UIScript() {
+UIScript::UIScript()
+    : registry(std::make_unique<PropertyRegistry>())
+{
     RegisterProperties();
 }
 
 UIScript::~UIScript() = default;
 
-void UIScript::Serialize(std::ostream& os) const {
-    registry->Serialize(os);
-}
-
-void UIScript::Deserialize(std::istream& is) {
-    registry->Deserialize(is);
+void UIScript::RegisterProperties() {
+    registry->category = "UIScript";
+    registry->type = GetType();
 }
 
 void UIScript::DrawImGui() {

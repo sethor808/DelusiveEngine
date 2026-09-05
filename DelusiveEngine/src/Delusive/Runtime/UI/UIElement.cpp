@@ -1,12 +1,13 @@
 #include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 
-UIElement::UIElement(DelusiveRenderer& _renderer)
-    : renderer(_renderer), registry(std::make_unique<PropertyRegistry>()), id(UUID::GenerateRandom())
+UIElement::UIElement(DelusiveInstance& instance)
+    : instance(instance), registry(std::make_unique<PropertyRegistry>()), id(UUID::GenerateRandom())
 {
 	RegisterProperties();
 }
@@ -15,10 +16,6 @@ UIElement::~UIElement() {
     if(parentCanvas) {
         parentCanvas->idManager.Unregister(id);
 	}
-}
-
-DelusiveRenderer& UIElement::GetRenderer() {
-    return renderer;
 }
 
 void UIElement::LinkCanvas(UICanvas* canvas) {
@@ -37,6 +34,9 @@ void UIElement::LinkCanvas(UICanvas* canvas) {
 }
 
 void UIElement::RegisterProperties(){
+    registry->category = "UIElement";
+    registry->type = GetType();
+
 	registry->Register("id", &id);
 	registry->Register("name", &name);
 	registry->Register("enabled", &enabled);
@@ -60,7 +60,7 @@ void UIElement::DrawImGui() {
         UUID payload = id;
 
         ImGui::SetDragDropPayload(
-            "DELUISIVE_UI_UUID",
+            "UI_ELEMENT_UUID",
             &payload,
             sizeof(UUID)
         );
@@ -136,7 +136,7 @@ void UIElement::DrawImGui() {
     if (ImGui::BeginPopup("AddUIElementPopup")) {
         std::string type = DelusiveUI::DrawUIElementAddMenu();
         if (!type.empty()) {
-            auto newElement = DelusiveUI::CreateUIElementByType(type, renderer, parentCanvas->GetScriptManager());
+            auto newElement = DelusiveUI::CreateUIElementByType(type, instance);
             if (newElement) {
                 newElement->LinkCanvas(parentCanvas);
                 children.push_back(std::move(newElement));
@@ -145,79 +145,4 @@ void UIElement::DrawImGui() {
         }
         ImGui::EndPopup();
     }
-}
-
-void UIElement::Serialize(std::ostream& out) const{
-	out << "[UIElement " << this->GetType() << "]\n";
-	registry->Serialize(out);
-
-	// Serialize elements here
-	for (auto& elem : children) {
-		elem->Serialize(out);
-	}
-
-	out << "[/UIElement]\n";
-}
-
-void UIElement::Deserialize(DelusiveParser::DataBlock& block) {
-    children.clear();
-
-    if (!parentCanvas) {
-        std::cerr << "[UIElement]::Deserialize called without linking UICanvas." << std::endl;
-        return;
-    }
-
-    registry->Deserialize(block);
-
-    for (auto& child : block.children)
-    {
-        if (child.category == "UIElement")
-        {
-            auto element = DelusiveUI::CreateUIElementByType(child.type, renderer, parentCanvas->GetScriptManager());
-
-            element->LinkCanvas(parentCanvas);
-            element->Deserialize(child);
-
-            children.push_back(std::move(element));
-        }
-    }
-}
-
-void UIElement::Deserialize(std::istream& in) {
-
-    //Possible old code
-    /*
-    registry->Deserialize(in); // will stop at first header
-
-    if (parentCanvas) {
-        parentCanvas->idManager.Register(this, id);
-	}
-
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line.empty()) continue;
-
-        if (line == "[/UIElement]") return;
-
-        // If a child block starts (e.g. nested elements in UIPanel)
-        if (line.rfind("[UIElement", 0) == 0) {
-            std::istringstream iss(line);
-            std::string discard, typeToken;
-            iss >> discard >> typeToken;
-            if (!typeToken.empty() && typeToken.back() == ']') typeToken.pop_back();
-
-            if (parentCanvas) {
-                std::unique_ptr<UIElement> child = DelusiveUI::CreateUIElementByType(typeToken, renderer, parentCanvas->GetScriptManager());
-
-                if (child) {
-                    child->Deserialize(in);
-                    child->LinkCanvas(parentCanvas);
-                    children.push_back(std::move(child));
-                }
-            }
-
-            continue;
-        }
-    }
-    */
 }

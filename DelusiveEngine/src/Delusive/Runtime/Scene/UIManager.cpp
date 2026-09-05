@@ -8,8 +8,8 @@
 #include <fstream>
 #include <sstream>
 
-UIManager::UIManager(DelusiveRenderer& _renderer) 
-	: SceneSystem(_renderer), uiRegistry(_renderer)
+UIManager::UIManager(DelusiveInstance& instance)
+	: SceneSystem(instance), uiRegistry(instance)
 {
 	name = "NewUIManager";
 	activeCanvasName = "";
@@ -25,7 +25,8 @@ UIManager::~UIManager() {
 }
 
 void UIManager::Init() {
-    uiRegistry.LoadAll();
+    //TODO: Properly INIT and factorize
+    //uiRegistry.LoadAll();
 }
 
 void UIManager::LinkScene(Scene* _scene) {
@@ -81,6 +82,11 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 
 void UIManager::DrawImGui() {
     ImGui::Text("UI Manager");
+    ImGui::SameLine();
+    if (ImGui::Button("Save")) {
+        //TODO: Properly INIT and factorize
+        //uiRegistry.SaveAll();
+    }
     ImGui::Separator();
 
     // ACTIVE CANVAS COMBO
@@ -154,7 +160,7 @@ void UIManager::DrawImGui() {
             std::string newName =
                 "Canvas_" + std::to_string(names.size());
 
-            auto newCanvas = std::make_unique<UICanvas>(renderer);
+            auto newCanvas = std::make_unique<UICanvas>(instance);
             newCanvas->SetName(newName);
 
             UICanvas* ptr = newCanvas.get();
@@ -187,7 +193,8 @@ void UIManager::Reset() {
 }
 
 std::unique_ptr<SceneSystem> UIManager::Clone() const {
-	auto clone = std::make_unique<UIManager>(renderer);
+	auto clone = std::make_unique<UIManager>(instance
+    );
 	clone->activeCanvasName = activeCanvasName;
 	clone->canvasList = canvasList;
 
@@ -198,26 +205,6 @@ std::unique_ptr<SceneSystem> UIManager::Clone() const {
 	return clone;
 }
 
-void UIManager::SaveToFile(std::ofstream& out) const {
-    uiRegistry.SaveAll();
-
-    // sync runtime pointers serialized names
-    const_cast<UIManager*>(this)->GrabCanvasNames();
-
-    out << "[UIManager]\n";
-
-    out << "ActiveCanvas=" << activeCanvasName << "\n";
-
-    out << "CanvasList=";
-    for (size_t i = 0; i < canvasList.size(); ++i) {
-        out << canvasList[i];
-        if (i < canvasList.size() - 1) out << ",";
-    }
-
-    out << "\n";
-    out << "[/UIManager]\n";
-}
-
 void UIManager::GrabCanvasNames() {
     canvasList.clear();
     for (auto* canvas : canvases) {
@@ -225,27 +212,4 @@ void UIManager::GrabCanvasNames() {
             canvasList.push_back(canvas->GetName());
         }
     }
-}
-
-void UIManager::Serialize(std::ostream& out) const {
-    SceneSystem::Serialize(out);
-}
-
-void UIManager::Deserialize(std::istream& in) {
-	canvasList.clear();
-    canvases.clear();
-	activeCanvasName.clear();
-
-	SceneSystem::Deserialize(in);
-
-    // rebuild pointer list
-    for (const auto& name : canvasList) {
-        if (auto canvas = uiRegistry.Get(name)) {
-            canvases.push_back(canvas);
-        }
-    }
-
-	if (!activeCanvasName.empty()) {
-		SetCanvasActive(activeCanvasName);
-	}
 }

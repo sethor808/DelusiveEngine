@@ -72,10 +72,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\debug_lib</OutDir>
+    <OutDir>..\debug_lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\lib</OutDir>
+    <OutDir>..\lib\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,11 +147,12 @@
   <ItemGroup>
     <ClCompile Include="..\include\imgui\backend\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\include\imgui\backend\imgui_impl_sdl3.cpp" />
-    <ClCompile Include="..\include\imgui\imgui.cpp" />
     <ClCompile Include="..\include\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\include\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\DelusiveComponentFactory.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Components\UUIDManager.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Core\DelusiveParser.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Utils\PropertyDraw.cpp" />
     <ClCompile Include="src\Delusive\Scripting\BehaviourScript.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="src\Delusive\Runtime\Editor\EditorRegistry.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Agents\EnemyAgent.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Editor\EngineUI.cpp" />
+    <ClCompile Include="src\Delusive\Runtime\Editor\EngineUI_UIBuilder.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Agents\EnvironmentAgent.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Rendering\Font.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Core\GameManager.cpp" />
@@ -209,7 +211,6 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UIPanel.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIScriptContainer.cpp" />
-    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanButton.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -321,18 +322,23 @@
     <ClInclude Include="include\Delusive\Runtime\Components\ColliderComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\Component.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\DelusiveComponents.h" />
+    <ClInclude Include="include\Delusive\Runtime\Components\DelusiveComponentFactory.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\PathfindingComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\ScriptComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\StatsComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Components\TransformComponent.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\Camera.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveInstance.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveCoreIncludes.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveData.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveParser.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\DelusiveRegistry.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\DelusiveVar.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\GameManager.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\IDLink.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\PhysicsSystem.h" />
+    <ClInclude Include="include\Delusive\Runtime\Core\UUIDManager.h" />
     <ClInclude Include="include\Delusive\Runtime\Editor\EditorInput.h" />
     <ClInclude Include="include\Delusive\Runtime\Editor\EditorInterface.h" />
     <ClInclude Include="include\Delusive\Runtime\Editor\EditorRegistry.h" />
@@ -371,7 +377,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIRepeatContainer.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIScriptContainer.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanButton.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UITalismanDisplay.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveDeserializer.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />

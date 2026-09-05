@@ -11,9 +11,12 @@ class DelusiveInventory;
 
 class EquipScreen : public UIScript {
 public:
+    EquipScreen();
     void RegisterProperties() override;
 
+    void RelocateReferences() override;
     std::string GetType() const override { return "EquipScreen"; }
+    virtual void Link(UIScriptContainer*) override;
 
     void OnInit() override;
     void OnUpdate(float) override {};
@@ -22,9 +25,9 @@ public:
     void OnClick(UIScriptContainer* clicked) override {}; //idk what this is supposed to be
 
 private:
-    DelusiveIDLink availableContainerID;
+    DelusiveUILink availableContainerID;
     UIRepeatContainer* availableContainer = nullptr;
-    DelusiveIDLink equippedContainerID;
+    DelusiveUILink equippedContainerID;
     UIRepeatContainer* equippedContainer = nullptr;
     DelusiveInventory* inventoryData = nullptr;
 

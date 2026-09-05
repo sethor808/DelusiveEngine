@@ -1,4 +1,6 @@
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Components/DelusiveComponentFactory.h>
 #include <Delusive/Runtime/Components/Component.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
@@ -8,8 +10,8 @@
 #include <limits>
 #include <sstream>
 
-Agent::Agent(DelusiveRenderer& renderer)
-	: renderer(renderer), registry(std::make_unique<PropertyRegistry>())
+Agent::Agent(DelusiveInstance& instance)
+	: instance(instance), registry(std::make_unique<PropertyRegistry>())
 {
 	RegisterProperties();
 }
@@ -19,6 +21,8 @@ Agent::~Agent() {
 }
 
 void Agent::RegisterProperties() {
+    registry->category = "Agent";
+    registry->type = this->GetType();
     registry->Register("id", &id);
 	registry->Register("name", &name);
 	transform.RegisterProperties(*registry);
@@ -96,66 +100,6 @@ void Agent::SetTransform(TransformComponent& newTransform) {
     transform = newTransform;
 }
 
-//TODO: Move this into the renderer itself
-/*
-GLuint Agent::RenderAgentToTexture(int width, int height) {
-	GLuint framebuffer, textureColorbuffer;
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	// Create texture
-	glGenTextures(1, &textureColorbuffer);
-	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Attach to framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-
-	// Optional depth buffer
-	GLuint rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		std::cerr << "[RenderAgentToTexture] Framebuffer not complete!" << std::endl;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return 0;
-	}
-
-	// Set viewport and clear
-	glViewport(0, 0, width, height);
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	float halfWidth = width * 0.5f;
-	float halfHeight = height * 0.5f;
-	constexpr float pixelsPerUnit = 64.0f;
-	float halfWidthUnits = width / (2.0f * pixelsPerUnit);
-	float halfHeightUnits = height / (2.0f * pixelsPerUnit);
-	glm::mat4 projection = glm::ortho(
-		-halfWidthUnits, halfWidthUnits,
-		-halfHeightUnits, halfHeightUnits,
-		-1.0f, 1.0f
-	);
-
-	this->Draw(projection);
-
-	// Cleanup
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_BLEND);
-	glDeleteRenderbuffers(1, &rbo);
-	glDeleteFramebuffers(1, &framebuffer);
-
-	return textureColorbuffer;
-}
-*/
-
 void Agent::AddRawComponent(std::unique_ptr<Component> component) {
 	component->SetOwner(this);
 
@@ -184,97 +128,6 @@ TransformComponent& Agent::GetTransform() const {
     return const_cast<TransformComponent&>(transform);
 }
 
-void Agent::Serialize(std::ofstream& out) const {
-	out << "[Agent " << GetType() << "]\n";
-	registry->Serialize(out);
-
-	for (auto& comp : components) {
-		out << "[Component " << comp->GetType() << "]\n";
-		comp->Serialize(out);
-		out << "[/Component]\n";
-	}
-
-	out << "[/Agent]\n";
-}
-
-void Agent::Deserialize(std::ifstream& in) {
-	std::string line;
-	while (std::getline(in, line)) {
-		if (line.empty()) continue;
-
-		if (line == "[/Agent]") {
-			break; // finished this agent block
-		}
-
-		// Components
-		if (line.rfind("[Component", 0) == 0) {
-			std::istringstream iss(line);
-			std::string discard, type;
-			iss >> discard >> type; // [Component SpriteComponent]
-
-			if (!type.empty() && type.back() == ']') {
-				type.pop_back();
-			}
-
-			Component* comp = nullptr;
-			if (type == "SpriteComponent")        comp = AddComponent<SpriteComponent>(in);
-			else if (type == "SolidCollider")     comp = AddComponent<SolidCollider>(in);
-			else if (type == "TriggerCollider")   comp = AddComponent<TriggerCollider>(in);
-			else if (type == "HurtboxCollider")   comp = AddComponent<HurtboxCollider>(in);
-			else if (type == "HitboxCollider")    comp = AddComponent<HitboxCollider>(in);
-			else if (type == "StatsComponent")    comp = AddComponent<StatsComponent>(in);
-			else if (type == "AnimatorComponent") comp = AddComponent<AnimatorComponent>(in);
-			else if (type == "ScriptComponent") {
-				ScriptManager& scriptManager = this->sceneLink->GetScriptManager();
-				comp = AddComponent<ScriptComponent>(in, scriptManager);
-			}
-		}
-		else {
-			// Allow both "key=value" and "key value"
-			std::string key, value;
-			auto pos = line.find('=');
-			if (pos != std::string::npos) {
-				key = line.substr(0, pos);
-				value = line.substr(pos + 1);
-			}
-			else {
-				std::istringstream iss(line);
-				iss >> key;
-				std::getline(iss, value);
-				if (!value.empty() && value[0] == ' ') value.erase(0, 1); // trim leading space
-			}
-
-			if (key.empty()) continue;
-
-			// Try registry first
-			std::istringstream valStream(value);
-			bool handled = false;
-			for (auto& p : registry->properties) {
-				if (p->name == key) {
-					p->Deserialize(valStream);
-					handled = true;
-					break;
-				}
-			}
-			if (handled) continue;
-
-			// Fallback manual handling
-			if (key == "position") {
-				std::istringstream vs(value);
-				vs >> transform.position.x >> transform.position.y;
-			}
-			else if (key == "scale") {
-				std::istringstream vs(value);
-				vs >> transform.scale.x >> transform.scale.y;
-			}
-			else if (key == "rotation") {
-				std::istringstream vs(value);
-				vs >> transform.rotation;
-			}
-		}
-	}
-}
-
 void Agent::DrawImGui() {
 	registry->DrawImGui();
 	ImGui::Separator();
@@ -288,51 +141,29 @@ void Agent::DrawImGui() {
 		ImGui::PopID();
 	}
 
-	if (ImGui::Button("Add Component")) {
-		ImGui::OpenPopup("AddComponentPopup");
-	}
+    if (ImGui::Button("Add Component"))
+    {
+        ImGui::OpenPopup("AddComponentPopup");
+    }
 
-	if (ImGui::BeginPopup("AddComponentPopup")) {
-		if (ImGui::MenuItem("Sprite")) AddComponent<SpriteComponent>();
-		if (ImGui::BeginMenu("Collider")) {
-			if (ImGui::MenuItem("Solid")) AddComponent<SolidCollider>();
-			if (ImGui::MenuItem("Hitbox")) AddComponent<HitboxCollider>();
-			if (ImGui::MenuItem("Hurtbox")) AddComponent<HurtboxCollider>();
-			if (ImGui::MenuItem("Trigger")) AddComponent<TriggerCollider>();
-			ImGui::EndMenu();
-		}
-		if (ImGui::MenuItem("AnimatorComponent")) AddComponent<AnimatorComponent>();
-		if (ImGui::MenuItem("ScriptComponent")) {
-			ScriptManager& scriptManager = this->sceneLink->GetScriptManager();
-			AddComponent<ScriptComponent>(scriptManager);
-		}
-		if (ImGui::MenuItem("Stats")) AddComponent<StatsComponent>();
-		ImGui::EndPopup();
-	}
-}
+    if (ImGui::BeginPopup("AddComponentPopup"))
+    {
+        std::string type = DelusiveComponentFactory::DrawComponentAddMenu();
 
-void Agent::SaveToFile(const std::string& filePath) const {
-	std::ofstream out(filePath);
-	if (!out.is_open()) return;
-	Serialize(out);
-}
+        if (!type.empty())
+        {
+            ScriptManager& scriptManager = sceneLink->GetScriptManager();
 
-void Agent::SaveToFile(std::ofstream& out) const {
-	Serialize(out);
-}
+            auto comp = DelusiveComponentFactory::CreateComponentByType(type, instance);
 
-void Agent::LoadFromFile(std::ifstream& in) {
-	if (!in) return;
+            if (comp)
+                AddRawComponent(std::move(comp));
 
-	components.clear();
+            ImGui::CloseCurrentPopup();
+        }
 
-	Deserialize(in);
-}
-
-void Agent::LoadFromFile(const std::string& filePath) {
-	std::ifstream in(filePath);
-	if (!in.is_open()) return;
-	LoadFromFile(in);
+        ImGui::EndPopup();
+    }
 }
 
 void Agent::RemoveComponentByPointer(Component* target) {

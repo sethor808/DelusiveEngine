@@ -1,4 +1,6 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/UUIDManager.h>
 #include <memory>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
@@ -10,6 +12,8 @@ class Scene;
 class GameManager {
 public:
 	GameManager(DelusiveRenderer&);
+
+    DelusiveInstance& GetInstance() { return instance; }
 
     void Init();
     void Update(float deltaTime);
@@ -28,7 +32,8 @@ public:
 
     ScriptManager& GetScriptManager() { return scriptManager; }
 private:
-    DelusiveRenderer& renderer;
+    DelusiveInstance instance;
+    UUIDManager idManager;
     ScriptManager scriptManager;
     DelusiveInventory inventory;
     Scene editorScene;

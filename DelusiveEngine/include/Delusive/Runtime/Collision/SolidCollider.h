@@ -4,12 +4,12 @@
 
 class SolidCollider : public ColliderComponent {
 public:
-	SolidCollider(DelusiveRenderer&);
+	SolidCollider(DelusiveInstance&);
 	SolidCollider() = delete;
 
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<SolidCollider>(renderer);
+		return std::make_unique<SolidCollider>(instance);
 	}
 
 	ColliderType GetColliderType() const override {
@@ -22,8 +22,5 @@ public:
 	const char* GetType() const override {
 		return "SolidCollider";
 	}
-
-	//void Serialize(std::ofstream& out) const override;
-	//void Deserialize(std::ifstream& in) override;
 private:
 };

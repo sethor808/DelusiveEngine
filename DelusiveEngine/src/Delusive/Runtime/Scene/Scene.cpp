@@ -1,11 +1,12 @@
 #include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 
 //TODO: If there is no camera, handle properly
-Scene::Scene(DelusiveRenderer& _renderer)
-	: renderer(_renderer), name("New Scene"), camera(nullptr)
+Scene::Scene(DelusiveInstance& instance)
+	: instance(instance), name("New Scene"), camera(nullptr)
 {
     //inventoryLink = gameManager->GetInventoryLink();
 }
@@ -20,7 +21,7 @@ void Scene::LinkGameManager(GameManager* gm) {
 }
 
 std::unique_ptr<Scene> Scene::Clone() {
-	auto cloned = std::make_unique<Scene>(renderer);
+	auto cloned = std::make_unique<Scene>(instance);
 	cloned->name = this->name;
 
 	if(gameManager) {
@@ -57,9 +58,9 @@ void Scene::CloneInto(Scene& container) const {
     for (auto& agent : container.agents) {
         for (auto& comp : agent->GetComponents()) {
             if (auto* scriptComp = dynamic_cast<ScriptComponent*>(comp.get())) {
-                if (auto* container = scriptComp->GetScriptContainer()) {
-                    if (container->script) {
-                        container->script->RelocateReferences();
+                if (auto* script = scriptComp->GetScript()) {
+                    if (script) {
+                        script->RelocateReferences();
                     }
                 }
             }
@@ -235,7 +236,7 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 
 	//Renderer::BeginUIRenderPass();
 	for (auto& system : systems) {
-		system->Draw(renderer.GetUIProjection());
+		system->Draw(instance.renderer.GetUIProjection());
 	}
 	//Renderer::EndUIRenderPass();
 }
@@ -257,108 +258,6 @@ void Scene::Clear() {
 	systems.clear();
     agentLookup.clear();
 	name = "New Scene";
-}
-
-bool Scene::SaveToFile(const std::string& path) const {
-	std::ofstream out(path);
-	if (!out.is_open()) return false;
-
-	out << "[Scene]" << "\n";
-	out << "name " << name << "\n";
-
-	// Save agents
-	out << "agents " << agents.size() << "\n";
-	for (const auto& agent : agents) {
-		agent->SaveToFile(out);
-	}
-
-	out << "systems " << systems.size() << "\n";
-	for (auto& sys : systems) {
-		sys->Serialize(out);
-	}
-
-	out << "[/Scene]" << "\n";
-	return true;
-}
-
-bool Scene::LoadFromFile(const std::string& path) {
-	std::ifstream in(path);
-	if (!in.is_open()) return false;
-
-	Clear(); // reset
-
-	std::string line;
-	while (std::getline(in, line)) {
-		if (line.empty()) continue;
-
-		std::istringstream iss(line);
-		std::string token;
-		iss >> token;
-
-		if (token == "[/Scene]") {
-			break;
-		}
-		else if (token == "[Scene]") {
-			continue;
-		}
-		else if (token == "name") {
-			std::string rest;
-			std::getline(iss, rest);
-			if (!rest.empty() && rest[0] == ' ') rest.erase(0, 1);
-			name = rest;
-		}
-		else if (token == "agents") {
-			int count;
-			iss >> count;
-			continue;
-		}
-		else if (token == "[Agent") {
-			std::string type;
-			iss >> type; // e.g. CameraAgent]
-
-			// trim trailing ']'
-			if (!type.empty() && type.back() == ']') {
-				type.pop_back();
-			}
-
-			std::unique_ptr<Agent> agent;
-			if (type == "PlayerAgent") agent = std::make_unique<PlayerAgent>(renderer);
-			else if (type == "CameraAgent") agent = std::make_unique<CameraAgent>(renderer);
-			else if (type == "EnemyAgent") agent = std::make_unique<EnemyAgent>(renderer);
-			else if (type == "EnvironmentAgent") agent = std::make_unique<EnvironmentAgent>(renderer);
-			else agent = std::make_unique<PlayerAgent>(renderer); // fallback
-
-			// Let the agent load its block (until [/Agent])
-			//There has to be a better way to do this
-			Agent* link = agent.get();
-            agent->LinkScene(this);
-			link->LoadFromFile(in);
-            AddAgent(std::move(agent));
-		}
-		else if (token == "systems"){
-			int count;
-			iss >> count;
-			continue;
-		}
-		else if (token == "[System") {
-			std::string type;
-			iss >> type;
-			
-			if (!type.empty() && type.back() == ']') {
-				type.pop_back();
-			}
-
-			std::unique_ptr<SceneSystem> sys = nullptr;
-			if (type == "PathfindingSystem") sys = std::make_unique<PathfindingSystem>(renderer);
-			else if (type == "UIManager") sys = std::make_unique<UIManager>(renderer);
-
-            SceneSystem* link = sys.get();
-            AddSystem(std::move(sys));
-			link->Deserialize(in);
-		}
-	}
-
-	return true;
 }
 
 CameraAgent* Scene::GetMainCamera() const {

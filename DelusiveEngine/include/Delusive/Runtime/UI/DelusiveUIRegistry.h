@@ -11,17 +11,15 @@ class DelusiveUIRegistry {
 public:
 	DelusiveUIRegistry(const DelusiveUIRegistry&) = delete;
 	DelusiveUIRegistry() = delete;
-	DelusiveUIRegistry(DelusiveRenderer&);
+	DelusiveUIRegistry(DelusiveInstance&);
     ~DelusiveUIRegistry() = default;
 
     void LinkManager(UIManager* manager) { owner = manager; }
     UIManager* GetManager() { return owner; }
 
-	void LoadAll() { LoadFromFile(registryFile); }
-	void SaveAll() const {SaveToFile(registryFile);}
-
-	void LoadFromFile(const std::string&);
-	void SaveToFile(const std::string&) const;
+    //TODO: Convert to a proper factory
+	//void LoadAll() { LoadFromFile(registryFile); }
+	//void SaveAll() const {SaveToFile(registryFile);}
 
 	UICanvas* Get(const std::string&) const;
 	std::unordered_map<std::string, UICanvas*> GetAll() const;
@@ -31,7 +29,7 @@ public:
 	std::vector<std::string> GetAllNames() const;
 
 private:
-	DelusiveRenderer& renderer;
+    DelusiveInstance& instance;
     UIManager* owner;
 	inline static const std::string registryFile = CANVAS_DATA;
 	std::unordered_map<std::string, std::unique_ptr<UICanvas>> canvases;

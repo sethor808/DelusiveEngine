@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <memory>
 #include <vector>
 #include <type_traits>
@@ -11,13 +12,12 @@
 
 class Component;
 class PropertyRegistry;
-class DelusiveRenderer;
 class Collider;
 class Scene;
 
 class Agent {
 public:
-    explicit Agent(DelusiveRenderer&);
+    explicit Agent(DelusiveInstance&);
     Agent() = delete;
     virtual ~Agent();
 
@@ -28,10 +28,6 @@ public:
     //Base Gameplay hooks
     virtual void Update(float);
     virtual void Draw(const glm::mat4&) const; //Probably can be removed/changed
-
-    //Serialization
-    virtual void Serialize(std::ofstream&) const;
-    virtual void Deserialize(std::ifstream&);
 
     //Editor
     virtual void DrawImGui();
@@ -90,7 +86,7 @@ public:
             "T must derive from Component");
 
         // Inject the renderer reference before forwarded args
-        auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
+        auto component = std::make_unique<T>(instance, std::forward<Args>(args)...);
         component->SetOwner(this);
         if (!component->GetID().IsValid()) {
             component->SetID(UUID::GenerateRandom());
@@ -108,7 +104,7 @@ public:
         static_assert(std::is_base_of<Component, T>::value,
             "T must derive from Component");
 
-        auto component = std::make_unique<T>(renderer, std::forward<Args>(args)...);
+        auto component = std::make_unique<T>(instance, std::forward<Args>(args)...);
 
         T* ptr = component.get();
         components.push_back(std::move(component));
@@ -157,12 +153,6 @@ public:
     const std::vector<std::unique_ptr<Component>>& GetComponents() const;
     void RemoveComponentByPointer(Component*);
 
-    //File I/O
-    void SaveToFile(const std::string&) const;
-    virtual void SaveToFile(std::ofstream&) const;
-    void LoadFromFile(const std::string&);
-    virtual void LoadFromFile(std::ifstream&);
-
     //Data
     void SetName(const std::string& n) { name = n; }
     const std::string& GetName() const { return name; }
@@ -175,7 +165,7 @@ public:
 
 protected:
     TransformComponent transform;
-    DelusiveRenderer& renderer;
+    DelusiveInstance& instance;
     Scene* sceneLink = nullptr;
     //uint64_t id = 0; REMOVED FOR UUID SYSTEM
     UUID id;
@@ -186,6 +176,7 @@ protected:
     std::vector<std::unique_ptr<Component>> components;
     std::unordered_map<UUID, Component*, UUID::Hash> componentLookup;
 
+    //std::string name;
     std::string name;
     std::string type;
     uint64_t nextComponentID = 0;

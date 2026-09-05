@@ -1,18 +1,20 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <memory>
 #include <glm/glm.hpp>
 
 class Scene;
-class PropertyRegistry;
 class DelusiveRenderer;
+class PropertyRegistry;
 class PlayerAgent;
 
 class SceneSystem {
 public:
 	SceneSystem() = delete;
-	SceneSystem(DelusiveRenderer&);
-    SceneSystem(DelusiveRenderer&, Scene*);
+	SceneSystem(DelusiveInstance&);
+    SceneSystem(DelusiveInstance&, Scene*);
 	virtual ~SceneSystem();
 
 	virtual void LinkScene(Scene* _scene) { scene = _scene; }
@@ -34,15 +36,9 @@ public:
 	virtual std::string GetType() const = 0;
 
 	virtual std::unique_ptr<SceneSystem> Clone() const = 0;
-
-	void SaveToFile(const std::string&) const {};
-	virtual void SaveToFile(std::ofstream&) const {};
-
-	virtual void Serialize(std::ostream&) const;
-	virtual void Deserialize(std::istream&);
 protected:
 	Scene* scene = nullptr;
-	DelusiveRenderer& renderer;
+    DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;
 	bool editorMode = false;
 	std::string name;

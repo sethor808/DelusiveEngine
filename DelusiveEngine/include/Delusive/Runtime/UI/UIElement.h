@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <vector>
@@ -10,7 +11,6 @@
 #include <imgui/imgui.h>
 #include <Delusive/Runtime/Utils/UUID.h>
 
-class DelusiveRenderer;
 class PropertyRegistry;
 class UICanvas;
 
@@ -21,9 +21,9 @@ public:
 	UIElement& operator=(const UIElement&) = delete;
 	UIElement(UIElement&&) noexcept = default;
 	UIElement& operator=(UIElement&&) noexcept = default;
-	UIElement(DelusiveRenderer&);
+	UIElement(DelusiveInstance& instance);
     
-    DelusiveRenderer& GetRenderer();
+    DelusiveInstance& GetInstance() { return instance; }
 
 	virtual void RegisterProperties();
 	virtual std::unique_ptr<UIElement> Clone() const = 0;
@@ -61,7 +61,7 @@ public:
 	
 	template<typename T, typename... Args>
 	T* AddChild(Args&&... args) {
-		auto child = std::make_unique<T>(renderer, std::forward<Args>(args)...);
+		auto child = std::make_unique<T>(instance, std::forward<Args>(args)...);
 		T* ptr = child.get();
 		child->LinkCanvas(parentCanvas);
 		children.push_back(std::move(child));
@@ -75,7 +75,7 @@ public:
 	std::vector<UIElement*> GetChildren();
     void ClearChildren() { children.clear(); }
 	
-	const UUID& GetID() const { return id; }
+	UUID GetID() const { return id; }
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }
     bool GetEnabled() { return enabled; }
@@ -87,13 +87,10 @@ public:
 	void SetPosition(const glm::vec2& pos) { position = pos; }
 	
 	virtual void DrawImGui();
-	virtual void Serialize(std::ostream& out) const;
-    virtual void Deserialize(DelusiveParser::DataBlock&);
-	virtual void Deserialize(std::istream& in); //OLD TO BE REMOVED
 protected:
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
-	DelusiveRenderer& renderer;
+	DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;
 	std::string name;
 	bool enabled = true;

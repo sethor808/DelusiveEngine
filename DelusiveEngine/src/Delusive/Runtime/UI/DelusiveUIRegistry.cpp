@@ -3,38 +3,10 @@
 #include <fstream>
 #include <iostream>
 
-DelusiveUIRegistry::DelusiveUIRegistry(DelusiveRenderer& _renderer)
-    : renderer(_renderer), owner(nullptr)
+DelusiveUIRegistry::DelusiveUIRegistry(DelusiveInstance& instance)
+    : instance(instance), owner(nullptr)
 {
 
-}
-
-void DelusiveUIRegistry::LoadFromFile(const std::string& path) {
-	std::ifstream file(path);
-    if (!file) {
-        std::cerr << "[DelusiveUIRegistry] Error opening canvas data file." << std::endl;
-        return;
-    }
-
-    auto blocks = DelusiveParser::ParseFile(file);
-
-    canvases.clear();
-    for (auto& block : blocks) {
-        if (block.category == "UICanvas") {
-            auto canvas = std::make_unique<UICanvas>(renderer);
-            canvas->LinkManager(owner);
-            canvas->Deserialize(block);
-            canvases[canvas->GetName()] = std::move(canvas);
-        }
-    }
-}
-
-void DelusiveUIRegistry::SaveToFile(const std::string& path) const {
-	std::ofstream out(path);
-	out << canvases.size() << std::endl;
-	for (const auto& key : canvases) {
-		key.second->Serialize(out);
-	}
 }
 
 UICanvas* DelusiveUIRegistry::Get(const std::string& name) const{

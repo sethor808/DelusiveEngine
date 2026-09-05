@@ -7,7 +7,7 @@ class Shader;
 
 class UIPanel : public UIElement {
 public:
-    UIPanel(DelusiveRenderer&);
+    UIPanel(DelusiveInstance&);
     std::unique_ptr<UIElement> Clone() const override;
 
     void SetTexture(GLuint texture);

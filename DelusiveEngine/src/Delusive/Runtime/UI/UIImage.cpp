@@ -9,8 +9,8 @@
 #include <glm/vec4.hpp>
 #include <filesystem>
 
-UIImage::UIImage(DelusiveRenderer& _renderer)
-	: UIElement(_renderer)
+UIImage::UIImage(DelusiveInstance& instance)
+	: UIElement(instance)
 {
 	Init();
 }
@@ -18,7 +18,7 @@ UIImage::UIImage(DelusiveRenderer& _renderer)
 void UIImage::Init() {
 	name = "UIImage";
 	textureData.texturePath = DEFAULT_SPRITE;
-	textureData.textureID = renderer.GetTexture(textureData.texturePath);
+	textureData.textureID = instance.renderer.GetTexture(textureData.texturePath);
 
 	RegisterProperties();
 }
@@ -29,7 +29,7 @@ void UIImage::RegisterProperties() {
 }
 
 std::unique_ptr<UIElement> UIImage::Clone() const{
-	auto copy = std::make_unique<UIImage>(renderer);
+	auto copy = std::make_unique<UIImage>(instance);
 	copy->SetPosition(position);
 	copy->SetSize(size);
 	copy->SetName(name);
@@ -52,12 +52,12 @@ void UIImage::Update(float deltaTime) {
 void UIImage::DrawImGui() {
 	UIElement::DrawImGui();
 
-	textureData.textureID = renderer.GetTexture(textureData.texturePath);
+	textureData.textureID = instance.renderer.GetTexture(textureData.texturePath);
 }
 
 void UIImage::SetTexturePath(const std::string& path) {
 	textureData.texturePath = path;
-	textureData.textureID = renderer.GetTexture(textureData.texturePath);
+	textureData.textureID = instance.renderer.GetTexture(textureData.texturePath);
 }
 
 void UIImage::Draw(const glm::mat4& projection) {
@@ -70,7 +70,7 @@ void UIImage::Draw(const glm::mat4& projection) {
 		glm::translate(glm::mat4(1.0f), glm::vec3(worldPos, 0.0f)) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(worldSize, 1.0f));
 
-	renderer.Submit({
+	instance.renderer.Submit({
 		.modelMatrix = model,
 		.color = glm::vec4(1.0f), // could expose as property
 		.textureID = textureData.textureID,
@@ -85,10 +85,4 @@ void UIImage::Draw(const glm::mat4& projection) {
 
 const std::string UIImage::GetType() const {
 	return "UIImage";
-}
-
-void UIImage::Deserialize(std::istream& in) {
-	UIElement::Deserialize(in);
-
-	SetTexturePath(textureData.texturePath);
 }

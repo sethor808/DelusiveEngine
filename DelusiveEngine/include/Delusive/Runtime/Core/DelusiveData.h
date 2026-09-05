@@ -9,6 +9,7 @@
 #include <Delusive/Scripting/UIScript.h>
 #include <Delusive/Runtime/Utils/UUID.h>
 #include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/Core/IDLink.h>
 #include <memory>
 #include <iostream>
 #include <glm/glm.hpp>
@@ -184,30 +185,4 @@ struct DelusiveFont {
 
         if (!wasBlend) glDisable(GL_BLEND);
     }
-};
-
-struct DelusiveScript {
-	std::string scriptName;
-    bool newScript = true;
-    std::unique_ptr<BehaviourScript> script;
-	ScriptManager* manager = nullptr;
-};
-
-struct DelusiveUIScript {
-    std::string scriptName;
-    bool newScript = true;
-    std::unique_ptr<UIScript> script;
-    ScriptManager* manager = nullptr;
-};
-
-struct DelusiveUIElement {
-    std::string name;
-    UUID* id;
-    UIElement* link = nullptr;
-};
-
-struct DelusiveUIPrototype {
-    UICanvas* parentCanvas = nullptr;
-    std::string type;
-    std::unique_ptr<UIElement> element;
 };

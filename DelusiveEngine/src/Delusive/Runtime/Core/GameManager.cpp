@@ -1,8 +1,9 @@
 #include <Delusive/Runtime/Core/GameManager.h>
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 
 
-GameManager::GameManager(DelusiveRenderer& _renderer)
-	: renderer(_renderer), editorScene(_renderer), playScene(_renderer)
+GameManager::GameManager(DelusiveRenderer& renderer)
+	: instance(renderer, idManager, scriptManager), editorScene(instance), playScene(instance)
 {
     Init();
 }
@@ -52,7 +53,7 @@ void GameManager::Update(float deltaTime) {
 
 void GameManager::Draw(const ColliderRenderer& renderer, const glm::mat4& projection) {
     activeScene->Draw(renderer, projection);
-    this->renderer.Flush(); //TODO: Fix the naming here it is confusing
+    this->instance.renderer.Flush(); //TODO: Fix the naming here it is confusing
 }
 
 void GameManager::HandleInput(const PlayerInputState& input) {

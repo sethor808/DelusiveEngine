@@ -6,8 +6,8 @@ const T& Clamp(const T& v, const T& lo, const T& hi) {
     return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
-ColliderComponent::ColliderComponent(DelusiveRenderer& renderer)
-    : Component(renderer)
+ColliderComponent::ColliderComponent(DelusiveInstance& instance)
+    : Component(instance)
 { 
 	name = "New Collider";
     RegisterProperties();

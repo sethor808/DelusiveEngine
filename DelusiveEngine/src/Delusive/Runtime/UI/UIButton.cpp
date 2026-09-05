@@ -1,13 +1,13 @@
 #include <Delusive/Runtime/UI/UIButton.h>
-#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <imgui/imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-UIButton::UIButton(DelusiveRenderer& _renderer) 
-	: UIElement(_renderer)
+UIButton::UIButton(DelusiveInstance& instance)
+	: UIElement(instance)
 {
 	Init();
 }
@@ -15,9 +15,9 @@ UIButton::UIButton(DelusiveRenderer& _renderer)
 void UIButton::Init() {
 	buttonTexture.texturePath = "../assets/ui/default_button.png";
 
-	buttonTexture.textureID = renderer.GetTexture(buttonTexture.texturePath);
+	buttonTexture.textureID = instance.renderer.GetTexture(buttonTexture.texturePath);
 	if (buttonTexture.textureID == 0) {
-		buttonTexture.textureID = renderer.CreateFallbackWhiteTexture();
+		buttonTexture.textureID = instance.renderer.CreateFallbackWhiteTexture();
 	}
 
 	// Font initialization (leave as-is if your Font class handles its own resources)
@@ -38,7 +38,7 @@ void UIButton::RegisterProperties() {
 }
 
 std::unique_ptr<UIElement> UIButton::Clone() const {
-	auto copy = std::make_unique<UIButton>(renderer);
+	auto copy = std::make_unique<UIButton>(instance);
 	copy->SetPosition(position);
 	copy->SetSize(size);
 	copy->SetEnabled(enabled);
@@ -51,9 +51,9 @@ std::unique_ptr<UIElement> UIButton::Clone() const {
 
 	// copy texture path and ask renderer for the cached textureID
 	copy->buttonTexture.texturePath = buttonTexture.texturePath;
-	copy->buttonTexture.textureID = renderer.GetTexture(copy->buttonTexture.texturePath);
+	copy->buttonTexture.textureID = instance.renderer.GetTexture(copy->buttonTexture.texturePath);
 	if (copy->buttonTexture.textureID == 0) {
-		copy->buttonTexture.textureID = renderer.CreateFallbackWhiteTexture();
+		copy->buttonTexture.textureID = instance.renderer.CreateFallbackWhiteTexture();
 	}
 
 	// Copy font (if Font is copyable; adjust if it requires a special clone)
@@ -88,10 +88,10 @@ void UIButton::Draw(const glm::mat4& projection) {
 	RenderCommand cmd;
 	cmd.modelMatrix = model;
 	cmd.color = glm::vec4(1.0f); // could become a property/tint
-	cmd.textureID = buttonTexture.textureID ? buttonTexture.textureID : renderer.CreateFallbackWhiteTexture();
+	cmd.textureID = buttonTexture.textureID ? buttonTexture.textureID : instance.renderer.CreateFallbackWhiteTexture();
 	cmd.layer = 0; // UI layer ordering -- feel free to expose as a member
 	cmd.isUI = true;
-	renderer.Submit(cmd);
+	instance.renderer.Submit(cmd);
 
 	// Draw label text using your font system (unchanged)
 	// Note: position for text should be in same coordinate space as Draw (center-origin)

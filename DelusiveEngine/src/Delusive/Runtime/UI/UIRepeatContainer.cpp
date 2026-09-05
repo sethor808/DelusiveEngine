@@ -6,17 +6,15 @@
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 
-UIRepeatContainer::UIRepeatContainer(DelusiveRenderer& renderer)
-	: UIElement(renderer)
+UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
+	: UIElement(instance)
 {
-	prototype = std::make_unique<DelusiveUIPrototype>();
-	prototype->element = nullptr;
 	name = "New UIRepeatContainer";
 	RegisterProperties();
 }
 
 std::unique_ptr<UIElement> UIRepeatContainer::Clone() const {
-	auto copy = std::make_unique<UIRepeatContainer>(renderer);
+	auto copy = std::make_unique<UIRepeatContainer>(instance);
 
 	copy->SetPosition(position);
 	copy->SetSize(size);
@@ -26,7 +24,7 @@ std::unique_ptr<UIElement> UIRepeatContainer::Clone() const {
 
 	if (prototype) {
 		// prototype->Clone() returns unique_ptr<UIElement>
-		copy->prototype->element = prototype->element->Clone();
+		copy->prototype = prototype->Clone();
 	}
 
 	// Caller can call RegenerateChildren() when appropriate.
@@ -50,10 +48,10 @@ void UIRepeatContainer::Draw(const glm::mat4& projection) {
 	}
 
 #ifdef DELUSIVE_EDITOR_MODE
-	if (prototype && prototype->element) {
-		renderer.PushAlpha(0.3f);
-		prototype->element->Draw(projection);
-		renderer.PopAlpha();
+	if (prototype) {
+		instance.renderer.PushAlpha(0.3f);
+		prototype->Draw(projection);
+		instance.renderer.PopAlpha();
 	}
 #endif
 }
@@ -64,7 +62,7 @@ void UIRepeatContainer::DrawImGui() {
 	// --- Prototype Management Section ---
 	ImGui::SeparatorText("Prototype");
 
-	if (!prototype->element) {
+	if (!prototype) {
 		ImGui::TextDisabled("No prototype assigned.");
 
 		if (ImGui::Button("Create Prototype", ImVec2(-FLT_MIN, 0))) {
@@ -74,10 +72,10 @@ void UIRepeatContainer::DrawImGui() {
 		if (ImGui::BeginPopup("AddPrototypePopup")) {
 			std::string type = DelusiveUI::DrawUIElementAddMenu();
 			if (!type.empty()) {
-				auto newProto = DelusiveUI::CreateUIElementByType(type, renderer, parentCanvas->GetScriptManager());
+				auto newProto = DelusiveUI::CreateUIElementByType(type, instance);
 				if (newProto) {
 					newProto->LinkCanvas(parentCanvas);
-					prototype->element = std::move(newProto);
+					prototype = std::move(newProto);
 				}
 				ImGui::CloseCurrentPopup();
 			}
@@ -91,7 +89,7 @@ void UIRepeatContainer::DrawImGui() {
 		{
 			// --- Inline prototype editing ---
 			ImGui::PushID("PrototypeEditor");
-			prototype->element->DrawImGui();
+			prototype->DrawImGui();
 			ImGui::PopID();
 
 			ImGui::Dummy(ImVec2(0, 4));
@@ -102,7 +100,7 @@ void UIRepeatContainer::DrawImGui() {
 			}
 
 			if (ImGui::Button("Remove Prototype", ImVec2(-FLT_MIN, 0))) {
-				prototype.reset();
+				prototype = nullptr;
 				children.clear();
 			}
 
@@ -112,7 +110,7 @@ void UIRepeatContainer::DrawImGui() {
 }
 
 void UIRepeatContainer::SetPrototype(std::unique_ptr<UIElement> element) {
-	prototype->element = std::move(element);
+	prototype = std::move(element);
 }
 
 void UIRepeatContainer::RegenerateChildren() {
@@ -126,7 +124,7 @@ void UIRepeatContainer::RegenerateChildren() {
 
 	// Use spacing.x for horizontal, spacing.y for vertical
 	for (int idx = 0; idx < count; ++idx) {
-		auto item = prototype->element->Clone();
+		auto item = prototype->Clone();
 		if (!item) continue;
 
 		int r = (rowsToUse == 1) ? 0 : (idx / cols);   // row index
@@ -138,26 +136,4 @@ void UIRepeatContainer::RegenerateChildren() {
 		// AddChild should take ownership and set parent properly
 		AddChild(std::move(item));
 	}
-}
-
-void UIRepeatContainer::Serialize(std::ostream& out) const {
-    out << "[UIElement " << this->GetType() << "]\n";
-    registry->Serialize(out);
-
-    // Serialize elements here
-    for (auto& elem : children) {
-        elem->Serialize(out);
-    }
-
-    if (prototype && prototype->element) {
-        out << "[Prototype]\n";
-        prototype->element->Serialize(out);
-        out << "[/Prototype]\n";
-    }
-
-    out << "[/UIElement]\n";
-}
-
-void UIRepeatContainer::Deserialize(std::istream& in) {
-    
 }

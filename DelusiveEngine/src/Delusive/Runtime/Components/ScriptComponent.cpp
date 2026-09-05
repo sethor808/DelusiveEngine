@@ -2,44 +2,38 @@
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Scripting/BehaviourScript.h>
 #include <iostream>
 
-ScriptComponent::ScriptComponent(DelusiveRenderer& renderer, ScriptManager& scriptManager)
-	: Component(renderer), scriptManager(scriptManager)
+ScriptComponent::ScriptComponent(DelusiveInstance& instance)
+	: Component(instance)
 { 
 	name = "New ScriptComponent";
-	InitScript();
 
 	RegisterProperties();
+}
+
+BehaviourScript* ScriptComponent::GetScript() const {
+    return script.get();
 }
 
 void ScriptComponent::SetOwner(Agent* agent) {
     if (agent) {
         owner = agent;
 
-        if (scriptContainer && scriptContainer->script) {
-            scriptContainer->script->SetOwner(owner);
-            scriptContainer->script->RelocateReferences();
-        }
-        else {
-            AttachScript();
+        if (script) {
+            script->SetOwner(owner);
+            script->RelocateReferences();
         }
 
         //SetTarget();
     }
 }
 
-void ScriptComponent::InitScript() {
-	scriptContainer = std::make_unique<DelusiveScript>();
-	std::cout << "[ScriptComponent] Initialized script container." << std::endl;
-	scriptContainer->manager = &scriptManager;
-}
-
 std::unique_ptr<Component> ScriptComponent::Clone() const {
-	auto copy = std::make_unique<ScriptComponent>(renderer, scriptManager);
+	auto copy = std::make_unique<ScriptComponent>(instance);
 	copy->SetName(GetName());
-	copy->scriptContainer->scriptName = scriptContainer->scriptName;
-    copy->scriptContainer->script = scriptContainer->script->Clone();
+    if(script) copy->script.object = script->Clone();
 	return copy;
 }
 
@@ -48,59 +42,34 @@ void ScriptComponent::SetTarget() {
 
 	Agent* player = owner->GetScene()->FetchPlayerRaw();
 	if (player) {
-		//SetTarget(player);
+		SetTarget(player);
 	}
 }
 
 void ScriptComponent::SetTarget(Agent* agent) {
-	if (!agent || !scriptContainer || !scriptContainer->script) return;
+	if (!agent || !script.get()) return;
 
-	target = agent;
-	scriptContainer->script->SetTarget(agent);
+    target.cached = agent;
+	script->SetTarget(agent);
 }
 
 void ScriptComponent::RegisterProperties()
 {
-	registry->Register("script", scriptContainer.get());
-}
-
-//PROBABLY RIP THIS OUT REWRITING OVER EXISTING SCRIPT
-void ScriptComponent::AttachScript() {
-    if (!scriptContainer->script) {
-        std::cout << "[ScriptComponent] Attempting to attach script: " << scriptContainer->scriptName << std::endl;
-        auto newScript = scriptManager.CreateEnemyLogicScript(scriptContainer->scriptName);
-        if (newScript) {
-            scriptContainer->script = std::move(newScript);
-            scriptContainer->script->SetOwner(owner);
-            scriptContainer->script->RelocateReferences();
-            std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
-        }
-    }
-    else {
-        std::cout << "[ScriptComponent] Attached script: " << scriptContainer->scriptName << std::endl;
-        scriptContainer->script->SetOwner(owner);
-        scriptContainer->script->RelocateReferences();
-    }
-
-    scriptContainer->newScript = false;
+	registry->Register("script", &script);
 }
 
 void ScriptComponent::Update(float deltaTime) {
-	if (scriptContainer->script.get()) {
-		scriptContainer->script->Update(deltaTime);
+	if (script) {
+		script->Update(deltaTime);
 	}
 }
 
 void ScriptComponent::DrawImGui() {
     Component::DrawImGui();
 
+    /*
     if (scriptContainer->newScript) {
         AttachScript();
     }
-}
-
-void ScriptComponent::Deserialize(std::istream& in) {
-	Component::Deserialize(in);
-    //if (!scriptContainer->script) return;
-	AttachScript();
+    */
 }

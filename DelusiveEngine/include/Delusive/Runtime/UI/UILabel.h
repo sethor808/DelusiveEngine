@@ -8,7 +8,7 @@
 class UILabel : public UIElement {
 public:
 	UILabel() = delete;
-	UILabel(DelusiveRenderer&);
+	UILabel(DelusiveInstance&);
 
 	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;

@@ -1,4 +1,5 @@
 #pragma once
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <string>
 #include <memory>
 #include <functional>
@@ -19,16 +20,14 @@ public:
 	virtual void OnDraw() {}
 	virtual void OnEvent() {}
 	virtual void OnClick(UIScriptContainer* clicked) {}
+    virtual void RelocateReferences() {}
 
-    virtual void RegisterProperties() {}
+    virtual void RegisterProperties();
 	virtual void Link(UIScriptContainer* root) { rootElement = root; }
     UIScriptContainer* GetRoot() const { return rootElement; }
 
 	virtual std::string GetType() const = 0;
 
-    //TODO: Make sure de/serialation works later
-    virtual void Serialize(std::ostream&) const;
-    virtual void Deserialize(std::istream&);
     virtual void DrawImGui();
 protected:
     UIScriptContainer* rootElement = nullptr;

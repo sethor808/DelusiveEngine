@@ -4,7 +4,7 @@
 
 class UIImage : public UIElement {
 public:
-	UIImage(DelusiveRenderer&);
+	UIImage(DelusiveInstance&);
 
 	void RegisterProperties() override;
 	std::unique_ptr<UIElement> Clone() const override;
@@ -19,8 +19,6 @@ public:
 	void HandleMouse(const glm::vec2&, bool) override {}
 
 	const std::string GetType() const override;
-
-	void Deserialize(std::istream& in) override;
 private:
 	DelusiveTexture textureData;
 };

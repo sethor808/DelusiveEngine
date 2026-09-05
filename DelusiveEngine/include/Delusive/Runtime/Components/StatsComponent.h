@@ -3,12 +3,12 @@
 
 class StatsComponent : public Component {
 public:
-	StatsComponent(DelusiveRenderer&);
+	StatsComponent(DelusiveInstance&);
 	StatsComponent() = delete;
 
 	std::unique_ptr<Component> Clone() const override {
 		//TODO: Properly copy over values
-		return std::make_unique<StatsComponent>(renderer);
+		return std::make_unique<StatsComponent>(instance);
 	}
 
 	int GetHealth();
@@ -19,9 +19,6 @@ public:
 	const char* GetType() const override {
 		return "StatsComponent";
 	}
-
-	//void Serialize(std::ofstream& out) const override;
-	//void Deserialize(std::ifstream& in) override;
 private:
 	int maxHealth, currentHealth;
 };

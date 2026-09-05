@@ -3,8 +3,8 @@
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Internal/Rendering/Font.h>
 
-UILabel::UILabel(DelusiveRenderer& _renderer)
-	: UIElement(_renderer), text("New Text"), color({1, 1, 1, 1})
+UILabel::UILabel(DelusiveInstance& instance)
+	: UIElement(instance), text("New Text"), color({1, 1, 1, 1})
 {
 	fontData.fontSize = 16.0f;
 	Init();
@@ -32,7 +32,7 @@ void UILabel::LoadFont(const std::string& ttfPath, float pixelHeight) {
 }
 
 std::unique_ptr<UIElement> UILabel::Clone() const {
-	auto copy = std::make_unique<UILabel>(renderer);
+	auto copy = std::make_unique<UILabel>(instance);
 	copy->SetText(text);
 	copy->SetPosition(position);
 	copy->SetFontSize(fontData.fontSize);

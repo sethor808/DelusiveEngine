@@ -8,8 +8,8 @@
 #include <iostream>
 #include <filesystem>
 
-AnimatorComponent::AnimatorComponent(DelusiveRenderer& _renderer)
-    : Component(_renderer)
+AnimatorComponent::AnimatorComponent(DelusiveInstance& instance)
+    : Component(instance)
 {
 
 }
@@ -170,7 +170,7 @@ void AnimatorComponent::DrawImGui() {
 
 
 std::unique_ptr<Component> AnimatorComponent::Clone() const {
-    auto clone = std::make_unique<AnimatorComponent>(renderer);
+    auto clone = std::make_unique<AnimatorComponent>(instance);
     clone->SetAnimatorData(currentAnimation.data);
     clone->currentAnimationPath = currentAnimationPath;
     clone->currentAnimation = currentAnimation;

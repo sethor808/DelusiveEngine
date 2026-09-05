@@ -1,11 +1,12 @@
 #pragma once
 #include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/Core/IDLink.h>
 
 struct DelusiveUIPrototype;
 
 class UIRepeatContainer : public UIElement {
 public:
-	UIRepeatContainer(DelusiveRenderer&);
+	UIRepeatContainer(DelusiveInstance&);
 	UIRepeatContainer() = delete;
 
 	const std::string GetType() const override { return "UIRepeatContainer"; }
@@ -25,13 +26,10 @@ public:
 	float GetSpacing() { return spacing; }
 
 	void RegenerateChildren();
-
-    void Serialize(std::ostream& out) const override;
-    void Deserialize(std::istream& in) override;
 private:
 	int count = 1;
 	int rows = 1;
 	float spacing = 0.0f;
 
-	std::unique_ptr<DelusiveUIPrototype> prototype;
+	DelusiveObject<UIElement> prototype;
 };

@@ -5,15 +5,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 
-PathfindingComponent::PathfindingComponent(DelusiveRenderer& renderer)
-    : Component(renderer)
+PathfindingComponent::PathfindingComponent(DelusiveInstance& instance)
+    : Component(instance)
 {
 
 }
 
 std::unique_ptr<Component> PathfindingComponent::Clone() const{
     //TODO: Make a proper deep copy
-	return std::make_unique<PathfindingComponent>(renderer);
+	return std::make_unique<PathfindingComponent>(instance);
 }
 
 void PathfindingComponent::Update(float deltaTime) {

@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <ProjectOutputs />
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\bin\DelusiveTools.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
   <ContentFiles />
   <SatelliteDlls />
   <NonRecipeFileRefs />

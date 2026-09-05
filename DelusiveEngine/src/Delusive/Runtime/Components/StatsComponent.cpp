@@ -1,8 +1,8 @@
 #include <Delusive/Runtime/Components/StatsComponent.h>
 #include <fstream>
 
-StatsComponent::StatsComponent(DelusiveRenderer& renderer)
-	: Component(renderer)
+StatsComponent::StatsComponent(DelusiveInstance& instance)
+	: Component(instance)
 {
 
 }

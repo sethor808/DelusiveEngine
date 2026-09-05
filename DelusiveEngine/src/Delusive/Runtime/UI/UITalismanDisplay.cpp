@@ -6,8 +6,8 @@
 #include <Delusive/Runtime/Talismans/Talisman.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 
-UITalismanDisplay::UITalismanDisplay(DelusiveRenderer& _renderer)
-	: UIElement(_renderer), player(nullptr)
+UITalismanDisplay::UITalismanDisplay(DelusiveInstance& instance)
+	: UIElement(instance), player(nullptr)
 {
 	LinkPlayer();
 	RegisterProperties();
@@ -26,7 +26,7 @@ void UITalismanDisplay::LinkPlayer(PlayerAgent* _player) {
 }
 
 std::unique_ptr<UIElement> UITalismanDisplay::Clone() const {
-	auto copy = std::make_unique<UITalismanDisplay>(renderer);
+	auto copy = std::make_unique<UITalismanDisplay>(instance);
 	copy->SetPosition(position);
 	copy->SetName(name);
 	copy->SetEnabled(enabled);
@@ -61,7 +61,7 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 	if (!player || !enabled) return;
 
 	int winW, winH;
-	renderer.GetWindowSize(winW, winH);
+	instance.renderer.GetWindowSize(winW, winH);
 
 	// starting offset (top-left corner of the screen + configured offsets)
 	float startX = (-winW / 2.0f + leftOffset) / DELUSIVE_PIXEL_SCALE;
@@ -74,7 +74,7 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 		const auto& t = talismans[i];
 		if (t->GetIsBroken()) continue;
 
-		GLuint tex = renderer.GetTexture(t->GetBaseTexture());
+		GLuint tex = instance.renderer.GetTexture(t->GetBaseTexture());
 		if (!tex) continue;
 
 		// Position in UI units
@@ -88,7 +88,7 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 			glm::translate(glm::mat4(1.0f), glm::vec3(worldPos, 0.0f)) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(worldSize, 1.0f));
 
-		renderer.Submit({
+		instance.renderer.Submit({
 			.modelMatrix = model,
 			.color = glm::vec4(1.0f),
 			.textureID = tex,
@@ -99,7 +99,7 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 		int currentHP = t->GetCurrentHP();
 		if (currentHP <= 0) continue;
 
-		GLuint stringTex = renderer.GetTexture(t->GetStringTexture());
+		GLuint stringTex = instance.renderer.GetTexture(t->GetStringTexture());
 		if (!stringTex) {
 			std::cout << "[UITalismanDisplay] Missing string texture.\n";
 			continue;
@@ -119,7 +119,7 @@ void UITalismanDisplay::Draw(const glm::mat4& proj) {
 				glm::translate(glm::mat4(1.0f), glm::vec3(stringPos, 0.0f)) *
 				glm::scale(glm::mat4(1.0f), glm::vec3(stringWorldSize, 1.0f));
 
-			renderer.Submit({
+			instance.renderer.Submit({
 				.modelMatrix = stringModel,
 				.color = glm::vec4(1.0f),
 				.textureID = stringTex,

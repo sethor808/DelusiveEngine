@@ -18,15 +18,15 @@ float vertices[] = {
     // pos       // tex
     -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  1.0f, 1.0f,
+
 
      0.5f,  0.5f,  1.0f, 1.0f,
     -0.5f,  0.5f,  0.0f, 1.0f,
     -0.5f, -0.5f,  0.0f, 0.0f
 };
 
-SpriteComponent::SpriteComponent(DelusiveRenderer& renderer)
-    : Component(renderer)
+SpriteComponent::SpriteComponent(DelusiveInstance& instance)
+    : Component(instance)
 {
     Init();
     RegisterProperties();
@@ -52,7 +52,7 @@ void SpriteComponent::RegisterProperties() {
 }
 
 std::unique_ptr<Component> SpriteComponent::Clone() const {
-    auto sprite = std::make_unique<SpriteComponent>(renderer);
+    auto sprite = std::make_unique<SpriteComponent>(instance);
     sprite->textureData.texturePath = textureData.texturePath;
 	sprite->textureData.textureID = textureData.textureID;
     sprite->SetPosition(transform->position.x, transform->position.y);
@@ -64,7 +64,7 @@ std::unique_ptr<Component> SpriteComponent::Clone() const {
 
 void SpriteComponent::SetTexturePath(const std::string& path) {
     textureData.texturePath = path;
-    textureData.textureID = renderer.GetTexture(path);
+    textureData.textureID = instance.renderer.GetTexture(path);
 }
 
 void SpriteComponent::SetPosition(float x, float y) {
@@ -84,7 +84,7 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
     glm::mat4 localTransform = transform->ToMatrix();
     glm::mat4 model = agentTransform * localTransform;
 
-    renderer.Submit({
+    instance.renderer.Submit({
         .modelMatrix = model,
         .color = glm::vec4(1.0f), // could expose as property
         .textureID = textureData.textureID,
@@ -201,10 +201,4 @@ void SpriteComponent::HandleMouse(const glm::vec2& worldMouse, bool isMouseDown)
             transform->position = delta;
         }
     }
-}
-
-void SpriteComponent::Deserialize(std::istream& in) {
-    Component::Deserialize(in);
-
-    SetTexturePath(textureData.texturePath);
 }

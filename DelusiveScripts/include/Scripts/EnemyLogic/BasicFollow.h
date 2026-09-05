@@ -7,6 +7,9 @@ class BasicFollow : public BehaviourScript {
 public:
     BasicFollow() = default;
     BasicFollow(Agent* owner);
+
+    std::string GetType() override { return "BasicFollow"; }
+
     void Update(float deltaTime) override;
     std::unique_ptr<BehaviourScript> Clone() const override;
 private:

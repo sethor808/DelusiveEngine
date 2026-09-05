@@ -1,7 +1,7 @@
 #include <Delusive/Runtime/Collision/HurtboxCollider.h>
 
-HurtboxCollider::HurtboxCollider(DelusiveRenderer& renderer)
-	: ColliderComponent(renderer)
+HurtboxCollider::HurtboxCollider(DelusiveInstance& instance)
+	: ColliderComponent(instance)
 {
 
 }

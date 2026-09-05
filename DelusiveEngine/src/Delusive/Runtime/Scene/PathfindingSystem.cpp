@@ -8,8 +8,8 @@
 #include <cmath>
 #include <glm/gtx/hash.hpp>
 
-PathfindingSystem::PathfindingSystem(DelusiveRenderer& _renderer) 
-	: SceneSystem(_renderer)
+PathfindingSystem::PathfindingSystem(DelusiveInstance& instance)
+	: SceneSystem(instance)
 {
 	name = "New PathfindingSystem";
 	RegisterProperties();
@@ -22,7 +22,7 @@ void PathfindingSystem::RegisterProperties() {
 }
 
 std::unique_ptr<SceneSystem> PathfindingSystem::Clone() const {
-	auto clone = std::make_unique<PathfindingSystem>(renderer);
+	auto clone = std::make_unique<PathfindingSystem>(instance);
 
 	// Clone all nodes
 	std::unordered_map<const Node*, Node*> originalToClone;
@@ -224,6 +224,6 @@ void PathfindingSystem::DrawDebug(const glm::mat4 projection) const {
 			color = glm::vec4(0.8f, 0.2f, 0.2f, 0.5f); // Red
 
 		// Draw a unit-size square at node center
-		renderer.DebugDrawRect(worldPos + glm::vec2(0.5f), 1.0f, color);
+		instance.renderer.DebugDrawRect(worldPos + glm::vec2(0.5f), 1.0f, color);
 	}
 }

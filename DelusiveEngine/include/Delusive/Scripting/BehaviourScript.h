@@ -1,4 +1,6 @@
 #pragma once
+//#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <memory>
 #include <glm/glm.hpp>
 #include <Delusive/Runtime/Core/IDLink.h>
@@ -19,13 +21,14 @@ public:
     void DrawImGui();
 	virtual void Update(float deltaTime);
 	virtual std::unique_ptr<BehaviourScript> Clone() const = 0;
+    virtual std::string GetType() = 0;
     void CopyCore(const BehaviourScript*);
     virtual void RelocateReferences();
 
 	//Getters and Setters
-	virtual Agent* GetOwner() const { return owner; }
+	virtual Agent* GetOwner() const { return owner.get(); }
     virtual void SetOwner(Agent*);
-	virtual Agent* GetTarget() const { return target; }
+	virtual Agent* GetTarget() const { return target.get(); }
     UUID GetTargetID() const;
     virtual void SetTarget(Agent* _target);
 	virtual void SetMovementSpeed(float speed) { movementSpeed = speed; }
@@ -33,13 +36,14 @@ public:
 
     //Serialization
     void Serialize(std::ostream&) const;
-    void Deserialize(std::istream&);
+    void Deserialize(DelusiveParser::DataBlock&);
 
     virtual void RegisterProperties();
 protected:
-    Agent* owner = nullptr;
-    Agent* target = nullptr;
-    DelusiveIDLink targetID;
+    DelusiveLink<Agent> owner;
+    DelusiveLink<Agent> target;
+    DelusiveLink<Agent> targetID;
+
     //UUID targetID;
     std::unique_ptr<PropertyRegistry> registry;
 	glm::vec2 direction = { 0,0 };

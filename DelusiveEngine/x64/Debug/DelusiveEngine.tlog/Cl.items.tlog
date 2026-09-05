@@ -1,10 +1,11 @@
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\backend\imgui_impl_opengl3.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_impl_opengl3.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\backend\imgui_impl_sdl3.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_impl_sdl3.obj
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_demo.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_demo.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_draw.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_draw.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_tables.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_tables.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\include\imgui\imgui_widgets.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\imgui_widgets.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Components\DelusiveComponentFactory.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveComponentFactory.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Components\UUIDManager.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UUIDManager.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Core\DelusiveParser.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\DelusiveParser.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Utils\PropertyDraw.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\PropertyDraw.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Scripting\BehaviourScript.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\BehaviourScript.obj
@@ -29,6 +30,7 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusi
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EditorRegistry.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\EditorRegistry.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Agents\EnemyAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\EnemyAgent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\EngineUI.obj
+C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Editor\EngineUI_UIBuilder.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\EngineUI_UIBuilder.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Agents\EnvironmentAgent.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\EnvironmentAgent.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Rendering\Font.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\Font.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\Core\GameManager.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\GameManager.obj
@@ -62,5 +64,4 @@ C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusi
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\UI\UIPanel.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UIPanel.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\UI\UIRepeatContainer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UIRepeatContainer.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\UI\UIScriptContainer.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UIScriptContainer.obj
-C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\UI\UITalismanButton.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UITalismanButton.obj
 C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\src\Delusive\Runtime\UI\UITalismanDisplay.cpp;C:\Users\Demon Teddy\Documents\Programs\DelusiveEngine\DelusiveEngine\x64\Debug\UITalismanDisplay.obj

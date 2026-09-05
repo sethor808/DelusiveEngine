@@ -1,9 +1,15 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 
+template<typename T>
+class Property;
+class PropertyRegistry;
+
 class PropertyBase {
 public:
     std::string name;
+    //Non-owning
+    PropertyRegistry* registry = nullptr;
     virtual ~PropertyBase() = default;
 
     const std::string& GetName() const { return name; }
@@ -13,12 +19,12 @@ public:
     virtual void DrawImGui() = 0;
 };
 
-template<typename T>
-class Property;
-
 // Registry
 class PropertyRegistry {
 public:
+    std::string category = "";
+    std::string type = "";
+
     std::vector<std::unique_ptr<PropertyBase>> properties;
 
     PropertyRegistry() = default;
@@ -31,7 +37,7 @@ public:
     void Register(const std::string& name, T* var);
 
     void Serialize(std::ostream& out) const;
-    void Deserialize(std::istream& in);
+    //void Deserialize(std::istream& in);
     void Deserialize(const DelusiveParser::DataBlock&);
     void DrawImGui();
 };

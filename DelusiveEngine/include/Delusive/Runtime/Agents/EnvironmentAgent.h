@@ -4,7 +4,7 @@
 
 class EnvironmentAgent : public Agent {
 public:
-	EnvironmentAgent(DelusiveRenderer&);
+	EnvironmentAgent(DelusiveInstance&);
 	EnvironmentAgent() = delete;
 
 	//Overrides
