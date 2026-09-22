@@ -111,7 +111,7 @@ void UIElement::DrawImGui() {
         // Add padding to separate header from content
         ImGui::Dummy(ImVec2(0, 4));
 
-        // Draw the child’s own inspector
+        // Draw the childï¿½s own inspector
         child->DrawImGui();
 
         ImGui::EndChild();
@@ -145,4 +145,17 @@ void UIElement::DrawImGui() {
         }
         ImGui::EndPopup();
     }
+}
+void UIElement::Deserialize(DelusiveParser::DataBlock& in) {
+	registry->Deserialize(in);
+	//Owned objects pull their recipes from the library, which is already populated
+	registry->Resolve(instance);
+}
+
+void UIElement::Serialize(DelusiveParser::DataBlock& out) const {
+	registry->Serialize(out);
+}
+
+void UIElement::CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const {
+	registry->Collect(out);
 }

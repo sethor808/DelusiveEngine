@@ -1,21 +1,36 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.idb
+*.pdb
+*.exp
+*.ilk
 *.ipch
 *.vsidx
 *.opendb
-*.pdb
 *.db
-.vs/DelusiveEngine/CopilotIndices/17.14.698.11175/CodeChunks.db
-*.db
-.vs/DelusiveEngine/CopilotIndices/17.14.698.11175/CodeChunks.db
-.vs/DelusiveEngine/v17/Browse.VC.db
-*.db
-.vs/DelusiveEngine/v17/Browse.VC.db
-.vs/DelusiveEngine/v17/Browse.VC.db-shm
-.vs/DelusiveEngine/v17/Browse.VC.db
-*.db
-*.db
-.vs/DelusiveEngine/v17/Browse.VC.db
-.vs/DelusiveEngine/v17/Browse.VC.db
-*.db
-.vs/DelusiveEngine/v17/Browse.VC.db
-*.db
-.vs/DelusiveEngine/v17/Browse.VC.db
+
+# MSBuild intermediate + output
+[Dd]ebug/
+[Rr]elease/
+x64/
+Win32/
+bin/
+debug_bin/
+lib/Debug/
+lib/Release/
+debug_lib/
+
+# CMake
+build/
+build_cmake/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Keep the vendored windows binaries that THIRDPARTY.md documents
+!lib/SDL3.lib
+!lib/SDL3.dll
+!lib/glew32.lib
+!lib/glew32.dll

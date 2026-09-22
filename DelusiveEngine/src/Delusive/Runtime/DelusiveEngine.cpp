@@ -79,7 +79,6 @@ namespace DelusiveEngine {
         // --- Collider Renderer ---
         ColliderRenderer colliderRenderer;
         
-
         // --- Editor Camera ---
         auto editorCamera = std::make_unique<CameraAgent>(game.GetInstance());
         CameraAgent* editorCamPtr = editorCamera.get();

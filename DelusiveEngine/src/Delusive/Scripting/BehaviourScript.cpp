@@ -14,55 +14,55 @@ void BehaviourScript::RegisterProperties() {
     registry->category = "BehaviourScript";
     registry->type = GetType();
 
-    registry->Register("targetID", &targetID);
+    registry->Register("id", &id);
+    registry->Register("target", &target);
     registry->Register("movementSpeed", &movementSpeed);
 }
 
 void BehaviourScript::Update(float deltaTime) {
-    if (targetID.dirty) {
+    if (target.dirty) {
         RelocateReferences();
     }
 }
 
-void BehaviourScript::SetOwner(Agent* owner) {
-    this->owner = owner;
-
-    if (!owner) return;
-
-    targetID.id = owner->GetID();
+void BehaviourScript::SetOwner(Agent* newOwner) {
+    owner = newOwner;
 }
 
 void BehaviourScript::SetTarget(Agent* agent) {
     target = agent;
-    targetID.id = agent ? agent->GetID() : UUID{};
-    targetID.dirty = true;
+    target.dirty = true;
 }
 
 UUID BehaviourScript::GetTargetID() const {
-    return targetID.id;
+    return target.getID();
 }
 
 void BehaviourScript::CopyCore(const BehaviourScript* base) {
-    targetID.id = base->targetID.id;
+    //A clone inherits the id but never the resolved pointer
+    target.id = base->target.id;
+    target.cached = nullptr;
+    target.dirty = true;
+
     movementSpeed = base->movementSpeed;
 
     RelocateReferences();
 }
 
 void BehaviourScript::RelocateReferences() {
-    if (targetID.id.IsValid() && owner) {
-        target = owner->GetScene()->FindAgentByUUID(targetID.id);
-    }
-    else {
-        target = nullptr;
-    }
+    //No owner means no scene to search, so stay dirty and retry once one is attached
+    Scene* scene = owner ? owner->GetScene() : nullptr;
+    if (!scene) return;
+
+    //Assign cached directly - set() would wipe the id when the lookup misses
+    target.cached = target.id.IsValid()
+        ? scene->FindAgentByUUID(target.id)
+        : nullptr;
+
+    target.dirty = false;
 }
 
 void BehaviourScript::DrawImGui() {
-    if (!owner) {
-
-    }
-
     registry->DrawImGui();
 }
 
@@ -72,4 +72,7 @@ void BehaviourScript::Serialize(std::ostream& out) const {
 
 void BehaviourScript::Deserialize(DelusiveParser::DataBlock& in) {
     registry->Deserialize(in);
+}
+void BehaviourScript::Serialize(DelusiveParser::DataBlock& out) const {
+    registry->Serialize(out);
 }

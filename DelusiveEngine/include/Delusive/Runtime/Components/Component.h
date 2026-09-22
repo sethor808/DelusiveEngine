@@ -3,7 +3,7 @@
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Animation/AnimatorData.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 #include <glm/glm.hpp>
 #include <string>
 #include <memory>
@@ -54,6 +54,12 @@ public:
 
     const UUID GetID() const {return id; }
 	void SetID(UUID id) { this->id = id; }
+
+	//Block entry points - the registry still does the work, these only expose it
+	virtual void Serialize(DelusiveParser::DataBlock& out) const;
+	virtual void Deserialize(DelusiveParser::DataBlock& in);
+	//Appends this component's owned objects as their own blocks
+	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
 protected:
 	DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;

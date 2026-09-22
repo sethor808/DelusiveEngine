@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 
-//Publically visible to the DLL
+//Scripts are linked statically for now - the DLL export path was removed for portability
 
 class BehaviourScript;
 class UIScript;
@@ -17,7 +17,3 @@ public:
 	virtual const char** ListBehaviourScripts(size_t& count) = 0;
 	virtual const char** ListUIScripts(size_t& count) = 0;
 };
-
-//Export to the DLL
-extern "C" __declspec(dllexport)
-ScriptFactoryBase* CreateScriptFactory();

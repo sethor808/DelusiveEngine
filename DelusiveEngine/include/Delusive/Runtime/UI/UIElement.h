@@ -9,7 +9,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
 #include <imgui/imgui.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 
 class PropertyRegistry;
 class UICanvas;
@@ -76,6 +76,14 @@ public:
     void ClearChildren() { children.clear(); }
 	
 	UUID GetID() const { return id; }
+	void SetID(UUID newID) { id = newID; }
+
+	//Block entry points - the registry still does the work, these only expose it
+	virtual void Serialize(DelusiveParser::DataBlock& out) const;
+	virtual void Deserialize(DelusiveParser::DataBlock& in);
+	//Appends this element's owned objects as their own blocks
+	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
+
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }
     bool GetEnabled() { return enabled; }

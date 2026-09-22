@@ -1,24 +1,8 @@
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
-<<<<<<< Updated upstream
-std::vector<DelusiveParser::DataBlock> DelusiveParser::ParseFile(std::istream& in) {
-    std::vector<DelusiveParser::DataBlock> blocks;
-
-    while (true) {
-        DelusiveParser::DataBlock block;
-
-        if (!DelusiveParser::ReadDataBlock(in, block)) break;
-
-        blocks.push_back(std::move(block));
-    }
-
-    return blocks;
-}
-
-bool DelusiveParser::ReadDataBlock(std::istream& in, DataBlock& block) {
-=======
 std::string DelusiveParser::Trim(const std::string& s)
 {
     const char* ws = " \t\r\n";
@@ -51,58 +35,15 @@ DelusiveParser::DataBlock DelusiveParser::ParseHeader(const std::string& line) {
 
 std::vector<DelusiveParser::DataBlock> DelusiveParser::ParseFile(std::istream& in) {
     std::vector<DataBlock> blocks;
->>>>>>> Stashed changes
     std::string line;
 
     while (std::getline(in, line)) {
         line = Trim(line);
         if (line.empty() || line.front() == '#') continue;
 
-<<<<<<< Updated upstream
-        if (line.front() == '[' && line[1] != '/') break;
-    }
-
-    if (!in) return false;
-
-    //Remove brackets
-    line = line.substr(1, line.size() - 2);
-    std::istringstream header(line);
-
-    header >> block.category;
-    header >> block.type;
-
-    std::string endTag = "[/" + block.category + "]";
-
-    while (true) {
-        std::streampos pos = in.tellg();
-
-        if (!std::getline(in, line)) break;
-        if (line.empty()) continue;
-        if (line == endTag) break;
-
-        if (line.front() == '[' && line[1] != '/')
-        {
-            in.seekg(pos);
-
-            DataBlock child;
-            if (ReadDataBlock(in, child))
-                block.children.push_back(std::move(child));
-
-            continue;
-        }
-
-        auto eq = line.find('=');
-        if (eq != std::string::npos)
-        {
-            std::string key = line.substr(0, eq);
-            std::string value = line.substr(eq + 1);
-
-            block.properties[key] = value;
-=======
         if (line.front() == '[') {
             blocks.push_back(ParseHeader(line));
             continue;
->>>>>>> Stashed changes
         }
 
         if (blocks.empty()) continue;
@@ -116,3 +57,24 @@ std::vector<DelusiveParser::DataBlock> DelusiveParser::ParseFile(std::istream& i
     return blocks;
 }
 
+void DelusiveParser::WriteBlock(std::ostream& out, const DataBlock& block) {
+    out << "[" << block.category;
+    if (!block.type.empty()) out << " " << block.type;
+    if (block.id.IsValid())  out << " " << block.id.ToString();
+    out << "]\n";
+
+    //properties is unordered, so sort the keys to keep saves diff stable
+    std::vector<const std::string*> keys;
+    keys.reserve(block.properties.size());
+
+    for (const auto& [key, value] : block.properties) {
+        keys.push_back(&key);
+    }
+
+    std::sort(keys.begin(), keys.end(),
+        [](const std::string* a, const std::string* b) { return *a < *b; });
+
+    for (const std::string* key : keys) {
+        out << *key << "=" << block.properties.at(*key) << "\n";
+    }
+}

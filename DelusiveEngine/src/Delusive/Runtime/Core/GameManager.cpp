@@ -3,12 +3,13 @@
 
 
 GameManager::GameManager(DelusiveRenderer& renderer)
-	: instance(renderer, idManager, scriptManager), editorScene(instance), playScene(instance)
+	: instance(renderer, idManager, scriptManager, assetLibrary), editorScene(instance), playScene(instance)
 {
     Init();
 }
 
 void GameManager::Init() {
+    assetLibrary.LoadAll();
     scriptManager.Init();
     isPlaying = false;
     activeScene = &editorScene;

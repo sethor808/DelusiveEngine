@@ -199,3 +199,77 @@ void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
 		}
 	}
 }
+#pragma region Block serialization
+
+void Agent::Serialize(DelusiveParser::DataBlock& out) const {
+	registry->Serialize(out);
+
+	//Ownership is a UUID list - each component writes its own block
+	std::ostringstream ids;
+	for (const auto& comp : components) {
+		if (comp) ids << comp->GetID().ToString() << " ";
+	}
+	out.properties["components"] = ids.str();
+}
+
+void Agent::Deserialize(DelusiveParser::DataBlock& in) {
+	registry->Deserialize(in);
+	//Owned objects pull their recipes from the library, which is already populated
+	registry->Resolve(instance);
+
+	components.clear();
+	componentLookup.clear();
+
+	auto list = in.properties.find("components");
+	if (list == in.properties.end()) return;
+
+	std::istringstream ids(list->second);
+	std::string idText;
+
+	while (ids >> idText) {
+		UUID componentID;
+		componentID.FromString(idText);
+
+		const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(componentID);
+		if (!recipe) {
+			std::cerr << "[Agent] Missing component recipe " << idText
+				<< " for " << name << std::endl;
+			continue;
+		}
+
+		std::unique_ptr<Component> comp =
+			DelusiveFactory<Component>::Create(recipe->type, instance);
+
+		if (!comp) {
+			std::cerr << "[Agent] Unknown component type: " << recipe->type << std::endl;
+			continue;
+		}
+
+		comp->SetOwner(this);
+		comp->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
+		comp->SetID(componentID);
+
+		AddRawComponent(std::move(comp));
+	}
+}
+
+void Agent::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
+	DelusiveParser::DataBlock self;
+	Serialize(self);
+	self.id = id;
+	out.push_back(std::move(self));
+
+	for (const auto& comp : components) {
+		if (!comp) continue;
+
+		DelusiveParser::DataBlock block;
+		comp->Serialize(block);
+		block.id = comp->GetID();
+		out.push_back(std::move(block));
+
+		//Anything the component owns writes its own block too
+		comp->CollectOwned(out);
+	}
+}
+
+#pragma endregion

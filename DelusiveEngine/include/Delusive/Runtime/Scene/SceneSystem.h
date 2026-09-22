@@ -1,6 +1,7 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Core/DelusiveParser.h>
+#include <Delusive/Runtime/Core/UUID.h>
 #include <string>
 #include <memory>
 #include <glm/glm.hpp>
@@ -35,10 +36,18 @@ public:
 
 	virtual std::string GetType() const = 0;
 
+	UUID GetID() const { return id; }
+	void SetID(UUID newID) { id = newID; }
+
+	//Block entry points - the registry still does the work, these only expose it
+	virtual void Serialize(DelusiveParser::DataBlock& out) const;
+	virtual void Deserialize(DelusiveParser::DataBlock& in);
+
 	virtual std::unique_ptr<SceneSystem> Clone() const = 0;
 protected:
 	Scene* scene = nullptr;
     DelusiveInstance& instance;
+	UUID id;
 	std::unique_ptr<PropertyRegistry> registry;
 	bool editorMode = false;
 	std::string name;

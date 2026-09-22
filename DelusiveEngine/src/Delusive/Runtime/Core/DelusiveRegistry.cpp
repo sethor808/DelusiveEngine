@@ -2,6 +2,8 @@
 #include <Delusive/Runtime/Core/DelusiveVar.h>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <limits>
 
 // Correct template constructor definition
 template<typename T>
@@ -30,6 +32,18 @@ void PropertyRegistry::Serialize(std::ostream& out) const {
     }
 }
 
+void PropertyRegistry::Serialize(DelusiveParser::DataBlock& out) const {
+    out.category = category;
+    out.type = type;
+
+    for (const auto& prop : properties) {
+        std::ostringstream ss;
+        ss << std::setprecision(std::numeric_limits<float>::max_digits10);
+        prop->Serialize(ss);
+        out.properties[prop->GetName()] = ss.str();
+    }
+}
+
 void PropertyRegistry::Deserialize(const DelusiveParser::DataBlock& block) {
     for (auto& prop : properties)
     {
@@ -40,6 +54,18 @@ void PropertyRegistry::Deserialize(const DelusiveParser::DataBlock& block) {
 
         std::istringstream ss(it->second);
         prop->Deserialize(ss);
+    }
+}
+
+void PropertyRegistry::Resolve(DelusiveInstance& instance) {
+    for (auto& prop : properties) {
+        prop->Resolve(instance);
+    }
+}
+
+void PropertyRegistry::Collect(std::vector<DelusiveParser::DataBlock>& out) const {
+    for (const auto& prop : properties) {
+        prop->Collect(out);
     }
 }
 

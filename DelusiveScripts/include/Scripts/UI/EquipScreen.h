@@ -1,6 +1,6 @@
 #pragma once
 #include <Delusive/Scripting/UIScript.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 #include <Delusive/Runtime/Talismans/Talisman.h>
 #include <Delusive/Runtime/Core/IDLink.h>
 #include <optional>

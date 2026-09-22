@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include <unordered_map> // Add this include
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 
 namespace DelusiveParser {
     struct DataBlock {
@@ -13,20 +13,14 @@ namespace DelusiveParser {
         UUID id;
 
         std::unordered_map<std::string, std::string> properties;
-<<<<<<< Updated upstream
-
-        std::vector<DataBlock> children;
-=======
->>>>>>> Stashed changes
     };
 
     DataBlock ParseHeader(const std::string&);
     std::vector<DataBlock> ParseFile(std::istream&);
-<<<<<<< Updated upstream
-    bool ReadDataBlock(std::istream&, DataBlock&);
-=======
+
+    //Counterpart to ParseFile - keeps read and write formats in one place
+    void WriteBlock(std::ostream&, const DataBlock&);
 
     //Helpers
     std::string Trim(const std::string&);
->>>>>>> Stashed changes
 }

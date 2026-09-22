@@ -6,7 +6,8 @@
 SceneSystem::SceneSystem(DelusiveInstance& instance)
 	: instance(instance), registry(std::make_unique<PropertyRegistry>())
 {
-    RegisterProperties();
+    //Derived constructors call RegisterProperties - calling it here would
+    //dispatch to the base GetType(), which is pure virtual during base construction
 }
 
 SceneSystem::SceneSystem(DelusiveInstance& instance, Scene* _scene)
@@ -18,7 +19,21 @@ SceneSystem::SceneSystem(DelusiveInstance& instance, Scene* _scene)
 SceneSystem::~SceneSystem() = default;
 
 void SceneSystem::RegisterProperties() {
+    registry->category = "System";
+    registry->type = GetType();
+
+    registry->Register("id", &id);
     registry->Register("name", &name);
+}
+
+void SceneSystem::Serialize(DelusiveParser::DataBlock& out) const {
+    registry->Serialize(out);
+}
+
+void SceneSystem::Deserialize(DelusiveParser::DataBlock& in) {
+    registry->Deserialize(in);
+    //Owned objects pull their recipes from the library, which is already populated
+    registry->Resolve(instance);
 }
 
 PlayerAgent* SceneSystem::FetchPlayer() const {

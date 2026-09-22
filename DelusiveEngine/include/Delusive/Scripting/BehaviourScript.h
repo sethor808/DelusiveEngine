@@ -4,6 +4,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include <Delusive/Runtime/Core/IDLink.h>
+#include <Delusive/Runtime/Core/UUID.h>
 
 class Agent;
 class PropertyRegistry;
@@ -25,6 +26,10 @@ public:
     void CopyCore(const BehaviourScript*);
     virtual void RelocateReferences();
 
+	//Identity handles
+	UUID GetID() const { return id; }
+	void SetID(UUID newID) { id = newID; }
+
 	//Getters and Setters
 	virtual Agent* GetOwner() const { return owner.get(); }
     virtual void SetOwner(Agent*);
@@ -36,15 +41,15 @@ public:
 
     //Serialization
     void Serialize(std::ostream&) const;
+    void Serialize(DelusiveParser::DataBlock&) const;
     void Deserialize(DelusiveParser::DataBlock&);
 
     virtual void RegisterProperties();
 protected:
+    UUID id;
     DelusiveLink<Agent> owner;
     DelusiveLink<Agent> target;
-    DelusiveLink<Agent> targetID;
 
-    //UUID targetID;
     std::unique_ptr<PropertyRegistry> registry;
 	glm::vec2 direction = { 0,0 };
 	float movementSpeed = 1.0f;

@@ -1,7 +1,10 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/IDLink.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
+#include <Delusive/Runtime/Core/DelusiveInstance.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <type_traits>
 #include <glm/glm.hpp>
@@ -9,6 +12,7 @@
 #include <imgui/imgui.h>
 #include <iostream>
 #include <iomanip>
+#include <cstdio>
 
 //==== [ZONE: link trait — matches any DelusiveLink<T>] ====
 template<typename>   struct is_delusive_link : std::false_type {};
@@ -114,6 +118,11 @@ public:
             else if constexpr (is_delusive_link_v<T>) { //[CLAUDE: trait swap]
                 out << value->id.ToString();
             }
+            //==== [ZONE: owned object — writes the recipe id, the object emits its own block] ====
+            else if constexpr (is_delusive_object_v<T>) {
+                out << value->id.ToString();
+            }
+            //==== [/ZONE: owned object] ====
         }
     }
 #pragma endregion
@@ -183,9 +192,71 @@ public:
 
                 value->id.FromString(uuidStr);
             }
+            //==== [ZONE: owned object — id only, construction happens in the resolve step] ====
+            else if constexpr (is_delusive_object_v<T>) {
+                std::string uuidStr;
+                in >> uuidStr;
+
+                value->id.FromString(uuidStr);
+            }
+            //==== [/ZONE: owned object] ====
         }
     }
 
+#pragma endregion
+
+#pragma region Resolve
+    //==== [ZONE: owned object construction — recipe id -> live instance] ====
+    void Resolve(DelusiveInstance& instance) override {
+        if constexpr (is_delusive_object_v<T>) {
+            using Target = typename T::element_type;
+
+            if (!value->id.IsValid()) return;
+            if (value->object) return; //Already built
+
+            const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(value->id);
+            if (!recipe) {
+                std::cerr << "[Resolve] No recipe for " << name
+                    << " (" << value->id.ToString() << ")" << std::endl;
+                return;
+            }
+
+            std::unique_ptr<Target> built = DelusiveFactory<Target>::Create(recipe->type, instance);
+            if (!built) {
+                std::cerr << "[Resolve] Factory rejected type '" << recipe->type
+                    << "' for " << name << std::endl;
+                return;
+            }
+
+            //Not every owned type exposes these yet - call them where they exist
+            if constexpr (requires(Target & t, UUID id) { t.SetID(id); }) {
+                built->SetID(value->id);
+            }
+
+            if constexpr (requires(Target & t, DelusiveParser::DataBlock & b) { t.Deserialize(b); }) {
+                built->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
+            }
+
+            value->set(std::move(built));
+        }
+    }
+
+    //Save counterpart - the owned object writes its own flat block
+    void Collect(std::vector<DelusiveParser::DataBlock>& out) const override {
+        if constexpr (is_delusive_object_v<T>) {
+            using Target = typename T::element_type;
+
+            if (!value->object) return;
+
+            if constexpr (requires(const Target & t, DelusiveParser::DataBlock & b) { t.Serialize(b); }) {
+                DelusiveParser::DataBlock block;
+                value->object->Serialize(block);
+                block.id = value->id;
+                out.push_back(std::move(block));
+            }
+        }
+    }
+    //==== [/ZONE: owned object construction] ====
 #pragma endregion
 
 #pragma region DrawImGui
@@ -211,8 +282,7 @@ public:
             }
             else if constexpr (std::is_same_v<T, std::string>) {
                 char buffer[256];
-                strncpy_s(buffer, value->c_str(), sizeof(buffer));
-                buffer[sizeof(buffer) - 1] = '\0';
+                std::snprintf(buffer, sizeof(buffer), "%s", value->c_str());
                 if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer))) {
                     *value = buffer;
                 }
@@ -236,8 +306,7 @@ public:
                     }
                     else if constexpr (std::is_same_v<typename T::value_type, std::string>) {
                         char buffer[256];
-                        strncpy_s(buffer, (*value)[i].c_str(), sizeof(buffer));
-                        buffer[sizeof(buffer) - 1] = '\0';
+                        std::snprintf(buffer, sizeof(buffer), "%s", (*value)[i].c_str());
                         if (ImGui::InputText(label.c_str(), buffer, sizeof(buffer))) {
                             (*value)[i] = buffer;
                         }
@@ -272,6 +341,9 @@ public:
             }
             else if constexpr (std::is_same_v<T, UUID>) {
                 ImGui::Text("UUID: %s", value->ToString().c_str());
+            }
+            else if constexpr (is_delusive_object_v<T>) {
+                DrawObjectUI(*value, name);
             }
             //==== [/ZONE: custom draws] ====
         }

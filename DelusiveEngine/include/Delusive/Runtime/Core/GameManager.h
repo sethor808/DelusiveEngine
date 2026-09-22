@@ -6,6 +6,7 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
 
 class Scene;
 
@@ -32,10 +33,12 @@ public:
 
     ScriptManager& GetScriptManager() { return scriptManager; }
 private:
-    DelusiveInstance instance;
+    //Declaration order is construction order - everything instance references must precede it
     UUIDManager idManager;
     ScriptManager scriptManager;
     DelusiveInventory inventory;
+    DelusiveLibrary assetLibrary;
+    DelusiveInstance instance;
     Scene editorScene;
     Scene playScene;
     Scene* activeScene = nullptr;

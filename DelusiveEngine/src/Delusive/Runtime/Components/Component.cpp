@@ -40,3 +40,16 @@ void Component::DrawImGui() {
     ImGui::Text("%s", GetType());
 	registry->DrawImGui();
 }
+void Component::Deserialize(DelusiveParser::DataBlock& in) {
+	registry->Deserialize(in);
+	//Owned objects pull their recipes from the library, which is already populated
+	registry->Resolve(instance);
+}
+
+void Component::Serialize(DelusiveParser::DataBlock& out) const {
+	registry->Serialize(out);
+}
+
+void Component::CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const {
+	registry->Collect(out);
+}

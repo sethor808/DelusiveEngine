@@ -1,18 +1,28 @@
 #pragma once
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 #include <memory>
 
 template <typename T>
 struct DelusiveObject {
+    using element_type = T;
+
+    //Holds the recipe id between deserialize and construction, then mirrors the live object
+    UUID id;
     std::unique_ptr<T> object = nullptr;
 
     DelusiveObject& operator=(std::unique_ptr<T> newObject) {
-        object = std::move(newObject);
+        set(std::move(newObject));
         return *this;
+    }
+
+    void set(std::unique_ptr<T> newObject) {
+        object = std::move(newObject);
+        id = object ? object->GetID() : UUID{};
     }
 
     T* get() { return object.get(); }
     T* get() const { return object.get(); }
+    UUID getID() const { return id; }
     T* operator->() const { return object.get(); }
     explicit operator bool() const { return object != nullptr; }
 };

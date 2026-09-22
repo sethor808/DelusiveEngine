@@ -8,7 +8,7 @@
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Runtime/Editor/EditorInterface.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 
 class Component;
 class PropertyRegistry;
@@ -35,6 +35,12 @@ public:
     //Identity Handles
     UUID GetID() const { return id; }
     void SetID(UUID newID) { id = newID; }
+
+    //Block entry points - the registry does the field work, these add the owned component list
+    void Serialize(DelusiveParser::DataBlock& out) const;
+    void Deserialize(DelusiveParser::DataBlock& in);
+    //Emits this agent plus every component it owns, flat
+    void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
 
     //Links
     virtual void LinkScene(Scene* scene) { sceneLink = scene; }

@@ -13,6 +13,9 @@
 EngineUI::EngineUI(GameManager& game)
     : gameManager(game), instance(game.GetInstance())
 {
+    //Property pickers reach the factories through this
+    DelusiveEditorContext::SetInstance(&instance);
+
     currentMode = EditorMode::SceneEditor;
     loadedAssets = LoadSceneList();
 }
@@ -213,8 +216,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                     std::string fullPath = GetPath(asset);
                     switch (currentMode) {
                     case EditorMode::SceneEditor: {
-                        //TODO: Broken, old file saving/loading path doesn't exist
-                        //scene.LoadFromFile(fullPath);
+                        scene.LoadFromFile(fullPath);
                         break;
                     }
                     case EditorMode::AgentEditor: {
@@ -267,8 +269,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
             std::string savePath = GetPath(selectedAsset);
             switch (currentMode) {
             case EditorMode::SceneEditor: {
-                //TODO: Broken, old file saving/loading path doesn't exist
-                //scene.SaveToFile(savePath);
+                scene.SaveToFile(savePath);
                 break;
             }
             case EditorMode::AgentEditor: {
@@ -752,7 +753,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
 
         if (agentSelected) {
             char nameBuffer[64];
-            strncpy_s(nameBuffer, agent.GetName().c_str(), sizeof(nameBuffer));
+            std::snprintf(nameBuffer, sizeof(nameBuffer), "%s", agent.GetName().c_str());
             ImGui::Text("Name");
             ImGui::SameLine();
             if (ImGui::InputText("##nameInput", nameBuffer, sizeof(nameBuffer))) {
@@ -761,7 +762,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
                 }
                 else {
                     // Restore or ignore empty name
-                    strncpy_s(nameBuffer, agent.GetName().c_str(), sizeof(nameBuffer));
+                    std::snprintf(nameBuffer, sizeof(nameBuffer), "%s", agent.GetName().c_str());
                 }
             }
 
@@ -933,7 +934,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
     for (int i = 0; i < currentAnimation.data.flags.size(); ++i) {
         ImGui::PushID(i);
         char buffer[64];
-        strncpy_s(buffer, currentAnimation.data.flags[i].c_str(), sizeof(buffer));
+        std::snprintf(buffer, sizeof(buffer), "%s", currentAnimation.data.flags[i].c_str());
         if (ImGui::InputText("##Flag", buffer, sizeof(buffer))) {
             currentAnimation.data.flags[i] = buffer;
         }
@@ -987,7 +988,7 @@ void EngineUI::RenderAnimatorEditor(Scene& scene) {
         }
 
         if (ImGui::BeginPopup("RenameBranch")) {
-            strncpy_s(renameBuffer, currentAnimation.data.branches[i].name.c_str(), sizeof(renameBuffer));
+            std::snprintf(renameBuffer, sizeof(renameBuffer), "%s", currentAnimation.data.branches[i].name.c_str());
             if (ImGui::InputText("New Name", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
                 currentAnimation.data.branches[i].name = renameBuffer;
                 ImGui::CloseCurrentPopup();

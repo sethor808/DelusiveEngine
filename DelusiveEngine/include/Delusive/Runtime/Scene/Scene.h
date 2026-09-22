@@ -9,7 +9,7 @@
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
-#include <Delusive/Runtime/Utils/UUID.h>
+#include <Delusive/Runtime/Core/UUID.h>
 
 //Forward declarations
 class Agent;
@@ -66,12 +66,20 @@ public:
 	std::string GetName() { return name; }
 	void SetName(const std::string& _name) { name = _name; }
 
+	UUID GetID() const { return id; }
+	void SetID(UUID newID) { id = newID; }
+
+	//Flat file I/O - every agent, component and system is written as its own block
+	bool SaveToFile(const std::string& path) const;
+	bool LoadFromFile(const std::string& path);
+
     template<typename T>
     bool ResolveID(DelusiveLink<T>&);
 private:
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
     DelusiveInstance& instance;
+	UUID id;
 	std::string name;
 	CameraAgent* camera;
     std::unordered_map<UUID, Agent*, UUID::Hash> agentLookup;
