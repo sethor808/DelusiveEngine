@@ -8,12 +8,7 @@
 PathfindingComponent::PathfindingComponent(DelusiveInstance& instance)
     : Component(instance)
 {
-
-}
-
-std::unique_ptr<Component> PathfindingComponent::Clone() const{
-    //TODO: Make a proper deep copy
-	return std::make_unique<PathfindingComponent>(instance);
+    RegisterProperties();
 }
 
 void PathfindingComponent::Update(float deltaTime) {

@@ -118,14 +118,3 @@ void BasicRanged::Update(float deltaTime) {
 }
 
 
-
-std::unique_ptr<BehaviourScript> BasicRanged::Clone() const {  // unique_ptr Clone method
-    std::unique_ptr<BehaviourScript> copy = std::make_unique<BasicRanged>();
-    
-    //return std::make_unique<BasicRanged>(*this);
-    
-    //Do basic copy - INCLUDE IN ALL COPY CALLS UNLESS SPECIFICALLY NEEDED
-    copy->CopyCore(this);
-
-    return copy;
-}

@@ -10,17 +10,25 @@ Texture::Texture(const char* path) {
         return;
     }
 
-    //stbi_set_flip_vertically_on_load(true);
-    //path = "C:/Users/Demon Teddy/Documents/Programs/DelusiveEngine/DelusiveEngine/assets/sprites/star.jpg";
+    //Every texture is stored bottom row first (OpenGL's convention). The flag is global to
+    //stb, so it is set here on every load rather than left to whichever code ran last.
+    stbi_set_flip_vertically_on_load(true);
     int w, h, channels;
     unsigned char* data = stbi_load(path, &w, &h, &channels, 4);
     if (data) {
+        width = w;
+        height = h;
         glGenTextures(1, &ID);
         glBindTexture(GL_TEXTURE_2D, ID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
             GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //Mipmaps keep large hand drawn frames from shimmering when drawn smaller
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //Repeat (the default) bleeds the opposite edge into sprite borders when filtering
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
     else {
         std::cout << "CWD: " << std::filesystem::current_path() << std::endl;
@@ -30,10 +38,6 @@ Texture::Texture(const char* path) {
     }
 
     stbi_image_free(data);
-
-    GLint currentContext;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentContext);
-    std::cout << "Current texture binding: " << currentContext << "\n";
 
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {

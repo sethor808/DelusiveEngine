@@ -3,7 +3,7 @@
 TriggerCollider::TriggerCollider(DelusiveInstance& instance)
     : ColliderComponent(instance)
 {
-
+    RegisterProperties();
 }
 
 void TriggerCollider::OnCollision(ColliderComponent* col) {

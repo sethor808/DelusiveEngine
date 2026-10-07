@@ -8,6 +8,9 @@
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
+#include <Delusive/Runtime/Editor/AnimatorEditor.h>
+#include <Delusive/Runtime/Editor/SceneEditor.h>
+#include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 
 EngineUI::EngineUI(GameManager& game)
@@ -16,19 +19,18 @@ EngineUI::EngineUI(GameManager& game)
     //Property pickers reach the factories through this
     DelusiveEditorContext::SetInstance(&instance);
 
+    animatorEditor = std::make_unique<AnimatorEditor>(instance);
+    sceneEditor = std::make_unique<SceneEditor>(instance);
+
     currentMode = EditorMode::SceneEditor;
     loadedAssets = LoadSceneList();
 }
 
-EngineUI::~EngineUI() {
-    for (auto& branch : currentAnimation.data.branches) {
-        for (auto& frame : branch.frames) {
-            if (frame.previewTexture != 0) {
-                glDeleteTextures(1, &frame.previewTexture);
-                frame.previewTexture = 0;
-            }
-        }
-    }
+EngineUI::~EngineUI() = default;
+
+void EngineUI::LinkEditorCamera(CameraAgent* cam) {
+    editorCamera = cam;
+    sceneEditor->LinkEditorCamera(cam);
 }
 
 const char* ViewModeToString(EditorMode mode) {
@@ -71,24 +73,14 @@ std::vector<std::string> EngineUI::LoadSceneList() {
     return sceneNames;
 }
 
-ImTextureID EngineUI::GetFramePreviewTexture(AnimationFrame& frame, Agent& baseAgent) {
-    if (!frame.dirty && frame.previewTexture != 0)
-        return (ImTextureID)(intptr_t)frame.previewTexture;
+void EngineUI::Render(Scene& topBarScene) {
+    RenderTopBar(topBarScene);
+    //The top bar may have stopped play - from here on edit whichever scene is live now
+    Scene& scene = gameManager.GetActiveScene();
 
-    std::unique_ptr<Agent> tempAgent = baseAgent.Clone(&gameManager.GetActiveScene());
-    ApplyOverrides(frame, *tempAgent);
-
-    if (frame.previewTexture != 0)
-        glDeleteTextures(1, &frame.previewTexture);
-
-    frame.previewTexture = instance.renderer.RenderAgentToTexture(*tempAgent, 256, 256);
-    frame.dirty = false;
-
-    return (ImTextureID)(intptr_t)frame.previewTexture;
-}
-
-void EngineUI::Render(Scene& scene) {
-    RenderTopBar(scene);
+    if (currentMode == EditorMode::SceneEditor) sceneEditor->RenderStatusBar(scene, gameManager.IsPlaying());
+    DockSpace();
+    Shortcuts(scene);
 
     switch (currentMode) {
     case EditorMode::SceneEditor:
@@ -109,17 +101,97 @@ void EngineUI::Render(Scene& scene) {
     }
 }
 
+void EngineUI::DockSpace() {
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    const ImGuiID dockID = ImGui::GetID(ViewModeToString(currentMode));
+    //Only when the layout has never been arranged - after that imgui.ini keeps it
+    if (!ImGui::DockBuilderGetNode(dockID)) BuildDefaultLayout(dockID);
+    ImGui::DockSpaceOverViewport(dockID, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
+}
+
+void EngineUI::BuildDefaultLayout(ImGuiID dockID) {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::DockBuilderAddNode(dockID, ImGuiDockNodeFlags_DockSpace);
+    ImGui::DockBuilderSetNodePos(dockID, viewport->WorkPos);
+    ImGui::DockBuilderSetNodeSize(dockID, viewport->WorkSize);
+
+    //Each split takes its fraction of what is left in the middle
+    ImGuiID centre = dockID;
+    auto Split = [&centre](ImGuiDir dir, float fraction) {
+        return ImGui::DockBuilderSplitNode(centre, dir, fraction, nullptr, &centre);
+    };
+
+    switch (currentMode) {
+    case EditorMode::SceneEditor: {
+        const ImGuiID left = Split(ImGuiDir_Left, 0.18f);
+        const ImGuiID right = Split(ImGuiDir_Right, 0.34f);
+        ImGui::DockBuilderDockWindow(SceneEditor::HierarchyWindow, left);
+        ImGui::DockBuilderDockWindow(SceneEditor::InspectorWindow, right);
+        break;
+    }
+    case EditorMode::AnimatorEditor: {
+        const ImGuiID bottom = Split(ImGuiDir_Down, 0.28f);
+        const ImGuiID left = Split(ImGuiDir_Left, 0.22f);
+        const ImGuiID right = Split(ImGuiDir_Right, 0.28f);
+        ImGui::DockBuilderDockWindow(AnimatorEditor::SetWindow, left);
+        ImGui::DockBuilderDockWindow(AnimatorEditor::FrameWindow, right);
+        ImGui::DockBuilderDockWindow(AnimatorEditor::TimelineWindow, bottom);
+        ImGui::DockBuilderDockWindow(AnimatorEditor::CanvasWindow, centre);
+        break;
+    }
+    case EditorMode::AgentEditor:
+        ImGui::DockBuilderDockWindow(AgentPanelWindow, Split(ImGuiDir_Right, 0.3f));
+        break;
+    case EditorMode::UIBuilder:
+        ImGui::DockBuilderDockWindow(UIBuilderPanelWindow, Split(ImGuiDir_Right, 0.3f));
+        break;
+    default:
+        break;
+    }
+    ImGui::DockBuilderFinish(dockID);
+}
+
+bool EngineUI::CanUndo() const {
+    switch (currentMode) {
+    case EditorMode::SceneEditor: return !gameManager.IsPlaying() && sceneEditor->CanUndo();
+    case EditorMode::AnimatorEditor: return animatorEditor->CanUndo();
+    default: return false;
+    }
+}
+
+bool EngineUI::CanRedo() const {
+    switch (currentMode) {
+    case EditorMode::SceneEditor: return !gameManager.IsPlaying() && sceneEditor->CanRedo();
+    case EditorMode::AnimatorEditor: return animatorEditor->CanRedo();
+    default: return false;
+    }
+}
+
+void EngineUI::Undo(Scene& scene) {
+    if (!CanUndo()) return;
+    if (currentMode == EditorMode::SceneEditor) sceneEditor->Undo(scene);
+    else if (currentMode == EditorMode::AnimatorEditor) animatorEditor->Undo();
+}
+
+void EngineUI::Redo(Scene& scene) {
+    if (!CanRedo()) return;
+    if (currentMode == EditorMode::SceneEditor) sceneEditor->Redo(scene);
+    else if (currentMode == EditorMode::AnimatorEditor) animatorEditor->Redo();
+}
+
+void EngineUI::Shortcuts(Scene& scene) {
+    //Text fields keep their own Ctrl+Z
+    if (ImGui::GetIO().WantTextInput) return;
+    if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Y) || ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Z)) Redo(scene);
+    else if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Z)) Undo(scene);
+}
+
 void EngineUI::SwitchMode(Scene& scene, EditorMode mode) {
     currentMode = mode;
     selectedAsset = "None";
 
     selectedComponent = nullptr;
-    selectedFrame = -1;
-    selectedBranch = -1;
-    ClearFramePreviews(currentAnimation);
-    currentAnimation.Clear();
-    baseAgent.reset();
-    pureAgent.reset();
+    animatorEditor->Close();
 
     scene.Clear();
 
@@ -140,8 +212,47 @@ void EngineUI::SwitchMode(Scene& scene, EditorMode mode) {
     default:
         scene.SetName("New Scene");
     }
+    sceneEditor->SceneLoaded(scene);
 
     loadedAssets = LoadSceneList();
+}
+
+void EngineUI::OpenAsset(Scene& scene, const std::string& asset) {
+    selectedAsset = asset;
+    std::string fullPath = GetPath(asset);
+    switch (currentMode) {
+    case EditorMode::SceneEditor: {
+        scene.LoadFromFile(fullPath);
+        sceneEditor->SceneLoaded(scene);
+        break;
+    }
+    case EditorMode::AgentEditor: {
+        LoadAgentAsset(scene, fullPath);
+        break;
+    }
+    case EditorMode::AnimatorEditor: {
+        animatorEditor->Open(fullPath);
+        break;
+    }
+    default: break;
+    }
+}
+
+void EngineUI::StartIn(Scene& scene, EditorMode mode, const std::string& asset) {
+    SwitchMode(scene, mode);
+    if (!asset.empty()) OpenAsset(scene, asset);
+}
+
+void EngineUI::LoadAgentAsset(Scene& scene, const std::string& path) {
+    //Every Agent/Component pointer into the old agent dies here
+    scene.ClearAgents();
+    if (selectedComponent) selectedComponent = nullptr;
+    agentSelected = true;
+
+    if (auto agent = Agent::LoadFromFile(path, instance, &scene)) {
+        scene.AddAgent(std::move(agent));
+    }
+    //On failure RenderAgentEditor falls back to a blank PlayerAgent
 }
 
 std::string EngineUI::GetPath(std::string fileName) {
@@ -161,10 +272,7 @@ std::string EngineUI::GetPath(std::string fileName) {
 void EngineUI::MoveEditorCameraTo(Agent* agent) {
     if (!agent || !editorCamera) return;
 
-    glm::vec2 pos = agent->GetTransform().position;
-
-    // TODO: Make this smooth if needed
-    editorCamera->SetPosition(pos);
+    editorCamera->SetPan(agent->GetTransform().position);
 }
 
 void EngineUI::RenderTopBar(Scene& scene) {
@@ -173,26 +281,23 @@ void EngineUI::RenderTopBar(Scene& scene) {
         ImGui::SameLine();
         ImGui::SetNextItemWidth(175.0f);
         if (ImGui::BeginCombo("##ViewModeSelector", ViewModeToString(currentMode))) {
+            StopPlaying(scene);
+            Scene& editing = gameManager.GetActiveScene();
             if (ImGui::Selectable("Scene Editor", currentMode == EditorMode::SceneEditor)) {
-                SwitchMode(scene, EditorMode::SceneEditor);    
+                SwitchMode(editing, EditorMode::SceneEditor);
             }
             if (ImGui::Selectable("Agent Editor", currentMode == EditorMode::AgentEditor)) {
-                SwitchMode(scene, EditorMode::AgentEditor);
+                SwitchMode(editing, EditorMode::AgentEditor);
             }
             if (ImGui::Selectable("Animator", currentMode == EditorMode::AnimatorEditor)) {
-                SwitchMode(scene, EditorMode::AnimatorEditor);
+                SwitchMode(editing, EditorMode::AnimatorEditor);
             }
             if (ImGui::Selectable("UI Builder", currentMode == EditorMode::UIBuilder)) {
-                SwitchMode(scene, EditorMode::UIBuilder);
+                SwitchMode(editing, EditorMode::UIBuilder);
             }
             if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
                 currentMode = EditorMode::GameView;
             }
-            if (gameManager.IsPlaying()) {
-                gameManager.Stop();
-                selected.Reset();
-            }
-            selected.Reset();
             ImGui::EndCombo();
         }
         ImGui::SameLine(0.0f, 10.0f);
@@ -202,7 +307,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
         ImGui::SetNextItemWidth(200.0f);
         ImGui::SameLine();
         if (ImGui::BeginCombo("##AssetSelector", selectedAsset.c_str())) {
-            selected.Reset();
+            StopPlaying(scene);
+            Scene& editing = gameManager.GetActiveScene();
 
             if (ImGui::Selectable("Add New...")) {
                 newAssetPopup = true;
@@ -212,36 +318,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 bool isSelected = (selectedAsset == asset);
                 ImGui::PushID(asset.c_str());
                 if (ImGui::Selectable(asset.c_str(), isSelected)) {
-                    selectedAsset = asset;
-                    std::string fullPath = GetPath(asset);
-                    switch (currentMode) {
-                    case EditorMode::SceneEditor: {
-                        scene.LoadFromFile(fullPath);
-                        break;
-                    }
-                    case EditorMode::AgentEditor: {
-                        scene.ClearAgents();
-                        selectedComponent = nullptr;
-
-                        std::ifstream in(fullPath);
-                        if (in.is_open()) {
-                            auto agent = std::make_unique<PlayerAgent>(instance);
-                            //TODO: USED TO LOAD FROM FILE
-                            scene.AddAgent(std::move(agent));
-                        }
-                        break;
-                    }
-                    case EditorMode::AnimatorEditor: {
-                        ClearFramePreviews(currentAnimation);
-
-                        currentAnimation.Clear();
-                        currentAnimation.LoadFromFile(fullPath);
-
-                        SetupAnimation(currentAnimation.data.defaultAgentPath);
-                        break;
-                    }
-                    default: break;
-                    }
+                    OpenAsset(editing, asset);
                 }
                 if (ImGui::BeginPopupContextItem("SceneContextMenu")) {
                     if (ImGui::MenuItem("Delete")) {
@@ -253,15 +330,13 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 ImGui::PopID();
             }
 
-            if (gameManager.IsPlaying()) {
-                gameManager.Stop();
-                selected.Reset();
-            }
-
             ImGui::EndCombo();
         }
 
+        //The play copy is never saved or undone - Stop returns to the scene being edited
+        const bool playing = gameManager.IsPlaying();
         ImGui::SameLine();
+        ImGui::BeginDisabled(playing);
         if (ImGui::Button("Save")) {
             std::string path;
             std::string name = selectedAsset.empty() ? "Unnamed" : selectedAsset;
@@ -269,22 +344,26 @@ void EngineUI::RenderTopBar(Scene& scene) {
             std::string savePath = GetPath(selectedAsset);
             switch (currentMode) {
             case EditorMode::SceneEditor: {
-                scene.SaveToFile(savePath);
+                bool reloaded = false;
+                if (scene.SaveToFile(savePath, &reloaded)) {
+                    //A copy saved under a new name carries fresh ids - its history starts here
+                    if (reloaded) sceneEditor->SceneLoaded(scene);
+                    else sceneEditor->SceneSaved(scene);
+                }
                 break;
             }
             case EditorMode::AgentEditor: {
                 if (!scene.GetAgents().empty()) {
-                    std::ofstream out(savePath);
-                    if (out.is_open()) {
-                        //TODO: Broken, old file saving/loading path doesn't exist
-                        //scene.GetAgents().front()->SaveToFile(out);  // Save the first (and only) agent
-                        out.close();
+                    bool remapped = false;
+                    //Saved as a copy - reload so the live agent carries the copy's fresh ids
+                    if (scene.GetAgents().front()->SaveToFile(savePath, &remapped) && remapped) {
+                        LoadAgentAsset(scene, savePath);
                     }
                 }
                 break;
             }
             case EditorMode::AnimatorEditor: {
-                currentAnimation.SaveToFile(savePath);
+                animatorEditor->Save(savePath);
                 break;
             }
             }
@@ -297,16 +376,26 @@ void EngineUI::RenderTopBar(Scene& scene) {
             assetToDelete = selectedAsset;
         }
 
+        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.x * 3.0f);
+        ImGui::BeginDisabled(!CanUndo());
+        if (ImGui::Button("Undo")) Undo(scene);
+        ImGui::SetItemTooltip("Ctrl+Z");
+        ImGui::EndDisabled();
         ImGui::SameLine();
+        ImGui::BeginDisabled(!CanRedo());
+        if (ImGui::Button("Redo")) Redo(scene);
+        ImGui::SetItemTooltip("Ctrl+Y / Ctrl+Shift+Z");
+        ImGui::EndDisabled();
+        ImGui::EndDisabled();
+
+        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.x * 3.0f);
         if (currentMode == EditorMode::SceneEditor || currentMode == EditorMode::GameView) {
-            if (ImGui::Button(gameManager.IsPlaying() ? "Stop" : "Play")) {
-                if (gameManager.IsPlaying()) {
-                    gameManager.Stop();
-                }
+            if (ImGui::Button(playing ? "Stop" : "Play")) {
+                if (playing) StopPlaying(scene);
                 else {
+                    sceneEditor->ClearSelection(scene);
                     gameManager.Play();
                 }
-                selected.Reset();
             }
         }
 
@@ -323,6 +412,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 std::string fullPath = GetPath(assetToDelete);
 
                 std::remove(fullPath.c_str());
+                gameManager.GetInstance().delusiveLibrary.RemoveFile(fullPath);
                 loadedAssets = LoadSceneList();
                 if (selectedAsset == assetToDelete) selectedAsset = "";
                 assetToDelete.clear();
@@ -367,9 +457,19 @@ void EngineUI::RenderTopBar(Scene& scene) {
                     scene.Clear();
                     scene.SetName(sceneName);
 
-                    std::ofstream out(GetPath(selectedAsset));
-                    out << "name " << selectedAsset << "\n";
-                    out.close();
+                    if (currentMode == EditorMode::SceneEditor) {
+                        scene.SaveToFile(GetPath(selectedAsset));
+                        sceneEditor->SceneLoaded(scene);
+                    }
+                    else if (currentMode == EditorMode::AgentEditor) {
+                        auto agent = std::make_unique<PlayerAgent>(instance);
+                        agent->SetName(selectedAsset);
+                        agent->SaveToFile(GetPath(selectedAsset));
+                        scene.AddAgent(std::move(agent));
+                    }
+                    else if (currentMode == EditorMode::AnimatorEditor) {
+                        animatorEditor->Create(GetPath(selectedAsset), selectedAsset);
+                    }
 
                     assetNameBuffer[0] = '\0';
                     loadedAssets = LoadSceneList();
@@ -385,253 +485,16 @@ void EngineUI::RenderTopBar(Scene& scene) {
     }
 }
 
-#pragma region SceneEditor
-void EngineUI::RenderSceneEditor(Scene& scene) {
-    float topBarHeight = ImGui::GetFrameHeight();
-    /*
-    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.7f, topBarHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.3f, ImGui::GetIO().DisplaySize.y - topBarHeight), ImGuiCond_Always);
-    ImGui::Begin("Scene Editor Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-    */
-    ImGui::Begin("SceneEditorPanel");
-
-    if (ImGui::BeginChild("Hierarchy", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0), true)) {
-        ImGui::Text("%s Hierarchy", scene.GetName().c_str());
-        if (ImGui::BeginPopupContextWindow("SceneRightClick", ImGuiPopupFlags_MouseButtonRight)) {
-            if (ImGui::BeginMenu("Add Agent")) {
-                if (ImGui::MenuItem("Player Agent")) {
-                    scene.AddAgent(std::make_unique<PlayerAgent>(instance));
-                }
-                if (ImGui::MenuItem("Camera Agent")) {
-                    scene.AddAgent(std::make_unique<CameraAgent>(instance));
-                }
-                if (ImGui::MenuItem("Enemy Agent")) {
-                    scene.AddAgent(std::make_unique<EnemyAgent>(instance));
-                }
-                if (ImGui::MenuItem("Environment Agent")) {
-                    scene.AddAgent(std::make_unique<EnvironmentAgent>(instance));
-                }
-                ImGui::EndMenu();
-            }
-
-            // Future: Add other right-click tools like "Paste", "Add Empty", "Create Group", etc.
-
-            ImGui::EndPopup();
-        }
-
-        ImGui::Indent();
-        if (ImGui::TreeNode("Systems")) {
-            auto& systems = scene.GetSystems();
-
-            // List systems like agents
-            for (size_t i = 0; i < systems.size(); ++i) {
-                auto& system = systems[i];
-                std::string label = system->GetName().empty()
-                    ? "System " + std::to_string(i)
-                    : system->GetName();
-
-                ImGui::PushID((int)i);
-
-                // Check if this system is the selected one
-                bool isSelected = (selected.kind == Selection::SystemObject &&
-                    selected.ptr == system.get());
-
-                // System selectable
-                if (ImGui::Selectable(label.c_str(), isSelected)) {
-                    if (selected.ptr) selected.SetEditorMode(false); // deselect previous
-                    selected.kind = Selection::SystemObject;
-                    selected.ptr = system.get();
-                    selected.SetEditorMode(true); // select new
-                }
-
-                // Right-click popup for delete and future options
-                if (ImGui::BeginPopupContextItem("SystemContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
-                    if (ImGui::MenuItem("Delete")) {
-                        // If deleting the currently selected system, clear selection
-                        if (selected.ptr == system.get()) {
-                            selected.SetEditorMode(false);
-                            selected.Reset();
-                        }
-
-                        systems.erase(systems.begin() + i);
-
-                        ImGui::EndPopup();
-                        ImGui::PopID();
-                        break; // exit loop, iterator invalid now
-                    }
-                    ImGui::EndPopup();
-                }
-
-                ImGui::PopID();
-            }
-
-            // Add system popup menu (triggered by right-clicking background of Systems tree node)
-            if (ImGui::BeginPopupContextItem("AddSystemPopup", ImGuiPopupFlags_MouseButtonRight)) {
-                if (ImGui::BeginMenu("Add System")) {
-                    if (ImGui::MenuItem("PathfindingSystem")) {
-                        scene.AddSystem(std::make_unique<PathfindingSystem>(instance));
-                    }
-                    if (ImGui::MenuItem("UIManager")) {
-                        scene.AddSystem(std::make_unique<UIManager>(instance));
-                    }
-                    ImGui::EndMenu();
-                }
-                ImGui::EndPopup();
-            }
-            ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Agents")) {
-            auto& agents = scene.GetAgents();
-            for (size_t i = 0; i < agents.size(); ++i) {
-				Agent* agent = agents[i].get();
-                std::string agentName = agent->GetName().empty() ? "Agent " + std::to_string(i) : agent->GetName();
-
-                ImGui::PushID((int)i);
-
-                ImGuiTreeNodeFlags flags =
-                    ImGuiTreeNodeFlags_OpenOnArrow |
-                    ImGuiTreeNodeFlags_OpenOnDoubleClick |
-                    ImGuiTreeNodeFlags_SpanAvailWidth |
-                    (selected.Is(Selection::AgentObject, agent) ? ImGuiTreeNodeFlags_Selected : 0);
-
-                bool agentOpen = ImGui::TreeNodeEx(agentName.c_str(), flags);
-
-                //Enable drag payload
-                if (ImGui::BeginDragDropSource())
-                {
-                    UUID uuid = agent->GetID();
-                    ImGui::SetDragDropPayload("DND_AGENT_UUID", &uuid, sizeof(UUID));
-                    ImGui::Text("Assign %s", agent->GetName().c_str());
-                    ImGui::EndDragDropSource();
-                }
-
-                // Selection on release
-                if (ImGui::IsItemHovered() &&
-                    ImGui::IsMouseReleased(ImGuiMouseButton_Left) &&
-                    ImGui::GetIO().MouseDragMaxDistanceSqr[0] < 4.0f)
-                {
-                    selected.SetEditorMode(false);
-                    selected.kind = Selection::AgentObject;
-                    selected.ptr = agent;
-                    selected.SetEditorMode(true);
-                }
-
-                // Double Click Focus
-                if (ImGui::IsItemHovered() &&
-                    ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-                {
-                    focusRequested = agent;
-                }
-
-
-                if (ImGui::BeginPopupContextItem("AgentContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
-                    if (ImGui::MenuItem("Delete")) {
-                        agentToDeleteIndex = (int)i;
-                        selected.Reset();
-                    }
-                    if (ImGui::BeginMenu("Load Prefab")) {
-                        for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
-                            if (entry.path().extension() == ".agent") {
-                                if (ImGui::MenuItem(entry.path().filename().string().c_str())) {
-                                    auto loaded = std::make_unique<PlayerAgent>(instance);
-                                    //loaded->LoadFromFile(entry.path().string());
-                                    scene.AddAgent(std::move(loaded));
-                                }
-                            }
-                        }
-                        ImGui::EndMenu();
-                    }
-                    ImGui::EndPopup();
-                }
-
-                //Component list
-                if (agentOpen) {
-                    auto& comps = agent->GetComponents();
-                    for (size_t c = 0; c < comps.size(); ++c) {
-
-                        Component* comp = comps[c].get();
-                        ImGui::PushID((int)c);
-
-                        bool compSelected = selected.Is(Selection::ComponentObject, comp);
-
-                        // Draw the selectable row
-                        ImGui::Selectable(comp->GetName().c_str(), compSelected);
-
-                        // Check hover event
-                        bool isHovered = ImGui::IsItemHovered();
-
-                        // Left click event
-                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-                            selected.SetEditorMode(false);
-                            selected.kind = Selection::ComponentObject;
-                            selected.ptr = comp;
-                            selected.SetEditorMode(true);
-                        }
-
-                        // Double click event
-                        if (isHovered && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-                            focusRequested = comp->GetOwner();
-                        }
-
-                        // Right click event
-                        if (ImGui::BeginPopupContextItem(
-                            ("ComponentContextMenu##" +
-                                std::to_string(i) + "_" + std::to_string(c)).c_str(),
-                            ImGuiPopupFlags_MouseButtonRight))
-                        {
-                            if (ImGui::MenuItem("Delete Component")) {
-                                agent->RemoveComponentByPointer(comp);
-
-                                if (selected.Is(Selection::ComponentObject, comp))
-                                    selected.Reset();
-                            }
-                            ImGui::EndPopup();
-                        }
-
-                        ImGui::PopID();
-                    }
-
-                    ImGui::TreePop();
-                }
-
-                ImGui::PopID();
-            }
-            ImGui::TreePop();
-        }
-    }
-    ImGui::EndChild();
-
-    // After the ImGui loop, handle deletion once safely
-    if (agentToDeleteIndex >= 0 && agentToDeleteIndex < (int)scene.GetAgents().size()) {
-        scene.GetAgents().erase(scene.GetAgents().begin() + agentToDeleteIndex);
-
-        // Adjust selectedAgentIndex accordingly
-        if(selected.ptr == scene.GetAgents()[agentToDeleteIndex].get()) {
-            selected.Reset(); // Deselect if the deleted agent was selected
-		}
-
-        agentToDeleteIndex = -1; // reset delete index
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::BeginChild("Inspector", ImVec2(0, 0), true)) {
-        ImGui::Text("Ptr: %p", selected.ptr);
-        selected.Draw();
-    }
-    ImGui::EndChild();
-
-    //Move camera to focused target
-    if (focusRequested) {
-        MoveEditorCameraTo(focusRequested);
-        focusRequested = nullptr;
-    }
-
-    ImGui::End();
+void EngineUI::StopPlaying(Scene& scene) {
+    if (!gameManager.IsPlaying()) return;
+    //Selection lives by id, but the editor-mode flags it set belong to the play copy
+    sceneEditor->ClearSelection(scene);
+    gameManager.Stop();
 }
 
-#pragma endregion
+void EngineUI::RenderSceneEditor(Scene& scene) {
+    sceneEditor->Render(scene, gameManager.IsPlaying());
+}
 
 void EngineUI::RenderAgentEditor(Scene& scene) {
     //Mouse stuff
@@ -641,12 +504,22 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
         glm::vec2 worldMouse = ScreenToWorld2D((int)mouseX, (int)mouseY, instance.renderer.GetProjection());
         bool mouseDown = SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_LMASK;
 
-        Agent& agent = *scene.GetAgents().front();
-        for (auto& comp : agent.GetComponents()) {
-            if (isDraggingCollider)
-                continue;
+        //The agent is created further down on the first frame after switching modes
+        if (!scene.GetAgents().empty()) {
+            Agent& agent = *scene.GetAgents().front();
 
-            comp->HandleMouse(worldMouse, mouseDown);
+            //Collider handles win over dragging whatever sits underneath them
+            isDraggingCollider = false;
+            for (auto& comp : agent.GetComponents()) {
+                if (auto* collider = dynamic_cast<ColliderComponent*>(comp.get())) {
+                    collider->HandleMouse(worldMouse, mouseDown);
+                    isDraggingCollider |= collider->IsDraggingHandle();
+                }
+            }
+            for (auto& comp : agent.GetComponents()) {
+                if (isDraggingCollider) break;
+                if (!dynamic_cast<ColliderComponent*>(comp.get())) comp->HandleMouse(worldMouse, mouseDown);
+            }
         }
     }
 
@@ -658,7 +531,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
     ImGui::Begin("Agent Editor Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
     */
 
-    ImGui::Begin("Scene Editor Panel");
+    ImGui::Begin(AgentPanelWindow);
 
     auto& agents = scene.GetAgents();
     if (agents.empty()) {
@@ -806,495 +679,8 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
     ImGui::End();
 }
 
-void EngineUI::ClearFramePreviews(Animation& anim) {
-    for (auto& branch : anim.data.branches) {
-        for (auto& frame : branch.frames) {
-            if (frame.previewTexture != 0) {
-                glDeleteTextures(1, &frame.previewTexture);
-                frame.previewTexture = 0;
-            }
-        }
-    }
-}
-
-void EngineUI::ApplyOverrides(AnimationFrame& frame, Agent& agent) {
-    auto overrides = frame.componentOverrides;
-    for (const auto& mod : overrides) {
-        if (Component* comp = agent.GetComponentByID(mod.componentID)) {
-            comp->SetEnabled(mod.enabled);
-            comp->transform->position = mod.positionOffset;
-            comp->transform->scale = mod.scale;
-            comp->transform->rotation = mod.rotation;
-            if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
-                static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);
-            }
-        }
-    }
-    frame.dirty = true;
-}
-
-void EngineUI::ResetOverrides() {
-    if (!pureAgent || !baseAgent) return;
-
-    if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-        auto& branch = currentAnimation.data.branches[selectedBranch];
-        if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-            auto& frame = branch.frames[selectedFrame];
-
-            for (auto& mod : frame.componentOverrides) {
-                Component* pure = pureAgent->GetComponentByID(mod.componentID);
-                if (pure) {
-                    mod.enabled = pure->IsEnabled();
-                    mod.positionOffset = pure->transform->position;
-                    mod.scale = pure->transform->scale;
-                    mod.rotation = pure->transform->rotation;
-                }
-            }
-
-            frame.dirty = true;
-        }
-    }
-}
-
-void EngineUI::SetupAnimation(const std::string pendingAgentFile) {
-    baseAgent = std::make_unique<PlayerAgent>(instance);
-    //baseAgent->LoadFromFile(pendingAgentFile);
-
-    pureAgent = std::make_unique<PlayerAgent>(instance);
-    //pureAgent->LoadFromFile(pendingAgentFile);
-
-    currentBaseAgentFile = pendingAgentFile;
-    currentAnimation.data.defaultAgentPath = pendingAgentFile;
-
-    // Reset animation-specific data
-    selectedBranch = -1;
-    selectedFrame = -1;
-    ClearFramePreviews(currentAnimation);
-    currentAnimation.data.defaultAgentPath = pendingAgentFile;
-}
-
-void EngineUI::RenderAnimationOverrides(AnimationFrame& frame, ComponentMod& mod) {
-    auto& comp = *baseAgent->GetComponentByID(mod.componentID);
-    frame.dirty = comp.DrawAnimatorImGui(mod);
-}
-
-void EngineUI::RenderAnimatorEditor(Scene& scene) {
-    float width = ImGui::GetIO().DisplaySize.x;
-    float height = ImGui::GetIO().DisplaySize.y;
-    float topHeight = height * 0.5f;
-    float leftWidth = width * 0.66f;
-    float rightWidth = width - leftWidth;
-
-    // -- Timeline (Top Left 2/3) --
-    ImGui::SetNextWindowPos(ImVec2(0, 20));
-    ImGui::SetNextWindowSize(ImVec2(leftWidth, topHeight));
-    ImGui::Begin("Timeline", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-
-    //Agent injector
-    ImGui::Text("Base Agent: %s", currentBaseAgentFile.empty() ? "None" : currentBaseAgentFile.c_str());
-    if (ImGui::Button("Select Base Agent")) {
-        ImGui::OpenPopup("AgentFileSelect");
-    }
-
-    if (ImGui::BeginPopup("AgentFileSelect")) {
-        for (const auto& entry : std::filesystem::directory_iterator(AGENTS_FOLDER)) {
-            if (entry.path().extension() == ".agent") {
-                if (ImGui::Selectable(entry.path().filename().string().c_str())) {
-                    pendingAgentFile = entry.path().string();
-                    confirmAgentSwitch = true;
-                    ImGui::CloseCurrentPopup();
-                }
-            }
-        }
-        ImGui::EndPopup();
-    }
-
-    //Agent confirmation
-    if (confirmAgentSwitch) {
-        ImGui::OpenPopup("ConfirmAgentSwitch");
-        confirmAgentSwitch = false;
-    }
-
-    if (ImGui::BeginPopupModal("ConfirmAgentSwitch", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Switching base agent will reset all animation data.\nContinue?");
-        if (ImGui::Button("Yes")) {
-            SetupAnimation(pendingAgentFile);
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("No")) {
-            pendingAgentFile.clear();
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    ImGui::Separator();
-    ImGui::Text("Global Flags");
-    for (int i = 0; i < currentAnimation.data.flags.size(); ++i) {
-        ImGui::PushID(i);
-        char buffer[64];
-        std::snprintf(buffer, sizeof(buffer), "%s", currentAnimation.data.flags[i].c_str());
-        if (ImGui::InputText("##Flag", buffer, sizeof(buffer))) {
-            currentAnimation.data.flags[i] = buffer;
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("X")) {
-            currentAnimation.data.flags.erase(currentAnimation.data.flags.begin() + i);
-            ImGui::PopID();
-            break;
-        }
-        ImGui::PopID();
-    }
-    if (ImGui::Button("Add Flag")) {
-        currentAnimation.data.flags.push_back("NewFlag");
-    }
-
-    bool defaultSelected = (selectedBranch == -1);
-    ImGui::Separator();
-    ImGui::Text("States");
-    ImGui::Indent();
-    if (ImGui::Selectable("Default State", defaultSelected)) {
-        selectedBranch = -1;
-        selectedFrame = -1;
-    }
-    for (size_t i = 0; i < currentAnimation.data.branches.size(); ++i) {
-        ImGui::PushID((int)i);
-        bool selected = selectedBranch == (int)i;
-
-        if (ImGui::Selectable(currentAnimation.data.branches[i].name.c_str(), selected)) {
-            selectedBranch = (int)i;
-            selectedFrame = 0;
-        }
-
-        if (ImGui::BeginPopupContextItem("BranchContext")) {
-            if (ImGui::MenuItem("Rename")) {
-                openRenamePopup = true;  // Set flag instead of opening now
-            }
-            if (ImGui::MenuItem("Duplicate")) {
-                // TODO: Deep copy branch logic
-            }
-            if (ImGui::MenuItem("Delete")) {
-                currentAnimation.data.branches.erase(currentAnimation.data.branches.begin() + i);
-                if (selectedBranch == (int)i) selectedBranch = -1;
-            }
-            ImGui::EndPopup();
-        }
-
-        // Must be outside of BeginPopupContextItem block
-        if (openRenamePopup) {
-            ImGui::OpenPopup("RenameBranch");
-            openRenamePopup = false;
-        }
-
-        if (ImGui::BeginPopup("RenameBranch")) {
-            std::snprintf(renameBuffer, sizeof(renameBuffer), "%s", currentAnimation.data.branches[i].name.c_str());
-            if (ImGui::InputText("New Name", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
-                currentAnimation.data.branches[i].name = renameBuffer;
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
-        
-        ImGui::PopID();
-    }
-    ImGui::Unindent();
-
-    if (ImGui::Button("Add Branch")) {
-        AnimationBranch newBranch = { "NewBranch", {} };
-        currentAnimation.data.branches.push_back(newBranch);
-        selectedBranch = (int)currentAnimation.data.branches.size() - 1;
-        selectedFrame = 0;
-    }
-
-    if(selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-        auto& branch = currentAnimation.data.branches[selectedBranch];
-        ImGui::Separator();
-
-        ImGui::Text("Entry Conditions:");
-        for(size_t i = 0; i < branch.conditions.size(); ++i) {
-            ImGui::PushID((int)i);
-            if (ImGui::BeginCombo("Flag", branch.conditions[i].flag.c_str())) {
-                for (auto& flag : currentAnimation.data.flags) {
-                    if (ImGui::Selectable(flag.c_str(), flag == branch.conditions[i].flag)) {
-                        branch.conditions[i].flag = flag;
-                    }
-                }
-                ImGui::EndCombo();
-            }
-            ImGui::SameLine();
-            ImGui::Checkbox("Expected", &branch.conditions[i].expectedValue);
-            ImGui::SameLine();
-            if(ImGui::Button("X")) {
-                branch.conditions.erase(branch.conditions.begin() + i);
-                ImGui::PopID();
-                break;
-            }
-            ImGui::PopID();
-        }
-        if (ImGui::Button("Add Entry Condition")) {
-            branch.conditions.push_back({ "NewFlag", true });
-        }
-
-        ImGui::Separator();
-        ImGui::Text("Frames in '%s'", branch.name.c_str());
-        ImGui::BeginChild("FrameList", ImVec2(0, 100), true, ImGuiWindowFlags_HorizontalScrollbar);
-        for(int i = 0; i < branch.frames.size(); ++i) {
-            ImGui::PushID(i);
-            bool isSelected = (i == selectedFrame);
-            if (isSelected) {
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.4f, 0.8f, 1.0f));
-            }
-
-            if (ImGui::ImageButton(
-                ("frame" + std::to_string(i)).c_str(),
-                (ImTextureID)(intptr_t)GetFramePreviewTexture(branch.frames[i], *baseAgent),
-                ImVec2(64, 64),
-                ImVec2(0, 1),  // UV top-left
-                ImVec2(1, 0)   // UV bottom-right (flipped Y)
-            )) {
-                selectedFrame = i;
-            }
-
-            if (isSelected) {
-                ImGui::PopStyleColor();
-            }
-
-            if (ImGui::BeginPopupContextItem("FrameContext")) {
-                if (ImGui::MenuItem("Duplicate")) {
-                    // TODO: Deep copy of AnimationFrame
-                }
-                if (ImGui::MenuItem("Delete")) {
-                    branch.frames.erase(branch.frames.begin() + i);
-                    if (selectedFrame == i) selectedFrame = -1;
-                    ImGui::CloseCurrentPopup();
-                }
-                if (ImGui::Button("Reset Frame Overrides")) {
-                    ResetOverrides();
-                }
-                ImGui::EndPopup();
-            }
-            ImGui::SameLine();
-            ImGui::PopID();
-        }
-        ImGui::EndChild();
-        if (ImGui::Button("Add Frame")) {
-            AnimationFrame newFrame;
-            if (baseAgent) {
-                for (auto& comp : baseAgent->GetComponents()) {
-                    newFrame.componentOverrides.push_back(ComponentMod{
-                        comp->GetID(), comp->IsEnabled(), comp->transform->position, 
-                        comp->transform->scale, comp->transform->rotation
-                        });
-                    newFrame.dirty = true;
-                }
-            }
-            branch.frames.push_back(std::move(newFrame));
-            selectedFrame = (int)branch.frames.size() - 1;
-        }
-    }
-
-    ImGui::End();
-
-    // -- Agent View (Top Right 1/3) --
-    ImGui::SetNextWindowPos(ImVec2(leftWidth, 20));
-    ImGui::SetNextWindowSize(ImVec2(rightWidth, topHeight));
-    ImGui::Begin("Agent View", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-
-    if (baseAgent) {
-        ImVec2 regionSize = ImGui::GetContentRegionAvail();
-        ImVec2 screenPos = ImGui::GetCursorScreenPos();
-
-        // Apply component overrides
-        if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-            auto& branch = currentAnimation.data.branches[selectedBranch];
-            if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-                ApplyOverrides(branch.frames[selectedFrame], *baseAgent);
-            }
-        }
-
-        // Render texture to match region size, aspect-preserved
-        GLuint previewTex = 0;
-        if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-            auto& branch = currentAnimation.data.branches[selectedBranch];
-            if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-                AnimationFrame& frame = branch.frames[selectedFrame];
-
-                // Apply overrides to baseAgent live
-                ApplyOverrides(frame, *baseAgent);
-
-                previewTex = (GLuint)(intptr_t)GetFramePreviewTexture(frame, *baseAgent);
-            }
-        }
-        else {
-            if (!baseAgent && !currentAnimation.data.defaultAgentPath.empty()) {
-                baseAgent = std::make_unique<PlayerAgent>(instance);
-                //TODO: USED TO LOAD FROM FILE
-            }
-
-            previewTex = instance.renderer.RenderAgentToTexture(*baseAgent, 256, 256);
-        }
-        float texAspect = (float)regionSize.x / (float)regionSize.y;
-
-        // Maintain square preview centered in available space
-        float previewSize = std::min(regionSize.x, regionSize.y);
-        ImVec2 previewDims = ImVec2(previewSize, previewSize);
-        ImVec2 previewPos = ImVec2(
-            screenPos.x + (regionSize.x - previewSize) * 0.5f,
-            screenPos.y + (regionSize.y - previewSize) * 0.5f
-        );
-
-        ImGui::SetCursorScreenPos(previewPos);
-        ImGui::Image((ImTextureID)(intptr_t)previewTex, previewDims, ImVec2(0, 1), ImVec2(1, 0));
-
-        // -- Mouse Interaction: Dragging, synced with ComponentMod --
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-            ImVec2 mouse = ImGui::GetMousePos();
-            ImVec2 imageMin = previewPos;
-            ImVec2 imageSize = previewDims;
-
-            // Get mouse position relative to center of image
-            float relativeX = (mouse.x - imageMin.x) - previewDims.x * 0.5f;
-            float relativeY = (mouse.y - imageMin.y) - previewDims.y * 0.5f;
-
-            // Convert to world space assuming ortho space from -256 to +256
-            constexpr float pixelsPerUnit = 64.0f;
-            float orthoScale = 1.0f / pixelsPerUnit; // world units per screen pixel (since it�s square)
-            glm::vec2 worldMouse = {
-                relativeX * orthoScale,
-                -relativeY * orthoScale
-            };
-
-            bool mouseDown = SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK;
-            for (auto& comp : baseAgent->GetComponents()) {
-                comp->HandleMouse(worldMouse, mouseDown);
-            }
-
-            // Sync updated transform back to override
-            if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-                auto& branch = currentAnimation.data.branches[selectedBranch];
-                if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-                    AnimationFrame& frame = branch.frames[selectedFrame];
-                    for (auto& mod : frame.componentOverrides) {
-                        Component* comp = baseAgent->GetComponentByID(mod.componentID);
-                        if (comp) {
-                            mod.positionOffset = comp->transform->position;
-                            mod.scale = comp->transform->scale;
-                            mod.rotation = comp->transform->rotation;
-                            frame.dirty = true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else {
-        ImGui::Text("No base agent set.");
-    }
-    ImGui::End();
-
-    // -- Frame Editor (Bottom Half) --
-    ImGui::SetNextWindowPos(ImVec2(0, 20 + topHeight));
-    ImGui::SetNextWindowSize(ImVec2(width, height - topHeight - 20));
-    ImGui::Begin("Frame Editor", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-
-    if (selectedBranch >= 0 && selectedBranch < currentAnimation.data.branches.size()) {
-        auto& branch = currentAnimation.data.branches[selectedBranch];
-        if (selectedFrame >= 0 && selectedFrame < branch.frames.size()) {
-            AnimationFrame& frame = branch.frames[selectedFrame];
-
-            ImGui::PushItemWidth(100);
-            ImGui::DragFloat("Frame Duration", &frame.duration, 0.1f, 0.01f, 10.0f);
-            ImGui::PopItemWidth();
-
-            ImGui::Separator();
-
-            int indexToDelete = -1;
-
-            for (int i = 0; i < frame.componentOverrides.size(); ++i) {
-                auto& mod = frame.componentOverrides[i];
-                ImGui::PushID(mod.componentID.ToString().c_str());
-
-                if (Component* comp = baseAgent->GetComponentByID(mod.componentID)) {
-                    const std::string& compName = comp->GetName();
-                    ImGui::Text("%s", compName.c_str());
-                }
-                else {
-                    ImGui::Text("Missing Component (ID %llu)", mod.componentID);
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("X")) {
-                    ImGui::OpenPopup("ConfirmDeleteComponent");
-                }
-
-                if (ImGui::BeginPopupModal("ConfirmDeleteComponent", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-                    ImGui::Text("Remove component override: %s?", baseAgent->GetComponentByID(mod.componentID)->GetName());
-                    if (ImGui::Button("Yes")) {
-                        indexToDelete = i;
-                        ImGui::CloseCurrentPopup();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Cancel")) {
-                        ImGui::CloseCurrentPopup();
-                    }
-                    ImGui::EndPopup();
-                }
-
-                RenderAnimationOverrides(frame, mod);
-
-                ImGui::Separator();
-
-                ImGui::PopID();
-            }
-
-            // Outside the loop � erase if needed
-            if (indexToDelete >= 0 && indexToDelete < frame.componentOverrides.size()) {
-                frame.componentOverrides.erase(frame.componentOverrides.begin() + indexToDelete);
-                frame.dirty = true;
-            }
-
-            ImGui::Text("Flag Changes:");
-            for (size_t i = 0; i < frame.flagChanges.size(); ++i) {
-                auto& flag = frame.flagChanges[i];
-                ImGui::PushID((int)i);
-
-                if (ImGui::BeginCombo("Flag", frame.flagChanges[i].flag.c_str())) {
-                    for (auto& flag : currentAnimation.data.flags) {
-                        if (ImGui::Selectable(flag.c_str(), flag == frame.flagChanges[i].flag)) {
-                            frame.flagChanges[i].flag = flag;
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-
-                ImGui::SameLine();
-                ImGui::Checkbox("Set", &flag.set);
-
-                ImGui::DragFloat("Duration", &flag.duration, 0.1f, 0.0f, 5.0f);
-
-                if (ImGui::Button("Remove Flag")) {
-                    frame.flagChanges.erase(frame.flagChanges.begin() + i);
-                    ImGui::PopID();
-                    break;  // break to avoid using invalid iterator
-                }
-
-                ImGui::Separator();
-                ImGui::PopID();
-            }
-
-            if (ImGui::Button("Add Flag Change")) {
-                frame.flagChanges.push_back({ "NewFlag", true, 1.0f });
-            }
-        }
-        else {
-            ImGui::Text("No valid frame selected.");
-        }
-    }
-    else {
-        ImGui::Text("No branch selected.");
-    }
-
-    ImGui::End();
+void EngineUI::RenderAnimatorEditor(Scene&) {
+    animatorEditor->Render();
 }
 
 void EngineUI::RenderGameView(Scene& scene) {

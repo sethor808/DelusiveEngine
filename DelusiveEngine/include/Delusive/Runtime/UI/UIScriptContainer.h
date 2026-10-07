@@ -21,7 +21,6 @@ public:
     UIScript* GetScript() const { return script.get(); }
     void Update(float) override;
 
-	std::unique_ptr<UIElement> Clone() const;
 	const std::string GetType() const { return "UIScriptContainer"; }
     void DrawImGui() override;
 private:

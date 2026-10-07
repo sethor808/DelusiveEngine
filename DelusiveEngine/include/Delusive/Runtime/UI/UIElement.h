@@ -26,7 +26,8 @@ public:
     DelusiveInstance& GetInstance() { return instance; }
 
 	virtual void RegisterProperties();
-	virtual std::unique_ptr<UIElement> Clone() const = 0;
+	//Save then load in memory, see DelusiveClone
+	std::unique_ptr<UIElement> Clone() const;
 	virtual const std::string GetType() const = 0;
 
 	virtual ~UIElement();
@@ -69,6 +70,7 @@ public:
 	}
 
 	void AddChild(std::unique_ptr<UIElement> element) {
+		element->LinkCanvas(parentCanvas);
 		children.push_back(std::move(element));
 	}
 
@@ -78,11 +80,15 @@ public:
 	UUID GetID() const { return id; }
 	void SetID(UUID newID) { id = newID; }
 
-	//Block entry points - the registry still does the work, these only expose it
+	//Block entry points - the registry does the field work, these add the child list
 	virtual void Serialize(DelusiveParser::DataBlock& out) const;
 	virtual void Deserialize(DelusiveParser::DataBlock& in);
 	//Appends this element's owned objects as their own blocks
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
+	//Emits this element, its owned objects and its children, flat
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
+	//False when children are rebuilt at runtime (repeat containers) and must not be saved
+	virtual bool SavesChildren() const { return true; }
 
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }

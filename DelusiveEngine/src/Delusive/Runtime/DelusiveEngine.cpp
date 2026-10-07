@@ -10,15 +10,117 @@
 #include <imgui/backend/imgui_impl_sdl3.h>
 #include <imgui/backend/imgui_impl_opengl3.h>
 #include <Delusive/Runtime/Agents/CameraAgent.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#ifdef _MSC_VER
 #include <crtdbg.h>
+#endif
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
+#include <string>
+#include <vector>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace {
+    //Developer launch options, read from the environment only. They let a test run open
+    //on a chosen monitor without taking focus, run at a low frame cap, start in an editor
+    //mode with an asset open, and save one frame of its own window before quitting.
+    //  DELUSIVE_DISPLAY      monitor name (or part of it) or index
+    //  DELUSIVE_MAX_FPS      render cap for this run
+    //  DELUSIVE_EDITOR_MODE  scene, agent, animator or ui
+    //  DELUSIVE_OPEN         asset name to open in that mode
+    //  DELUSIVE_CAPTURE      .ppm path written on the last frame
+    //  DELUSIVE_QUIT_AFTER   frames to run before quitting
+    //  DELUSIVE_WINDOW_SIZE  window size as WxH
+    struct DevLaunch {
+        std::string display;
+        int maxFPS = 0;
+        std::string editorMode;
+        std::string openAsset;
+        std::string capturePath;
+        int quitAfter = 0;
+        int windowWidth = 0;
+        int windowHeight = 0;
+
+        bool Active() const {
+            return !display.empty() || maxFPS > 0 || !editorMode.empty() || quitAfter > 0;
+        }
+    };
+
+    std::string Env(const char* name) {
+        const char* value = std::getenv(name);
+        return value ? value : "";
+    }
+
+    DevLaunch ReadDevLaunch() {
+        DevLaunch dev;
+        dev.display = Env("DELUSIVE_DISPLAY");
+        dev.maxFPS = std::atoi(Env("DELUSIVE_MAX_FPS").c_str());
+        dev.editorMode = Env("DELUSIVE_EDITOR_MODE");
+        dev.openAsset = Env("DELUSIVE_OPEN");
+        dev.capturePath = Env("DELUSIVE_CAPTURE");
+        dev.quitAfter = std::atoi(Env("DELUSIVE_QUIT_AFTER").c_str());
+        std::sscanf(Env("DELUSIVE_WINDOW_SIZE").c_str(), "%dx%d", &dev.windowWidth, &dev.windowHeight);
+        return dev;
+    }
+
+    SDL_DisplayID FindDisplay(const std::string& wanted) {
+        int count = 0;
+        SDL_DisplayID* ids = SDL_GetDisplays(&count);
+        SDL_DisplayID found = 0;
+
+        for (int i = 0; i < count; ++i) {
+            const char* name = SDL_GetDisplayName(ids[i]);
+            SDL_Rect bounds{};
+            SDL_GetDisplayBounds(ids[i], &bounds);
+            std::cout << "[DevLaunch] Display " << i << ": " << (name ? name : "?") << " at "
+                << bounds.x << "," << bounds.y << " " << bounds.w << "x" << bounds.h << "\n";
+
+            if (!found && (wanted == std::to_string(i) || (name && std::string(name).find(wanted) != std::string::npos))) {
+                found = ids[i];
+            }
+        }
+
+        SDL_free(ids);
+        return found;
+    }
+
+    //Reads back this window's own framebuffer - nothing else on screen is touched
+    bool CaptureWindow(SDL_Window* window, const std::string& path) {
+        int width = 0, height = 0;
+        SDL_GetWindowSizeInPixels(window, &width, &height);
+        std::vector<unsigned char> pixels(static_cast<size_t>(width) * height * 3);
+
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadBuffer(GL_BACK);
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+        std::ofstream out(path, std::ios::binary);
+        out << "P6\n" << width << " " << height << "\n255\n";
+        for (int y = height - 1; y >= 0; --y) {
+            out.write(reinterpret_cast<const char*>(&pixels[static_cast<size_t>(y) * width * 3]), width * 3);
+        }
+        return static_cast<bool>(out);
+    }
+
+    bool ParseEditorMode(const std::string& name, EditorMode& mode) {
+        if (name == "scene")    { mode = EditorMode::SceneEditor; return true; }
+        if (name == "agent")    { mode = EditorMode::AgentEditor; return true; }
+        if (name == "animator") { mode = EditorMode::AnimatorEditor; return true; }
+        if (name == "ui")       { mode = EditorMode::UIBuilder; return true; }
+        return false;
+    }
+}
+
 namespace DelusiveEngine {
     
     int Run(const DelusiveContext& context) {
+#ifdef _MSC_VER
         _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+#endif
 
         // --- SDL / OpenGL Setup ---
         if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -30,12 +132,39 @@ namespace DelusiveEngine {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-        SDL_Window* window = SDL_CreateWindow(
-            context.windowTitle,
-            context.windowWidth,
-            context.windowHeight,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
-        );
+        const DevLaunch dev = ReadDevLaunch();
+
+        SDL_Window* window = nullptr;
+        if (!dev.display.empty()) {
+            //Opened straight onto the chosen monitor, never shown elsewhere, never focused
+            SDL_SetHint(SDL_HINT_WINDOW_ACTIVATE_WHEN_SHOWN, "0");
+            SDL_DisplayID display = FindDisplay(dev.display);
+            if (!display) std::cerr << "[DevLaunch] No display matches '" << dev.display << "'\n";
+
+            SDL_PropertiesID props = SDL_CreateProperties();
+            SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, context.windowTitle);
+            SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, dev.windowWidth > 0 ? dev.windowWidth : context.windowWidth);
+            SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, dev.windowHeight > 0 ? dev.windowHeight : context.windowHeight);
+            if (display) {
+                SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(display));
+                SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(display));
+            }
+            SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_OPENGL_BOOLEAN, true);
+            //The hint alone does not stop every window manager focusing a new window;
+            //a non focusable window tells X11 it never takes input focus at all
+            SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_FOCUSABLE_BOOLEAN, false);
+            SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, true);
+            window = display ? SDL_CreateWindowWithProperties(props) : nullptr;
+            SDL_DestroyProperties(props);
+        }
+        else {
+            window = SDL_CreateWindow(
+                context.windowTitle,
+                context.windowWidth,
+                context.windowHeight,
+                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+            );
+        }
         if (!window) {
             std::cerr << "SDL_CreateWindow failed\n";
             return -1;
@@ -60,7 +189,13 @@ namespace DelusiveEngine {
         ImGuiIO& io = ImGui::GetIO();
 
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        if (dev.Active()) {
+            //Test runs keep every ImGui window inside this one and leave imgui.ini alone
+            io.IniFilename = nullptr;
+        }
+        else {
+            io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        }
 
         ImGui::StyleColorsDark();
         ImGuiStyle& style = ImGui::GetStyle();
@@ -86,12 +221,23 @@ namespace DelusiveEngine {
         float scrollDelta = 0.0f;
         bool running = true;
         SDL_Event e;
-        uint64_t lastTicks = SDL_GetTicks();
+        uint64_t lastTicks = SDL_GetTicksNS();
+        double tickAccumulator = 0.0;
 
         EngineUI ui(game);
         ui.LinkEditorCamera(editorCamPtr);
 
+        EditorMode startMode;
+        if (context.editorMode && ParseEditorMode(dev.editorMode, startMode)) {
+            ui.StartIn(game.GetEditorScene(), startMode, dev.openAsset);
+        }
+        int frameCount = 0;
+
+        const int maxFPS = dev.maxFPS > 0 ? dev.maxFPS : context.maxFPS;
+        const uint64_t frameBudgetNS = maxFPS > 0 ? SDL_NS_PER_SECOND / maxFPS : 0;
+
         while (running) {
+            const uint64_t frameStart = SDL_GetTicksNS();
             scrollDelta = 0.0f;
 
             // --- Event Polling ---
@@ -145,10 +291,13 @@ namespace DelusiveEngine {
                 cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, scrollDelta);
             }
 
-            // --- Delta Time ---
-            uint64_t currentTicks = SDL_GetTicks();
-            float deltaTime = (currentTicks - lastTicks) / 1000.0f;
+            // --- Fixed Timestep ---
+            //Gameplay runs in whole ticks so frame data plays the same at any refresh rate
+            uint64_t currentTicks = SDL_GetTicksNS();
+            double frameSeconds = (currentTicks - lastTicks) / 1e9;
             lastTicks = currentTicks;
+            //A stall (breakpoint, window drag) would otherwise replay seconds of ticks at once
+            tickAccumulator += std::min(frameSeconds, 0.25);
 
             // --- Clear / Update / Draw ---
             renderer.Clear();
@@ -157,44 +306,12 @@ namespace DelusiveEngine {
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
-            // --- Docking Root Window (transparent + passthrough) ---
-            ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(main_viewport->Pos);
-            ImGui::SetNextWindowSize(main_viewport->Size);
-            ImGui::SetNextWindowViewport(main_viewport->ID);
+            //Each editor mode submits its own dock space - see EngineUI::DockSpace
 
-            //Building docking windows
-            ImGuiWindowFlags window_flags =
-                ImGuiWindowFlags_MenuBar |
-                ImGuiWindowFlags_NoDocking |
-                ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoCollapse |
-                ImGuiWindowFlags_NoResize |
-                ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_NoBringToFrontOnFocus |
-                ImGuiWindowFlags_NoNavFocus|
-                ImGuiWindowFlags_NoBackground;
-
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(0, 0, 0, 0)); // transparent
-
-            ImGui::Begin("DockSpaceRoot", nullptr, window_flags);
-
-            ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-
-            ImGui::End();
-
-            ImGui::PopStyleColor();
-            ImGui::PopStyleVar(2);
-
-            game.Update(deltaTime);
+            while (tickAccumulator >= DELUSIVE_TICK_SECONDS) {
+                game.Update(DELUSIVE_TICK_SECONDS);
+                tickAccumulator -= DELUSIVE_TICK_SECONDS;
+            }
 
             int width, height;
             renderer.GetWindowSize(width, height);
@@ -203,7 +320,9 @@ namespace DelusiveEngine {
             renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);
 
-            game.HandleMouse(worldMouse, mouseState & SDL_BUTTON_LEFT);
+            //In the editor the mode being shown owns the mouse until Play
+            if (!context.editorMode || game.IsPlaying())
+                game.HandleMouse(worldMouse, mouseState & SDL_BUTTON_LEFT);
             game.Draw(colliderRenderer, projection);
 
             if (context.editorMode) {
@@ -220,7 +339,20 @@ namespace DelusiveEngine {
                 SDL_GL_MakeCurrent(window, glctx); // restore main context
             }
 
+            if (dev.quitAfter > 0 && ++frameCount >= dev.quitAfter) {
+                if (!dev.capturePath.empty()) CaptureWindow(window, dev.capturePath);
+                running = false;
+            }
+
             SDL_GL_SwapWindow(window);
+
+            //Frame cap - sleep off whatever is left of this frame's budget
+            if (frameBudgetNS > 0) {
+                const uint64_t frameTime = SDL_GetTicksNS() - frameStart;
+                if (frameTime < frameBudgetNS) {
+                    SDL_DelayPrecise(frameBudgetNS - frameTime);
+                }
+            }
         }
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -236,7 +368,9 @@ namespace DelusiveEngine {
         SDL_DestroyWindow(window);
         SDL_Quit();
 
+#ifdef _MSC_VER
         _CrtDumpMemoryLeaks();
+#endif
         return 0;
     }
 

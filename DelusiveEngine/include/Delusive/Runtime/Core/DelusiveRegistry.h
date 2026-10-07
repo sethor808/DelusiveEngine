@@ -9,6 +9,8 @@ struct DelusiveInstance;
 class PropertyBase {
 public:
     std::string name;
+    //Saved and loaded as usual, but the owner draws its own editor for it
+    bool hidden = false;
     //Non-owning
     PropertyRegistry* registry = nullptr;
     virtual ~PropertyBase() = default;
@@ -43,6 +45,8 @@ public:
 
     template<typename T>
     void Register(const std::string& name, T* var);
+    //Keeps a property out of DrawImGui when its owner has a custom editor for it
+    void Hide(const std::string& name);
 
     void Serialize(std::ostream& out) const;
     //Fills a block instead of writing text - lets the caller add the header UUID

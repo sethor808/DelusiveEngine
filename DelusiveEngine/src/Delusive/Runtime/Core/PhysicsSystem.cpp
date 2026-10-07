@@ -1,184 +1,213 @@
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
-#include <Delusive/Runtime/Components/DelusiveComponents.h>
+#include <Delusive/Runtime/Agents/Agent.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
+#include <cmath>
+#include <unordered_map>
 
-void PhysicsSystem::HandleCollisions(const std::vector<std::unique_ptr<Agent>>& agents) {
-	for (size_t i = 0; i < agents.size(); ++i) {
-		auto* agentA = agents[i].get();
-		auto collidersA = agentA->GetComponentsOfType<ColliderComponent>();
+namespace {
+	float LengthSq(const glm::vec2& v) { return glm::dot(v, v); }
 
-		for (auto* colA : collidersA) {
-			for (size_t j = i + 1; j < agents.size(); ++j) {
-				auto* agentB = agents[j].get();
-				auto collidersB = agentB->GetComponentsOfType<ColliderComponent>();
+	bool Contains(const WorldShape& box, const glm::vec2& p) {
+		return p.x > box.min.x && p.x < box.max.x && p.y > box.min.y && p.y < box.max.y;
+	}
 
-				for (auto* colB : collidersB) {
-					if (colA->GetOwner() == colB->GetOwner()) continue;
-					//printf("A type: %d, B type: %d\n", colA->GetColliderType(), colB->GetColliderType());
+	//Proper crossing of segments ab and cd
+	bool SegmentsCross(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d) {
+		auto ccw = [](glm::vec2 A, glm::vec2 B, glm::vec2 C) {
+			return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x);
+		};
+		return (ccw(a, c, d) != ccw(b, c, d)) && (ccw(a, b, c) != ccw(a, b, d));
+	}
 
-					bool isHit =
-						(colA->GetColliderType() == ColliderType::Hitbox && colB->GetColliderType() == ColliderType::Hurtbox)
-						|| (colA->GetColliderType() == ColliderType::Hurtbox && colB->GetColliderType() == ColliderType::Hitbox)
-						|| (colA->GetColliderType() == ColliderType::Solid && (colB->GetColliderType() == ColliderType::Solid || colB->GetColliderType() == ColliderType::Trigger))
-						|| (colA->GetColliderType() == ColliderType::Trigger && colB->GetColliderType() == ColliderType::Solid)
-						;
+	glm::vec2 ClosestOnSegment(glm::vec2 a, glm::vec2 b, glm::vec2 p) {
+		const glm::vec2 seg = b - a;
+		const float lengthSq = LengthSq(seg);
+		if (lengthSq == 0.0f) return a; //A zero length line is a point
+		const float t = std::clamp(glm::dot(p - a, seg) / lengthSq, 0.0f, 1.0f);
+		return a + seg * t;
+	}
 
- 					if (isHit && CheckAABBCollision(colA, colB)) {
-						//Notify
-						colA->OnCollision(colB);
-						colB->OnCollision(colA);
+	bool BoxBox(const WorldShape& a, const WorldShape& b) {
+		return a.min.x < b.max.x && a.max.x > b.min.x &&
+			a.min.y < b.max.y && a.max.y > b.min.y;
+	}
 
-						if (colA->GetColliderType() == ColliderType::Solid) {
-							ResolveSolidCollision(colA, colB);
-						}
-						else if (colB->GetColliderType() == ColliderType::Solid) {
-							ResolveSolidCollision(colB, colA);
-						}
-					}
-				}
-			}
-		}
+	bool CircleCircle(const WorldShape& a, const WorldShape& b) {
+		const float reach = a.radius + b.radius;
+		return LengthSq(a.center - b.center) < reach * reach;
+	}
+
+	bool BoxCircle(const WorldShape& box, const WorldShape& circle) {
+		const glm::vec2 closest = glm::clamp(circle.center, box.min, box.max);
+		return LengthSq(circle.center - closest) < circle.radius * circle.radius;
+	}
+
+	bool LineLine(const WorldShape& a, const WorldShape& b) {
+		return SegmentsCross(a.center, a.end, b.center, b.end);
+	}
+
+	bool LineCircle(const WorldShape& line, const WorldShape& circle) {
+		const glm::vec2 closest = ClosestOnSegment(line.center, line.end, circle.center);
+		return LengthSq(circle.center - closest) < circle.radius * circle.radius;
+	}
+
+	bool LineBox(const WorldShape& line, const WorldShape& box) {
+		//A segment entirely inside the box crosses no edge
+		if (Contains(box, line.center) || Contains(box, line.end)) return true;
+
+		const glm::vec2 bl = box.min, tr = box.max;
+		const glm::vec2 br = { tr.x, bl.y }, tl = { bl.x, tr.y };
+		return SegmentsCross(line.center, line.end, bl, br) ||
+			SegmentsCross(line.center, line.end, br, tr) ||
+			SegmentsCross(line.center, line.end, tr, tl) ||
+			SegmentsCross(line.center, line.end, tl, bl);
 	}
 }
 
-void PhysicsSystem::ResolveSolidCollision(ColliderComponent* solid, ColliderComponent* other) {
-	glm::vec2 sMin = solid->GetMin(), sMax = solid->GetMax();
-	glm::vec2 mMin = other->GetMin(), mMax = other->GetMax();
-	glm::vec2 overlapMin = glm::max(sMin, mMin);
-	glm::vec2 overlapMax = glm::min(sMax, mMax);
-	glm::vec2 overlap = overlapMax - overlapMin;
-	if (overlap.x <= 0 || overlap.y <= 0) return;
+WorldShape PhysicsSystem::BuildShape(const ColliderComponent& collider) {
+	WorldShape out;
+	out.collider = const_cast<ColliderComponent*>(&collider);
+	out.owner = collider.GetOwner();
+	out.type = collider.GetColliderType();
+	out.shape = collider.GetShapeType();
 
-	glm::vec2 delta = (overlap.x < overlap.y)
-		? glm::vec2((mMin.x < sMin.x) ? -overlap.x : overlap.x, 0.0f)
-		: glm::vec2(0.0f, (mMin.y < sMin.y) ? -overlap.y : overlap.y);
+	//Colliders never rotate: world = agent position + agent scale * local. A negative
+	//agent scale (facing left) mirrors the offset, so hitboxes flip with the agent.
+	const Transform& agent = out.owner->GetTransform();
+	const Transform& local = *collider.transform;
+	const glm::vec2 center = agent.position + agent.scale * local.position;
+	const glm::vec2 size = glm::abs(agent.scale * local.scale);
 
-	solid->GetOwner()->GetTransform().position -= delta;
+	switch (out.shape) {
+	case ShapeType::Circle: {
+		out.center = center;
+		out.radius = 0.5f * std::abs(local.scale.x) * std::max(std::abs(agent.scale.x), std::abs(agent.scale.y));
+		out.min = center - glm::vec2(out.radius);
+		out.max = center + glm::vec2(out.radius);
+		break;
+	}
+	case ShapeType::Line: {
+		//A line is the one shape with a direction: local rotation, length scale.x
+		const glm::vec2 dir = { std::cos(local.rotation), std::sin(local.rotation) };
+		out.center = center;
+		out.end = center + agent.scale * (dir * local.scale.x);
+		out.min = glm::min(out.center, out.end);
+		out.max = glm::max(out.center, out.end);
+		break;
+	}
+	case ShapeType::Box:
+	default: {
+		out.center = center;
+		out.min = center - 0.5f * size;
+		out.max = center + 0.5f * size;
+		break;
+	}
+	}
+
+	return out;
 }
 
-bool PhysicsSystem::CheckAABBCollision(ColliderComponent* a, ColliderComponent* b) {
-	ShapeType sa = a->GetShapeType();
-	ShapeType sb = b->GetShapeType();
+bool PhysicsSystem::Interacts(ColliderType a, ColliderType b) {
+	//Which collider types meet - one table instead of a chain of conditions
+	static constexpr bool table[4][4] = {
+		//             Solid  Hitbox Hurtbox Trigger
+		/*Solid*/    { true,  false, false,  true  },
+		/*Hitbox*/   { false, false, true,   false },
+		/*Hurtbox*/  { false, true,  false,  false },
+		/*Trigger*/  { true,  false, false,  false },
+	};
+	return table[static_cast<int>(a)][static_cast<int>(b)];
+}
 
-	if (sa == ShapeType::Box && sb == ShapeType::Box)
-		return CheckBoxBoxCollision(a, b);
-	if (sa == ShapeType::Circle && sb == ShapeType::Circle)
-		return CheckCircleCircleCollision(a, b);
-	if (sa == ShapeType::Box && sb == ShapeType::Circle)
-		return CheckBoxCircleCollision(a, b);
-	if (sa == ShapeType::Circle && sb == ShapeType::Box)
-		return CheckBoxCircleCollision(b, a);
+bool PhysicsSystem::Overlaps(const WorldShape& a, const WorldShape& b) {
+	//Order the pair so each shape combination has one test
+	if (static_cast<int>(a.shape) > static_cast<int>(b.shape)) return Overlaps(b, a);
 
-	if (sa == ShapeType::Line && sb == ShapeType::Line)
-		return CheckLineLineCollision(a, b);
-	if (sa == ShapeType::Line && sb == ShapeType::Circle)
-		return CheckLineCircleCollision(a, b);
-	if (sa == ShapeType::Circle && sb == ShapeType::Line)
-		return CheckLineCircleCollision(b, a);
-	if (sa == ShapeType::Line && sb == ShapeType::Box)
-		return CheckLineBoxCollision(a, b);
-	if (sa == ShapeType::Box && sb == ShapeType::Line)
-		return CheckLineBoxCollision(b, a);
-
+	switch (a.shape) {
+	case ShapeType::Box:
+		if (b.shape == ShapeType::Box)    return BoxBox(a, b);
+		if (b.shape == ShapeType::Circle) return BoxCircle(a, b);
+		return LineBox(b, a);
+	case ShapeType::Circle:
+		if (b.shape == ShapeType::Circle) return CircleCircle(a, b);
+		return LineCircle(b, a);
+	case ShapeType::Line:
+		return LineLine(a, b);
+	}
 	return false;
 }
 
-bool PhysicsSystem::CheckBoxBoxCollision(ColliderComponent* a, ColliderComponent* b) {
-	glm::vec2 aMin = a->GetMin();
-	glm::vec2 aMax = a->GetMax();
-	glm::vec2 bMin = b->GetMin();
-	glm::vec2 bMax = b->GetMax();
+void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
+	//1. Gather - every enabled collider resolved to world space once
+	shapes.clear();
+	for (const auto& agent : agents) {
+		for (ColliderComponent* collider : agent->GetComponentsOfType<ColliderComponent>()) {
+			if (collider->IsEnabled()) shapes.push_back(BuildShape(*collider));
+		}
+	}
 
-	return (aMin.x < bMax.x && aMax.x > bMin.x &&
-		aMin.y < bMax.y && aMax.y > bMin.y);
+	//2. Find every contact against this tick's positions before anything reacts
+	contacts.clear();
+	for (size_t i = 0; i < shapes.size(); ++i) {
+		for (size_t j = i + 1; j < shapes.size(); ++j) {
+			const WorldShape& a = shapes[i];
+			const WorldShape& b = shapes[j];
+
+			if (a.owner == b.owner) continue; //An agent never collides with itself
+			if (!Interacts(a.type, b.type)) continue;
+			if (a.max.x < b.min.x || b.max.x < a.min.x ||
+				a.max.y < b.min.y || b.max.y < a.min.y) continue; //Bounds reject
+			if (!Overlaps(a, b)) continue;
+
+			contacts.push_back({ i, j });
+		}
+	}
+
+	//3. React - callbacks first, then separation, all from the same snapshot
+	for (const Contact& contact : contacts) {
+		shapes[contact.a].collider->OnCollision(shapes[contact.b].collider);
+		shapes[contact.b].collider->OnCollision(shapes[contact.a].collider);
+	}
+
+	ResolveSolids();
 }
 
-bool PhysicsSystem::CheckCircleCircleCollision(ColliderComponent* circle, ColliderComponent* box) {
-	glm::vec2 centerA = circle->transform->position;
-	glm::vec2 centerB = box->transform->position;
-	float radiusA = circle->transform->scale.x * 0.5f;
-	float radiusB = box->transform->scale.x * 0.5f;
+void PhysicsSystem::ResolveSolids() {
+	//Static solids (walls) stop everything else. Two moving solids pass through each
+	//other - characters meet through hit/hurt contact rather than shoving.
+	//Largest push per axis per agent, so standing against two wall pieces at once does
+	//not double the correction.
+	std::unordered_map<Agent*, glm::vec2> pushes;
 
-	float distSq = glm::length2(centerA - centerB);
-	float radiusSum = radiusA + radiusB;
+	for (const Contact& contact : contacts) {
+		const WorldShape& a = shapes[contact.a];
+		const WorldShape& b = shapes[contact.b];
+		if (a.type != ColliderType::Solid || b.type != ColliderType::Solid) continue;
 
-	return distSq <= radiusSum * radiusSum;
-}
+		const bool aStatic = a.owner->IsStatic();
+		const bool bStatic = b.owner->IsStatic();
+		if (aStatic == bStatic) continue;
 
-bool PhysicsSystem::CheckBoxCircleCollision(ColliderComponent* box, ColliderComponent* circle) {
-	glm::vec2 boxMin = box->GetMin();
-	glm::vec2 boxMax = box->GetMax();
-	glm::vec2 circleCenter = circle->transform->position;
-	float radius = circle->transform->scale.x * 0.5f;
+		const WorldShape& mover = aStatic ? b : a;
+		const WorldShape& wall = aStatic ? a : b;
 
-	// Clamp circle center to nearest point inside box
-	glm::vec2 closest = glm::clamp(circleCenter, boxMin, boxMax);
-	glm::vec2 delta = circleCenter - closest;
+		//Shortest way out of the wall, along the shallower axis
+		const glm::vec2 overlap = glm::min(mover.max, wall.max) - glm::max(mover.min, wall.min);
+		if (overlap.x <= 0.0f || overlap.y <= 0.0f) continue;
 
-	return glm::length2(delta) <= radius * radius;
-}
+		const glm::vec2 moverCenter = mover.min + mover.max; //Doubled - only compared
+		const glm::vec2 wallCenter = wall.min + wall.max;
+		const glm::vec2 push = (overlap.x < overlap.y)
+			? glm::vec2(moverCenter.x < wallCenter.x ? -overlap.x : overlap.x, 0.0f)
+			: glm::vec2(0.0f, moverCenter.y < wallCenter.y ? -overlap.y : overlap.y);
 
-bool PhysicsSystem::CheckLineLineCollision(ColliderComponent* a, ColliderComponent* b) {
-	glm::vec2 p1 = a->transform->position;
-	glm::vec2 d1 = glm::vec2(cos(a->transform->rotation), sin(a->transform->rotation)) * a->transform->scale.x;
-	glm::vec2 p2 = b->transform->position;
-	glm::vec2 d2 = glm::vec2(cos(b->transform->rotation), sin(b->transform->rotation)) * b->transform->scale.x;
+		glm::vec2& total = pushes[mover.owner];
+		if (std::abs(push.x) > std::abs(total.x)) total.x = push.x;
+		if (std::abs(push.y) > std::abs(total.y)) total.y = push.y;
+	}
 
-	glm::vec2 q1 = p1 + d1;
-	glm::vec2 q2 = p2 + d2;
-
-	// Line segment intersection check
-	auto ccw = [](glm::vec2 A, glm::vec2 B, glm::vec2 C) {
-		return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x);
-		};
-
-	return (ccw(p1, p2, q2) != ccw(q1, p2, q2)) &&
-		(ccw(p1, q1, p2) != ccw(p1, q1, q2));
-}
-
-bool PhysicsSystem::CheckLineCircleCollision(ColliderComponent* line, ColliderComponent* circle) {
-	glm::vec2 p1 = line->transform->position;
-	glm::vec2 dir = glm::vec2(cos(line->transform->rotation), sin(line->transform->rotation));
-	glm::vec2 p2 = p1 + dir * line->transform->scale.x;
-
-	glm::vec2 circleCenter = circle->transform->position;
-	float radius = circle->transform->scale.x * 0.5f;
-
-	// Project point onto segment
-	glm::vec2 seg = p2 - p1;
-	glm::vec2 toCenter = circleCenter - p1;
-
-	float t = glm::clamp(glm::dot(toCenter, seg) / glm::dot(seg, seg), 0.0f, 1.0f);
-	glm::vec2 closest = p1 + seg * t;
-
-	glm::vec2 delta = circleCenter - closest;
-	return glm::length2(delta) <= radius * radius;
-}
-
-bool PhysicsSystem::CheckLineBoxCollision(ColliderComponent* line, ColliderComponent* box) {
-	glm::vec2 p1 = line->transform->position;
-	glm::vec2 dir = glm::vec2(cos(line->transform->rotation), sin(line->transform->rotation));
-	glm::vec2 p2 = p1 + dir * line->transform->scale.x;
-
-	glm::vec2 boxMin = box->GetMin();
-	glm::vec2 boxMax = box->GetMax();
-
-	// Check for intersection with each of the 4 box edges
-	auto IntersectsSegment = [](glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d) {
-		auto ccw = [](glm::vec2 A, glm::vec2 B, glm::vec2 C) {
-			return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x);
-			};
-		return (ccw(a, c, d) != ccw(b, c, d)) && (ccw(a, b, c) != ccw(a, b, d));
-		};
-
-	glm::vec2 bl = { boxMin.x, boxMin.y };
-	glm::vec2 br = { boxMax.x, boxMin.y };
-	glm::vec2 tr = { boxMax.x, boxMax.y };
-	glm::vec2 tl = { boxMin.x, boxMax.y };
-
-	return IntersectsSegment(p1, p2, bl, br) ||
-		IntersectsSegment(p1, p2, br, tr) ||
-		IntersectsSegment(p1, p2, tr, tl) ||
-		IntersectsSegment(p1, p2, tl, bl);
+	for (auto& [agent, push] : pushes) {
+		agent->GetTransform().position += push;
+	}
 }

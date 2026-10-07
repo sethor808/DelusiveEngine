@@ -15,6 +15,8 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     for (int i = 0; i < numTalismans; ++i) {
         talismans.push_back(std::make_unique<BasicTalisman>());
     }
+
+    RegisterProperties();
 }
 
 void PlayerAgent::LinkScene(Scene* scene) {
@@ -146,12 +148,6 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
     impulse = glm::normalize(dir) * strength;
     //dodging = false;
     inputLockTimer = 0.1f;
-}
-
-std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<PlayerAgent>(instance);
-    CloneBaseProperties(copy.get(), scene);
-    return copy;
 }
 
 void PlayerAgent::TriggerInvul(float duration) {

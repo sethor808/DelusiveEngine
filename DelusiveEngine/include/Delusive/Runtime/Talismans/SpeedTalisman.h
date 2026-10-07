@@ -2,5 +2,6 @@
 #include <Delusive/Runtime/Talismans/Talisman.h>
 
 class SpeedTalisman : public Talisman {
-	std::string GetType() override { return "Speed"; }
+public:
+	std::string GetType() const override { return "SpeedTalisman"; }
 };

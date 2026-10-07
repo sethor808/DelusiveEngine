@@ -3,6 +3,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Player/PlayerStats.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
+#include <Delusive/Runtime/Talismans/Talisman.h> //Owned by unique_ptr, so it must be complete
 
 class Talisman;
 class DelusiveInventory;
@@ -11,7 +12,6 @@ class PlayerAgent : public Agent {
 public:
 	explicit PlayerAgent(DelusiveInstance&);
 	PlayerAgent() = delete;
-	std::unique_ptr<Agent> Clone(Scene*) const override;
 
     void LinkScene(Scene* scene) override;
 

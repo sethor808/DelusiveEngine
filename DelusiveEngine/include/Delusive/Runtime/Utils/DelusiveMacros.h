@@ -1,6 +1,9 @@
 #pragma once
 //Constant values
 #define DELUSIVE_PIXEL_SCALE 64.0f
+//Gameplay and animation advance in fixed ticks, independent of the display refresh rate
+#define DELUSIVE_TICKS_PER_SECOND 60
+#define DELUSIVE_TICK_SECONDS (1.0f / DELUSIVE_TICKS_PER_SECOND)
 
 //Default asset path stuff
 #define DEFAULT_VERT "../assets/shaders/vertex.glsl"
@@ -23,10 +26,11 @@
 #define AGENT_EXT ".agent"
 #define ANIM_PATH "../assets/animations/"
 #define ANIM_EXT ".anim"
+#define CANVAS_PATH "../assets/canvases/"
+#define CANVAS_EXT ".canvas"
 
 #define AGENTS_FOLDER "../assets/agents/"
 #define SCENES_FOLDER "../assets/scenes/"
 #define ANIMS_FOLDER "../assets/animations/"
 #define SPRITE_FOLDER "../assets/sprites/"
 #define FONT_FOLDER "../assets/fonts/"
-#define CANVAS_DATA "../assets/canvasData/ui_canvases.txt"

@@ -3,7 +3,7 @@
 HurtboxCollider::HurtboxCollider(DelusiveInstance& instance)
 	: ColliderComponent(instance)
 {
-
+    RegisterProperties();
 }
 
 void HurtboxCollider::OnCollision(ColliderComponent* col) {

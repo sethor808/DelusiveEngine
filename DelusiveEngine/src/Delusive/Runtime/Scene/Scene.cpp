@@ -1,8 +1,13 @@
 #include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <algorithm>
+#include <iomanip>
+#include <sstream>
 
 //TODO: If there is no camera, handle properly
 Scene::Scene(DelusiveInstance& instance)
@@ -144,12 +149,25 @@ std::vector<std::unique_ptr<Agent>>& Scene::GetAgents() {
 	return agents;
 }
 
+bool Scene::RemoveAgent(const UUID& agentID) {
+	auto found = std::find_if(agents.begin(), agents.end(),
+		[&](const std::unique_ptr<Agent>& a) { return a && a->GetID() == agentID; });
+	if (found == agents.end()) return false;
+
+	if (camera == found->get()) camera = nullptr;
+	agentLookup.erase(agentID);
+	agents.erase(found);
+	return true;
+}
+
 void Scene::ClearAgents() {
 	agents.clear();
     agentLookup.clear();
+	camera = nullptr;
 }
 
 void Scene::AddSystem(std::unique_ptr<SceneSystem> sys) {
+	if (!sys->GetID().IsValid()) sys->SetID(UUID::GenerateRandom());
 	sys->LinkScene(this);
     sys->Init();
 	systems.push_back(std::move(sys));
@@ -191,7 +209,7 @@ void Scene::Update(float deltaTime) {
 		agent->Update(deltaTime);
 	}
 
-	physicsSystem.HandleCollisions(agents);
+	physics.Step(agents);
 }
 
 void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {
@@ -257,7 +275,10 @@ void Scene::Clear() {
 	agents.clear();
 	systems.clear();
     agentLookup.clear();
+	camera = nullptr;
 	name = "New Scene";
+	//A cleared scene is a new scene - it must not save over the old one's ids
+	id = UUID();
 }
 
 CameraAgent* Scene::GetMainCamera() const {
@@ -271,20 +292,6 @@ CameraAgent* Scene::GetMainCamera() const {
 #pragma region File IO
 
 namespace {
-	std::unique_ptr<Agent> CreateAgentByType(const std::string& type, DelusiveInstance& instance) {
-		if (type == "PlayerAgent")      return std::make_unique<PlayerAgent>(instance);
-		if (type == "CameraAgent")      return std::make_unique<CameraAgent>(instance);
-		if (type == "EnemyAgent")       return std::make_unique<EnemyAgent>(instance);
-		if (type == "EnvironmentAgent") return std::make_unique<EnvironmentAgent>(instance);
-		return nullptr;
-	}
-
-	std::unique_ptr<SceneSystem> CreateSystemByType(const std::string& type, DelusiveInstance& instance) {
-		if (type == "UIManager")         return std::make_unique<UIManager>(instance);
-		if (type == "PathfindingSystem") return std::make_unique<PathfindingSystem>(instance);
-		return nullptr;
-	}
-
 	std::string JoinIDs(const std::vector<UUID>& ids) {
 		std::ostringstream out;
 		for (const UUID& id : ids) out << id.ToString() << " ";
@@ -306,18 +313,19 @@ namespace {
 	}
 }
 
-bool Scene::SaveToFile(const std::string& path) const {
-	std::vector<DelusiveParser::DataBlock> blocks;
-
+void Scene::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
 	//Scene block carries the name plus what it owns
 	DelusiveParser::DataBlock sceneBlock;
 	sceneBlock.category = "Scene";
-	sceneBlock.id = id.IsValid() ? id : UUID::GenerateRandom();
-	sceneBlock.properties["name"] = name;
+	sceneBlock.id = id;
+	{
+		std::ostringstream quoted;
+		quoted << std::quoted(name);
+		sceneBlock.properties["name"] = quoted.str();
+	}
 
 	std::vector<UUID> agentIDs;
 	std::vector<UUID> systemIDs;
-
 	for (const auto& agent : agents) {
 		if (agent) agentIDs.push_back(agent->GetID());
 	}
@@ -327,95 +335,89 @@ bool Scene::SaveToFile(const std::string& path) const {
 
 	sceneBlock.properties["agents"] = JoinIDs(agentIDs);
 	sceneBlock.properties["systems"] = JoinIDs(systemIDs);
-	blocks.push_back(std::move(sceneBlock));
+	out.push_back(std::move(sceneBlock));
 
 	//Agents emit themselves and their components, flat
 	for (const auto& agent : agents) {
-		if (agent) agent->CollectBlocks(blocks);
+		if (agent) agent->CollectBlocks(out);
 	}
-
 	for (const auto& sys : systems) {
-		if (!sys) continue;
+		if (sys) sys->CollectBlocks(out);
+	}
+}
 
-		DelusiveParser::DataBlock block;
-		sys->Serialize(block);
-		block.id = sys->GetID();
-		blocks.push_back(std::move(block));
+bool Scene::SaveToFile(const std::string& path, bool* reloaded) {
+	if (reloaded) *reloaded = false;
+	if (!id.IsValid()) id = UUID::GenerateRandom();
+
+	std::vector<DelusiveParser::DataBlock> blocks;
+	CollectBlocks(blocks);
+
+	//Also replaces the library's copy of this file, so a reload sees what was just saved
+	DelusiveLibrary::IDRemap remap;
+	if (!instance.delusiveLibrary.WriteFile(path, std::move(blocks), &remap)) return false;
+
+	//Saved as a copy - reload so the live scene carries the copy's fresh ids
+	if (!remap.empty()) {
+		if (reloaded) *reloaded = true;
+		return LoadFromFile(path);
 	}
 
-	std::ofstream out(path);
-	if (!out) {
-		std::cerr << "[Scene] Cannot write " << path << std::endl;
-		return false;
-	}
-
-	out << std::setprecision(std::numeric_limits<float>::max_digits10);
-
-	for (const DelusiveParser::DataBlock& block : blocks) {
-		DelusiveParser::WriteBlock(out, block);
-		out << "\n";
-	}
-
-	return static_cast<bool>(out);
+	return true;
 }
 
 bool Scene::LoadFromFile(const std::string& path) {
-	std::ifstream in(path);
-	if (!in) {
-		std::cerr << "[Scene] Cannot open " << path << std::endl;
-		return false;
+	//Re-reads the file so edits made since startup are picked up. Every block in
+	//it becomes a recipe the agents can pull from.
+	if (!instance.delusiveLibrary.LoadFile(path)) return false;
+
+	for (const DelusiveParser::DataBlock* block : instance.delusiveLibrary.ListFile(path)) {
+		if (block->category == "Scene") return Build(*block);
 	}
 
-	//Every block in this file becomes a recipe the agents can pull from
-	std::vector<DelusiveParser::DataBlock> blocks = DelusiveParser::ParseFile(in);
+	std::cerr << "[Scene] No Scene block in " << path << std::endl;
+	return false;
+}
 
-	for (auto& block : blocks) {
-		if (block.id.IsValid()) {
-			instance.delusiveLibrary.Add(block, path);
-		}
-	}
+bool Scene::LoadFromBlocks(const std::vector<DelusiveParser::DataBlock>& blocks) {
+	auto sceneBlock = std::find_if(blocks.begin(), blocks.end(),
+		[](const DelusiveParser::DataBlock& b) { return b.category == "Scene"; });
+	if (sceneBlock == blocks.end()) return false;
 
-	const DelusiveParser::DataBlock* sceneBlock = nullptr;
-	for (const auto& block : blocks) {
-		if (block.category == "Scene") {
-			sceneBlock = &block;
-			break;
-		}
-	}
+	//The blocks stand in for the library while the scene is rebuilt
+	DelusiveLibrary::Overlay overlay(instance.delusiveLibrary, blocks);
+	return Build(*sceneBlock);
+}
 
-	if (!sceneBlock) {
-		std::cerr << "[Scene] No Scene block in " << path << std::endl;
-		return false;
-	}
-
+bool Scene::Build(const DelusiveParser::DataBlock& sceneBlock) {
 	Clear();
 
-	id = sceneBlock->id;
+	id = sceneBlock.id;
 
-	auto nameProp = sceneBlock->properties.find("name");
-	if (nameProp != sceneBlock->properties.end()) name = nameProp->second;
+	auto nameProp = sceneBlock.properties.find("name");
+	if (nameProp != sceneBlock.properties.end()) {
+		//Quoted like every other string property; older saves wrote it bare
+		std::istringstream in(nameProp->second);
+		if (in.peek() == '"') in >> std::quoted(name);
+		else name = nameProp->second;
+	}
 
 	//Systems first so agents can find them during resolve
-	auto systemList = sceneBlock->properties.find("systems");
-	if (systemList != sceneBlock->properties.end()) {
+	auto systemList = sceneBlock.properties.find("systems");
+	if (systemList != sceneBlock.properties.end()) {
 		for (const UUID& sysID : SplitIDs(systemList->second)) {
 			const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(sysID);
 			if (!recipe) continue;
 
-			std::unique_ptr<SceneSystem> sys = CreateSystemByType(recipe->type, instance);
-			if (!sys) {
-				std::cerr << "[Scene] Unknown system type: " << recipe->type << std::endl;
-				continue;
-			}
+			std::unique_ptr<SceneSystem> sys = DelusiveBuild<SceneSystem>(*recipe, instance);
+			if (!sys) continue;
 
-			sys->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
-			sys->SetID(sysID);
 			AddSystem(std::move(sys));
 		}
 	}
 
-	auto agentList = sceneBlock->properties.find("agents");
-	if (agentList != sceneBlock->properties.end()) {
+	auto agentList = sceneBlock.properties.find("agents");
+	if (agentList != sceneBlock.properties.end()) {
 		for (const UUID& agentID : SplitIDs(agentList->second)) {
 			const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(agentID);
 			if (!recipe) {
@@ -423,15 +425,9 @@ bool Scene::LoadFromFile(const std::string& path) {
 				continue;
 			}
 
-			std::unique_ptr<Agent> agent = CreateAgentByType(recipe->type, instance);
-			if (!agent) {
-				std::cerr << "[Scene] Unknown agent type: " << recipe->type << std::endl;
-				continue;
-			}
+			std::unique_ptr<Agent> agent = Agent::FromRecipe(*recipe, instance, this);
+			if (!agent) continue;
 
-			agent->LinkScene(this);
-			agent->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
-			agent->SetID(agentID);
 			AddAgent(std::move(agent));
 		}
 	}

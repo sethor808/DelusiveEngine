@@ -6,19 +6,18 @@ CameraAgent::CameraAgent(DelusiveInstance& instance)
 	: Agent(instance)
 {
 	SetName("New Camera");
+
+	RegisterProperties();
 }
 
 std::string CameraAgent::GetType() const{
 	return "CameraAgent";
 }
 
-std::unique_ptr<Agent> CameraAgent::Clone(Scene* scene) const {
-	auto cam = std::make_unique<CameraAgent>(instance);
-	cam->SetName(GetName());
-	cam->SetZoom(zoom);
-	cam->panOffset = panOffset;
-	cam->LinkScene(scene);
-	return cam;
+void CameraAgent::RegisterProperties() {
+	Agent::RegisterProperties();
+	//panOffset is runtime dragging, not authored, so it is not saved
+	registry->Register("zoom", &zoom);
 }
 
 void CameraAgent::Update(float deltaTime) {

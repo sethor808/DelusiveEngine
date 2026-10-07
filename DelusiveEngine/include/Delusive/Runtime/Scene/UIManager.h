@@ -18,8 +18,9 @@ public:
 	std::string GetType() const { return "UIManager"; }
 	void RegisterProperties() override;
 
-    void GrabCanvasNames();
 	void SetCanvasActive(const std::string&);
+	void ActivateCanvas(UICanvas*);
+	UICanvas* GetActiveCanvas() const { return activeCanvas; }
 
 	void Update(float) override;
 	void Draw(const glm::mat4&) override;
@@ -27,11 +28,14 @@ public:
 	void DrawImGui() override;
 
 	void Reset() override;
-	std::unique_ptr<SceneSystem> Clone() const override;
 private:
+    //Canvases are referenced by UUID on disk; the pointers are rebuilt in Init
+    void ResolveCanvases();
+    void SyncCanvasIDs();
+
 	DelusiveUIRegistry uiRegistry;
 	UICanvas* activeCanvas = nullptr;
-	std::string activeCanvasName;
-	std::vector<std::string> canvasList;
+	UUID activeCanvasID;
+	std::vector<std::string> canvasIDs;
     std::vector<UICanvas*> canvases;
 };

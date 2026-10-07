@@ -3,7 +3,7 @@
 SolidCollider::SolidCollider(DelusiveInstance& instance)
 	: ColliderComponent(instance)
 {
-
+    RegisterProperties();
 }
 
 void SolidCollider::OnCollision(ColliderComponent* col) {

@@ -1,4 +1,5 @@
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <Delusive/Runtime/Components/DelusiveComponentFactory.h>
 #include <Delusive/Runtime/Components/Component.h>
@@ -7,13 +8,16 @@
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Runtime/Components/DelusiveComponents.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <limits>
 #include <sstream>
 
 Agent::Agent(DelusiveInstance& instance)
 	: instance(instance), registry(std::make_unique<PropertyRegistry>())
 {
-	RegisterProperties();
+	//Derived constructors call RegisterProperties - calling it here would
+	//dispatch to the base GetType(), which is pure virtual during base construction
 }
 
 Agent::~Agent() {
@@ -128,6 +132,24 @@ TransformComponent& Agent::GetTransform() const {
     return const_cast<TransformComponent&>(transform);
 }
 
+void Agent::MoveComponent(Component* target, int delta) {
+	auto found = std::find_if(components.begin(), components.end(),
+		[target](const std::unique_ptr<Component>& c) { return c.get() == target; });
+	if (found == components.end()) return;
+
+	const int from = static_cast<int>(found - components.begin());
+	const int to = std::clamp(from + delta, 0, static_cast<int>(components.size()) - 1);
+	if (from == to) return;
+
+	std::unique_ptr<Component> moving = std::move(*found);
+	components.erase(found);
+	components.insert(components.begin() + to, std::move(moving));
+}
+
+void Agent::DrawPropertiesImGui() {
+	registry->DrawImGui();
+}
+
 void Agent::DrawImGui() {
 	registry->DrawImGui();
 	ImGui::Separator();
@@ -167,6 +189,9 @@ void Agent::DrawImGui() {
 }
 
 void Agent::RemoveComponentByPointer(Component* target) {
+	if (!target) return;
+	//The lookup must not outlive the component
+	componentLookup.erase(target->GetID());
 	components.erase(
 		std::remove_if(
 			components.begin(),
@@ -183,22 +208,6 @@ const std::vector<std::unique_ptr<Component>>& Agent::GetComponents() const {
 	return components;
 }
 
-void Agent::CloneBaseProperties(Agent* copy, Scene* scene) const{
-	copy->SetPosition(GetTransform().position);
-	copy->SetRotation(GetTransform().rotation);
-	copy->SetScale(GetTransform().scale);
-	copy->SetName(GetName());
-    copy->SetID(id);
-	copy->LinkScene(scene);
-
-	// Deep copy components
-	for (const auto& comp : GetComponents()) {
-		if (comp) {
-			std::unique_ptr<Component> clone = comp->Clone();
-			if (clone) copy->AddRawComponent(std::move(clone));
-		}
-	}
-}
 #pragma region Block serialization
 
 void Agent::Serialize(DelusiveParser::DataBlock& out) const {
@@ -237,20 +246,54 @@ void Agent::Deserialize(DelusiveParser::DataBlock& in) {
 			continue;
 		}
 
-		std::unique_ptr<Component> comp =
-			DelusiveFactory<Component>::Create(recipe->type, instance);
-
-		if (!comp) {
-			std::cerr << "[Agent] Unknown component type: " << recipe->type << std::endl;
-			continue;
-		}
-
-		comp->SetOwner(this);
-		comp->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
-		comp->SetID(componentID);
+		//Owner first - some components reach their agent while loading
+		std::unique_ptr<Component> comp = DelusiveBuild<Component>(*recipe, instance,
+			[this](Component& c) { c.SetOwner(this); });
+		if (!comp) continue;
 
 		AddRawComponent(std::move(comp));
 	}
+}
+
+std::unique_ptr<Agent> Agent::FromRecipe(const DelusiveParser::DataBlock& recipe, DelusiveInstance& instance, Scene* scene) {
+	//Scene first - scripts look up other agents while their components load
+	return DelusiveBuild<Agent>(recipe, instance, [scene](Agent& agent) {
+		if (scene) agent.LinkScene(scene);
+	});
+}
+
+std::unique_ptr<Agent> Agent::Clone(Scene* scene) const {
+	return DelusiveClone<Agent>(*this, instance, [scene](Agent& agent) {
+		if (scene) agent.LinkScene(scene);
+	});
+}
+
+std::unique_ptr<Agent> Agent::LoadFromFile(const std::string& path, DelusiveInstance& instance, Scene* scene) {
+	if (!instance.delusiveLibrary.LoadFile(path)) return nullptr;
+
+	//The first Agent block is the file's root - the rest are its components
+	for (const DelusiveParser::DataBlock* block : instance.delusiveLibrary.ListFile(path)) {
+		if (block->category == "Agent") {
+			return FromRecipe(*block, instance, scene);
+		}
+	}
+
+	std::cerr << "[Agent] No Agent block in " << path << std::endl;
+	return nullptr;
+}
+
+bool Agent::SaveToFile(const std::string& path, bool* remapped) {
+	if (remapped) *remapped = false;
+	if (!id.IsValid()) id = UUID::GenerateRandom();
+
+	std::vector<DelusiveParser::DataBlock> blocks;
+	CollectBlocks(blocks);
+
+	DelusiveLibrary::IDRemap remap;
+	if (!instance.delusiveLibrary.WriteFile(path, std::move(blocks), &remap)) return false;
+
+	if (remapped) *remapped = !remap.empty();
+	return true;
 }
 
 void Agent::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
@@ -260,15 +303,7 @@ void Agent::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
 	out.push_back(std::move(self));
 
 	for (const auto& comp : components) {
-		if (!comp) continue;
-
-		DelusiveParser::DataBlock block;
-		comp->Serialize(block);
-		block.id = comp->GetID();
-		out.push_back(std::move(block));
-
-		//Anything the component owns writes its own block too
-		comp->CollectOwned(out);
+		if (comp) comp->CollectBlocks(out);
 	}
 }
 

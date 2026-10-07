@@ -4,7 +4,7 @@
 StatsComponent::StatsComponent(DelusiveInstance& instance)
 	: Component(instance)
 {
-
+    RegisterProperties();
 }
 
 int StatsComponent::GetHealth() {

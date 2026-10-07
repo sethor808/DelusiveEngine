@@ -21,15 +21,15 @@ public:
     void Init();
 
     void RegisterProperties() override;
-    std::unique_ptr<Component> Clone() const override;
 
     void SetTexturePath(const std::string&);
+    //Loading only sets the path - this turns it into a texture
+    void Deserialize(DelusiveParser::DataBlock& in) override;
     void SetPosition(float x, float y);
     void SetScale(float sx, float sy);
     void SetRotation(float angle);
     void Draw(const glm::mat4& projection) const override;
     void DrawImGui() override;
-    bool DrawAnimatorImGui(ComponentMod&) override;
     void SetVelocity(float x, float y);
     void Update(float) override;
     void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) override;

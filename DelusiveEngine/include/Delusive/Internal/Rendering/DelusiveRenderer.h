@@ -30,6 +30,7 @@ public:
 
 	//Draw functions
 	GLuint GetTexture(const std::string&);
+	glm::ivec2 GetTextureSize(const std::string&);
 	Shader* GetDefaultShader();
 	void Submit(const RenderCommand&);
 	void Flush();

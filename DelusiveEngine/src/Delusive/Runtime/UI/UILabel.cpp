@@ -19,6 +19,15 @@ void UILabel::Init() {
 	RegisterProperties();
 }
 
+void UILabel::Deserialize(DelusiveParser::DataBlock& in) {
+	UIElement::Deserialize(in);
+
+	//Init loaded the default font before the saved one arrived
+	if (!fontData.fontPath.empty()) {
+		fontData.SetFont(fontData.fontPath, 48.0f);
+	}
+}
+
 void UILabel::RegisterProperties() {
 	UIElement::RegisterProperties();
 	registry->Register("font", &fontData);
@@ -29,27 +38,6 @@ void UILabel::RegisterProperties() {
 void UILabel::LoadFont(const std::string& ttfPath, float pixelHeight) {
 	fontData.SetFont(ttfPath, pixelHeight);
 	fontData.fontSize = (pixelHeight);
-}
-
-std::unique_ptr<UIElement> UILabel::Clone() const {
-	auto copy = std::make_unique<UILabel>(instance);
-	copy->SetText(text);
-	copy->SetPosition(position);
-	copy->SetFontSize(fontData.fontSize);
-	copy->SetColor(color);
-	copy->SetName(name);
-	copy->SetEnabled(enabled);
-
-	// copy font settings
-	copy->fontData.fontPath = fontData.fontPath;
-	copy->fontData.fontSize = fontData.fontSize;
-	copy->fontData.Init();
-
-	for (const auto& child : children) {
-		copy->AddChild(std::move(child->Clone()));
-	}
-
-	return copy;
 }
 
 void UILabel::Update(float deltaTime) {

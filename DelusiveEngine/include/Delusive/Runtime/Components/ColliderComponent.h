@@ -4,7 +4,9 @@
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Internal/Rendering/ColliderRenderer.h>
 #include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 enum class ColliderType {
 	Solid,
@@ -12,11 +14,6 @@ enum class ColliderType {
 	Hurtbox,
 	Trigger
 };
-
-struct Zone {
-	glm::vec2 min, max;
-};
-
 
 enum class ColliderHandleType {
     None,
@@ -29,15 +26,6 @@ enum class ShapeType {
 	Box,
 	Circle,
 	Line
-};
-
-enum class ColliderAction {
-	None,
-	Drag,
-	ResizeLeft,
-	ResizeRight,
-	ResizeTop,
-	ResizeBottom
 };
 
 class Component;
@@ -55,33 +43,36 @@ public:
 	ColliderComponent& operator=(ColliderComponent&&) noexcept = default;
 
 	virtual ~ColliderComponent() = default;
-	std::unique_ptr<Component> Clone() const override = 0;
 
 	void RegisterProperties() override;
 
-	glm::vec2 GetMin() const;
-	glm::vec2 GetMax() const;
-
 	virtual ColliderType GetColliderType() const = 0;
 	virtual ShapeType GetShapeType() const { return shape; }
+	void SetShapeType(ShapeType newShape) { shape = newShape; }
 
 	virtual bool CheckCenterRender() const { return showCenter; }
 	virtual void ToggleCenterDisplay() { showCenter = !showCenter; };
 	
 	virtual void Draw(const ColliderRenderer&, const glm::mat4& ) const;
-	virtual bool DrawAnimatorImGui(ComponentMod&) override;
 	void HandleMouse(const glm::vec2&, bool) override;
 
 	virtual void OnCollision(ColliderComponent* other) = 0;
-	ColliderAction FromColliderHandleType(ColliderHandleType h);
+
+	//Editor handles in world space, built from the same shape that collides and draws
+	struct Handle {
+		ColliderHandleType type;
+		glm::vec2 position;
+	};
+	std::vector<Handle> GetHandles() const;
+	bool IsDraggingHandle() const { return activeHandle != ColliderHandleType::None; }
+	//World size of a drawn handle; the mouse grabs within half of it
+	static constexpr float HandleSize = 12.0f / DELUSIVE_PIXEL_SCALE;
+
 protected:
 	ShapeType shape = ShapeType::Box;
 	bool showCenter = false;
 	ColliderHandleType activeHandle = ColliderHandleType::None;
-	ColliderAction currentAction = ColliderAction::None;
-	glm::vec2 dragStartMouse;
-	glm::vec2 dragStartPos;
-	glm::vec2 dragStartSize;
-
-	Zone ComputeWorldArea() const;
+	glm::vec2 dragStartMouse{ 0.0f };
+	//Handles are only grabbed when the button goes down, not by passing over them mid-drag
+	bool mouseWasDown = false;
 };

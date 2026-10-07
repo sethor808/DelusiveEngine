@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Talismans/Talisman.h>
 
 class BasicTalisman : public Talisman{
-	std::string GetType() override { return "Basic"; }
+public:
+	std::string GetType() const override { return "BasicTalisman"; }
 
 };

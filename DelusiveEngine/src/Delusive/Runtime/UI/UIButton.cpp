@@ -28,6 +28,19 @@ void UIButton::Init() {
 	RegisterProperties();
 }
 
+void UIButton::Deserialize(DelusiveParser::DataBlock& in) {
+	UIElement::Deserialize(in);
+
+	//Init resolved the defaults before the saved paths arrived
+	buttonTexture.textureID = instance.renderer.GetTexture(buttonTexture.texturePath);
+	if (buttonTexture.textureID == 0) {
+		buttonTexture.textureID = instance.renderer.CreateFallbackWhiteTexture();
+	}
+	if (!buttonFont.fontPath.empty()) {
+		buttonFont.SetFont(buttonFont.fontPath, 48.0f);
+	}
+}
+
 void UIButton::RegisterProperties() {
 	UIElement::RegisterProperties();
 	registry->Register("Label", &label);
@@ -35,38 +48,6 @@ void UIButton::RegisterProperties() {
 	registry->Register("Font", &buttonFont);
 	registry->Register("FontColor", &fontColor);
 	registry->Register("TextOffset", &textOffset);
-}
-
-std::unique_ptr<UIElement> UIButton::Clone() const {
-	auto copy = std::make_unique<UIButton>(instance);
-	copy->SetPosition(position);
-	copy->SetSize(size);
-	copy->SetEnabled(enabled);
-	copy->SetName(name);
-
-	// copy simple data
-	copy->label = label;
-	copy->fontColor = fontColor;
-	copy->textOffset = textOffset;
-
-	// copy texture path and ask renderer for the cached textureID
-	copy->buttonTexture.texturePath = buttonTexture.texturePath;
-	copy->buttonTexture.textureID = instance.renderer.GetTexture(copy->buttonTexture.texturePath);
-	if (copy->buttonTexture.textureID == 0) {
-		copy->buttonTexture.textureID = instance.renderer.CreateFallbackWhiteTexture();
-	}
-
-	// Copy font (if Font is copyable; adjust if it requires a special clone)
-	copy->buttonFont.fontSize = buttonFont.fontSize;
-
-	// copy onClick (note: copying lambdas with captures might not behave as you expect)
-	copy->onClick = onClick;
-
-	for (const auto& child : children) {
-		copy->AddChild(std::move(child->Clone()));
-	}
-
-	return copy;
 }
 
 void UIButton::SetOnClick(std::function<void()> callback) {

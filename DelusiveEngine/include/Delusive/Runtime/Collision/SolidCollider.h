@@ -7,11 +7,6 @@ public:
 	SolidCollider(DelusiveInstance&);
 	SolidCollider() = delete;
 
-	std::unique_ptr<Component> Clone() const override {
-		//TODO: Properly copy over values
-		return std::make_unique<SolidCollider>(instance);
-	}
-
 	ColliderType GetColliderType() const override {
 		return ColliderType::Solid;
 	}

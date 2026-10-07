@@ -1,0 +1,38 @@
+[UICanvas cec166525b6c2213-2a952ce32c0334f3]
+elements=dbf682c90514dbaa-c3bfd59e606e87d0 4e3cad7c418f0cd1-9cf49e6c52b69feb 0ebd1541dfcf03ec-358395f050dd222d
+id=cec166525b6c2213-2a952ce32c0334f3
+name="Equip Screen"
+
+[UIElement UIRepeatContainer dbf682c90514dbaa-c3bfd59e606e87d0]
+count=1
+enabled=1
+id=dbf682c90514dbaa-c3bfd59e606e87d0
+name="Equipped Talismans"
+position=0 0
+rows=1
+size=1 1
+spacing=0
+
+[UIElement UIRepeatContainer 4e3cad7c418f0cd1-9cf49e6c52b69feb]
+count=1
+enabled=1
+id=4e3cad7c418f0cd1-9cf49e6c52b69feb
+name="Available Talismans"
+position=0 0
+rows=1
+size=1 1
+spacing=0
+
+[UIElement UIScriptContainer 0ebd1541dfcf03ec-358395f050dd222d]
+children=
+enabled=1
+id=0ebd1541dfcf03ec-358395f050dd222d
+name="InventoryManager"
+position=0 0
+script=53b58ae024be25d0-3a8545709928add8
+size=1 1
+
+[UIScript EquipScreen 53b58ae024be25d0-3a8545709928add8]
+availableContainerID=4e3cad7c418f0cd1-9cf49e6c52b69feb
+equippedContainerID=dbf682c90514dbaa-c3bfd59e606e87d0
+id=53b58ae024be25d0-3a8545709928add8

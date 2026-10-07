@@ -22,6 +22,12 @@ GLuint TextureManager::Load(const std::string& path) {
     return texID;
 }
 
+glm::ivec2 TextureManager::GetSize(const std::string& path) {
+    if (Load(path) == 0) return { 0, 0 };
+    const Texture& texture = *cache.at(path);
+    return { texture.width, texture.height };
+}
+
 void TextureManager::UnloadAll() {
     cache.clear(); // textures deleted by destructor
 }

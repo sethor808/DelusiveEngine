@@ -43,7 +43,6 @@ public:
 	void Reset() override {};
 	void DrawImGui() override;
 
-	std::unique_ptr<SceneSystem> Clone() const override;
 
 	void DrawDebug(const glm::mat4 projection) const;
 

@@ -8,7 +8,6 @@ public:
 	UITalismanDisplay(DelusiveInstance&);
 
 	const std::string GetType() const override { return "UITalismanDisplay"; }
-	std::unique_ptr<UIElement> Clone() const override;
 
 	void RegisterProperties();
 

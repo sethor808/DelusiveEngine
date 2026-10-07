@@ -5,6 +5,7 @@
 #include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 
 UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
 	: UIElement(instance)
@@ -13,29 +14,13 @@ UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
 	RegisterProperties();
 }
 
-std::unique_ptr<UIElement> UIRepeatContainer::Clone() const {
-	auto copy = std::make_unique<UIRepeatContainer>(instance);
-
-	copy->SetPosition(position);
-	copy->SetSize(size);
-	copy->count = count;
-	copy->rows = rows;
-	copy->spacing = spacing;
-
-	if (prototype) {
-		// prototype->Clone() returns unique_ptr<UIElement>
-		copy->prototype = prototype->Clone();
-	}
-
-	// Caller can call RegenerateChildren() when appropriate.
-	return copy;
-}
-
 void UIRepeatContainer::RegisterProperties() {
 	UIElement::RegisterProperties();
 	registry->Register("count", &count);
 	registry->Register("rows", &rows);
 	registry->Register("spacing", &spacing);
+	registry->Register("prototype", &prototype);
+	registry->Hide("prototype"); //Edited in the Prototype section below
 }
 
 void UIRepeatContainer::Draw(const glm::mat4& projection) {
@@ -124,7 +109,8 @@ void UIRepeatContainer::RegenerateChildren() {
 
 	// Use spacing.x for horizontal, spacing.y for vertical
 	for (int idx = 0; idx < count; ++idx) {
-		auto item = prototype->Clone();
+		//Each item is its own element, so it needs its own ids
+		auto item = DelusiveInstantiate<UIElement>(*prototype.get(), instance);
 		if (!item) continue;
 
 		int r = (rowsToUse == 1) ? 0 : (idx / cols);   // row index

@@ -1,9 +1,14 @@
 #include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Scene/UIManager.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <imgui/imgui.h>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -18,26 +23,115 @@ UICanvas::~UICanvas() = default;
 
 void UICanvas::RegisterProperties()
 {
-    registry->category = "Canvas";
+    registry->category = "UICanvas";
+	registry->Register("id", &id);
 	registry->Register("name", &name);
 }
 
-std::unique_ptr<UICanvas> UICanvas::Clone() const {
-	// Create a new canvas with the same name
-	std::unique_ptr<UICanvas> copy = std::make_unique<UICanvas>(instance);
-	copy->name = this->name;
-	copy->SetActive(this->IsActive());
+#pragma region File IO
 
-	// Copy each child element by cloning them
+void UICanvas::Serialize(DelusiveParser::DataBlock& out) const {
+	registry->Serialize(out);
+
+	//Ownership is a UUID list - each element writes its own block
+	std::ostringstream ids;
 	for (const auto& element : elements) {
-		copy->AddElement(std::move(element->Clone()));
+		if (element) ids << element->GetID().ToString() << " ";
+	}
+	out.properties["elements"] = ids.str();
+}
+
+void UICanvas::Deserialize(DelusiveParser::DataBlock& in) {
+	registry->Deserialize(in);
+	registry->Resolve(instance);
+
+	elements.clear();
+
+	auto list = in.properties.find("elements");
+	if (list == in.properties.end()) return;
+
+	std::istringstream ids(list->second);
+	std::string idText;
+
+	while (ids >> idText) {
+		UUID elementID;
+		elementID.FromString(idText);
+
+		const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(elementID);
+		if (!recipe) {
+			std::cerr << "[UICanvas] Missing element recipe " << idText << " in " << name << std::endl;
+			continue;
+		}
+
+		std::unique_ptr<UIElement> element = DelusiveBuild<UIElement>(*recipe, instance);
+		if (!element) continue;
+
+		AddElement(std::move(element));
+	}
+}
+
+void UICanvas::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
+	DelusiveParser::DataBlock self;
+	Serialize(self);
+	self.id = id;
+	out.push_back(std::move(self));
+
+	for (const auto& element : elements) {
+		if (element) element->CollectBlocks(out);
+	}
+}
+
+std::unique_ptr<UICanvas> UICanvas::FromRecipe(const DelusiveParser::DataBlock& recipe, DelusiveInstance& instance) {
+	return DelusiveBuild<UICanvas>(recipe, instance);
+}
+
+std::unique_ptr<UICanvas> UICanvas::Clone() const {
+	return DelusiveClone<UICanvas>(*this, instance);
+}
+
+std::unique_ptr<UICanvas> UICanvas::LoadFromFile(const std::string& path, DelusiveInstance& instance) {
+	if (!instance.delusiveLibrary.LoadFile(path)) return nullptr;
+
+	for (const DelusiveParser::DataBlock* block : instance.delusiveLibrary.ListFile(path)) {
+		if (block->category == "UICanvas") {
+			return FromRecipe(*block, instance);
+		}
 	}
 
-	// Copy activation state
-	copy->SetActive(this->IsActive());
-
-	return copy;
+	std::cerr << "[UICanvas] No UICanvas block in " << path << std::endl;
+	return nullptr;
 }
+
+bool UICanvas::SaveToFile(const std::string& path, bool* remapped) {
+	if (remapped) *remapped = false;
+	if (!id.IsValid()) id = UUID::GenerateRandom();
+
+	std::vector<DelusiveParser::DataBlock> blocks;
+	CollectBlocks(blocks);
+
+	DelusiveLibrary::IDRemap remap;
+	if (!instance.delusiveLibrary.WriteFile(path, std::move(blocks), &remap)) return false;
+
+	if (remapped) *remapped = !remap.empty();
+	return true;
+}
+
+bool UICanvas::Save(bool* remapped) {
+	std::string path = instance.delusiveLibrary.GetSourceFile(id);
+
+	//A new canvas must not land on another canvas's file
+	if (path.empty()) {
+		const std::string base = std::string(CANVAS_PATH) + name;
+		path = base + CANVAS_EXT;
+		for (int n = 2; std::filesystem::exists(path); ++n) {
+			path = base + "_" + std::to_string(n) + CANVAS_EXT;
+		}
+	}
+
+	return SaveToFile(path, remapped);
+}
+
+#pragma endregion
 
 ScriptManager& UICanvas::GetScriptManager() const {
     if (uiManager != nullptr) {

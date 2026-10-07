@@ -7,11 +7,6 @@ public:
 	HitboxCollider(DelusiveInstance&);
 	HitboxCollider() = delete;
 
-	std::unique_ptr<Component> Clone() const override {
-		//TODO: Properly deep copy values
-		return std::make_unique<HitboxCollider>(instance);
-	}
-
 	ColliderType GetColliderType() const override {
 		return ColliderType::Hitbox;
 	}

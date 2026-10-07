@@ -70,20 +70,31 @@ public:
 	void SetID(UUID newID) { id = newID; }
 
 	//Flat file I/O - every agent, component and system is written as its own block
-	bool SaveToFile(const std::string& path) const;
+	//Saving to a file other than its own gives the copy fresh ids and reloads from
+	//it - reloaded tells the caller every Agent/Component pointer is now invalid
+	bool SaveToFile(const std::string& path, bool* reloaded = nullptr);
 	bool LoadFromFile(const std::string& path);
+	//The scene as it would be saved: its own block first, then every agent and system
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
+	//Rebuilds the scene from blocks in memory - undo uses it; nothing is read from disk
+	bool LoadFromBlocks(const std::vector<DelusiveParser::DataBlock>& blocks);
+	//Takes the agent out of the scene and every lookup that points at it
+	bool RemoveAgent(const UUID& agentID);
 
     template<typename T>
     bool ResolveID(DelusiveLink<T>&);
 private:
+	bool Build(const DelusiveParser::DataBlock& sceneBlock);
+
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
     DelusiveInstance& instance;
 	UUID id;
 	std::string name;
-	CameraAgent* camera;
+	CameraAgent* camera = nullptr;
     std::unordered_map<UUID, Agent*, UUID::Hash> agentLookup;
-	static PhysicsSystem physicsSystem;
+	//Per scene - contact state must not leak between the editor and play scenes
+	PhysicsSystem physics;
 	std::vector<std::unique_ptr<Agent>> agents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 };
