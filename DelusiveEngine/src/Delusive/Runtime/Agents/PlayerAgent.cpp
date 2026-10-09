@@ -163,7 +163,7 @@ void PlayerAgent::ResetStats() {
 void PlayerAgent::LoadFromInventory() {
     if (!inventoryLink) return;
 
-    //Fresh copies, so damage taken in a run never touches the inventory
+    //Copies, so run damage never touches the inventory
     std::vector<std::unique_ptr<Talisman>> loadout;
     for (Talisman* equipped : inventoryLink->GetEquippedTalismans()) {
         if (!equipped) continue;
@@ -171,6 +171,6 @@ void PlayerAgent::LoadFromInventory() {
         if (talisman) loadout.push_back(std::move(talisman));
     }
 
-    //An empty loadout keeps the default talismans, so scenes without an equip screen still play
+    //Empty keeps the defaults for scenes without an equip screen
     if (!loadout.empty()) talismans = std::move(loadout);
 }

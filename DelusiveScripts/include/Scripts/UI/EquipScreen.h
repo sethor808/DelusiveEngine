@@ -1,9 +1,8 @@
 #pragma once
 #include <Delusive/Scripting/UIScript.h>
-#include <Delusive/Runtime/Core/UUID.h>
-#include <Delusive/Runtime/Talismans/Talisman.h>
 #include <Delusive/Runtime/Core/IDLink.h>
 
+class Talisman;
 class UIElement;
 class UIRepeatContainer;
 class DelusiveInventory;
@@ -40,7 +39,7 @@ private:
     float stringSize = 1.0f;
     float stringXOffset = 1.0f, stringYOffset = 1.0f;
 
-    //Clicks only mark the lists stale - rebuilding inside a click would delete the clicked button
+    //Rebuilding inside a click would delete the clicked button
     bool needsRebuild = true;
     bool closeRequested = false;
 

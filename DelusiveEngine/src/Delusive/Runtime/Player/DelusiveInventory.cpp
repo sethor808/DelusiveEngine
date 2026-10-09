@@ -39,7 +39,6 @@ std::vector<Talisman*> DelusiveInventory::GetEquippedTalismans() {
 	std::vector<Talisman*> result;
 	result.reserve(equippedTalismans.size());
 
-	//One entry per slot, null for an empty one, so indices match slots
 	for (auto& t : equippedTalismans) {
 		result.push_back(t.get());
 	}
@@ -68,7 +67,6 @@ void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
     );
     if (it == availableTalismans.end()) return;
 
-    //Moves out of the available list, so one talisman fills one slot
     std::unique_ptr<Talisman> talisman = std::move(*it);
     availableTalismans.erase(it);
     UnequipTalisman(slot);
@@ -77,7 +75,6 @@ void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
 
 void DelusiveInventory::UnequipTalisman(int index) {
 	if (index < 0 || index >= slotCount) return;
-	//Back to the available list rather than destroyed
 	if (equippedTalismans[index]) availableTalismans.push_back(std::move(equippedTalismans[index]));
 }
 

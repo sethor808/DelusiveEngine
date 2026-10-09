@@ -28,7 +28,7 @@ public:
 	void ResetStats();
 
 	//InventoryAccess
-	//Replaces the talismans with copies of the inventory's equipped ones, at full HP
+	//Full HP copies of the equipped talismans
 	void LoadFromInventory();
 	DelusiveInventory* GetInventory() { return inventoryLink; }
 
