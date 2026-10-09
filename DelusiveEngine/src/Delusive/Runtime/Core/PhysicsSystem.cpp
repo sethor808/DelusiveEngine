@@ -172,9 +172,7 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 		}
 	}
 
-	//3. React - callbacks first, then separation, all from the same snapshot.
-	//Callbacks only fire for pairs that were not touching last tick, so a swing
-	//lands once per overlap rather than once per frame.
+	//3. React - callbacks only for new contacts, then separation
 	nowTouching.clear();
 	for (const Contact& contact : contacts) {
 		ColliderComponent* a = shapes[contact.a].collider;
@@ -193,13 +191,13 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 }
 
 glm::vec2 PhysicsSystem::PushOut(const WorldShape& mover, const WorldShape& wall) {
-	//Shortest move that takes the mover out of the wall. Lines never get pushed.
+	//Shortest move out of the wall; lines are never pushed
 	if (mover.shape == ShapeType::Line) return glm::vec2(0.0f);
 
 	const bool moverCircle = mover.shape == ShapeType::Circle;
 	const glm::vec2 moverCenter = moverCircle ? mover.center : (mover.min + mover.max) * 0.5f;
 
-	//Boxes fall back to their bounds: out along the shallower axis
+	//Out along the shallower axis of the bounds
 	auto BoundsPush = [&]() {
 		const glm::vec2 overlap = glm::min(mover.max, wall.max) - glm::max(mover.min, wall.min);
 		if (overlap.x <= 0.0f || overlap.y <= 0.0f) return glm::vec2(0.0f);
@@ -209,7 +207,6 @@ glm::vec2 PhysicsSystem::PushOut(const WorldShape& mover, const WorldShape& wall
 			: glm::vec2(0.0f, moverCenter.y < wallCenter.y ? -overlap.y : overlap.y);
 	};
 
-	//Out along a direction until the two are reach apart
 	auto PushAlong = [](glm::vec2 away, float reach) {
 		const float distance = glm::length(away);
 		if (distance == 0.0f || distance >= reach) return glm::vec2(0.0f);
@@ -218,8 +215,7 @@ glm::vec2 PhysicsSystem::PushOut(const WorldShape& mover, const WorldShape& wall
 
 	switch (wall.shape) {
 	case ShapeType::Line: {
-		//Out along the line normal, to whichever side the mover is on. Treated as an
-		//infinite line, so near the ends a mover is pushed sideways rather than around.
+		//Out along the normal, treating the segment as an infinite line
 		const glm::vec2 along = wall.end - wall.center;
 		if (LengthSq(along) == 0.0f) return glm::vec2(0.0f);
 		const glm::vec2 normal = glm::normalize(glm::vec2(-along.y, along.x));
@@ -232,7 +228,6 @@ glm::vec2 PhysicsSystem::PushOut(const WorldShape& mover, const WorldShape& wall
 	}
 	case ShapeType::Circle: {
 		if (moverCircle) return PushAlong(mover.center - wall.center, mover.radius + wall.radius);
-		//Box against circle: away from the wall through the box's closest point
 		const glm::vec2 closest = glm::clamp(wall.center, mover.min, mover.max);
 		if (closest == wall.center) return BoundsPush(); //Circle center inside the box
 		return PushAlong(closest - wall.center, wall.radius);

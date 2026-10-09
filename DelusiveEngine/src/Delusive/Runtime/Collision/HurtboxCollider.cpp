@@ -7,7 +7,6 @@ HurtboxCollider::HurtboxCollider(DelusiveInstance& instance)
 }
 
 void HurtboxCollider::OnCollision(ColliderComponent* col) {
-	//Self and same team hits are filtered out by PhysicsSystem
 	if (col->GetColliderType() == ColliderType::Hitbox) {
 		GetOwner()->TakeDamage();
 	}

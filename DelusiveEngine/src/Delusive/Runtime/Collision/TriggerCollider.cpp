@@ -1,4 +1,5 @@
 #include <Delusive/Runtime/Collision/TriggerCollider.h>
+#include <iostream>
 
 TriggerCollider::TriggerCollider(DelusiveInstance& instance)
     : ColliderComponent(instance)

@@ -1,6 +1,5 @@
 #pragma once
 #include <Delusive/Runtime/Components/ColliderComponent.h>
-#include <iostream>
 
 class TriggerCollider : public ColliderComponent {
 public:

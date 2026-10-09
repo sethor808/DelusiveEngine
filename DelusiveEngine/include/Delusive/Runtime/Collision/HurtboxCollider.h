@@ -1,6 +1,5 @@
 #pragma once
 #include <Delusive/Runtime/Components/ColliderComponent.h>
-#include <iostream>
 
 class HurtboxCollider : public ColliderComponent {
 public:

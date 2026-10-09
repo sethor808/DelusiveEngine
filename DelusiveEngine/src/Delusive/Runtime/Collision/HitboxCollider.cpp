@@ -6,6 +6,6 @@ HitboxCollider::HitboxCollider(DelusiveInstance& instance)
     RegisterProperties();
 }
 
-void HitboxCollider::OnCollision(ColliderComponent*){
-	//The hurtbox side applies the damage
+void HitboxCollider::OnCollision(ColliderComponent*) {
+	//Damage is applied by the hurtbox
 }

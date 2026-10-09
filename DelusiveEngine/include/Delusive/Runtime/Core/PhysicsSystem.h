@@ -23,7 +23,7 @@ struct WorldShape {
 //Owned per scene, so contact state never leaks between the editor and play scenes.
 //Each tick: resolve every enabled collider to world space, find every contact against
 //that snapshot, then run callbacks and solid separation from the same snapshot.
-//OnCollision fires once when a contact begins, not every tick it lasts.
+//OnCollision fires once when a contact begins.
 class PhysicsSystem {
 public:
 	void Step(const std::vector<std::unique_ptr<Agent>>& agents);
@@ -46,6 +46,6 @@ private:
 	//Reused every tick so steady state does no allocation
 	std::vector<WorldShape> shapes;
 	std::vector<Contact> contacts;
-	//Pairs touching last tick and this tick, sorted, so callbacks only fire on new contacts
+	//Sorted pairs touching last tick and this tick
 	std::vector<ColliderPair> touching, nowTouching;
 };

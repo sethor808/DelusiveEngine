@@ -179,7 +179,7 @@ public:
     virtual void HandleInput(const PlayerInputState&) {}
     //Static agents block solids but are never moved by collision resolution
     virtual bool IsStatic() const { return false; }
-    //Hitboxes skip hurtboxes on the same team; 0 means no team and hits everyone
+    //0 = no team; hit/hurt boxes on the same team ignore each other
     int GetTeam() const { return team; }
     virtual void TakeDamage() {}
     virtual void TakeDamage(int) {}

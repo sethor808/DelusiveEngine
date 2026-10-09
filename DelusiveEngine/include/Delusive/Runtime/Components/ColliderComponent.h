@@ -2,7 +2,6 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Components/Component.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
-#include <Delusive/Internal/Rendering/ColliderRenderer.h>
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <glm/glm.hpp>

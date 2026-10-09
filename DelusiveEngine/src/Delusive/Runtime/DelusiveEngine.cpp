@@ -3,6 +3,7 @@
 #include <SDL3/SDL_opengl.h>
 #include <Delusive/Internal/DelusiveEngine.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Internal/Rendering/ColliderRenderer.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Editor/EngineUI.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>

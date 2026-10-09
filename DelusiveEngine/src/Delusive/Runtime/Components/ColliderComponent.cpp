@@ -1,5 +1,6 @@
 #include <Delusive/Runtime/Components/ColliderComponent.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
+#include <Delusive/Internal/Rendering/ColliderRenderer.h>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
