@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Components/ColliderComponent.h>
 #include <glm/glm.hpp>
 #include <memory>
+#include <utility>
 #include <vector>
 
 class Agent;
@@ -22,6 +23,7 @@ struct WorldShape {
 //Owned per scene, so contact state never leaks between the editor and play scenes.
 //Each tick: resolve every enabled collider to world space, find every contact against
 //that snapshot, then run callbacks and solid separation from the same snapshot.
+//OnCollision fires once when a contact begins, not every tick it lasts.
 class PhysicsSystem {
 public:
 	void Step(const std::vector<std::unique_ptr<Agent>>& agents);
@@ -34,11 +36,16 @@ private:
 		size_t a, b;
 	};
 
-	static bool Interacts(ColliderType, ColliderType);
+	using ColliderPair = std::pair<const ColliderComponent*, const ColliderComponent*>;
+
+	static bool Interacts(const WorldShape&, const WorldShape&);
 	static bool Overlaps(const WorldShape&, const WorldShape&);
+	static glm::vec2 PushOut(const WorldShape& mover, const WorldShape& wall);
 	void ResolveSolids();
 
 	//Reused every tick so steady state does no allocation
 	std::vector<WorldShape> shapes;
 	std::vector<Contact> contacts;
+	//Pairs touching last tick and this tick, sorted, so callbacks only fire on new contacts
+	std::vector<ColliderPair> touching, nowTouching;
 };

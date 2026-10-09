@@ -30,11 +30,20 @@ ColliderRenderer::ColliderRenderer() {
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glGenVertexArrays(1, &pointsVAO);
+    glGenBuffers(1, &pointsVBO);
+    glBindVertexArray(pointsVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+    glEnableVertexAttribArray(0);
 }
 
 ColliderRenderer::~ColliderRenderer() {
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &pointsVBO);
+    glDeleteVertexArrays(1, &pointsVAO);
     delete shader;
 }
 
@@ -76,11 +85,11 @@ void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& 
     }
 
     if (collider.CheckCenterRender()) {
-        glm::vec4 worldCenter = collider.GetOwner()->GetTransform().ToMatrix() * glm::vec4(collider.transform->position, 0.0f, 1.0f);
-        DrawCenterHandle(glm::vec2(worldCenter), projection);
+        DrawHandle(PhysicsSystem::BuildShape(collider).center, projection);
     }
 
-    DrawHandles(collider, projection);
+    //Handle positions come from the collider, so what is drawn is exactly what can be grabbed
+    for (const auto& handle : collider.GetHandles()) DrawHandle(handle.position, projection);
 }
 
 //Shapes come from PhysicsSystem::BuildShape so what is drawn is exactly what collides.
@@ -105,97 +114,24 @@ void ColliderRenderer::DrawCircle(const ColliderComponent& collider, const glm::
         points.push_back(circle.center + glm::vec2(cos(angle), sin(angle)) * circle.radius);
     }
 
-    shader->Use();
-    shader->SetMat4("model", glm::value_ptr(glm::mat4(1.0f)));
-    shader->SetMat4("projection", glm::value_ptr(projection));
-
-    GLuint circleVBO, circleVAO;
-    glGenVertexArrays(1, &circleVAO);
-    glGenBuffers(1, &circleVBO);
-
-    glBindVertexArray(circleVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, circleVBO);
-    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec2), points.data(), GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-    glEnableVertexAttribArray(0);
-    glDrawArrays(GL_LINE_STRIP, 0, (GLsizei)points.size());
-
-    glDeleteBuffers(1, &circleVBO);
-    glDeleteVertexArrays(1, &circleVAO);
+    DrawPoints(points.data(), points.size(), GL_LINE_STRIP, projection);
 }
 
 void ColliderRenderer::DrawLine(const ColliderComponent& collider, const glm::mat4& projection) const {
     const WorldShape line = PhysicsSystem::BuildShape(collider);
     glm::vec2 points[2] = { line.center, line.end };
 
+    DrawPoints(points, 2, GL_LINES, projection);
+}
+
+void ColliderRenderer::DrawPoints(const glm::vec2* points, size_t count, GLenum mode, const glm::mat4& projection) const {
     shader->Use();
     shader->SetMat4("model", glm::value_ptr(glm::mat4(1.0f)));
     shader->SetMat4("projection", glm::value_ptr(projection));
-
-    GLuint lineVBO, lineVAO;
-    glGenVertexArrays(1, &lineVAO);
-    glGenBuffers(1, &lineVBO);
-
-    glBindVertexArray(lineVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-    glEnableVertexAttribArray(0);
-    glDrawArrays(GL_LINES, 0, 2);
-
-    glDeleteBuffers(1, &lineVBO);
-    glDeleteVertexArrays(1, &lineVAO);
-}
-
-void ColliderRenderer::DrawCenterHandle(const glm::vec2& center, const glm::mat4& projection) const {
-    shader->Use();
-    
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(center, 0.0f));
-    model = glm::scale(model, glm::vec3(handleSize, handleSize, 1.0f));
-
-    // Try a bigger handle or consider screen-space scaling
-    model = glm::translate(glm::mat4(1.0f), glm::vec3(center, 0.0f));
-    model = glm::scale(model, glm::vec3(handleSize, handleSize, 1.0f));
-
-    shader->SetMat4("model", glm::value_ptr(model));
-    shader->SetMat4("projection", glm::value_ptr(projection));
-
-    GLint colorLoc = glGetUniformLocation(shader->GetID(), "color");
-    if (colorLoc != -1) {
-        glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
-    }
-
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-}
-
-void ColliderRenderer::DrawHandles(const ColliderComponent& collider, const glm::mat4& projection) const {
-    switch (collider.GetShapeType()) {
-    case ShapeType::Box:
-        DrawBoxHandles(collider, projection);
-        break;
-    case ShapeType::Circle:
-        DrawCircleHandles(collider, projection);
-        break;
-    case ShapeType::Line:
-        DrawLineHandles(collider, projection);
-        break;
-    }
-}
-
-//Handle positions come from the collider, so what is drawn is exactly what can be grabbed
-void ColliderRenderer::DrawBoxHandles(const ColliderComponent& collider, const glm::mat4& projection) const {
-    for (const auto& handle : collider.GetHandles()) DrawHandle(handle.position, projection);
-}
-
-void ColliderRenderer::DrawCircleHandles(const ColliderComponent& collider, const glm::mat4& projection) const {
-    for (const auto& handle : collider.GetHandles()) DrawHandle(handle.position, projection);
-}
-
-void ColliderRenderer::DrawLineHandles(const ColliderComponent& collider, const glm::mat4& projection) const {
-    for (const auto& handle : collider.GetHandles()) DrawHandle(handle.position, projection);
+    glBindVertexArray(pointsVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+    glBufferData(GL_ARRAY_BUFFER, count * sizeof(glm::vec2), points, GL_DYNAMIC_DRAW);
+    glDrawArrays(mode, 0, (GLsizei)count);
 }
 
 void ColliderRenderer::DrawHandle(const glm::vec2& center, const glm::mat4& projection) const {

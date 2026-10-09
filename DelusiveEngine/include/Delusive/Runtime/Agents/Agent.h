@@ -12,7 +12,6 @@
 
 class Component;
 class PropertyRegistry;
-class Collider;
 class Scene;
 
 class Agent {
@@ -180,6 +179,8 @@ public:
     virtual void HandleInput(const PlayerInputState&) {}
     //Static agents block solids but are never moved by collision resolution
     virtual bool IsStatic() const { return false; }
+    //Hitboxes skip hurtboxes on the same team; 0 means no team and hits everyone
+    int GetTeam() const { return team; }
     virtual void TakeDamage() {}
     virtual void TakeDamage(int) {}
     virtual void OnHit() {};
@@ -192,6 +193,7 @@ protected:
     UUID id;
 
     bool editorMode = false;
+    int team = 0;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;

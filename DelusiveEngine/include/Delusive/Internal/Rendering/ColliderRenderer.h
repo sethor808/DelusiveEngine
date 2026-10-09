@@ -16,15 +16,12 @@ public:
 	void DrawBox(const ColliderComponent&, const glm::mat4&) const;
 	void DrawCircle(const ColliderComponent&, const glm::mat4&) const;
 	void DrawLine(const ColliderComponent&, const glm::mat4&) const;
-	void DrawCenterHandle(const glm::vec2&, const glm::mat4&) const; //Outdated
-
-	void DrawHandles(const ColliderComponent&, const glm::mat4&) const;
-	void DrawBoxHandles(const ColliderComponent&, const glm::mat4&) const;
-	void DrawCircleHandles(const ColliderComponent&, const glm::mat4&) const;
-	void DrawLineHandles(const ColliderComponent&, const glm::mat4&) const;
 	void DrawHandle(const glm::vec2& center, const glm::mat4& projection) const;
 private:
 	GLuint VAO, VBO;
+	//Reused for circle and line points, refilled per draw
+	GLuint pointsVAO, pointsVBO;
+	void DrawPoints(const glm::vec2* points, size_t count, GLenum mode, const glm::mat4& projection) const;
 	Shader* shader;
 	float handleSize = 12.0f;
 };

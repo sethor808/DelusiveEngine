@@ -108,7 +108,9 @@ WorldShape PhysicsSystem::BuildShape(const ColliderComponent& collider) {
 	return out;
 }
 
-bool PhysicsSystem::Interacts(ColliderType a, ColliderType b) {
+bool PhysicsSystem::Interacts(const WorldShape& a, const WorldShape& b) {
+	if (a.owner == b.owner) return false; //An agent never collides with itself
+
 	//Which collider types meet - one table instead of a chain of conditions
 	static constexpr bool table[4][4] = {
 		//             Solid  Hitbox Hurtbox Trigger
@@ -117,7 +119,14 @@ bool PhysicsSystem::Interacts(ColliderType a, ColliderType b) {
 		/*Hurtbox*/  { false, true,  false,  false },
 		/*Trigger*/  { true,  false, false,  false },
 	};
-	return table[static_cast<int>(a)][static_cast<int>(b)];
+	if (!table[static_cast<int>(a.type)][static_cast<int>(b.type)]) return false;
+
+	//No friendly fire between hit and hurt boxes
+	if (a.type == ColliderType::Hitbox || a.type == ColliderType::Hurtbox) {
+		const int team = a.owner->GetTeam();
+		if (team != 0 && team == b.owner->GetTeam()) return false;
+	}
+	return true;
 }
 
 bool PhysicsSystem::Overlaps(const WorldShape& a, const WorldShape& b) {
@@ -154,8 +163,7 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 			const WorldShape& a = shapes[i];
 			const WorldShape& b = shapes[j];
 
-			if (a.owner == b.owner) continue; //An agent never collides with itself
-			if (!Interacts(a.type, b.type)) continue;
+			if (!Interacts(a, b)) continue;
 			if (a.max.x < b.min.x || b.max.x < a.min.x ||
 				a.max.y < b.min.y || b.max.y < a.min.y) continue; //Bounds reject
 			if (!Overlaps(a, b)) continue;
@@ -164,13 +172,79 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 		}
 	}
 
-	//3. React - callbacks first, then separation, all from the same snapshot
+	//3. React - callbacks first, then separation, all from the same snapshot.
+	//Callbacks only fire for pairs that were not touching last tick, so a swing
+	//lands once per overlap rather than once per frame.
+	nowTouching.clear();
 	for (const Contact& contact : contacts) {
-		shapes[contact.a].collider->OnCollision(shapes[contact.b].collider);
-		shapes[contact.b].collider->OnCollision(shapes[contact.a].collider);
+		ColliderComponent* a = shapes[contact.a].collider;
+		ColliderComponent* b = shapes[contact.b].collider;
+		const ColliderPair pair = a < b ? ColliderPair(a, b) : ColliderPair(b, a);
+		nowTouching.push_back(pair);
+		if (std::binary_search(touching.begin(), touching.end(), pair)) continue;
+
+		a->OnCollision(b);
+		b->OnCollision(a);
 	}
+	std::sort(nowTouching.begin(), nowTouching.end());
+	touching.swap(nowTouching);
 
 	ResolveSolids();
+}
+
+glm::vec2 PhysicsSystem::PushOut(const WorldShape& mover, const WorldShape& wall) {
+	//Shortest move that takes the mover out of the wall. Lines never get pushed.
+	if (mover.shape == ShapeType::Line) return glm::vec2(0.0f);
+
+	const bool moverCircle = mover.shape == ShapeType::Circle;
+	const glm::vec2 moverCenter = moverCircle ? mover.center : (mover.min + mover.max) * 0.5f;
+
+	//Boxes fall back to their bounds: out along the shallower axis
+	auto BoundsPush = [&]() {
+		const glm::vec2 overlap = glm::min(mover.max, wall.max) - glm::max(mover.min, wall.min);
+		if (overlap.x <= 0.0f || overlap.y <= 0.0f) return glm::vec2(0.0f);
+		const glm::vec2 wallCenter = (wall.min + wall.max) * 0.5f;
+		return (overlap.x < overlap.y)
+			? glm::vec2(moverCenter.x < wallCenter.x ? -overlap.x : overlap.x, 0.0f)
+			: glm::vec2(0.0f, moverCenter.y < wallCenter.y ? -overlap.y : overlap.y);
+	};
+
+	//Out along a direction until the two are reach apart
+	auto PushAlong = [](glm::vec2 away, float reach) {
+		const float distance = glm::length(away);
+		if (distance == 0.0f || distance >= reach) return glm::vec2(0.0f);
+		return away / distance * (reach - distance);
+	};
+
+	switch (wall.shape) {
+	case ShapeType::Line: {
+		//Out along the line normal, to whichever side the mover is on. Treated as an
+		//infinite line, so near the ends a mover is pushed sideways rather than around.
+		const glm::vec2 along = wall.end - wall.center;
+		if (LengthSq(along) == 0.0f) return glm::vec2(0.0f);
+		const glm::vec2 normal = glm::normalize(glm::vec2(-along.y, along.x));
+		const glm::vec2 half = (mover.max - mover.min) * 0.5f;
+		const float extent = moverCircle ? mover.radius
+			: half.x * std::abs(normal.x) + half.y * std::abs(normal.y);
+		const float side = glm::dot(moverCenter - wall.center, normal);
+		const float target = side < 0.0f ? -extent : extent;
+		return normal * (target - side);
+	}
+	case ShapeType::Circle: {
+		if (moverCircle) return PushAlong(mover.center - wall.center, mover.radius + wall.radius);
+		//Box against circle: away from the wall through the box's closest point
+		const glm::vec2 closest = glm::clamp(wall.center, mover.min, mover.max);
+		if (closest == wall.center) return BoundsPush(); //Circle center inside the box
+		return PushAlong(closest - wall.center, wall.radius);
+	}
+	case ShapeType::Box:
+	default: {
+		if (!moverCircle) return BoundsPush();
+		const glm::vec2 closest = glm::clamp(mover.center, wall.min, wall.max);
+		if (closest == mover.center) return BoundsPush(); //Circle center inside the box
+		return PushAlong(mover.center - closest, mover.radius);
+	}
+	}
 }
 
 void PhysicsSystem::ResolveSolids() {
@@ -191,16 +265,7 @@ void PhysicsSystem::ResolveSolids() {
 
 		const WorldShape& mover = aStatic ? b : a;
 		const WorldShape& wall = aStatic ? a : b;
-
-		//Shortest way out of the wall, along the shallower axis
-		const glm::vec2 overlap = glm::min(mover.max, wall.max) - glm::max(mover.min, wall.min);
-		if (overlap.x <= 0.0f || overlap.y <= 0.0f) continue;
-
-		const glm::vec2 moverCenter = mover.min + mover.max; //Doubled - only compared
-		const glm::vec2 wallCenter = wall.min + wall.max;
-		const glm::vec2 push = (overlap.x < overlap.y)
-			? glm::vec2(moverCenter.x < wallCenter.x ? -overlap.x : overlap.x, 0.0f)
-			: glm::vec2(0.0f, moverCenter.y < wallCenter.y ? -overlap.y : overlap.y);
+		const glm::vec2 push = PushOut(mover, wall);
 
 		glm::vec2& total = pushes[mover.owner];
 		if (std::abs(push.x) > std::abs(total.x)) total.x = push.x;

@@ -6,9 +6,6 @@ HitboxCollider::HitboxCollider(DelusiveInstance& instance)
     RegisterProperties();
 }
 
-void HitboxCollider::OnCollision(ColliderComponent* col){
-	if (col->GetColliderType() == ColliderType::Hurtbox) {
-		std::cout << "[Hitbox] Damaged by enemy agent." << std::endl;
-		//Call damage here
-	}
+void HitboxCollider::OnCollision(ColliderComponent*){
+	//The hurtbox side applies the damage
 }
