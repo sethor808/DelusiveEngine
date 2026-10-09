@@ -3,11 +3,11 @@
 #include <Delusive/Runtime/Core/UUID.h>
 #include <Delusive/Runtime/Talismans/Talisman.h>
 #include <Delusive/Runtime/Core/IDLink.h>
-#include <optional>
 
 class UIElement;
 class UIRepeatContainer;
 class DelusiveInventory;
+class PlayerAgent;
 
 class EquipScreen : public UIScript {
 public:
@@ -19,7 +19,7 @@ public:
     virtual void Link(UIScriptContainer*) override;
 
     void OnInit() override;
-    void OnUpdate(float) override {};
+    void OnUpdate(float) override;
     void OnDraw() override {};
     void OnEvent() override {};
     void OnClick(UIScriptContainer* clicked) override {}; //idk what this is supposed to be
@@ -29,18 +29,23 @@ private:
     UIRepeatContainer* availableContainer = nullptr;
     DelusiveUILink equippedContainerID;
     UIRepeatContainer* equippedContainer = nullptr;
+    //Optional - clicking it hides the screen
+    DelusiveUILink confirmButtonID;
     DelusiveInventory* inventoryData = nullptr;
+    PlayerAgent* player = nullptr;
 
-    //Display settings - make visible in editor
+    //Display settings
     float iconSize = 1.0f;
     float stringSpacing = 1.0f;
     float stringSize = 1.0f;
     float stringXOffset = 1.0f, stringYOffset = 1.0f;
 
-    std::vector<Talisman*> inventoryTalismans;
-    std::vector<std::optional<Talisman*>> equippedSlots;
+    //Clicks only mark the lists stale - rebuilding inside a click would delete the clicked button
+    bool needsRebuild = true;
+    bool closeRequested = false;
 
     bool ReadyCheck();
+    void Rebuild();
     void BuildTalismanVisual(UIElement*, Talisman*);
     void BuildAvailableList();
     void BuildEquippedSlots();

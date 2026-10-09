@@ -42,13 +42,16 @@ public:
 		}
 	}
 
+	//A disabled element hides and ignores input for its whole subtree
 	virtual void Draw(const glm::mat4& proj) {
+		if (!enabled) return;
 		for (auto& child : children) {
 			child->Draw(proj);
 		}
 	}
 
 	virtual void HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
+		if (!enabled) return;
 		for (auto& child : children) {
 			child->HandleMouse(mousePos, mouseDown);
 		}

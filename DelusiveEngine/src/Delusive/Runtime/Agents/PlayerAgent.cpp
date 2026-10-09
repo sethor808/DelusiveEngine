@@ -3,6 +3,7 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     : Agent(instance)
@@ -22,6 +23,7 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
 void PlayerAgent::LinkScene(Scene* scene) {
     sceneLink = scene;
     inventoryLink = sceneLink->GetInventoryLink();
+    LoadFromInventory();
 }
 
 std::string PlayerAgent::GetType() const{
@@ -158,9 +160,17 @@ void PlayerAgent::ResetStats() {
     modified = base; //TODO: Reapply talisman effects after sync
 }
 
-void PlayerAgent::EquipTalisman(int index, Talisman* talisman) {
-    if (index < 0 || index >= static_cast<int>(talismans.size())) return;
-    
-    //TODO: Properly equip talisman
-	//inventory->EquipTalisman(index, talisman);
+void PlayerAgent::LoadFromInventory() {
+    if (!inventoryLink) return;
+
+    //Fresh copies, so damage taken in a run never touches the inventory
+    std::vector<std::unique_ptr<Talisman>> loadout;
+    for (Talisman* equipped : inventoryLink->GetEquippedTalismans()) {
+        if (!equipped) continue;
+        auto talisman = DelusiveFactory<Talisman>::Create(equipped->GetType(), instance);
+        if (talisman) loadout.push_back(std::move(talisman));
+    }
+
+    //An empty loadout keeps the default talismans, so scenes without an equip screen still play
+    if (!loadout.empty()) talismans = std::move(loadout);
 }
