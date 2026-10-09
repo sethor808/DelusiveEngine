@@ -178,7 +178,7 @@ void EquipScreen::BuildEquippedSlots() {
     equippedContainer->RegenerateChildren();
 
     auto children = equippedContainer->GetChildren();
-    for (int i = 0; i < slots && i < (int)children.size(); ++i) {
+    for (int i = 0; i < slots && i < static_cast<int>(children.size()); ++i) {
         UIElement* child = children[i];
         if (!equipped[i]) continue;
 
