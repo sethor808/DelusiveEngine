@@ -23,7 +23,7 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
 void PlayerAgent::LinkScene(Scene* scene) {
     sceneLink = scene;
     inventoryLink = sceneLink->GetInventoryLink();
-    LoadFromInventory();
+	LoadFromInventory();
 }
 
 std::string PlayerAgent::GetType() const{
@@ -161,16 +161,16 @@ void PlayerAgent::ResetStats() {
 }
 
 void PlayerAgent::LoadFromInventory() {
-    if (!inventoryLink) return;
+	if (!inventoryLink) return;
 
-    //Copies, so run damage never touches the inventory
-    std::vector<std::unique_ptr<Talisman>> loadout;
-    for (Talisman* equipped : inventoryLink->GetEquippedTalismans()) {
-        if (!equipped) continue;
-        auto talisman = DelusiveFactory<Talisman>::Create(equipped->GetType(), instance);
-        if (talisman) loadout.push_back(std::move(talisman));
-    }
+	//Copies, so run damage never touches the inventory
+	std::vector<std::unique_ptr<Talisman>> loadout;
+	for (Talisman* equipped : inventoryLink->GetEquippedTalismans()) {
+		if (!equipped) continue;
+		auto talisman = DelusiveFactory<Talisman>::Create(equipped->GetType(), instance);
+		if (talisman) loadout.push_back(std::move(talisman));
+	}
 
-    //Empty keeps the defaults for scenes without an equip screen
-    if (!loadout.empty()) talismans = std::move(loadout);
+	//Empty keeps the defaults for scenes without an equip screen
+	if (!loadout.empty()) talismans = std::move(loadout);
 }

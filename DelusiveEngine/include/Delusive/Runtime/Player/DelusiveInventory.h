@@ -32,9 +32,9 @@ public:
 
     //Handle talisman equipping
     void EquipTalisman(int, std::unique_ptr<Talisman>);
-    //Moves an available talisman into a slot; whatever was there goes back to available
+	//Moves an available talisman into a slot; whatever was there goes back to available
     void EquipTalisman(int, Talisman*);
-    //Moves the slot's talisman back to available
+	//Moves the slot's talisman back to available
     void UnequipTalisman(int);
     //Type names come from DelusiveFactory<Talisman>, e.g. "BasicTalisman"
     void AddTalisman(const std::string&);

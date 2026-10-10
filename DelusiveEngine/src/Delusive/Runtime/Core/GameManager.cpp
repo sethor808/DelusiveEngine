@@ -17,10 +17,10 @@ void GameManager::Init() {
 	playScene.LinkGameManager(this);
     inventory.Link(this);
 
-    //Test unlocks until the inventory is saved between sessions
-    for (int i = 0; i < inventory.GetSlotCount(); ++i) {
-        inventory.AddTalisman("BasicTalisman");
-    }
+	//Test unlocks until the inventory is saved between sessions
+	for (int i = 0; i < inventory.GetSlotCount(); ++i) {
+		inventory.AddTalisman("BasicTalisman");
+	}
 }
 
 void GameManager::Play() {

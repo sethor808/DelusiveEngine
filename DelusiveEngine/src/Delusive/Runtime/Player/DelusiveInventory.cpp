@@ -56,7 +56,7 @@ void DelusiveInventory::EquipTalisman(int index, std::unique_ptr<Talisman> talis
 }
 
 void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
-    if (slot < 0 || slot >= slotCount) return;
+	if (slot < 0 || slot >= slotCount) return;
 
     auto it = std::find_if(
         availableTalismans.begin(),
@@ -67,10 +67,10 @@ void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
     );
     if (it == availableTalismans.end()) return;
 
-    std::unique_ptr<Talisman> talisman = std::move(*it);
+	std::unique_ptr<Talisman> talisman = std::move(*it);
     availableTalismans.erase(it);
-    UnequipTalisman(slot);
-    equippedTalismans[slot] = std::move(talisman);
+	UnequipTalisman(slot);
+	equippedTalismans[slot] = std::move(talisman);
 }
 
 void DelusiveInventory::UnequipTalisman(int index) {
