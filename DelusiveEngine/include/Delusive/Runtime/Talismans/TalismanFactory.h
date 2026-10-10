@@ -15,7 +15,7 @@ public:
 
     std::unique_ptr<Talisman> Create(const std::string& type) const {
         auto it = creators.find(type);
-        if (it == creators.find(type)) {
+		if (it == creators.end()) {
             return nullptr;
         }
 

@@ -40,7 +40,6 @@ std::vector<Talisman*> DelusiveInventory::GetEquippedTalismans() {
 	result.reserve(equippedTalismans.size());
 
 	for (auto& t : equippedTalismans) {
-		if (!t) continue;
 		result.push_back(t.get());
 	}
 	return result;
@@ -57,6 +56,8 @@ void DelusiveInventory::EquipTalisman(int index, std::unique_ptr<Talisman> talis
 }
 
 void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
+	if (slot < 0 || slot >= slotCount) return;
+
     auto it = std::find_if(
         availableTalismans.begin(),
         availableTalismans.end(),
@@ -64,19 +65,17 @@ void DelusiveInventory::EquipTalisman(int slot, Talisman* t) {
             return ptr.get() == t;
         }
     );
-
     if (it == availableTalismans.end()) return;
 
-    //Exit out early, unsure if I want to remove talismans from available ones
-    return;
-
-    equippedTalismans[slot] = std::move(*it);
+	std::unique_ptr<Talisman> talisman = std::move(*it);
     availableTalismans.erase(it);
+	UnequipTalisman(slot);
+	equippedTalismans[slot] = std::move(talisman);
 }
 
 void DelusiveInventory::UnequipTalisman(int index) {
 	if (index < 0 || index >= slotCount) return;
-	equippedTalismans[index].reset();
+	if (equippedTalismans[index]) availableTalismans.push_back(std::move(equippedTalismans[index]));
 }
 
 void DelusiveInventory::AddTalisman(const std::string& type) {

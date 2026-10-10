@@ -6,6 +6,7 @@
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/UI/UIImage.h>
+#include <Delusive/Runtime/Talismans/Talisman.h>
 
 EquipScreen::EquipScreen()
     : UIScript()
@@ -18,12 +19,20 @@ void EquipScreen::RegisterProperties() {
 
     registry->Register("availableContainerID", &availableContainerID);
     registry->Register("equippedContainerID", &equippedContainerID);
+	registry->Register("confirmButtonID", &confirmButtonID);
+
+	registry->Register("iconSize", &iconSize);
+	registry->Register("stringSpacing", &stringSpacing);
+	registry->Register("stringSize", &stringSize);
+	registry->Register("stringXOffset", &stringXOffset);
+	registry->Register("stringYOffset", &stringYOffset);
 }
 
 void EquipScreen::Link(UIScriptContainer* root) {
     UIScript::Link(root);
     availableContainerID.canvasLink = root->GetCanvas();
     equippedContainerID.canvasLink = root->GetCanvas();
+	confirmButtonID.canvasLink = root->GetCanvas();
 }
 
 void EquipScreen::RelocateReferences() {
@@ -31,20 +40,9 @@ void EquipScreen::RelocateReferences() {
 
     availableContainer = nullptr;
     equippedContainer = nullptr;
-
-    if (availableContainerID.id.IsValid() && rootElement) {
-        availableContainer = dynamic_cast<UIRepeatContainer*>(rootElement->GetCanvas()->FindElementByUUID(availableContainerID.id));
-    }
-    else {
-        availableContainer = nullptr;
-    }
-
-    if (equippedContainerID.id.IsValid() && rootElement) {
-        equippedContainer = dynamic_cast<UIRepeatContainer*>(rootElement->GetCanvas()->FindElementByUUID(equippedContainerID.id));
-    }
-    else {
-        equippedContainer = nullptr;
-    }
+	player = nullptr;
+	inventoryData = nullptr;
+	needsRebuild = true; //ReadyCheck resolves everything again
 }
 
 bool EquipScreen::ReadyCheck() {
@@ -53,7 +51,8 @@ bool EquipScreen::ReadyCheck() {
 
     //Make sure that player is findable
     UICanvas* canvas = rootElement->GetCanvas();
-    PlayerAgent* player = canvas->FetchPlayer();
+	if (!canvas) return false;
+	if (!player) player = canvas->FetchPlayer();
     if (!player) return false;
 
     //Make sure link to Inventory works
@@ -65,20 +64,42 @@ bool EquipScreen::ReadyCheck() {
     }
     
     //Check UUIDs for Necessary UI Elements
-    if (!availableContainer) {
-        availableContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID.id));
-        if (!availableContainer) return false;
-    }
-    if (!equippedContainer) {
-        equippedContainer = static_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID.id));
-        if (!equippedContainer) return false;
-    }
+	if (!availableContainer) availableContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID.id));
+	if (!equippedContainer) equippedContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID.id));
+	if (!availableContainer || !equippedContainer) return false;
 
     return true;
 }
 
 void EquipScreen::OnInit() {
-    //DelusiveScriptPlayer player = rootElement->GetCanvas().FetchPlayer();
+	needsRebuild = true;
+}
+
+void EquipScreen::OnUpdate(float) {
+	if (!rootElement || !rootElement->GetEnabled()) return;
+	if (!ReadyCheck()) return;
+
+	if (closeRequested) {
+		closeRequested = false;
+		player->LoadFromInventory();
+		rootElement->SetEnabled(false);
+		return;
+	}
+
+	if (needsRebuild) Rebuild();
+}
+
+void EquipScreen::Rebuild() {
+	needsRebuild = false;
+	BuildAvailableList();
+	BuildEquippedSlots();
+	player->LoadFromInventory();
+
+	//Optional, so it never blocks ReadyCheck
+	UIElement* confirm = rootElement->GetCanvas()->FindElementByUUID(confirmButtonID.id);
+	if (confirm && confirm->SupportsClick()) {
+		confirm->SetOnClick([this]() { closeRequested = true; });
+	}
 }
 
 void EquipScreen::BuildTalismanVisual(UIElement* root, Talisman* talisman) {
@@ -130,18 +151,18 @@ void EquipScreen::BuildAvailableList() {
 
     availableContainer->SetCount((int)talismans.size());
     availableContainer->RegenerateChildren();
+	//SetCount clamps to one
+	if (talismans.empty()) availableContainer->ClearChildren();
 
     auto children = availableContainer->GetChildren();
-    for (size_t i = 0; i < children.size(); ++i) {
+	for (size_t i = 0; i < children.size() && i < talismans.size(); ++i) {
         Talisman* talisman = talismans[i];
         UIElement* child = children[i];
 
         BuildTalismanVisual(child, talisman);
 
         if (child->SupportsClick()) {
-            child->SetOnClick([this, talisman]() {
-                EquipToFirstOpenSlot(talisman);
-                });
+			child->SetOnClick([this, talisman]() { EquipToFirstOpenSlot(talisman); });
         }
         else {
             // Link to log here
@@ -157,29 +178,16 @@ void EquipScreen::BuildEquippedSlots() {
     equippedContainer->RegenerateChildren();
 
     auto children = equippedContainer->GetChildren();
+	for (int i = 0; i < slots && i < static_cast<int>(children.size()); ++i) {
+		UIElement* child = children[i];
+		if (!equipped[i]) continue;
 
-    for (int i = 0; i < slots; ++i) {
-        UIElement* child(children[i]);
-
-        if (equipped[i]) {
-            BuildTalismanVisual(child, equipped[i]);
-
-            if (child->SupportsClick()) {
-                const int slotIndex = i;
-                child->SetOnClick([this, slotIndex]() {
-                    inventoryData->UnequipTalisman(slotIndex);
-
-                    // Refresh UI
-                    BuildAvailableList();
-                    BuildEquippedSlots();
-                    });
-            }
-        }
-        else {
-            // Maybe disable click here
-            if (child->SupportsClick()) {
-                //child.ClearOnClick();
-            }
+		BuildTalismanVisual(child, equipped[i]);
+		if (child->SupportsClick()) {
+			child->SetOnClick([this, i]() {
+				inventoryData->UnequipTalisman(i);
+				needsRebuild = true;
+			});
         }
     }
 }
@@ -193,10 +201,7 @@ void EquipScreen::EquipToFirstOpenSlot(Talisman* talisman) {
     for (int i = 0; i < slotCount; ++i) {
         if (!equipped[i]) {
             inventoryData->EquipTalisman(i, talisman);
-
-            // Refresh UI
-            BuildAvailableList();
-            BuildEquippedSlots();
+			needsRebuild = true;
             return;
         }
     }

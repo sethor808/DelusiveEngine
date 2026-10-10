@@ -27,11 +27,14 @@ public:
 	int GetSlotCount() const { return slotCount; }
 
     std::vector<Talisman*> GetAvailableTalismans();
+	//slotCount long - a null entry is an empty slot
 	std::vector<Talisman*> GetEquippedTalismans();
 
     //Handle talisman equipping
     void EquipTalisman(int, std::unique_ptr<Talisman>);
+	//Moves an available talisman into a slot; whatever was there goes back to available
     void EquipTalisman(int, Talisman*);
+	//Moves the slot's talisman back to available
     void UnequipTalisman(int);
     //Type names come from DelusiveFactory<Talisman>, e.g. "BasicTalisman"
     void AddTalisman(const std::string&);
