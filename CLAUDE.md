@@ -44,7 +44,7 @@ Keep code minimal and tooling light. Prefer small, readable changes over new abs
 - Enums are `enum class` with `PascalCase` values: `ColliderType::Hurtbox`, `EditorMode::SceneEditor`.
 - Macros and constants: `UPPER_SNAKE` in `Runtime/Utils/DelusiveMacros.h` (`DELUSIVE_PIXEL_SCALE`, `SCENE_PATH`, `ANIM_EXT`).
 - Free-function groups go in a namespace named after the system: `namespace DelusiveParser`, `namespace DelusiveUI`, `namespace DelusiveEngine`. Classes are not namespaced. Never `using namespace`.
-- Constructor parameters that would shadow a member get a leading underscore: `UIButton(DelusiveRenderer& _renderer) : UIElement(_renderer)`, `void SetName(const std::string& _name) { name = _name; }`.
+- Parameters normally share the member's name. Use a leading underscore only where the same name would cause trouble, mainly a body assignment that would otherwise assign the variable to itself: `void SetName(const std::string& _name) { name = _name; }`. Initializer lists resolve correctly, so `: renderer(renderer)` needs no underscore.
 
 ## Class layout
 
@@ -73,6 +73,7 @@ Keep code minimal and tooling light. Prefer small, readable changes over new abs
 - Copying goes through a virtual `Clone()` returning `std::unique_ptr<Base>`, built with `std::make_unique<Derived>(renderer)` and then field-by-field copies.
 - Trivial getters/setters are inline one-liners in the header; anything longer goes in the `.cpp`.
 - Overrides use `override` without repeating `virtual`.
+- `GetType()` returns `const char*` from a string literal: `const char* GetType() const override { return "UIButton"; }`. The `std::string` and `const std::string` versions are leftovers from the serialization work; normalize them when touching a class. Compare type names as `std::string` or with `strcmp`, never `==` on two `const char*`.
 - Default member values are given at the declaration: `bool enabled = true;`, `glm::vec2 velocity = { 0.0f, 0.0f };`, `Agent* owner = nullptr;`.
 
 ## Ownership and types
@@ -89,23 +90,22 @@ Keep code minimal and tooling light. Prefer small, readable changes over new abs
 
 ## Formatting
 
-- 4-space indentation (`.editorconfig` sets `indent_style = space`).
-- Braces on the same line for functions, classes, control flow. Constructors with an initializer list put it on the next line and the brace on its own line:
+- Tab indentation (`.editorconfig` sets `indent_style = tab`).
+- Opening braces always go on the same line, never on a line of their own: functions, classes, control flow, lambdas, ImGui blocks. A constructor's initializer list goes on the next line with the brace at its end:
   ```cpp
   ColliderComponent::ColliderComponent(DelusiveRenderer& renderer)
-      : Component(renderer)
-  {
-      name = "New Collider";
-      RegisterProperties();
+  	: Component(renderer) {
+  	name = "New Collider";
+  	RegisterProperties();
   }
   ```
 - `else` / `else if` start a new line after the closing brace:
   ```cpp
   if (currentHealth <= 0) {
-      return -1;
+  	return -1;
   }
   else {
-      return 0;
+  	return 0;
   }
   ```
 - Guard clauses go on one line without braces: `if (!enabled) return;`, `if (!owner || !target) return;`. Multi-line bodies always get braces.
@@ -135,9 +135,9 @@ Keep code minimal and tooling light. Prefer small, readable changes over new abs
 - Editable/serialized fields are registered in `RegisterProperties()`, which calls the base first:
   ```cpp
   void UIButton::RegisterProperties() {
-      UIElement::RegisterProperties();
-      registry->Register("Label", &label);
-      registry->Register("FontColor", &fontColor);
+  	UIElement::RegisterProperties();
+  	registry->Register("Label", &label);
+  	registry->Register("FontColor", &fontColor);
   }
   ```
 - Base-class behaviour is called explicitly at the top of overrides (`BehaviourScript::Update(deltaTime);`) or the end of draw passes (`UIElement::Draw(projection);`).
