@@ -122,7 +122,7 @@ void PlayerAgent::HandleDodge(float deltaTime) {
 }
 
 void PlayerAgent::TakeDamage() {
-    //Talismans work as a stack: a hit only damages the first unbroken one
+	//Talismans work as a stack: a hit only damages the first unbroken one
     for (auto& talisman : talismans) {
         if (talisman->GetIsBroken()) {
             continue;
@@ -132,7 +132,7 @@ void PlayerAgent::TakeDamage() {
             //Activate consume passive here
             talisman->OnConsume(); //TODO: Make this do something
         }
-        return;
+		return;
     }
 }
 

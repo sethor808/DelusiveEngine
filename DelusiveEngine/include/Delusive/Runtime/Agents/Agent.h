@@ -179,8 +179,8 @@ public:
     virtual void HandleInput(const PlayerInputState&) {}
     //Static agents block solids but are never moved by collision resolution
     virtual bool IsStatic() const { return false; }
-    //0 = no team; hit/hurt boxes on the same team ignore each other
-    int GetTeam() const { return team; }
+	//0 = no team; hit/hurt boxes on the same team ignore each other
+	int GetTeam() const { return team; }
     virtual void TakeDamage() {}
     virtual void TakeDamage(int) {}
     virtual void OnHit() {};
@@ -193,7 +193,7 @@ protected:
     UUID id;
 
     bool editorMode = false;
-    int team = 0;
+	int team = 0;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;
