@@ -29,6 +29,7 @@ void Agent::RegisterProperties() {
     registry->type = this->GetType();
     registry->Register("id", &id);
 	registry->Register("name", &name);
+	registry->Register("team", &team);
 	transform.RegisterProperties(*registry);
 }
 

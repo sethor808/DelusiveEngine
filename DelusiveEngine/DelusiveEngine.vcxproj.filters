@@ -136,9 +136,6 @@
     <ClCompile Include="src\Delusive\Runtime\Scene\Scene.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Collision\Collider.cpp">
-      <Filter>engine\physics\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Rendering\DelusiveRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
@@ -320,7 +317,6 @@
     <ClInclude Include="include\Delusive\Runtime\Agents\PlayerAgent.h" />
     <ClInclude Include="include\Delusive\Runtime\Animation\Animation.h" />
     <ClInclude Include="include\Delusive\Runtime\Animation\AnimatorData.h" />
-    <ClInclude Include="include\Delusive\Runtime\Collision\Collider.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\HitboxCollider.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\HurtboxCollider.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\SolidCollider.h" />
