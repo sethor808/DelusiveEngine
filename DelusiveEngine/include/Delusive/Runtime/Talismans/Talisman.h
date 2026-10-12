@@ -9,6 +9,8 @@
 class PlayerAgent;
 class DelusiveInventory;
 class PropertyRegistry;
+struct PlayerStats;
+struct HitData;
 
 //Built through DelusiveFactory<Talisman>, so it loads, saves and clones like everything else.
 //The type sets maxHP and textures; a talisman's own state (hp, broken) is what gets saved.
@@ -23,7 +25,7 @@ public:
     virtual void Link(DelusiveInventory* link) { inventoryLink = link; }
 
 	//Doubles as the factory key
-	virtual std::string GetType() const = 0;
+	virtual const char* GetType() const = 0;
 
 	//Identity and block entry points
 	UUID GetID() const { return id; }
@@ -34,14 +36,17 @@ public:
 
 	virtual int GetMaxHP() { return maxHP; }
 	virtual int GetCurrentHP() { return hp; }
-	virtual bool TakeDamage();
+	virtual bool TakeDamage(int);
 
 	virtual bool GetIsBroken() { return isBroken; }
 	virtual void SetIsBroken(bool broken) { isBroken = broken; }
 
-	virtual void ConstantPassive() {}
-	virtual void WhileActive() {}    
-	virtual void OnConsume() {}
+	//Hooks: Passive while equipped and unbroken, WhileActive only on the top unbroken talisman
+	virtual void ApplyPassive(PlayerStats&) const {}
+	virtual void ApplyWhileActive(PlayerStats&) const {}
+	virtual void OnConsume(PlayerAgent&) {}
+	virtual void HitEvent(PlayerAgent&, const HitData&) {}
+	virtual void LandHitEvent(PlayerAgent&, const HitData&) {}
 
     virtual std::string ConstantPassiveDesc() { return ""; }
     virtual std::string WhileActiveDesc() { return ""; }
