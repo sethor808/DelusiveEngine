@@ -18,6 +18,7 @@ public:
 	void Update(float deltaTime) override;
 	void HandleInput(const PlayerInputState&);
 	std::string GetType() const override;
+	void RegisterProperties() override;
 
 	void ApplyKnockback(const glm::vec2&, float);
 
@@ -52,6 +53,12 @@ private:
 	float dodgeBufferTimer = 0.0f;
 	float invulTimer = 0.0f;
 
+	//Weapon slots: a swap locks further swaps for swapCooldown so one wheel flick moves one slot
+	int weaponIndex = 0;
+	int weaponSlots = 2;
+	float swapCooldown = 0.12f;
+	float swapLockTimer = 0.0f;
+
 	//For input control tracking
 	PlayerInputState prevInput;
 
@@ -65,4 +72,5 @@ private:
 	void StartDodge(const glm::vec2&);
 	void HandleDodge(float);
 	void HandleMovement(float deltaTime);
+	void SwapWeapon(int);
 };

@@ -257,13 +257,17 @@ namespace DelusiveEngine {
                     renderer.OnResize(newWidth, newHeight);
                 }
                 else if (e.type == SDL_EVENT_MOUSE_WHEEL) {
-                    scrollDelta = static_cast<float>(e.wheel.y);
+                    scrollDelta += static_cast<float>(e.wheel.y);
                 }
             }
 
             // --- Mouse / Keyboard ---
             float mouseX, mouseY;
             uint32_t mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
+            //Mouse over an editor panel belongs to ImGui, not the game
+            ImGuiIO& io = ImGui::GetIO();
+            const bool gameMouse = !io.WantCaptureMouse;
 
             PlayerInputState inputState;
             const bool* keys = SDL_GetKeyboardState(nullptr);
@@ -275,8 +279,11 @@ namespace DelusiveEngine {
             if (glm::length(inputState.moveDir) > 0.0f)
                 inputState.moveDir = glm::normalize(inputState.moveDir);
 
-            inputState.lightAttackPressed = keys[SDL_SCANCODE_J];
-            inputState.heavyAttackPressed = keys[SDL_SCANCODE_K];
+            inputState.lightAttackPressed = keys[SDL_SCANCODE_J] || (gameMouse && (mouseState & SDL_BUTTON_LMASK));
+            inputState.heavyAttackPressed = keys[SDL_SCANCODE_K] || (gameMouse && (mouseState & SDL_BUTTON_RMASK));
+            if (gameMouse && game.IsPlaying() && scrollDelta != 0.0f) {
+                inputState.swapDir = scrollDelta > 0.0f ? 1 : -1;
+            }
             inputState.dodgePressed = keys[SDL_SCANCODE_LSHIFT];
 
             game.HandleInput(inputState);
@@ -287,9 +294,9 @@ namespace DelusiveEngine {
             else
                 cam = editorCamPtr;
 
-            ImGuiIO& io = ImGui::GetIO();
-            if (cam && !io.WantCaptureMouse) {
-                cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, scrollDelta);
+            //While playing the wheel swaps weapons instead of zooming
+            if (cam && gameMouse) {
+                cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, game.IsPlaying() ? 0.0f : scrollDelta);
             }
 
             // --- Fixed Timestep ---
