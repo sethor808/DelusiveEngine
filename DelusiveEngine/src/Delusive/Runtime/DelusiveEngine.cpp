@@ -172,11 +172,17 @@ namespace DelusiveEngine {
         }
 
         SDL_GLContext glctx = SDL_GL_CreateContext(window);
+        if (!glctx) {
+            std::cerr << "SDL_GL_CreateContext failed: " << SDL_GetError() << "\n";
+            return -1;
+        }
         SDL_GL_MakeCurrent(window, glctx);
 
         glewExperimental = GL_TRUE;
-        if (glewInit() != GLEW_OK) {
-            std::cerr << "glewInit failed\n";
+        //A GLX built GLEW reports no GLX display on Wayland's EGL context after the GL functions already loaded
+        const GLenum glewStatus = glewInit();
+        if (glewStatus != GLEW_OK && glewStatus != GLEW_ERROR_NO_GLX_DISPLAY) {
+            std::cerr << "glewInit failed: " << glewGetErrorString(glewStatus) << "\n";
             return -1;
         }
 
