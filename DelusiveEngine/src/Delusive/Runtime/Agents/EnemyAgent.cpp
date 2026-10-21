@@ -59,10 +59,6 @@ void EnemyAgent::DrawImGui() {
     */
 }
 
-void EnemyAgent::OnHit() {
-
-}
-
 void EnemyAgent::SetTarget(Agent* target) {
     this->target = target;
 }

@@ -22,11 +22,15 @@ public:
 
 	void ApplyKnockback(const glm::vec2&, float);
 
-	void TakeDamage() override;
+	void HitEvent(const HitData&) override;
+	void LandHitEvent(const HitData&) override;
 	const std::vector<std::unique_ptr<Talisman>>& GetTalismans() { return talismans; }
+	//First unbroken talisman: the one the next hit damages
+	Talisman* GetActiveTalisman() const;
 
 	void TriggerInvul(float);
-	void ResetStats();
+	//Base stats plus talisman hooks; call whenever the stack changes
+	void RecalculateStats();
 
 	//InventoryAccess
 	//Full HP copies of the equipped talismans

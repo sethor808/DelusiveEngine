@@ -13,6 +13,7 @@
 class Component;
 class PropertyRegistry;
 class Scene;
+struct HitData;
 
 class Agent {
 public:
@@ -181,9 +182,9 @@ public:
     virtual bool IsStatic() const { return false; }
 	//0 = no team; hit/hurt boxes on the same team ignore each other
 	int GetTeam() const { return team; }
-    virtual void TakeDamage() {}
-    virtual void TakeDamage(int) {}
-    virtual void OnHit() {};
+	//HitEvent on the agent hit, LandHitEvent on the attacker
+	virtual void HitEvent(const HitData&) {}
+	virtual void LandHitEvent(const HitData&) {}
 
 protected:
     TransformComponent transform;
