@@ -21,6 +21,8 @@ void GameManager::Init() {
 	for (int i = 0; i < inventory.GetSlotCount(); ++i) {
 		inventory.AddTalisman("BasicTalisman");
 	}
+	inventory.AddTalisman("SpeedTalisman");
+	inventory.AddTalisman("MajorSpeedTalisman");
 }
 
 void GameManager::Play() {

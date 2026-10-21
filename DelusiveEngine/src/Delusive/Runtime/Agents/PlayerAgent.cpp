@@ -4,6 +4,7 @@
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Collision/HitData.h>
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     : Agent(instance)
@@ -18,6 +19,7 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     }
 
     RegisterProperties();
+	RecalculateStats();
 }
 
 void PlayerAgent::LinkScene(Scene* scene) {
@@ -123,19 +125,32 @@ void PlayerAgent::HandleDodge(float deltaTime) {
     }
 }
 
-void PlayerAgent::TakeDamage() {
-	//Talismans work as a stack: a hit only damages the first unbroken one
-    for (auto& talisman : talismans) {
-        if (talisman->GetIsBroken()) {
-            continue;
-        }
+void PlayerAgent::HitEvent(const HitData& hit) {
+	Talisman* active = GetActiveTalisman();
+	if (!active) return;
 
-        if (talisman->TakeDamage()) {
-            //Activate consume passive here
-            talisman->OnConsume(); //TODO: Make this do something
-        }
-		return;
-    }
+	for (auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->HitEvent(*this, hit);
+	}
+
+	//Talismans work as a stack: a hit only damages the first unbroken one
+	if (active->TakeDamage(hit.damage)) {
+		active->OnConsume(*this);
+		RecalculateStats();
+	}
+}
+
+void PlayerAgent::LandHitEvent(const HitData& hit) {
+	for (auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->LandHitEvent(*this, hit);
+	}
+}
+
+Talisman* PlayerAgent::GetActiveTalisman() const {
+	for (const auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) return talisman.get();
+	}
+	return nullptr;
 }
 
 bool PlayerAgent::CheckIfDead() {
@@ -158,8 +173,14 @@ void PlayerAgent::TriggerInvul(float duration) {
 	invulTimer = duration; //TODO: Add more effects to make this really feel like an invul
 }
 
-void PlayerAgent::ResetStats() {
-    modified = base; //TODO: Reapply talisman effects after sync
+void PlayerAgent::RecalculateStats() {
+	modified = base;
+
+	for (const auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->ApplyPassive(modified);
+	}
+
+	if (Talisman* active = GetActiveTalisman()) active->ApplyWhileActive(modified);
 }
 
 void PlayerAgent::LoadFromInventory() {
@@ -175,4 +196,5 @@ void PlayerAgent::LoadFromInventory() {
 
 	//Empty keeps the defaults for scenes without an equip screen
 	if (!loadout.empty()) talismans = std::move(loadout);
+	RecalculateStats();
 }

@@ -241,6 +241,9 @@
     <ClCompile Include="src\Delusive\Runtime\Talismans\BasicTalisman.cpp">
       <Filter>engine\healthsystem\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Delusive\Runtime\Talismans\MajorSpeedTalisman.cpp">
+      <Filter>engine\healthsystem\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Scene\SceneSystem.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
@@ -318,6 +321,7 @@
     <ClInclude Include="include\Delusive\Runtime\Animation\Animation.h" />
     <ClInclude Include="include\Delusive\Runtime\Animation\AnimatorData.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\HitboxCollider.h" />
+    <ClInclude Include="include\Delusive\Runtime\Collision\HitData.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\HurtboxCollider.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\SolidCollider.h" />
     <ClInclude Include="include\Delusive\Runtime\Collision\TriggerCollider.h" />

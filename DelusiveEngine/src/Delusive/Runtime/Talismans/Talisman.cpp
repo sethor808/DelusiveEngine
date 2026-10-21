@@ -30,8 +30,8 @@ void Talisman::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const 
 	out.push_back(std::move(self));
 }
 
-bool Talisman::TakeDamage() {
-	hp -= 1;
+bool Talisman::TakeDamage(int damage) {
+	hp -= damage;
 
 	if (hp <= 0) {
 		isBroken = true;
