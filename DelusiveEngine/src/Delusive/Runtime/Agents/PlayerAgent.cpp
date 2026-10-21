@@ -4,6 +4,8 @@
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <iostream>
 #include <Delusive/Runtime/Collision/HitData.h>
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
@@ -32,6 +34,12 @@ std::string PlayerAgent::GetType() const{
     return "PlayerAgent";
 }
 
+void PlayerAgent::RegisterProperties() {
+	Agent::RegisterProperties();
+	registry->Register("weaponSlots", &weaponSlots);
+	registry->Register("swapCooldown", &swapCooldown);
+}
+
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
     // Movement logic
     bool dodgePressed = (input.dodgePressed && !prevInput.dodgePressed);
@@ -41,6 +49,11 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
         dodgeDir = input.moveDir;
     }
 
+	//Ticks during the lock are dropped, not queued, so a fast flick can't slide past a slot
+	if (input.swapDir != 0 && swapLockTimer <= 0.0f) {
+		SwapWeapon(input.swapDir);
+	}
+
     prevInput = input;
 }
 
@@ -48,6 +61,10 @@ void PlayerAgent::Update(float deltaTime) {
     if (CheckIfDead()) {
         //TODO: Die
     }
+
+	if (swapLockTimer > 0.0f) {
+		swapLockTimer -= deltaTime;
+	}
 
     // Input lock countdown
     if (inputLockTimer > 0.0f) {
@@ -100,6 +117,14 @@ void PlayerAgent::HandleMovement(float deltaTime) {
     if (glm::length(impulse) < 0.01f) {
         impulse = glm::vec2(0.0f);
     }
+}
+
+void PlayerAgent::SwapWeapon(int dir) {
+	if (weaponSlots <= 1) return;
+
+	weaponIndex = (weaponIndex + dir + weaponSlots) % weaponSlots;
+	swapLockTimer = swapCooldown;
+	std::cout << "[PlayerAgent] Weapon slot " << weaponIndex << std::endl; //TODO: Equip the slot's weapon once weapons exist
 }
 
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
