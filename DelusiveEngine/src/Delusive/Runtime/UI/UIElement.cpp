@@ -48,6 +48,24 @@ void UIElement::RegisterProperties(){
 	registry->Register("enabled", &enabled);
 	registry->Register("position", &position);
 	registry->Register("size", &size);
+	registry->Register("bindEnabled", &bindEnabled);
+}
+
+void UIElement::Move(const glm::vec2& delta) {
+	position += delta;
+	for (auto& child : children) {
+		child->Move(delta);
+	}
+}
+
+void UIElement::ApplyBinding(const UIBindItem& item) {
+	if (const std::string* value = DelusiveUI::FetchBindField(item, bindEnabled)) {
+		enabled = *value != "0";
+	}
+
+	for (auto& child : children) {
+		child->ApplyBinding(item);
+	}
 }
 
 std::vector<UIElement*> UIElement::GetChildren() {

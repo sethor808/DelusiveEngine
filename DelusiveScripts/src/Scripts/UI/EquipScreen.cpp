@@ -151,8 +151,6 @@ void EquipScreen::BuildAvailableList() {
 
     availableContainer->SetCount((int)talismans.size());
     availableContainer->RegenerateChildren();
-	//SetCount clamps to one
-	if (talismans.empty()) availableContainer->ClearChildren();
 
     auto children = availableContainer->GetChildren();
 	for (size_t i = 0; i < children.size() && i < talismans.size(); ++i) {

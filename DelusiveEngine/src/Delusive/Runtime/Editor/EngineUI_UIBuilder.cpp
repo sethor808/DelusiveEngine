@@ -16,7 +16,7 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	// Canvas toolbar: pick, create, save
 	const char* activeLabel = editingCanvas ? editingCanvas->GetName().c_str() : "<None>";
 	ImGui::SetNextItemWidth(200.0f);
-	if (ImGui::BeginCombo("Canvas", activeLabel)) {
+	if (ImGui::BeginCombo("##Canvas", activeLabel)) {
 		for (UICanvas* canvas : uiRegistry->List()) {
 			ImGui::PushID(canvas);
 			if (ImGui::Selectable(canvas->GetName().c_str(), canvas == editingCanvas)) {
@@ -29,19 +29,34 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	}
 
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(160.0f);
-	ImGui::InputText("##NewCanvasName", uiCanvasNameBuffer, sizeof(uiCanvasNameBuffer));
-	ImGui::SameLine();
 	if (ImGui::Button("New Canvas")) {
+		uiCanvasNameBuffer[0] = '\0';
+		ImGui::OpenPopup("NewCanvasPopup");
+	}
+
+	//The name is only asked for while creating
+	if (ImGui::BeginPopup("NewCanvasPopup")) {
+		if (ImGui::IsWindowAppearing()) ImGui::SetKeyboardFocusHere();
+		ImGui::SetNextItemWidth(200.0f);
+		bool submitted = ImGui::InputTextWithHint("##NewCanvasName", "Canvas name", uiCanvasNameBuffer, sizeof(uiCanvasNameBuffer), ImGuiInputTextFlags_EnterReturnsTrue);
+
 		std::string name = uiCanvasNameBuffer;
-		if (!name.empty() && !uiRegistry->Exists(name)) {
+		bool taken = uiRegistry->Exists(name);
+		if (taken) ImGui::TextDisabled("Name already in use");
+
+		ImGui::BeginDisabled(name.empty() || taken);
+		submitted |= ImGui::Button("Create");
+		ImGui::EndDisabled();
+
+		if (submitted && !name.empty() && !taken) {
 			auto canvas = std::make_unique<UICanvas>(instance);
 			canvas->SetName(name);
 			editingCanvas = canvas.get();
 			uiRegistry->Register(std::move(canvas));
 			selectedUIElement = nullptr;
-			uiCanvasNameBuffer[0] = '\0';
+			ImGui::CloseCurrentPopup();
 		}
+		ImGui::EndPopup();
 	}
 
 	ImGui::SameLine();
