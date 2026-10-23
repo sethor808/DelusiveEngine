@@ -34,6 +34,12 @@ void UILabel::RegisterProperties() {
 	registry->Register("text", &text);
 	registry->Register("color", &color);
 	registry->Register("bindText", &bindText);
+	registry->Hide("bindText"); //Drawn in the Data binding section
+}
+
+void UILabel::DrawBindingImGui() {
+	UIElement::DrawBindingImGui();
+	DrawBindField("Text from", bindText, "Shows the field's value as this label's text. Leave empty to keep your own.");
 }
 
 void UILabel::ApplyBinding(const UIBindItem& item) {

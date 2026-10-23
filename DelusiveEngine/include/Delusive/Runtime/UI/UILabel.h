@@ -33,6 +33,8 @@ public:
 
 	const std::string GetType() const override;
 	void Deserialize(DelusiveParser::DataBlock& in) override;
+protected:
+	void DrawBindingImGui() override;
 private:
 	std::string text;
 	std::string bindText;
