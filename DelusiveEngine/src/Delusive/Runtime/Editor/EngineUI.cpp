@@ -60,7 +60,9 @@ std::vector<std::string> EngineUI::LoadSceneList() {
         break;
     }
 
-    for (const auto& entry : std::filesystem::directory_iterator(path)) {
+    //A missing folder (fresh clone has no animations yet) just lists nothing
+    std::error_code ec;
+    for (const auto& entry : std::filesystem::directory_iterator(path, ec)) {
         if (entry.is_regular_file()) {
             std::string filename = entry.path().stem().string();
             //filter by extension code
