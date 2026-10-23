@@ -1,225 +1,342 @@
 #include <Delusive/Runtime/Components/AnimatorComponent.h>
+#include <Delusive/Runtime/Components/SpriteComponent.h>
 #include <Delusive/Runtime/Agents/Agent.h>
-#include <Delusive/Runtime/Utils/DelusiveMacros.h>
-#include <Delusive/Runtime/Components/TransformComponent.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <imgui/imgui.h>
-#include <fstream>
-#include <iostream>
+#include <algorithm>
 #include <filesystem>
+#include <iomanip>
+#include <sstream>
+
+using namespace DelusiveAnimation;
 
 AnimatorComponent::AnimatorComponent(DelusiveInstance& instance)
     : Component(instance)
 {
-
+    name = "New Animator";
+    RegisterProperties();
 }
 
-void AnimatorComponent::Update(float deltaTime) {
-    if (!playing || !currentBranch || currentBranch->frames.empty()) {
-        return;
+void AnimatorComponent::RegisterProperties() {
+    Component::RegisterProperties();
+    registry->Register("animationSet", &setID);
+}
+
+void AnimatorComponent::Deserialize(DelusiveParser::DataBlock& in) {
+    Component::Deserialize(in);
+    LinkSet(setID);
+}
+
+void AnimatorComponent::SetOwner(Agent* agent) {
+    Component::SetOwner(agent);
+    ApplyFrame();
+}
+
+const Branch* AnimatorComponent::CurrentBranch() const {
+    if (currentBranch < 0 || currentBranch >= (int)set.branches.size()) return nullptr;
+    return &set.branches[currentBranch];
+}
+
+bool AnimatorComponent::LinkSet(const UUID& newSetID) {
+    setID = newSetID;
+    currentBranch = -1;
+    currentFrame = 0;
+    tickInFrame = 0;
+
+    //A missing set keeps its id so the link survives a save and can resolve later
+    if (!setID.IsValid() || !set.FromLibrary(instance.delusiveLibrary, setID)) {
+        set = Set();
+        return false;
     }
 
-    timeAccumulator += deltaTime;
-    AnimationFrame& frame = currentBranch->frames[currentFrame];
+    if (!set.branches.empty()) {
+        currentBranch = 0;
+        ApplyFrame();
+    }
+    return true;
+}
 
-    if (timeAccumulator >= frame.duration) {
-        timeAccumulator -= frame.duration;
-        currentFrame++;
-
-        if (currentFrame >= (int)currentBranch->frames.size()) {
-            if (currentBranch->loop) {
-                currentFrame = 0;
-            }
-            else {
-                currentFrame = (int)currentBranch->frames.size() - 1;
-                playing = false;
-            }
+void AnimatorComponent::PlayBranch(const UUID& branchID) {
+    //By id, not name - names are labels and may repeat
+    for (int i = 0; i < (int)set.branches.size(); ++i) {
+        if (set.branches[i].id == branchID) {
+            currentBranch = i;
+            currentFrame = 0;
+            tickInFrame = 0;
+            playing = true;
+            ApplyFrame();
+            return;
         }
-
-        // Optional: mark frame dirty for editor refresh, probably remove later
-        currentBranch->frames[currentFrame].dirty = true;
     }
-
-    ApplyComponentOverrides();
 }
 
-void AnimatorComponent::ApplyComponentOverrides() {
-    if (!currentBranch || currentFrame >= currentBranch->frames.size()) {
-        return;
+bool AnimatorComponent::SetFlag(const std::string& name, bool value) {
+    if (!HasFlag(name)) return false;
+    flagValues[name] = value;
+    return true;
+}
+
+bool AnimatorComponent::Trigger(const std::string& name) {
+    if (!HasFlag(name)) return false;
+    flagValues[name] = true;
+    return true;
+}
+
+bool AnimatorComponent::HasFlag(const std::string& name) const {
+    return set.FindFlag(name) != nullptr;
+}
+
+std::vector<AnimatorComponent::FlagState> AnimatorComponent::GetFlags() const {
+    std::vector<FlagState> flags;
+    flags.reserve(set.flags.size());
+    for (const Flag& flag : set.flags) {
+        flags.push_back({ flag.name, flag.kind, GetFlag(flag.name) });
+    }
+    return flags;
+}
+
+bool AnimatorComponent::GetFlag(const std::string& name) const {
+    auto it = flagValues.find(name);
+    return it != flagValues.end() && it->second;
+}
+
+bool AnimatorComponent::IsInputLocked() const {
+    const Branch* branch = CurrentBranch();
+    if (!branch) return false;
+    if (branch->lockInput) return true;
+    return currentFrame < (int)branch->frames.size() && branch->frames[currentFrame].inputLock;
+}
+
+std::string AnimatorComponent::GetBranchName() const {
+    const Branch* branch = CurrentBranch();
+    return branch ? branch->name : "";
+}
+
+bool AnimatorComponent::Matches(const Transition& t, bool finished, bool fromAny) const {
+    if (!t.target.IsValid() || !set.FindBranch(t.target)) return false;
+    if (t.onFinish && !finished) return false;
+
+    //Frame windows belong to the branch being left, so they only apply to its own transitions
+    if (!fromAny) {
+        const int frame = currentFrame + 1;
+        if (t.fromFrame > 0 && frame < t.fromFrame) return false;
+        if (t.toFrame > 0 && frame > t.toFrame) return false;
     }
 
-    const AnimationFrame& frame = currentBranch->frames[currentFrame];
+    for (const Condition& cond : t.conditions) {
+        const Flag* flag = set.FindFlag(cond.flag);
+        const bool value = GetFlag(cond.flag);
+        if (flag && flag->kind == FlagKind::Trigger) {
+            if (!value) return false;
+        }
+        else if (value != cond.value) {
+            return false;
+        }
+    }
+    return true;
+}
 
-    for (const ComponentMod& mod : frame.componentOverrides) {
-        Component* comp = GetOwner()->GetComponentByID(mod.componentID);
-        if (!comp) continue;
+void AnimatorComponent::Fire(const Transition& t) {
+    //A trigger is spent by the transition that used it
+    for (const Condition& cond : t.conditions) {
+        const Flag* flag = set.FindFlag(cond.flag);
+        if (flag && flag->kind == FlagKind::Trigger) flagValues[cond.flag] = false;
+    }
+    PlayBranch(t.target);
+}
 
-        comp->SetEnabled(mod.enabled);
-        comp->transform->position = mod.positionOffset; // No += here
-        comp->transform->scale = mod.scale;
-        comp->transform->rotation = mod.rotation;
+void AnimatorComponent::FollowTransitions(bool finished) {
+    const Branch* branch = CurrentBranch();
 
-        if (!mod.texturePath.empty() && std::string(comp->GetType()) == "SpriteComponent") {
-            static_cast<SpriteComponent*>(comp)->SetTexturePath(mod.texturePath);
+    //Interrupts first - taking damage and the like can happen in any branch, locked or not
+    for (const Transition& t : set.anyTransitions) {
+        //A held bool must not restart its own branch every tick; a trigger may re-enter
+        const bool reenter = std::any_of(t.conditions.begin(), t.conditions.end(), [this](const Condition& c) {
+            const Flag* flag = set.FindFlag(c.flag);
+            return flag && flag->kind == FlagKind::Trigger;
+        });
+        if (branch && t.target == branch->id && !reenter) continue;
+
+        if (Matches(t, finished, true)) {
+            Fire(t);
+            return;
+        }
+    }
+
+    if (!branch) return;
+    for (const Transition& t : branch->transitions) {
+        if (Matches(t, finished, false)) {
+            Fire(t);
+            return;
         }
     }
 }
 
 void AnimatorComponent::PlayBranch(const std::string& branchName) {
-    for (AnimationBranch& branch : currentAnimation.data.branches) {
-        if (branch.name == branchName) {
-            currentBranch = &branch;
+    for (int i = 0; i < (int)set.branches.size(); ++i) {
+        if (set.branches[i].name == branchName) {
+            currentBranch = i;
             currentFrame = 0;
-            timeAccumulator = 0.0f;
+            tickInFrame = 0;
             playing = true;
-            break;
+            ApplyFrame();
+            return;
         }
     }
 }
 
-void AnimatorComponent::SetAnimatorData(const AnimatorData& animatorData) {
-    currentAnimation = Animation(animatorData);
+void AnimatorComponent::Update(float) {
+    const Branch* branch = CurrentBranch();
+    bool finished = false;
+
+    if (branch && branch->frames.empty()) {
+        finished = true; //Nothing to show - pass straight through
+    }
+    else if (branch && playing && ++tickInFrame >= branch->frames[currentFrame].ticks) {
+        tickInFrame = 0;
+
+        if (currentFrame + 1 < (int)branch->frames.size()) {
+            currentFrame++;
+            ApplyFrame();
+        }
+        else if (branch->loop) {
+            currentFrame = 0;
+            finished = true;
+            ApplyFrame();
+        }
+        else {
+            //Hold the last frame unless a transition takes over
+            playing = false;
+            finished = true;
+        }
+    }
+
+    FollowTransitions(finished);
+
+    //Unused triggers expire - buffering input is the input code's job, not the animator's
+    for (const Flag& flag : set.flags) {
+        if (flag.kind == FlagKind::Trigger) flagValues[flag.name] = false;
+    }
+}
+
+void AnimatorComponent::ApplyFrame() {
+    const Branch* branch = CurrentBranch();
+    if (!branch || currentFrame >= (int)branch->frames.size() || !GetOwner()) return;
+
+    const Frame& frame = branch->frames[currentFrame];
+    if (frame.texturePath.empty()) return;
+
+    //The animator owns its sprite's placement: size comes from the image and the set's
+    //pixels per unit, and the offset puts the frame's pivot on the agent's position. Image
+    //pixels run top-down, world y runs up, hence the flipped y.
+    for (SpriteComponent* sprite : GetOwner()->GetComponentsOfType<SpriteComponent>()) {
+        sprite->SetTexturePath(frame.texturePath);
+
+        const glm::ivec2 imageSize = instance.renderer.GetTextureSize(frame.texturePath);
+        if (imageSize.x > 0 && imageSize.y > 0) {
+            const float ppu = set.pixelsPerUnit > 0.0f ? set.pixelsPerUnit : DELUSIVE_PIXEL_SCALE;
+            const glm::vec2 pivot = set.PivotFor(frame, imageSize);
+            sprite->SetScale(imageSize.x / ppu, imageSize.y / ppu);
+            sprite->SetPosition((imageSize.x * 0.5f - pivot.x) / ppu, (pivot.y - imageSize.y * 0.5f) / ppu);
+        }
+        break;
+    }
 }
 
 void AnimatorComponent::DrawImGui() {
-    ImGui::Text("Animator Component");
+    Component::DrawImGui();
     ImGui::Separator();
 
-    ImGui::Text("Animation File:");
-    ImGui::SameLine();
-    ImGui::Text("%s", currentAnimationPath.empty() ? "[None]" : currentAnimationPath.c_str());
+    //Sets are listed from the library, so any indexed .anim can be linked
+    auto SetLabel = [this](const DelusiveParser::DataBlock& block) {
+        std::string setName = "Unnamed";
+        auto prop = block.properties.find("name");
+        if (prop != block.properties.end()) {
+            std::istringstream in(prop->second);
+            in >> std::quoted(setName);
+        }
+        std::string file = std::filesystem::path(instance.delusiveLibrary.GetSourceFile(block.id)).filename().string();
+        return setName + " (" + file + ")";
+    };
 
-    if (ImGui::Button("Change Animation")) {
-        ImGui::OpenPopup("AnimationFileBrowser");
-    }
+    const DelusiveParser::DataBlock* linked = instance.delusiveLibrary.Find(setID);
+    std::string preview = linked ? SetLabel(*linked) : (setID.IsValid() ? "<missing set>" : "<none>");
 
-    if (ImGui::BeginPopup("AnimationFileBrowser")) {
-        for (const auto& entry : std::filesystem::directory_iterator(ANIMS_FOLDER)) { //TODO: Setup a macro path somewhere
-            if (entry.is_regular_file() && entry.path().extension() == ".anim") {
-                std::string fullPath = entry.path().string();
-                std::string filename = entry.path().filename().string();
-                if (ImGui::Selectable(filename.c_str())) {
-                    currentAnimationPath = fullPath;
-
-                    if (currentAnimation.LoadFromFile(currentAnimationPath)) {
-                        currentAnimation.data = currentAnimation.data;
-                        if (!currentAnimation.data.branches.empty()) {
-                            PlayBranch(currentAnimation.data.branches[0].name);
-                        }
-                        ImGui::CloseCurrentPopup();
-                    }
-                    else {
-                        std::cerr << "[AnimatorComponent] Failed to load .anim: " << fullPath << "\n";
-                    }
-                }
+    if (ImGui::BeginCombo("Animation Set", preview.c_str())) {
+        if (ImGui::Selectable("<none>", !setID.IsValid())) {
+            LinkSet(UUID());
+        }
+        for (const DelusiveParser::DataBlock* block : instance.delusiveLibrary.List("AnimationSet")) {
+            ImGui::PushID(block);
+            if (ImGui::Selectable(SetLabel(*block).c_str(), block->id == setID)) {
+                LinkSet(block->id);
             }
+            ImGui::PopID();
         }
-        ImGui::EndPopup();
+        ImGui::EndCombo();
     }
 
-    ImGui::Separator();
-
-    // Branch Selector
-    static int selectedBranch = 0;
-    ImGui::Text("Animation Branch:");
-    for (int i = 0; i < currentAnimation.data.branches.size(); ++i) {
-        std::string label = currentAnimation.data.branches[i].name + (i == selectedBranch ? " (current)" : "");
-        if (ImGui::Selectable(label.c_str(), i == selectedBranch)) {
-            selectedBranch = i;
-            PlayBranch(currentAnimation.data.branches[i].name);
+    if (setID.IsValid()) {
+        ImGui::SameLine();
+        if (ImGui::Button("Reload")) {
+            LinkSet(setID);
         }
     }
 
-    // Playback Controls
+    if (ImGui::Button("Delete Component")) {
+        MarkToDelete();
+    }
+
+    if (set.branches.empty()) {
+        ImGui::TextDisabled("No branches");
+        return;
+    }
+
+    ImGui::Text("Branches:");
+    for (int i = 0; i < (int)set.branches.size(); ++i) {
+        ImGui::PushID(i);
+        if (ImGui::Selectable(set.branches[i].name.c_str(), i == currentBranch)) {
+            PlayBranch(set.branches[i].name);
+        }
+        ImGui::PopID();
+    }
+
     if (ImGui::Button(playing ? "Pause" : "Play")) {
         playing = !playing;
     }
     ImGui::SameLine();
     if (ImGui::Button("Restart")) {
         currentFrame = 0;
-        timeAccumulator = 0.0f;
+        tickInFrame = 0;
+        playing = true;
+        ApplyFrame();
     }
 
-    // Branch Info
-    if (currentBranch) {
-        ImGui::Text("Branch: %s", currentBranch->name.c_str());
-        ImGui::Text("Frame: %d / %d", currentFrame, (int)currentBranch->frames.size() - 1);
-        if (currentFrame >= 0 && currentFrame < currentBranch->frames.size()) {
-            const AnimationFrame& frame = currentBranch->frames[currentFrame];
-            ImGui::Text("Duration: %.2fs", frame.duration);
+    if (const Branch* branch = CurrentBranch()) {
+        ImGui::Text("Frame: %d / %d", currentFrame + 1, (int)branch->frames.size());
+        if (currentFrame < (int)branch->frames.size()) {
+            const Frame& frame = branch->frames[currentFrame];
+            ImGui::Text("Tick: %d / %d", tickInFrame + 1, frame.ticks);
             ImGui::Text("Input Lock: %s", frame.inputLock ? "Yes" : "No");
-            ImGui::Text("Flags: %d, Mods: %d",
-                (int)frame.flagChanges.size(),
-                (int)frame.componentOverrides.size());
+            ImGui::Text("Boxes: %d", (int)frame.boxes.size());
         }
     }
-    else {
-        ImGui::Text("No branch playing.");
-    }
 
-    ImGui::Separator();
-    ImGui::Text("Flags:");
-    for (const std::string& flag : currentAnimation.data.flags) {
-        ImGui::BulletText("%s", flag.c_str());
-    }
-
-    if (ImGui::Button("Delete Component")) {
-        MarkToDelete();
-    }
-}
-
-
-std::unique_ptr<Component> AnimatorComponent::Clone() const {
-    auto clone = std::make_unique<AnimatorComponent>(instance);
-    clone->SetAnimatorData(currentAnimation.data);
-    clone->currentAnimationPath = currentAnimationPath;
-    clone->currentAnimation = currentAnimation;
-    return clone;
-}
-
-/*
-void AnimatorComponent::Serialize(std::ofstream& out) const {
-    if (!out.is_open()) return;
-
-    out << "name " << name << "\n";
-    out << "animpath " << currentAnimationPath << "\n";
-    out << "---\n";
-}
-
-void AnimatorComponent::Deserialize(std::ifstream& in) {
-    if (!in.is_open()) return;
-
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line == "---") break;
-
-        std::istringstream iss(line);
-        std::string token;
-        iss >> token;
-
-        if (token == "name") {
-            std::string tempName;
-            std::getline(iss, tempName);
-            if (!tempName.empty() && tempName[0] == ' ') tempName.erase(0, 1);
-            SetName(tempName.c_str());
-        }
-        else if (token == "animpath") {
-            iss >> currentAnimationPath;
-
-            if (!currentAnimation.LoadFromFile(currentAnimationPath)) {
-                std::cerr << "[AnimatorComponent] Failed to load .anim file: " << currentAnimationPath << "\n";
-                return;
+    if (!set.flags.empty()) {
+        ImGui::Separator();
+        ImGui::Text("Flags:");
+        for (const Flag& flag : set.flags) {
+            ImGui::PushID(flag.name.c_str());
+            if (flag.kind == FlagKind::Trigger) {
+                if (ImGui::SmallButton(flag.name.c_str())) Trigger(flag.name);
             }
-
-            //data = currentAnimation.data;
-
-            if (!currentAnimation.data.branches.empty()) {
-                PlayBranch(currentAnimation.data.branches[0].name);
+            else {
+                bool value = GetFlag(flag.name);
+                if (ImGui::Checkbox(flag.name.c_str(), &value)) SetFlag(flag.name, value);
             }
-        }
-        else {
-            break;
+            ImGui::PopID();
         }
     }
 }
-*/

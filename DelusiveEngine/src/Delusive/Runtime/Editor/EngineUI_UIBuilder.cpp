@@ -8,21 +8,22 @@
 void EngineUI::RenderUIBuilder(Scene& scene) {
     if (!uiRegistry) {
         uiRegistry = std::make_unique<DelusiveUIRegistry>(instance);
-        //TODO: restore canvas load once DelusiveUIRegistry has its factory-based file I/O
+        uiRegistry->LoadAll();
     }
 
-    ImGui::Begin("UIBuilderPanel");
+    ImGui::Begin(UIBuilderPanelWindow);
 
     // Canvas toolbar: pick, create, save
     const char* activeLabel = editingCanvas ? editingCanvas->GetName().c_str() : "<None>";
     ImGui::SetNextItemWidth(200.0f);
     if (ImGui::BeginCombo("Canvas", activeLabel)) {
-        for (const auto& name : uiRegistry->GetAllNames()) {
-            bool isSelected = editingCanvas && editingCanvas->GetName() == name;
-            if (ImGui::Selectable(name.c_str(), isSelected)) {
-                editingCanvas = uiRegistry->Get(name);
+        for (UICanvas* canvas : uiRegistry->List()) {
+            ImGui::PushID(canvas);
+            if (ImGui::Selectable(canvas->GetName().c_str(), canvas == editingCanvas)) {
+                editingCanvas = canvas;
                 selectedUIElement = nullptr;
             }
+            ImGui::PopID();
         }
         ImGui::EndCombo();
     }
@@ -36,17 +37,18 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
         if (!name.empty() && !uiRegistry->Exists(name)) {
             auto canvas = std::make_unique<UICanvas>(instance);
             canvas->SetName(name);
+            editingCanvas = canvas.get();
             uiRegistry->Register(std::move(canvas));
-            editingCanvas = uiRegistry->Get(name);
             selectedUIElement = nullptr;
             uiCanvasNameBuffer[0] = '\0';
         }
     }
 
     ImGui::SameLine();
-    ImGui::BeginDisabled();
-    ImGui::Button("Save All"); //TODO: re-enable with DelusiveUIRegistry file I/O
-    ImGui::EndDisabled();
+    //Each canvas goes back to its own .canvas file; new ones get CANVAS_PATH/<name>
+    if (ImGui::Button("Save All")) {
+        uiRegistry->SaveAll();
+    }
 
     ImGui::Separator();
 

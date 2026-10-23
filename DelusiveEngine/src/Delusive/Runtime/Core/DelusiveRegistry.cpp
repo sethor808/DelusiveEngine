@@ -71,6 +71,13 @@ void PropertyRegistry::Collect(std::vector<DelusiveParser::DataBlock>& out) cons
 
 void PropertyRegistry::DrawImGui() {
     for (auto& prop : properties) {
+        if (prop->hidden) continue;
         prop->DrawImGui();
+    }
+}
+
+void PropertyRegistry::Hide(const std::string& name) {
+    for (auto& prop : properties) {
+        if (prop->GetName() == name) prop->hidden = true;
     }
 }

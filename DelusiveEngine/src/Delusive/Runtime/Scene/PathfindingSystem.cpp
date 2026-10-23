@@ -21,35 +21,6 @@ void PathfindingSystem::RegisterProperties() {
 
 }
 
-std::unique_ptr<SceneSystem> PathfindingSystem::Clone() const {
-	auto clone = std::make_unique<PathfindingSystem>(instance);
-
-	// Clone all nodes
-	std::unordered_map<const Node*, Node*> originalToClone;
-	for (const auto& originalNodePtr : allNodes) {
-		if (!originalNodePtr) continue;
-
-		// Copy node
-		auto newNode = std::make_unique<Node>(*originalNodePtr);
-
-		// Keep track of mapping from original to cloned node
-		originalToClone[originalNodePtr.get()] = newNode.get();
-
-		// Store it in clone->allNodes
-		clone->allNodes.push_back(std::move(newNode));
-	}
-
-	// Rebuild gridMap with cloned node pointers
-	for (const auto& [pos, originalNode] : gridMap) {
-		auto it = originalToClone.find(originalNode);
-		if (it != originalToClone.end()) {
-			clone->gridMap[pos] = it->second;
-		}
-	}
-
-	return clone;
-}
-
 void PathfindingSystem::DrawImGui() {
 	ImGui::SeparatorText("Pathfinding System");
 

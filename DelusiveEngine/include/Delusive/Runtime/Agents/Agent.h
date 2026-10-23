@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include <type_traits>
 #include <string>
 #include <fstream>
@@ -12,8 +13,8 @@
 
 class Component;
 class PropertyRegistry;
-class Collider;
 class Scene;
+struct HitData;
 
 class Agent {
 public:
@@ -22,7 +23,8 @@ public:
     virtual ~Agent();
 
     //Mandatory virtuals
-    virtual std::unique_ptr<Agent> Clone(Scene*) const = 0;
+    //Save then load in memory, see DelusiveClone - scene is linked before loading
+    std::unique_ptr<Agent> Clone(Scene*) const;
     virtual std::string GetType() const = 0;
 
     //Base Gameplay hooks
@@ -41,6 +43,14 @@ public:
     void Deserialize(DelusiveParser::DataBlock& in);
     //Emits this agent plus every component it owns, flat
     void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
+
+    //Builds through DelusiveFactory<Agent> - shared by scene and agent file loading
+    static std::unique_ptr<Agent> FromRecipe(const DelusiveParser::DataBlock&, DelusiveInstance&, Scene* scene = nullptr);
+
+    //Agent files hold one agent plus its components. Loading re-reads the file;
+    //saving to another agent's file gives the copy fresh ids (remapped = reload it).
+    static std::unique_ptr<Agent> LoadFromFile(const std::string& path, DelusiveInstance&, Scene* scene = nullptr);
+    bool SaveToFile(const std::string& path, bool* remapped = nullptr);
 
     //Links
     virtual void LinkScene(Scene* scene) { sceneLink = scene; }
@@ -158,6 +168,10 @@ public:
     Component* GetComponentByID(UUID);
     const std::vector<std::unique_ptr<Component>>& GetComponents() const;
     void RemoveComponentByPointer(Component*);
+    //Moves a component earlier (negative) or later in the list
+    void MoveComponent(Component*, int delta);
+    //Just the agent's own fields - the scene inspector draws components itself
+    void DrawPropertiesImGui();
 
     //Data
     void SetName(const std::string& n) { name = n; }
@@ -165,9 +179,13 @@ public:
 
     //Gameplay calls
     virtual void HandleInput(const PlayerInputState&) {}
-    virtual void TakeDamage() {}
-    virtual void TakeDamage(int) {}
-    virtual void OnHit() {};
+    //Static agents block solids but are never moved by collision resolution
+    virtual bool IsStatic() const { return false; }
+	//0 = no team; hit/hurt boxes on the same team ignore each other
+	int GetTeam() const { return team; }
+	//HitEvent on the agent hit, LandHitEvent on the attacker
+	virtual void HitEvent(const HitData&) {}
+	virtual void LandHitEvent(const HitData&) {}
 
 protected:
     TransformComponent transform;
@@ -177,6 +195,7 @@ protected:
     UUID id;
 
     bool editorMode = false;
+	int team = 0;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;
@@ -188,5 +207,4 @@ protected:
     uint64_t nextComponentID = 0;
     std::unique_ptr<PropertyRegistry> registry;
 
-    void CloneBaseProperties(Agent*, Scene*) const;
 };

@@ -1,8 +1,6 @@
 #pragma once
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Scene/Scene.h>
-#include <Delusive/Runtime/Animation/AnimatorData.h>
-#include <Delusive/Runtime/Animation/Animation.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Agents/AgentTypes.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -20,73 +18,19 @@ enum class EditorMode {
 };
 
 class DelusiveUIRegistry;
+class AnimatorEditor;
+class SceneEditor;
 class UICanvas;
 class UIElement;
 
-struct Selection {
-    enum Kind { None = 0, AgentObject = 1, ComponentObject = 2, SystemObject = 3 } kind = None;
-    void* ptr = nullptr;
-    void Reset() { kind = None; ptr = nullptr; }
-    bool Is(Kind k, void* p) const { return kind == k && ptr == p; }
-    void Draw() {
-        // Use selection.kind to safely cast to the correct type
-        switch (kind) {
-        case AgentObject:
-            if (ptr) {
-                Agent* a = static_cast<Agent*>(ptr);
-                a->DrawImGui();
-            }
-            break;
-        case ComponentObject:
-            if (ptr) {
-                Component* c = static_cast<Component*>(ptr);
-                c->DrawImGui();
-            }
-            break;
-        case SystemObject:
-            if (ptr) {
-                SceneSystem* s = static_cast<SceneSystem*>(ptr);
-                s->DrawImGui();
-            }
-            break;
-        default:
-            ImGui::TextDisabled("Nothing selected.");
-            break;
-        }
-    }
-    void SetEditorMode(bool enabled) {
-        switch (kind) {
-        case AgentObject:
-            if (ptr) {
-                Agent* a = static_cast<Agent*>(ptr);
-                a->SetEditorMode(enabled);
-            }
-            break;
-        case ComponentObject:
-            if (ptr) {
-                Component* c = static_cast<Component*>(ptr);
-                c->SetEditorMode(enabled);
-            }
-            break;
-        case SystemObject:
-            if (ptr) {
-                SceneSystem* s = static_cast<SceneSystem*>(ptr);
-                s->SetEditorMode(enabled);
-            }
-            break;
-        default:
-            ImGui::TextDisabled("Nothing selected.");
-            break;
-        }
-    }
-};
-
 class EngineUI {
 public:
+	//Window names the default layouts dock
+	static constexpr const char* AgentPanelWindow = "Agent###AgentEditorPanel";
+	static constexpr const char* UIBuilderPanelWindow = "UIBuilderPanel";
 	EngineUI(GameManager&);
 	~EngineUI();
 	std::vector<std::string> LoadSceneList();
-	ImTextureID GetFramePreviewTexture(AnimationFrame&, Agent&);
     void MoveEditorCameraTo(Agent* agent);
 	void SetRenderer(const DelusiveRenderer&);
 
@@ -98,7 +42,9 @@ public:
 	void RenderUIBuilder(Scene& scene);
 	void RenderGameView(Scene& scene);
 
-    void LinkEditorCamera(CameraAgent* cam) { editorCamera = cam; }
+    void LinkEditorCamera(CameraAgent* cam);
+    //Switches mode and opens an asset as if picked from the asset list
+    void StartIn(Scene&, EditorMode, const std::string& asset);
 private:
 	GameManager& gameManager;
 	DelusiveInstance& instance;
@@ -120,25 +66,17 @@ private:
     bool newAssetPopup = false;
     bool showDeleteConfirm = false;
 
-	//Scene editor specifics
-    Selection selected;
-	int agentToDeleteIndex = -1;
-    Agent* focusRequested = nullptr;
+	//Scene mode lives in its own class
+	std::unique_ptr<SceneEditor> sceneEditor;
 
 	//Agent editor specifics
 	bool isDraggingCollider = false;
 
-	//AnimatorData
-	Animation currentAnimation;
-	int selectedFrame = -1;
-	int selectedBranch = -1;
 	Component* selectedComponent = nullptr;
 	bool agentSelected = true;
-	std::unique_ptr<Agent> baseAgent = nullptr;
-	std::unique_ptr<Agent> pureAgent = nullptr;
-	std::string currentBaseAgentFile;
-	bool confirmAgentSwitch = false;
-	std::string pendingAgentFile;
+
+	//Animator mode lives in its own class
+	std::unique_ptr<AnimatorEditor> animatorEditor;
 
 	//UI builder specifics
 	std::unique_ptr<DelusiveUIRegistry> uiRegistry;
@@ -149,11 +87,20 @@ private:
 	void DrawUIElementNode(UIElement* element);
 
 	//Helper functions
+	//Each mode has its own dock space, so each keeps its own arrangement of panels
+	void DockSpace();
+	void BuildDefaultLayout(ImGuiID dockID);
+	//Leaves play mode, if playing - pickers and asset switches act on the scene being edited
+	void StopPlaying(Scene&);
+	void Shortcuts(Scene&);
+	bool CanUndo() const;
+	bool CanRedo() const;
+	void Undo(Scene&);
+	void Redo(Scene&);
 	void SwitchMode(Scene&, EditorMode);
 	std::string GetPath(std::string);
-	void ClearFramePreviews(Animation& anim);
-	void ApplyOverrides(AnimationFrame&, Agent&);
-	void ResetOverrides();
-	void SetupAnimation(const std::string);
-	void RenderAnimationOverrides(AnimationFrame&, ComponentMod&);
+	//Replaces the agent being edited with the one in this file
+	void LoadAgentAsset(Scene&, const std::string& path);
+	//Opens an asset of the current mode by name - the asset list and StartIn share it
+	void OpenAsset(Scene&, const std::string& asset);
 };

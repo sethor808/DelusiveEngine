@@ -9,11 +9,9 @@ public:
 	EnemyAgent() = delete;
 
 	//Overrides
-	std::unique_ptr<Agent> Clone(Scene*) const override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& projection) const override;
 	void DrawImGui() ;
-	void OnHit() override;
 	std::string GetType() const override;
 	void RegisterProperties() override;
 

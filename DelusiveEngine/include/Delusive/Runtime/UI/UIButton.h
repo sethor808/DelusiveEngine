@@ -6,7 +6,6 @@ class UIButton : public UIElement {
 public:
 	UIButton(DelusiveInstance&);
 	UIButton(const std::string& label, const glm::vec2& position);
-	std::unique_ptr<UIElement> Clone() const override;
 
     bool SupportsClick() const override { return true; }
 
@@ -22,6 +21,7 @@ public:
 	void SetOnClick(std::function<void()>) override;
 
 	const std::string GetType() const override;
+	void Deserialize(DelusiveParser::DataBlock& in) override;
 private:
 	std::string label = "";
 

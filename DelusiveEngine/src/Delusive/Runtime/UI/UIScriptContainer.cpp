@@ -23,17 +23,15 @@ void UIScriptContainer::RegisterProperties() {
     registry->Register("script", &script);
 }
 
-std::unique_ptr<UIElement> UIScriptContainer::Clone() const{
-	return std::make_unique<UIScriptContainer>(instance);
-}
-
 void UIScriptContainer::Update(float deltaTime) {
     UIElement::Update(deltaTime);
     if (script) script->OnUpdate(deltaTime);
 }
 
 void UIScriptContainer::SetScript(std::unique_ptr<UIScript> newScript) {
-    script.object = std::move(newScript);
+    //A script needs an identity to be saved, referenced or cloned
+    if (newScript && !newScript->GetID().IsValid()) newScript->SetID(UUID::GenerateRandom());
+    script.set(std::move(newScript));
     if (script) {
         script->Link(this);
         script->OnInit();

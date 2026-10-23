@@ -21,6 +21,7 @@ debug_bin/
 lib/Debug/
 lib/Release/
 debug_lib/
+lib/*.a
 
 # CMake
 build/
@@ -34,3 +35,8 @@ cmake_install.cmake
 !lib/SDL3.dll
 !lib/glew32.lib
 !lib/glew32.dll
+
+# CLion
+.idea/
+cmake-build-*/
+CMakeUserPresets.json

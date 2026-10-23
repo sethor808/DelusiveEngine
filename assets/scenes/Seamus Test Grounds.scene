@@ -1,49 +1,60 @@
-[Scene]
-name New Scene
-agents 3
-[Agent PlayerAgent]
-name=Player
+[Scene 3064080bf8ddab50-e0275477a087430e]
+agents=89dc8b6c4902387e-4c525d746c0a1f7e 72df01ee6f353f1a-08e76559483cde3d 29ca21b545d462f7-d88bc4cae8830627
+name="New Scene"
+systems=
+
+[Agent PlayerAgent 89dc8b6c4902387e-4c525d746c0a1f7e]
+components=bdc02c8e634a8a32-acb888fb376ef016
+id=89dc8b6c4902387e-4c525d746c0a1f7e
+name="Player"
 position=-1.81201 -0.341525
-scale=1 1
 rotation=0
-[Component SpriteComponent]
-position=0 0
 scale=1 1
-rotation=0
-name=New Sprite
+
+[Component SpriteComponent bdc02c8e634a8a32-acb888fb376ef016]
 enabled=1
-textureData=../assets/sprites/BasicDude\BasicDude1.jpg
-[/Component]
-[/Agent]
-[Agent CameraAgent]
-name=New Camera
+id=bdc02c8e634a8a32-acb888fb376ef016
+name="New Sprite"
 position=0 0
-scale=1 1
 rotation=0
-[/Agent]
-[Agent EnemyAgent]
-name=Enemy
-position=-8.24235 0.581075
 scale=1 1
+textureData=../assets/sprites/BasicDude/BasicDude1.jpg
+
+[Agent CameraAgent 72df01ee6f353f1a-08e76559483cde3d]
+components=
+id=72df01ee6f353f1a-08e76559483cde3d
+name="New Camera"
+position=0 0
 rotation=0
-moveSpeed=10
+scale=1 1
+
+[Agent EnemyAgent 29ca21b545d462f7-d88bc4cae8830627]
+components=bdab3f1a39753fd8-28e83c6856bf0fe4 44609f8400ccf603-9d503df3b6c62a4d
 damping=0.9
-[Component SpriteComponent]
-position=0 0
-scale=1 1
+id=29ca21b545d462f7-d88bc4cae8830627
+moveSpeed=10
+name="Enemy"
+position=-8.24235 0.581075
 rotation=0
-name=New Sprite
-enabled=1
-textureData=../assets/sprites/BasicDude\BasicDude4.png
-[/Component]
-[Component ScriptComponent]
-position=0 0
 scale=1 1
-rotation=0
-name=New ScriptComponent
+
+[Component SpriteComponent bdab3f1a39753fd8-28e83c6856bf0fe4]
 enabled=1
-script=BasicRanged
-[/Component]
-[/Agent]
-systems 0
-[/Scene]
+id=bdab3f1a39753fd8-28e83c6856bf0fe4
+name="New Sprite"
+position=0 0
+rotation=0
+scale=1 1
+textureData=../assets/sprites/BasicDude/BasicDude4.png
+
+[Component ScriptComponent 44609f8400ccf603-9d503df3b6c62a4d]
+enabled=1
+id=44609f8400ccf603-9d503df3b6c62a4d
+name="New ScriptComponent"
+position=0 0
+rotation=0
+scale=1 1
+script=d3740f16a894bdf6-ede22df6236f5b12
+
+[BehaviourScript BasicRanged d3740f16a894bdf6-ede22df6236f5b12]
+id=d3740f16a894bdf6-ede22df6236f5b12

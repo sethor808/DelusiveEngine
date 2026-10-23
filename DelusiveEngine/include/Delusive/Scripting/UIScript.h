@@ -34,6 +34,8 @@ public:
 	//Block entry points - the registry still does the work, these only expose it
 	virtual void Serialize(DelusiveParser::DataBlock& out) const;
 	virtual void Deserialize(DelusiveParser::DataBlock& in);
+	//Emits this script's block - clone with DelusiveClone
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
 
 	virtual std::string GetType() const = 0;
 

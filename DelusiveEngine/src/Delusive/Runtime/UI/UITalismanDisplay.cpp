@@ -25,19 +25,6 @@ void UITalismanDisplay::LinkPlayer(PlayerAgent* _player) {
 	}
 }
 
-std::unique_ptr<UIElement> UITalismanDisplay::Clone() const {
-	auto copy = std::make_unique<UITalismanDisplay>(instance);
-	copy->SetPosition(position);
-	copy->SetName(name);
-	copy->SetEnabled(enabled);
-
-	for (const auto& child : children) {
-		copy->AddChild(std::move(child->Clone()));
-	}
-
-	return copy;
-}
-
 void UITalismanDisplay::RegisterProperties() {
 	UIElement::RegisterProperties();
 	registry->Register("leftOffset", &leftOffset);

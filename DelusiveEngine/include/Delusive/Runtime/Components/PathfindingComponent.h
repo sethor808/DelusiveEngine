@@ -6,13 +6,12 @@ public:
 	PathfindingComponent(DelusiveInstance&);
 
 	//Virtual function overrides
-	std::unique_ptr<Component> Clone() const override;
 	void DrawImGui() override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4& projection) const override {};
 
 	const char* GetType() const override {
-		return "PathfinderComponent";
+		return "PathfindingComponent";
 	}
 
 	//void Serialize(std::ofstream& out) const override;

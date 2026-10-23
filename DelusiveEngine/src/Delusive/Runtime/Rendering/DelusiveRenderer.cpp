@@ -122,6 +122,10 @@ GLuint DelusiveRenderer::GetTexture(const std::string& path) {
 	return textureManager->Load(path);
 }
 
+glm::ivec2 DelusiveRenderer::GetTextureSize(const std::string& path) {
+	return textureManager->GetSize(path);
+}
+
 Shader* DelusiveRenderer::GetDefaultShader() {
 	const std::string& shaderVert = DEFAULT_VERT;
 	const std::string& shaderFrag = DEFAULT_FRAG;

@@ -7,7 +7,6 @@ public:
 	UIImage(DelusiveInstance&);
 
 	void RegisterProperties() override;
-	std::unique_ptr<UIElement> Clone() const override;
 
 	void Update(float) override;
 	void DrawImGui() override;

@@ -1,7 +1,8 @@
 #pragma once
 #include <Delusive/Runtime/Talismans/Talisman.h>
 
-class BasicTalisman : public Talisman{
-	std::string GetType() override { return "Basic"; }
+class BasicTalisman : public Talisman {
+public:
+	const char* GetType() const override { return "BasicTalisman"; }
 
 };

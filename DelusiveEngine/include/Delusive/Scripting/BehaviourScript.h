@@ -21,9 +21,7 @@ public:
 
     void DrawImGui();
 	virtual void Update(float deltaTime);
-	virtual std::unique_ptr<BehaviourScript> Clone() const = 0;
-    virtual std::string GetType() = 0;
-    void CopyCore(const BehaviourScript*);
+    virtual std::string GetType() const = 0;
     virtual void RelocateReferences();
 
 	//Identity handles
@@ -43,6 +41,8 @@ public:
     void Serialize(std::ostream&) const;
     void Serialize(DelusiveParser::DataBlock&) const;
     void Deserialize(DelusiveParser::DataBlock&);
+    //Emits this script's block - clone with DelusiveClone
+    void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
 
     virtual void RegisterProperties();
 protected:

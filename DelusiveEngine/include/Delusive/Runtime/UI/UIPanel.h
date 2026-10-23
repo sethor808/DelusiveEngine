@@ -8,7 +8,6 @@ class Shader;
 class UIPanel : public UIElement {
 public:
     UIPanel(DelusiveInstance&);
-    std::unique_ptr<UIElement> Clone() const override;
 
     void SetTexture(GLuint texture);
     void SetShader(Shader* shader);
@@ -18,6 +17,7 @@ public:
     void HandleMouse(const glm::vec2&, bool) override {}
 
     const std::string GetType() const override;
+    void RegisterProperties() override;
 private:
     glm::vec4 color = { 0.1f, 0.1f, 0.1f, 0.85f };
 

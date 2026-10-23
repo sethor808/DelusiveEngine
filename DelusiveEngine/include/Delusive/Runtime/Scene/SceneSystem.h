@@ -43,7 +43,10 @@ public:
 	virtual void Serialize(DelusiveParser::DataBlock& out) const;
 	virtual void Deserialize(DelusiveParser::DataBlock& in);
 
-	virtual std::unique_ptr<SceneSystem> Clone() const = 0;
+	//Save then load in memory, see DelusiveClone
+	std::unique_ptr<SceneSystem> Clone() const;
+	//Emits this system then everything it owns, flat
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
 protected:
 	Scene* scene = nullptr;
     DelusiveInstance& instance;

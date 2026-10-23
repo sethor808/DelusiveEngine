@@ -1,15 +1,21 @@
 #include <Delusive/Runtime/UI/UIElement.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/UI/DelusiveUI.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <iostream>
+#include <sstream>
 
 UIElement::UIElement(DelusiveInstance& instance)
     : instance(instance), registry(std::make_unique<PropertyRegistry>()), id(UUID::GenerateRandom())
 {
-	RegisterProperties();
+	//Derived constructors call RegisterProperties - calling it here would
+	//dispatch to the base GetType(), which is pure virtual during base construction
 }
 
 UIElement::~UIElement() {
@@ -150,10 +156,65 @@ void UIElement::Deserialize(DelusiveParser::DataBlock& in) {
 	registry->Deserialize(in);
 	//Owned objects pull their recipes from the library, which is already populated
 	registry->Resolve(instance);
+
+	if (!SavesChildren()) return;
+
+	children.clear();
+
+	auto list = in.properties.find("children");
+	if (list == in.properties.end()) return;
+
+	std::istringstream ids(list->second);
+	std::string idText;
+
+	while (ids >> idText) {
+		UUID childID;
+		childID.FromString(idText);
+
+		const DelusiveParser::DataBlock* recipe = instance.delusiveLibrary.Find(childID);
+		if (!recipe) {
+			std::cerr << "[UIElement] Missing child recipe " << idText << " for " << name << std::endl;
+			continue;
+		}
+
+		std::unique_ptr<UIElement> child = DelusiveBuild<UIElement>(*recipe, instance);
+		if (!child) continue;
+
+		child->LinkCanvas(parentCanvas);
+		children.push_back(std::move(child));
+	}
 }
 
 void UIElement::Serialize(DelusiveParser::DataBlock& out) const {
 	registry->Serialize(out);
+
+	if (!SavesChildren()) return;
+
+	//Ownership is a UUID list - each child writes its own block
+	std::ostringstream ids;
+	for (const auto& child : children) {
+		if (child) ids << child->GetID().ToString() << " ";
+	}
+	out.properties["children"] = ids.str();
+}
+
+std::unique_ptr<UIElement> UIElement::Clone() const {
+	return DelusiveClone<UIElement>(*this, instance);
+}
+
+void UIElement::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
+	DelusiveParser::DataBlock self;
+	Serialize(self);
+	self.id = id;
+	out.push_back(std::move(self));
+
+	CollectOwned(out);
+
+	if (!SavesChildren()) return;
+
+	for (const auto& child : children) {
+		if (child) child->CollectBlocks(out);
+	}
 }
 
 void UIElement::CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const {

@@ -5,17 +5,12 @@ EnvironmentAgent::EnvironmentAgent(DelusiveInstance& instance)
 {
     SetName("New EnvironmentAgent");
 	SetScale({ 1.0f, 1.0f });
+
+    RegisterProperties();
 }
 
 std::string EnvironmentAgent::GetType() const{
     return "EnvironmentAgent";
-}
-
-std::unique_ptr<Agent> EnvironmentAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<EnvironmentAgent>(instance);
-    copy->name = GetName();
-    CloneBaseProperties(copy.get(), scene);
-    return copy;
 }
 
 void EnvironmentAgent::Update(float deltaTime) {

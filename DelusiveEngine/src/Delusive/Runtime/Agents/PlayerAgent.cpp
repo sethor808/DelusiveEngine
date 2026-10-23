@@ -3,6 +3,10 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Scene/Scene.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <iostream>
+#include <Delusive/Runtime/Collision/HitData.h>
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     : Agent(instance)
@@ -15,15 +19,25 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     for (int i = 0; i < numTalismans; ++i) {
         talismans.push_back(std::make_unique<BasicTalisman>());
     }
+
+    RegisterProperties();
+	RecalculateStats();
 }
 
 void PlayerAgent::LinkScene(Scene* scene) {
     sceneLink = scene;
     inventoryLink = sceneLink->GetInventoryLink();
+	LoadFromInventory();
 }
 
 std::string PlayerAgent::GetType() const{
     return "PlayerAgent";
+}
+
+void PlayerAgent::RegisterProperties() {
+	Agent::RegisterProperties();
+	registry->Register("weaponSlots", &weaponSlots);
+	registry->Register("swapCooldown", &swapCooldown);
 }
 
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
@@ -35,6 +49,11 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
         dodgeDir = input.moveDir;
     }
 
+	//Ticks during the lock are dropped, not queued, so a fast flick can't slide past a slot
+	if (input.swapDir != 0 && swapLockTimer <= 0.0f) {
+		SwapWeapon(input.swapDir);
+	}
+
     prevInput = input;
 }
 
@@ -42,6 +61,10 @@ void PlayerAgent::Update(float deltaTime) {
     if (CheckIfDead()) {
         //TODO: Die
     }
+
+	if (swapLockTimer > 0.0f) {
+		swapLockTimer -= deltaTime;
+	}
 
     // Input lock countdown
     if (inputLockTimer > 0.0f) {
@@ -96,6 +119,14 @@ void PlayerAgent::HandleMovement(float deltaTime) {
     }
 }
 
+void PlayerAgent::SwapWeapon(int dir) {
+	if (weaponSlots <= 1) return;
+
+	weaponIndex = (weaponIndex + dir + weaponSlots) % weaponSlots;
+	swapLockTimer = swapCooldown;
+	std::cout << "[PlayerAgent] Weapon slot " << weaponIndex << std::endl; //TODO: Equip the slot's weapon once weapons exist
+}
+
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
     dodging = true;
     dodgeTimer = modified.dodgeDuration;
@@ -119,17 +150,32 @@ void PlayerAgent::HandleDodge(float deltaTime) {
     }
 }
 
-void PlayerAgent::TakeDamage() {
-    for (auto& talisman : talismans) {
-        if (talisman->GetIsBroken()) {
-            continue;
-        }
+void PlayerAgent::HitEvent(const HitData& hit) {
+	Talisman* active = GetActiveTalisman();
+	if (!active) return;
 
-        if (talisman->TakeDamage()) {
-            //Activate consume passive here
-            talisman->OnConsume(); //TODO: Make this do something
-        }
-    }
+	for (auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->HitEvent(*this, hit);
+	}
+
+	//Talismans work as a stack: a hit only damages the first unbroken one
+	if (active->TakeDamage(hit.damage)) {
+		active->OnConsume(*this);
+		RecalculateStats();
+	}
+}
+
+void PlayerAgent::LandHitEvent(const HitData& hit) {
+	for (auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->LandHitEvent(*this, hit);
+	}
+}
+
+Talisman* PlayerAgent::GetActiveTalisman() const {
+	for (const auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) return talisman.get();
+	}
+	return nullptr;
 }
 
 bool PlayerAgent::CheckIfDead() {
@@ -148,23 +194,32 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
     inputLockTimer = 0.1f;
 }
 
-std::unique_ptr<Agent> PlayerAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<PlayerAgent>(instance);
-    CloneBaseProperties(copy.get(), scene);
-    return copy;
-}
-
 void PlayerAgent::TriggerInvul(float duration) {
 	invulTimer = duration; //TODO: Add more effects to make this really feel like an invul
 }
 
-void PlayerAgent::ResetStats() {
-    modified = base; //TODO: Reapply talisman effects after sync
+void PlayerAgent::RecalculateStats() {
+	modified = base;
+
+	for (const auto& talisman : talismans) {
+		if (!talisman->GetIsBroken()) talisman->ApplyPassive(modified);
+	}
+
+	if (Talisman* active = GetActiveTalisman()) active->ApplyWhileActive(modified);
 }
 
-void PlayerAgent::EquipTalisman(int index, Talisman* talisman) {
-    if (index < 0 || index >= static_cast<int>(talismans.size())) return;
-    
-    //TODO: Properly equip talisman
-	//inventory->EquipTalisman(index, talisman);
+void PlayerAgent::LoadFromInventory() {
+	if (!inventoryLink) return;
+
+	//Copies, so run damage never touches the inventory
+	std::vector<std::unique_ptr<Talisman>> loadout;
+	for (Talisman* equipped : inventoryLink->GetEquippedTalismans()) {
+		if (!equipped) continue;
+		auto talisman = DelusiveFactory<Talisman>::Create(equipped->GetType(), instance);
+		if (talisman) loadout.push_back(std::move(talisman));
+	}
+
+	//Empty keeps the defaults for scenes without an equip screen
+	if (!loadout.empty()) talismans = std::move(loadout);
+	RecalculateStats();
 }

@@ -30,6 +30,19 @@ DelusiveParser::DataBlock DelusiveParser::ParseHeader(const std::string& line) {
     header >> block.category >> block.type >> idText;
     if (!idText.empty()) block.id.FromString(idText);
 
+    //Untyped blocks like [Scene <id>] put the id where the type would be
+    bool looksLikeID = block.type.find('-') != std::string::npos &&
+        block.type.find_first_not_of("0123456789abcdefABCDEF-") == std::string::npos;
+
+    if (idText.empty() && looksLikeID) {
+        UUID id;
+        id.FromString(block.type);
+        if (id.IsValid()) {
+            block.id = id;
+            block.type.clear();
+        }
+    }
+
     return block;
 }
 

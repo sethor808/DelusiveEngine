@@ -1,7 +1,6 @@
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
-#include <Delusive/Runtime/Core/DelusiveParser.h>
-#include <fstream>
-#include <iostream>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <algorithm>
 
 DelusiveUIRegistry::DelusiveUIRegistry(DelusiveInstance& instance)
     : instance(instance), owner(nullptr)
@@ -9,36 +8,56 @@ DelusiveUIRegistry::DelusiveUIRegistry(DelusiveInstance& instance)
 
 }
 
-UICanvas* DelusiveUIRegistry::Get(const std::string& name) const{
-	auto canv = canvases.find(name);
-	if (canv != canvases.end()) {
-		return canv->second.get();
+void DelusiveUIRegistry::LoadAll() {
+	canvases.clear();
+
+	for (const DelusiveParser::DataBlock* block : instance.delusiveLibrary.List("UICanvas")) {
+		Register(UICanvas::FromRecipe(*block, instance));
+	}
+}
+
+bool DelusiveUIRegistry::SaveAll() {
+	bool success = true;
+
+	for (auto& [id, canvas] : canvases) {
+		if (!canvas->Save()) success = false;
+	}
+
+	return success;
+}
+
+UICanvas* DelusiveUIRegistry::Get(const UUID& id) const {
+	auto canv = canvases.find(id);
+	return canv == canvases.end() ? nullptr : canv->second.get();
+}
+
+UICanvas* DelusiveUIRegistry::Get(const std::string& name) const {
+	for (const auto& [id, canvas] : canvases) {
+		if (canvas->GetName() == name) return canvas.get();
 	}
 	return nullptr;
 }
 
-std::unordered_map<std::string, UICanvas*> DelusiveUIRegistry::GetAll() const {
-	std::unordered_map<std::string, UICanvas*> allCanvases;
-	for (const auto& key : canvases) {
-		allCanvases[key.first] = key.second.get();
-	}
-	return allCanvases;
-}
-
-std::vector<std::string> DelusiveUIRegistry::GetAllNames() const {
-	std::vector<std::string> names;
-	names.reserve(canvases.size()); // efficiency
-	for (const auto& [name, _] : canvases) {
-		names.push_back(name);
-	}
-	return names;
-}
-
 bool DelusiveUIRegistry::Exists(const std::string& name) const {
-	return canvases.contains(name);
+	return Get(name) != nullptr;
+}
+
+std::vector<UICanvas*> DelusiveUIRegistry::List() const {
+	std::vector<UICanvas*> list;
+	list.reserve(canvases.size());
+
+	for (const auto& [id, canvas] : canvases) {
+		list.push_back(canvas.get());
+	}
+
+	std::sort(list.begin(), list.end(), [](UICanvas* a, UICanvas* b) { return a->GetName() < b->GetName(); });
+	return list;
 }
 
 void DelusiveUIRegistry::Register(std::unique_ptr<UICanvas> canvas) {
-	std::string name = canvas->GetName();
-	canvases[name] = std::move(canvas);
+	if (!canvas) return;
+	if (!canvas->GetID().IsValid()) canvas->SetID(UUID::GenerateRandom());
+
+	UUID id = canvas->GetID();
+	canvases[id] = std::move(canvas);
 }

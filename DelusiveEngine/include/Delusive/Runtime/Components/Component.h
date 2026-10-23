@@ -2,7 +2,6 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Core/DelusiveParser.h>
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
-#include <Delusive/Runtime/Animation/AnimatorData.h>
 #include <Delusive/Runtime/Core/UUID.h>
 #include <glm/glm.hpp>
 #include <string>
@@ -24,14 +23,14 @@ public:
 	Component& operator=(Component&&) noexcept = default;
 
 	virtual ~Component();
-	virtual std::unique_ptr<Component> Clone() const = 0;
+	//Save then load in memory, see DelusiveClone
+	std::unique_ptr<Component> Clone() const;
 
 	virtual void RegisterProperties();
 
     virtual void Update(float) {};
 	virtual void Draw(const glm::mat4& projection) const {};
 	virtual void DrawImGui();
-	virtual bool DrawAnimatorImGui(ComponentMod&) { return false; }
 	virtual void SetEditorMode(bool editor) { editorMode = editor; }
 	virtual void SetLocalTransform(const glm::vec2&, const glm::vec2&, float) {}
 	
@@ -60,6 +59,8 @@ public:
 	virtual void Deserialize(DelusiveParser::DataBlock& in);
 	//Appends this component's owned objects as their own blocks
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
+	//Emits this component then everything it owns, flat
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
 protected:
 	DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;

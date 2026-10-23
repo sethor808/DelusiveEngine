@@ -22,13 +22,6 @@ std::string EnemyAgent::GetType() const{
     return "EnemyAgent";
 }
 
-std::unique_ptr<Agent> EnemyAgent::Clone(Scene* scene) const {
-    auto copy = std::make_unique<EnemyAgent>(instance);
-    copy->name = GetName();
-    CloneBaseProperties(copy.get(), scene);
-    return copy;
-}
-
 void EnemyAgent::Update(float deltaTime) {
     //if (logicScript) {
       //  logicScript->Update(deltaTime);
@@ -64,10 +57,6 @@ void EnemyAgent::DrawImGui() {
         SetScript(names[currentIndex]);
     }
     */
-}
-
-void EnemyAgent::OnHit() {
-
 }
 
 void EnemyAgent::SetTarget(Agent* target) {

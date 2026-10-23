@@ -5,6 +5,7 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <type_traits>
 #include <glm/glm.hpp>
@@ -118,6 +119,9 @@ public:
             else if constexpr (is_delusive_link_v<T>) { //[CLAUDE: trait swap]
                 out << value->id.ToString();
             }
+            else if constexpr (std::is_same_v<T, DelusiveUILink>) {
+                out << value->id.ToString();
+            }
             //==== [ZONE: owned object — writes the recipe id, the object emits its own block] ====
             else if constexpr (is_delusive_object_v<T>) {
                 out << value->id.ToString();
@@ -192,6 +196,13 @@ public:
 
                 value->id.FromString(uuidStr);
             }
+            else if constexpr (std::is_same_v<T, DelusiveUILink>) {
+                std::string uuidStr;
+                in >> uuidStr;
+
+                value->id.FromString(uuidStr);
+                value->dirty = true;
+            }
             //==== [ZONE: owned object — id only, construction happens in the resolve step] ====
             else if constexpr (is_delusive_object_v<T>) {
                 std::string uuidStr;
@@ -221,21 +232,8 @@ public:
                 return;
             }
 
-            std::unique_ptr<Target> built = DelusiveFactory<Target>::Create(recipe->type, instance);
-            if (!built) {
-                std::cerr << "[Resolve] Factory rejected type '" << recipe->type
-                    << "' for " << name << std::endl;
-                return;
-            }
-
-            //Not every owned type exposes these yet - call them where they exist
-            if constexpr (requires(Target & t, UUID id) { t.SetID(id); }) {
-                built->SetID(value->id);
-            }
-
-            if constexpr (requires(Target & t, DelusiveParser::DataBlock & b) { t.Deserialize(b); }) {
-                built->Deserialize(const_cast<DelusiveParser::DataBlock&>(*recipe));
-            }
+            std::unique_ptr<Target> built = DelusiveBuild<Target>(*recipe, instance);
+            if (!built) return;
 
             value->set(std::move(built));
         }
@@ -248,7 +246,11 @@ public:
 
             if (!value->object) return;
 
-            if constexpr (requires(const Target & t, DelusiveParser::DataBlock & b) { t.Serialize(b); }) {
+            //Objects that own others (an element's children) emit their whole tree
+            if constexpr (requires(const Target & t, std::vector<DelusiveParser::DataBlock>&b) { t.CollectBlocks(b); }) {
+                value->object->CollectBlocks(out);
+            }
+            else if constexpr (requires(const Target & t, DelusiveParser::DataBlock & b) { t.Serialize(b); }) {
                 DelusiveParser::DataBlock block;
                 value->object->Serialize(block);
                 block.id = value->id;

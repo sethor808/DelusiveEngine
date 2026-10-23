@@ -1,4 +1,5 @@
 #include <Delusive/Runtime/Scene/SceneSystem.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <memory>
@@ -24,6 +25,19 @@ void SceneSystem::RegisterProperties() {
 
     registry->Register("id", &id);
     registry->Register("name", &name);
+}
+
+std::unique_ptr<SceneSystem> SceneSystem::Clone() const {
+    return DelusiveClone<SceneSystem>(*this, instance);
+}
+
+void SceneSystem::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
+    DelusiveParser::DataBlock self;
+    Serialize(self);
+    self.id = id;
+    out.push_back(std::move(self));
+
+    registry->Collect(out);
 }
 
 void SceneSystem::Serialize(DelusiveParser::DataBlock& out) const {

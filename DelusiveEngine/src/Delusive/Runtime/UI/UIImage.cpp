@@ -28,23 +28,6 @@ void UIImage::RegisterProperties() {
 	registry->Register("textureData", &textureData);
 }
 
-std::unique_ptr<UIElement> UIImage::Clone() const{
-	auto copy = std::make_unique<UIImage>(instance);
-	copy->SetPosition(position);
-	copy->SetSize(size);
-	copy->SetName(name);
-	copy->SetEnabled(enabled);
-	copy->SetPosition(position);
-	copy->SetSize(size);
-	copy->SetTexturePath(textureData.texturePath);
-
-	for (const auto& child : children) {
-		copy->AddChild(std::move(child->Clone()));
-	}
-
-	return copy;
-}
-
 void UIImage::Update(float deltaTime) {
 	UIElement::Update(deltaTime);
 }

@@ -8,10 +8,10 @@ public:
 	EnvironmentAgent() = delete;
 
 	//Overrides
-	std::unique_ptr<Agent> Clone(Scene*) const override;
 	void Update(float deltaTime) override;
 	void Draw(const glm::mat4&) const override;
 	std::string GetType() const override;
+	bool IsStatic() const override { return true; }
 
 private:
 	glm::vec2 velocity = { 0.0f, 0.0f };

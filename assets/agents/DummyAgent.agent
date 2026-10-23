@@ -1,14 +1,16 @@
-[Agent PlayerAgent]
-name NewAgent
-position 0 0
-scale 1 1
-rotation 0
-[Component SpriteComponent]
-position 0 0
-scale 1 1
-rotation 0
-name New Sprite
-enabled 1
-textureData ../assets/sprites/star.jpg
-[/Component]
-[/Agent]
+[Agent PlayerAgent d5d4f254019d38b5-4a6c6553ac5536c9]
+components=f46f030bd5852d58-48bb2da61b6b41a0
+id=d5d4f254019d38b5-4a6c6553ac5536c9
+name="NewAgent"
+position=0 0
+rotation=0
+scale=1 1
+
+[Component SpriteComponent f46f030bd5852d58-48bb2da61b6b41a0]
+enabled=1
+id=f46f030bd5852d58-48bb2da61b6b41a0
+name="New Sprite"
+position=0 0
+rotation=0
+scale=1 1
+textureData=../assets/sprites/star.jpg

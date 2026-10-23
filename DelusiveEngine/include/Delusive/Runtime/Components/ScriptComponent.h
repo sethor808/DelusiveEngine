@@ -22,7 +22,6 @@ public:
 
     void SetOwner(Agent*) override;
     const char* GetType() const override { return "ScriptComponent"; }
-    std::unique_ptr<Component> Clone() const override;
 
     void SetTarget();
     void SetTarget(Agent*);

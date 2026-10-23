@@ -10,11 +10,13 @@ public:
 	UIRepeatContainer() = delete;
 
 	const std::string GetType() const override { return "UIRepeatContainer"; }
-	std::unique_ptr<UIElement> Clone() const override;
 
 	void RegisterProperties() override;
 	void Draw(const glm::mat4&) override;
 	void DrawImGui() override;
+
+	//Children are rebuilt from the prototype, so only the prototype is saved
+	bool SavesChildren() const override { return false; }
 
 	void SetPrototype(std::unique_ptr<UIElement>);
 

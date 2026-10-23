@@ -1,8 +1,12 @@
 #include <Delusive/Runtime/Components/Component.h>
+#include <Delusive/Runtime/Core/DelusiveClone.h>
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/imgui.h>
@@ -12,15 +16,24 @@ Component::Component(DelusiveInstance& instance)
     :   instance(instance),
         registry(std::make_unique<PropertyRegistry>()), transform(std::make_unique<TransformComponent>())
 {
-    
-    bool initialized = false;
-    if (!initialized) {
-        RegisterProperties();
-        initialized = true;
-    }
+    //Derived constructors call RegisterProperties - calling it here would
+    //dispatch to the base GetType(), which is pure virtual during base construction
 }
 
 Component::~Component() = default;
+
+std::unique_ptr<Component> Component::Clone() const {
+    return DelusiveClone<Component>(*this, instance);
+}
+
+void Component::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const {
+    DelusiveParser::DataBlock self;
+    Serialize(self);
+    self.id = id;
+    out.push_back(std::move(self));
+
+    CollectOwned(out);
+}
 
 void Component::RegisterProperties() {
     registry->category = "Component";

@@ -3,6 +3,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Player/PlayerStats.h>
 #include <Delusive/Runtime/Player/PlayerInputState.h>
+#include <Delusive/Runtime/Talismans/Talisman.h> //Owned by unique_ptr, so it must be complete
 
 class Talisman;
 class DelusiveInventory;
@@ -11,24 +12,29 @@ class PlayerAgent : public Agent {
 public:
 	explicit PlayerAgent(DelusiveInstance&);
 	PlayerAgent() = delete;
-	std::unique_ptr<Agent> Clone(Scene*) const override;
 
     void LinkScene(Scene* scene) override;
 
 	void Update(float deltaTime) override;
 	void HandleInput(const PlayerInputState&);
 	std::string GetType() const override;
+	void RegisterProperties() override;
 
 	void ApplyKnockback(const glm::vec2&, float);
 
-	void TakeDamage() override;
+	void HitEvent(const HitData&) override;
+	void LandHitEvent(const HitData&) override;
 	const std::vector<std::unique_ptr<Talisman>>& GetTalismans() { return talismans; }
+	//First unbroken talisman: the one the next hit damages
+	Talisman* GetActiveTalisman() const;
 
 	void TriggerInvul(float);
-	void ResetStats();
+	//Base stats plus talisman hooks; call whenever the stack changes
+	void RecalculateStats();
 
 	//InventoryAccess
-	void EquipTalisman(int, Talisman*);
+	//Full HP copies of the equipped talismans
+	void LoadFromInventory();
 	DelusiveInventory* GetInventory() { return inventoryLink; }
 
 private:
@@ -51,6 +57,12 @@ private:
 	float dodgeBufferTimer = 0.0f;
 	float invulTimer = 0.0f;
 
+	//Weapon slots: a swap locks further swaps for swapCooldown so one wheel flick moves one slot
+	int weaponIndex = 0;
+	int weaponSlots = 2;
+	float swapCooldown = 0.12f;
+	float swapLockTimer = 0.0f;
+
 	//For input control tracking
 	PlayerInputState prevInput;
 
@@ -64,4 +76,5 @@ private:
 	void StartDodge(const glm::vec2&);
 	void HandleDodge(float);
 	void HandleMovement(float deltaTime);
+	void SwapWeapon(int);
 };

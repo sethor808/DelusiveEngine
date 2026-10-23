@@ -28,13 +28,3 @@ void BasicFollow::Update(float deltaTime) {
         }
     }
 }
-
-std::unique_ptr<BehaviourScript> BasicFollow::Clone() const {
-    auto copy = std::make_unique<BasicFollow>();
-    //Do custom copy
-
-    //Do basic copy - INCLUDE IN ALL COPY CALLS UNLESS SPECIFICALLY NEEDED
-    copy->CopyCore(this);
-
-    return copy;
-}

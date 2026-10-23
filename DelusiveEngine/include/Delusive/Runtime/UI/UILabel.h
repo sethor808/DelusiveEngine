@@ -11,7 +11,6 @@ public:
 	UILabel(DelusiveInstance&);
 
 	void RegisterProperties() override;
-	std::unique_ptr<UIElement> Clone() const override;
 
 	void Init();
 	void LoadFont(const std::string&, float);
@@ -32,6 +31,7 @@ public:
 	float GetFontSize() const { return fontData.fontSize; }
 
 	const std::string GetType() const override;
+	void Deserialize(DelusiveParser::DataBlock& in) override;
 private:
 	std::string text;
 	glm::vec4 color;

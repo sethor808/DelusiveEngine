@@ -30,7 +30,26 @@ public:
 
 	void RegisterProperties();
 
+	//Save then load in memory, see DelusiveClone
 	std::unique_ptr<UICanvas> Clone() const;
+
+	//Identity handles
+	UUID GetID() const { return id; }
+	void SetID(UUID newID) { id = newID; }
+
+	//Block entry points - the canvas block lists its top level elements by UUID
+	void Serialize(DelusiveParser::DataBlock& out) const;
+	void Deserialize(DelusiveParser::DataBlock& in);
+	//Emits the canvas plus every element tree it owns, flat
+	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
+
+	//Canvas files hold one canvas. Loading re-reads the file; saving to another
+	//canvas's file gives the copy fresh ids (remapped = reload it).
+	static std::unique_ptr<UICanvas> FromRecipe(const DelusiveParser::DataBlock&, DelusiveInstance&);
+	static std::unique_ptr<UICanvas> LoadFromFile(const std::string& path, DelusiveInstance&);
+	bool SaveToFile(const std::string& path, bool* remapped = nullptr);
+	//Saves back to the file this canvas came from; a new canvas goes to CANVAS_PATH/<name>
+	bool Save(bool* remapped = nullptr);
 
 	void LinkManager(UIManager* manager) { uiManager = manager; }
 	void DelinkManager() { uiManager = nullptr; }
@@ -55,6 +74,7 @@ private:
 	UIManager* uiManager = nullptr;
     DelusiveInstance& instance;
 	std::unique_ptr<PropertyRegistry> registry;
+	UUID id;
 	std::string name;
 	bool active = false;
 

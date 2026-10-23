@@ -13,6 +13,8 @@ namespace DelusiveParser {
         UUID id;
 
         std::unordered_map<std::string, std::string> properties;
+
+        bool operator==(const DataBlock&) const = default;
     };
 
     DataBlock ParseHeader(const std::string&);
