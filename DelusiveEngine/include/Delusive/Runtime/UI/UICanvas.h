@@ -53,6 +53,7 @@ public:
 
 	void LinkManager(UIManager* manager) { uiManager = manager; }
 	void DelinkManager() { uiManager = nullptr; }
+	UIManager* GetManager() const { return uiManager; }
     ScriptManager& GetScriptManager() const;
 	PlayerAgent* FetchPlayer() const;
 	void Update(float);

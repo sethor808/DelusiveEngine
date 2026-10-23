@@ -5,6 +5,7 @@
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -186,6 +187,7 @@ T* Scene::GetSystem() {
 	}
 	return nullptr;
 }
+template UIManager* Scene::GetSystem<UIManager>();
 
 void Scene::Update(float deltaTime) {
 	if (!camera) {
@@ -204,6 +206,10 @@ void Scene::Update(float deltaTime) {
 	for (auto& sys : systems) {
 		sys->Update(deltaTime);
 	}
+
+	//A pause menu keeps the UI running but stops the world
+	UIManager* ui = GetSystem<UIManager>();
+	if (ui && ui->IsPaused()) return;
 
 	for (auto& agent : agents) {
 		agent->Update(deltaTime);
@@ -263,12 +269,16 @@ void Scene::HandleInput(const PlayerInputState& input) {
 	for (auto& agent : agents) {
 		agent->HandleInput(input);
 	}
+
+	if (UIManager* ui = GetSystem<UIManager>()) ui->HandleInput(input);
 }
 
-void Scene::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
+void Scene::HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool mouseDown) {
 	for (auto& agent : agents) {
 		agent->HandleMouse(worldMouse, mouseDown);
 	}
+
+	if (UIManager* ui = GetSystem<UIManager>()) ui->HandleMouse(uiMouse, mouseDown);
 }
 
 void Scene::Clear() {

@@ -24,6 +24,10 @@ public:
 	void Deserialize(DelusiveParser::DataBlock& in) override;
 private:
 	std::string label = "";
+	//UI state actions on click, applied pop, then goto, then push
+	std::string gotoState;
+	std::string pushState;
+	bool popState = false;
 
 	bool wasDown = false;
 	std::function<void()> onClick;
