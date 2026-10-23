@@ -265,20 +265,25 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 	//Renderer::EndUIRenderPass();
 }
 
+//UI goes first: an open menu keeps clicks and keys from reaching the game
 void Scene::HandleInput(const PlayerInputState& input) {
+	UIManager* ui = GetSystem<UIManager>();
+	if (ui) ui->HandleInput(input);
+	if (ui && ui->CapturesInput()) return;
+
 	for (auto& agent : agents) {
 		agent->HandleInput(input);
 	}
-
-	if (UIManager* ui = GetSystem<UIManager>()) ui->HandleInput(input);
 }
 
 void Scene::HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool mouseDown) {
+	UIManager* ui = GetSystem<UIManager>();
+	if (ui) ui->HandleMouse(uiMouse, mouseDown);
+	if (ui && ui->CapturesInput()) return;
+
 	for (auto& agent : agents) {
 		agent->HandleMouse(worldMouse, mouseDown);
 	}
-
-	if (UIManager* ui = GetSystem<UIManager>()) ui->HandleMouse(uiMouse, mouseDown);
 }
 
 void Scene::Clear() {

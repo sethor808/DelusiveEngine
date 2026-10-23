@@ -43,6 +43,9 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	// Hierarchy
 	if (ImGui::BeginChild("UIHierarchy", ImVec2(ImGui::GetContentRegionAvail().x * 0.25f, 0), true)) {
 		ImGui::Text("%s", editingCanvas->GetName().c_str());
+		bool captures = editingCanvas->CapturesInput();
+		if (ImGui::Checkbox("Captures input", &captures)) editingCanvas->SetCapturesInput(captures);
+		ImGui::SetItemTooltip("Menus take clicks and keys from the game; leave off for HUDs");
 
 		if (ImGui::BeginPopupContextWindow("CanvasRightClick", ImGuiPopupFlags_MouseButtonRight)) {
 			std::string type = DelusiveUI::DrawUIElementAddMenu();

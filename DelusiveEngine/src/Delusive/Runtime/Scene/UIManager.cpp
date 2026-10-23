@@ -197,11 +197,11 @@ void UIManager::SetStateCanvases(const std::string& stateName, const std::vector
 	SyncStates();
 }
 
-std::vector<UICanvas*> UIManager::LinkCanvases(bool topOnly) {
+std::vector<UICanvas*> UIManager::LinkCanvases() {
 	std::vector<UICanvas*> canvases;
 
-	for (size_t i = topOnly && !stack.empty() ? stack.size() - 1 : 0; i < stack.size(); ++i) {
-		for (UICanvas* canvas : states[stack[i]].canvases) {
+	for (int index : stack) {
+		for (UICanvas* canvas : states[index].canvases) {
 			canvas->LinkManager(this);
 			canvases.push_back(canvas);
 		}
@@ -210,16 +210,40 @@ std::vector<UICanvas*> UIManager::LinkCanvases(bool topOnly) {
 	return canvases;
 }
 
+std::vector<UICanvas*> UIManager::LinkInputCanvases() {
+	std::vector<UICanvas*> canvases;
+
+	//Display-only canvases (a HUD) let input fall through to the states below
+	for (auto index = stack.rbegin(); index != stack.rend() && canvases.empty(); ++index) {
+		for (UICanvas* canvas : states[*index].canvases) {
+			if (!canvas->CapturesInput()) continue;
+			canvas->LinkManager(this);
+			canvases.push_back(canvas);
+		}
+	}
+
+	return canvases;
+}
+
+bool UIManager::CapturesInput() const {
+	for (int index : stack) {
+		for (UICanvas* canvas : states[index].canvases) {
+			if (canvas->CapturesInput()) return true;
+		}
+	}
+	return false;
+}
+
 #pragma endregion
 
 void UIManager::Update(float deltaTime) {
-	for (UICanvas* canvas : LinkCanvases(false)) {
+	for (UICanvas* canvas : LinkCanvases()) {
 		canvas->Update(deltaTime);
 	}
 }
 
 void UIManager::Draw(const glm::mat4& projection) {
-	for (UICanvas* canvas : LinkCanvases(false)) {
+	for (UICanvas* canvas : LinkCanvases()) {
 		canvas->Draw(projection);
 	}
 }
@@ -231,9 +255,9 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 	}
 
 	const std::vector<int> before = stack;
-	for (UICanvas* canvas : LinkCanvases(true)) {
+	for (UICanvas* canvas : LinkInputCanvases()) {
 		canvas->HandleMouse(mousePos, mouseDown);
-		//A button changed the stack - the old top is done
+		//A button changed the stack - the old canvases are done
 		if (stack != before) return;
 	}
 }
@@ -259,7 +283,7 @@ void UIManager::HandleInput(const PlayerInputState& input) {
 		}
 	}
 
-	for (UICanvas* canvas : LinkCanvases(true)) {
+	for (UICanvas* canvas : LinkInputCanvases()) {
 		canvas->HandleInput(input);
 	}
 }

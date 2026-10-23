@@ -9,7 +9,8 @@ class UICanvas;
 class DelusiveUIRegistry;
 
 //UI states form a stack: a base state with overlays pushed on top (pause, equip).
-//Every stacked state is drawn bottom first; only the top one takes input.
+//Every stacked state is drawn bottom first. Input goes to the capturing canvases of the
+//highest state that has any; display-only canvases never take it.
 class UIManager : public SceneSystem {
 public:
 	UIManager(DelusiveInstance&);
@@ -33,6 +34,8 @@ public:
 	const std::string& GetState() const;
 	//True while any stacked state pauses the game
 	bool IsPaused() const;
+	//True while a stacked canvas captures input - the game does not get it then
+	bool CapturesInput() const;
 	//Adds the state or replaces its canvases
 	void SetStateCanvases(const std::string&, const std::vector<UICanvas*>&);
 
@@ -73,7 +76,8 @@ private:
 	void SyncStates();
 	//Marks stacked canvases active, the rest inactive, after the stack changes
 	void StackChanged();
-	//Canvases of every stacked state, or only the top one, linked to this manager
-	std::vector<UICanvas*> LinkCanvases(bool topOnly);
+	//Canvases of every stacked state, linked to this manager
+	std::vector<UICanvas*> LinkCanvases();
+	std::vector<UICanvas*> LinkInputCanvases();
 	void DrawStateImGui(UIState&, DelusiveUIRegistry&);
 };
