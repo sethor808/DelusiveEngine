@@ -60,7 +60,7 @@ std::vector<std::string> EngineUI::LoadSceneList() {
         break;
     }
 
-    //A missing folder (fresh clone has no animations yet) just lists nothing
+    //Modes without an asset folder (UI Builder, Game View) just list nothing
     std::error_code ec;
     for (const auto& entry : std::filesystem::directory_iterator(path, ec)) {
         if (entry.is_regular_file()) {
