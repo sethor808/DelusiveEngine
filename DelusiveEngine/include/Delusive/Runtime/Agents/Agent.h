@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include <type_traits>
 #include <string>
 #include <fstream>
