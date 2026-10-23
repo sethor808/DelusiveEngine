@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -107,6 +108,15 @@ namespace {
         return static_cast<bool>(out);
     }
 
+    //First run on a fresh clone - folders with no tracked files yet are missing
+    void CreateAssetFolders() {
+        for (const char* folder : { SCENE_PATH, AGENT_PATH, ANIM_PATH, CANVAS_PATH, SPRITE_FOLDER }) {
+            std::error_code ec;
+            std::filesystem::create_directories(folder, ec);
+            if (ec) std::cerr << "[DelusiveEngine] Failed to create " << folder << ": " << ec.message() << "\n";
+        }
+    }
+
     bool ParseEditorMode(const std::string& name, EditorMode& mode) {
         if (name == "scene")    { mode = EditorMode::SceneEditor; return true; }
         if (name == "agent")    { mode = EditorMode::AgentEditor; return true; }
@@ -185,6 +195,8 @@ namespace DelusiveEngine {
             std::cerr << "glewInit failed: " << glewGetErrorString(glewStatus) << "\n";
             return -1;
         }
+
+        CreateAssetFolders();
 
         DelusiveRenderer renderer;
         renderer.Init();
@@ -277,6 +289,8 @@ namespace DelusiveEngine {
 
             PlayerInputState inputState;
             const bool* keys = SDL_GetKeyboardState(nullptr);
+            //Typing in an editor field must not toggle game UI
+            inputState.keys = io.WantCaptureKeyboard ? nullptr : keys;
             inputState.moveDir.y += keys[SDL_SCANCODE_W];
             inputState.moveDir.y -= keys[SDL_SCANCODE_S];
             inputState.moveDir.x += keys[SDL_SCANCODE_D];
@@ -333,10 +347,12 @@ namespace DelusiveEngine {
             glm::mat4 view = glm::inverse(cam->GetTransform().ToMatrix());
             renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);
+            //UI space: centred on the window, y up, in element units
+            glm::vec2 uiMouse = glm::vec2(mouseX - width / 2.0f, height / 2.0f - mouseY) / DELUSIVE_PIXEL_SCALE;
 
             //In the editor the mode being shown owns the mouse until Play
             if (!context.editorMode || game.IsPlaying())
-                game.HandleMouse(worldMouse, mouseState & SDL_BUTTON_LEFT);
+                game.HandleMouse(worldMouse, uiMouse, mouseState & SDL_BUTTON_LEFT);
             game.Draw(colliderRenderer, projection);
 
             if (context.editorMode) {

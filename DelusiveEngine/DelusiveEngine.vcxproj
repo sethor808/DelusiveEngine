@@ -213,7 +213,6 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UIPanel.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp" />
     <ClCompile Include="src\Delusive\Runtime\UI\UIScriptContainer.cpp" />
-    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Delusive\Internal\DelusiveEngine.h" />
@@ -292,7 +291,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIRepeatContainer.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIScriptContainer.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanDisplay.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveUtils.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\PropertyDraw.h" />

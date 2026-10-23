@@ -20,6 +20,7 @@ public:
 
 	void SetText(const std::string& newText) { text = newText; }
 	const std::string& GetText() const { return text; }
+	void ApplyBinding(const UIBindItem&) override;
 
 	void SetPosition(const glm::vec2& pos) { position = pos; }
 	glm::vec2 GetPosition() const { return position; }
@@ -32,8 +33,11 @@ public:
 
 	const std::string GetType() const override;
 	void Deserialize(DelusiveParser::DataBlock& in) override;
+protected:
+	void DrawBindingImGui() override;
 private:
 	std::string text;
+	std::string bindText;
 	glm::vec4 color;
 
 	DelusiveFont fontData;

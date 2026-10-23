@@ -12,4 +12,7 @@ struct PlayerInputState {
 
     bool lightAttackHeld = false;
     bool heavyAttackHeld = false;
+
+    //Raw SDL keyboard state indexed by scancode, for bindings like UI state keys
+    const bool* keys = nullptr;
 };

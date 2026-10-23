@@ -33,6 +33,21 @@ void UILabel::RegisterProperties() {
 	registry->Register("font", &fontData);
 	registry->Register("text", &text);
 	registry->Register("color", &color);
+	registry->Register("bindText", &bindText);
+	registry->Hide("bindText"); //Drawn in the Data binding section
+}
+
+void UILabel::DrawBindingImGui() {
+	UIElement::DrawBindingImGui();
+	DrawBindField("Text from", bindText, "Shows the field's value as this label's text. Leave empty to keep your own.");
+}
+
+void UILabel::ApplyBinding(const UIBindItem& item) {
+	if (const std::string* value = DelusiveUI::FetchBindField(item, bindText)) {
+		text = *value;
+	}
+
+	UIElement::ApplyBinding(item);
 }
 
 void UILabel::LoadFont(const std::string& ttfPath, float pixelHeight) {

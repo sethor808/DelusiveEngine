@@ -8,6 +8,7 @@
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <imgui/imgui.h>
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -26,6 +27,7 @@ void UICanvas::RegisterProperties()
     registry->category = "UICanvas";
 	registry->Register("id", &id);
 	registry->Register("name", &name);
+	registry->Register("capturesInput", &capturesInput);
 }
 
 #pragma region File IO
@@ -186,6 +188,21 @@ void UICanvas::AddElement(std::unique_ptr<UIElement> element) {
     idManager.Register(element.get(), id);
 
 	elements.push_back(std::move(element));
+}
+
+bool UICanvas::RemoveElement(UIElement* target) {
+	auto found = std::find_if(elements.begin(), elements.end(),
+		[target](const std::unique_ptr<UIElement>& element) { return element.get() == target; });
+	if (found == elements.end()) return false;
+
+	elements.erase(found);
+	return true;
+}
+
+void UICanvas::NotifyEdited() {
+	for (auto& element : elements) {
+		element->NotifyEdited();
+	}
 }
 
 PlayerAgent* UICanvas::FetchPlayer() const {

@@ -1,235 +1,389 @@
 #include <Delusive/Runtime/Scene/UIManager.h>
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
+#include <SDL3/SDL_keyboard.h>
 #include <algorithm>
 #include <iostream>
 #include <imgui/imgui.h>
-#include <fstream>
 #include <sstream>
 
 UIManager::UIManager(DelusiveInstance& instance)
-	: SceneSystem(instance), uiRegistry(instance)
+	: SceneSystem(instance)
 {
 	name = "NewUIManager";
-	activeCanvas = nullptr;
-    uiRegistry.LinkManager(this);
 	RegisterProperties();
 }
 
 UIManager::~UIManager() {
-    if (activeCanvas) {
-		activeCanvas->DelinkManager();
-    }
+	//Canvases outlive the scene, so they must not keep pointing here
+	for (UIState& state : states) {
+		for (UICanvas* canvas : state.canvases) {
+			if (canvas->GetManager() == this) canvas->DelinkManager();
+		}
+	}
 }
 
 void UIManager::Init() {
-    //Runs after Deserialize, so the canvas ids are already loaded
-    uiRegistry.LoadAll();
-    ResolveCanvases();
-}
-
-void UIManager::ResolveCanvases() {
-    canvases.clear();
-    activeCanvas = nullptr;
-
-    for (const std::string& idText : canvasIDs) {
-        UUID canvasID;
-        canvasID.FromString(idText);
-
-        if (UICanvas* canvas = uiRegistry.Get(canvasID)) {
-            canvases.push_back(canvas);
-        }
-        else {
-            std::cerr << "[UIManager] Missing canvas " << idText << std::endl;
-        }
-    }
-
-    if (UICanvas* canvas = uiRegistry.Get(activeCanvasID)) {
-        ActivateCanvas(canvas);
-    }
-}
-
-void UIManager::SyncCanvasIDs() {
-    canvasIDs.clear();
-    for (UICanvas* canvas : canvases) {
-        if (canvas) canvasIDs.push_back(canvas->GetID().ToString());
-    }
-    activeCanvasID = activeCanvas ? activeCanvas->GetID() : UUID();
+	//Runs after Deserialize, so the state lists are already loaded
+	ResolveStates();
 }
 
 void UIManager::LinkScene(Scene* _scene) {
-    scene = _scene;
+	scene = _scene;
 }
 
 ScriptManager& UIManager::GetScriptManager() const {
-    if (!scene)
-        throw std::runtime_error("UIManager: scene null");
+	if (!scene)
+		throw std::runtime_error("UIManager: scene null");
 
-    if (!scene->HasGameManager())   // add this function
-        throw std::runtime_error("UIManager: gameManager null");
+	if (!scene->HasGameManager())
+		throw std::runtime_error("UIManager: gameManager null");
 
-    return scene->GetScriptManager();
+	return scene->GetScriptManager();
 }
 
 void UIManager::RegisterProperties() {
 	SceneSystem::RegisterProperties();
-	registry->Register("activeCanvas", &activeCanvasID);
-	registry->Register("canvases", &canvasIDs);
+	registry->Register("stateNames", &stateNames);
+	registry->Register("stateCanvases", &stateCanvases);
+	registry->Register("statePauses", &statePauses);
+	registry->Register("stateKeys", &stateKeys);
+	registry->Register("startState", &startState);
+	//Edited through the States section of DrawImGui
+	registry->Hide("stateNames");
+	registry->Hide("stateCanvases");
+	registry->Hide("statePauses");
+	registry->Hide("stateKeys");
+	registry->Hide("startState");
 }
 
-void UIManager::SetCanvasActive(const std::string& name) {
-	if (auto canvas = uiRegistry.Get(name)) {
-		ActivateCanvas(canvas);
+DelusiveUIRegistry* UIManager::FetchRegistry() const {
+	if (!scene || !scene->GetGameManager()) return nullptr;
+	return &scene->GetGameManager()->GetUIRegistry();
+}
+
+#pragma region States
+
+int UIManager::FindState(const std::string& stateName) const {
+	for (size_t i = 0; i < states.size(); ++i) {
+		if (states[i].name == stateName) return static_cast<int>(i);
+	}
+	return -1;
+}
+
+void UIManager::ResolveStates() {
+	states.clear();
+	stack.clear();
+
+	DelusiveUIRegistry* uiRegistry = FetchRegistry();
+	if (!uiRegistry) return;
+
+	for (size_t i = 0; i < stateNames.size(); ++i) {
+		UIState state;
+		state.name = stateNames[i];
+		state.pausesGame = i < statePauses.size() && statePauses[i] != 0;
+		state.toggleKey = i < stateKeys.size() ? stateKeys[i] : "";
+
+		std::istringstream ids(i < stateCanvases.size() ? stateCanvases[i] : "");
+		std::string idText;
+		while (ids >> idText) {
+			UUID canvasID;
+			canvasID.FromString(idText);
+
+			if (UICanvas* canvas = uiRegistry->Get(canvasID)) {
+				state.canvases.push_back(canvas);
+			}
+			else {
+				std::cerr << "[UIManager] Missing canvas " << idText << " in state " << state.name << std::endl;
+			}
+		}
+
+		states.push_back(std::move(state));
+	}
+
+	if (states.empty()) return;
+	SetState(startState.empty() ? states.front().name : startState);
+}
+
+void UIManager::SyncStates() {
+	stateNames.clear();
+	stateCanvases.clear();
+	statePauses.clear();
+	stateKeys.clear();
+
+	for (const UIState& state : states) {
+		std::ostringstream ids;
+		for (UICanvas* canvas : state.canvases) {
+			ids << canvas->GetID().ToString() << " ";
+		}
+		stateNames.push_back(state.name);
+		stateCanvases.push_back(ids.str());
+		statePauses.push_back(state.pausesGame ? 1 : 0);
+		stateKeys.push_back(state.toggleKey);
 	}
 }
 
-void UIManager::ActivateCanvas(UICanvas* canvas) {
-    if (activeCanvas && activeCanvas != canvas) {
-        activeCanvas->DelinkManager();
-    }
+void UIManager::StackChanged() {
+	for (const UIState& state : states) {
+		for (UICanvas* canvas : state.canvases) canvas->SetActive(false);
+	}
+	for (int index : stack) {
+		for (UICanvas* canvas : states[index].canvases) canvas->SetActive(true);
+	}
 
-    activeCanvas = canvas;
-    if (activeCanvas) {
-        activeCanvas->SetActive(true);
-        activeCanvas->LinkManager(this);
-    }
-
-    SyncCanvasIDs();
+	waitForRelease = true;
 }
 
+void UIManager::SetState(const std::string& stateName) {
+	int index = FindState(stateName);
+	if (index < 0) {
+		std::cerr << "[UIManager] No UI state named " << stateName << std::endl;
+		return;
+	}
+
+	stack = { index };
+	StackChanged();
+}
+
+void UIManager::PushState(const std::string& stateName) {
+	int index = FindState(stateName);
+	if (index < 0) {
+		std::cerr << "[UIManager] No UI state named " << stateName << std::endl;
+		return;
+	}
+	if (std::find(stack.begin(), stack.end(), index) != stack.end()) return;
+
+	stack.push_back(index);
+	StackChanged();
+}
+
+void UIManager::PopState() {
+	if (stack.size() <= 1) return;
+
+	stack.pop_back();
+	StackChanged();
+}
+
+const std::string& UIManager::GetState() const {
+	static const std::string none;
+	return stack.empty() ? none : states[stack.back()].name;
+}
+
+bool UIManager::IsPaused() const {
+	for (int index : stack) {
+		if (states[index].pausesGame) return true;
+	}
+	return false;
+}
+
+void UIManager::SetStateCanvases(const std::string& stateName, const std::vector<UICanvas*>& canvases) {
+	int index = FindState(stateName);
+
+	if (index < 0) {
+		UIState state;
+		state.name = stateName;
+		state.canvases = canvases;
+		states.push_back(std::move(state));
+	}
+	else {
+		states[index].canvases = canvases;
+		StackChanged();
+	}
+
+	SyncStates();
+}
+
+std::vector<UICanvas*> UIManager::LinkCanvases() {
+	std::vector<UICanvas*> canvases;
+
+	for (int index : stack) {
+		for (UICanvas* canvas : states[index].canvases) {
+			canvas->LinkManager(this);
+			canvases.push_back(canvas);
+		}
+	}
+
+	return canvases;
+}
+
+std::vector<UICanvas*> UIManager::LinkInputCanvases() {
+	std::vector<UICanvas*> canvases;
+
+	//Display-only canvases (a HUD) let input fall through to the states below
+	for (auto index = stack.rbegin(); index != stack.rend() && canvases.empty(); ++index) {
+		for (UICanvas* canvas : states[*index].canvases) {
+			if (!canvas->CapturesInput()) continue;
+			canvas->LinkManager(this);
+			canvases.push_back(canvas);
+		}
+	}
+
+	return canvases;
+}
+
+bool UIManager::CapturesInput() const {
+	for (int index : stack) {
+		for (UICanvas* canvas : states[index].canvases) {
+			if (canvas->CapturesInput()) return true;
+		}
+	}
+	return false;
+}
+
+#pragma endregion
+
 void UIManager::Update(float deltaTime) {
-	if(activeCanvas && activeCanvas->IsActive()) {
-		activeCanvas->Update(deltaTime);
+	for (UICanvas* canvas : LinkCanvases()) {
+		canvas->Update(deltaTime);
 	}
 }
 
 void UIManager::Draw(const glm::mat4& projection) {
-	if (activeCanvas && activeCanvas->IsActive()) {
-		activeCanvas->Draw(projection);
+	for (UICanvas* canvas : LinkCanvases()) {
+		canvas->Draw(projection);
 	}
 }
 
 void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
-	if (activeCanvas && activeCanvas->IsActive()) {
-		activeCanvas->HandleMouse(mousePos, mouseDown);
+	if (waitForRelease) {
+		if (mouseDown) return;
+		waitForRelease = false;
+	}
+
+	const std::vector<int> before = stack;
+	for (UICanvas* canvas : LinkInputCanvases()) {
+		canvas->HandleMouse(mousePos, mouseDown);
+		//A button changed the stack - the old canvases are done
+		if (stack != before) return;
+	}
+}
+
+void UIManager::HandleInput(const PlayerInputState& input) {
+	if (input.keys) {
+		int toggled = -1;
+		for (size_t i = 0; i < states.size(); ++i) {
+			UIState& state = states[i];
+			if (state.toggleKey.empty()) continue;
+
+			SDL_Scancode code = SDL_GetScancodeFromName(state.toggleKey.c_str());
+			if (code == SDL_SCANCODE_UNKNOWN) continue;
+
+			bool down = input.keys[code];
+			if (down && !state.keyWasDown) toggled = static_cast<int>(i);
+			state.keyWasDown = down;
+		}
+
+		if (toggled >= 0) {
+			if (!stack.empty() && stack.back() == toggled) PopState();
+			else PushState(states[toggled].name);
+		}
+	}
+
+	for (UICanvas* canvas : LinkInputCanvases()) {
+		canvas->HandleInput(input);
 	}
 }
 
 void UIManager::DrawImGui() {
-    ImGui::Text("UI Manager");
-    ImGui::SameLine();
-    if (ImGui::Button("Save Canvases")) {
-        uiRegistry.SaveAll();
-    }
-    ImGui::Separator();
+	DelusiveUIRegistry* uiRegistry = FetchRegistry();
+	if (!uiRegistry) {
+		ImGui::TextDisabled("Not in a scene");
+		return;
+	}
 
-    // ACTIVE CANVAS COMBO
-    if (ImGui::BeginCombo("Active Canvas",
-        activeCanvas ? activeCanvas->GetName().c_str() : "<none>"))
-    {
-        for (auto canvas : canvases)
-        {
-            bool selected = (canvas == activeCanvas);
+	if (ImGui::Button("Save Canvases")) {
+		uiRegistry->SaveAll();
+	}
 
-            if (ImGui::Selectable(canvas->GetName().c_str(), selected))
-                ActivateCanvas(canvas);
+	ImGui::SeparatorText("States");
 
-            if (selected)
-                ImGui::SetItemDefaultFocus();
-        }
+	if (ImGui::BeginCombo("Start state", startState.empty() ? "<First>" : startState.c_str())) {
+		if (ImGui::Selectable("<First>", startState.empty())) startState.clear();
+		for (const UIState& state : states) {
+			if (ImGui::Selectable(state.name.c_str(), state.name == startState)) startState = state.name;
+		}
+		ImGui::EndCombo();
+	}
 
-        ImGui::EndCombo();
-    }
+	std::string stackText;
+	for (int index : stack) stackText += (stackText.empty() ? "" : " > ") + states[index].name;
+	ImGui::TextDisabled("Stack: %s", stackText.empty() ? "<empty>" : stackText.c_str());
 
-    ImGui::Separator();
+	int removeIndex = -1;
+	for (size_t i = 0; i < states.size(); ++i) {
+		ImGui::PushID(static_cast<int>(i));
+		if (ImGui::TreeNodeEx("##state", ImGuiTreeNodeFlags_DefaultOpen, "%s", states[i].name.c_str())) {
+			DrawStateImGui(states[i], *uiRegistry);
 
-    // CANVAS TABLE
-    if (ImGui::BeginTable("CanvasTable", 2))
-    {
-        for (size_t i = 0; i < canvases.size(); i++)
-        {
-            UICanvas* canvas = canvases[i];
+			if (ImGui::SmallButton("Set")) SetState(states[i].name);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Push")) PushState(states[i].name);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Remove")) removeIndex = static_cast<int>(i);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
 
-            ImGui::TableNextRow();
+	if (removeIndex >= 0) {
+		//Stack entries are indices, so drop the removed one and shift the rest
+		stack.erase(std::remove(stack.begin(), stack.end(), removeIndex), stack.end());
+		for (int& index : stack) {
+			if (index > removeIndex) --index;
+		}
+		for (UICanvas* canvas : states[removeIndex].canvases) canvas->SetActive(false);
+		states.erase(states.begin() + removeIndex);
+		StackChanged();
+	}
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("%s", canvas->GetName().c_str());
+	if (ImGui::Button("Add State")) {
+		UIState state;
+		state.name = "State " + std::to_string(states.size() + 1);
+		states.push_back(std::move(state));
+	}
 
-            ImGui::TableSetColumnIndex(1);
-            if (ImGui::SmallButton(("Remove##" + std::to_string(i)).c_str()))
-            {
-                if (canvas == activeCanvas) ActivateCanvas(nullptr);
-                canvases.erase(canvases.begin() + i);
-                SyncCanvasIDs();
-                break;
-            }
-        }
+	SyncStates();
+}
 
-        ImGui::EndTable();
-    }
+void UIManager::DrawStateImGui(UIState& state, DelusiveUIRegistry& uiRegistry) {
+	char buffer[64];
+	std::snprintf(buffer, sizeof(buffer), "%s", state.name.c_str());
+	if (ImGui::InputText("Name", buffer, sizeof(buffer))) {
+		if (startState == state.name) startState = buffer;
+		state.name = buffer;
+	}
 
-    ImGui::Separator();
+	ImGui::Checkbox("Pauses game", &state.pausesGame);
 
-    // ADD CANVAS
-    if (ImGui::Button("Add Canvas"))
-        ImGui::OpenPopup("AddCanvasPopup");
+	std::snprintf(buffer, sizeof(buffer), "%s", state.toggleKey.c_str());
+	if (ImGui::InputTextWithHint("Toggle key", "e.g. Escape, Tab", buffer, sizeof(buffer))) {
+		state.toggleKey = buffer;
+	}
+	if (!state.toggleKey.empty() && SDL_GetScancodeFromName(state.toggleKey.c_str()) == SDL_SCANCODE_UNKNOWN) {
+		ImGui::TextDisabled("Unknown key name");
+	}
 
-    if (ImGui::BeginPopup("AddCanvasPopup"))
-    {
-        std::vector<UICanvas*> available = uiRegistry.List();
+	//Every canvas, ticked when this state shows it
+	for (UICanvas* canvas : uiRegistry.List()) {
+		auto found = std::find(state.canvases.begin(), state.canvases.end(), canvas);
+		bool shown = found != state.canvases.end();
 
-        // ADD EXISTING
-        for (UICanvas* canvas : available)
-        {
-            if (std::find(canvases.begin(), canvases.end(), canvas) != canvases.end()) continue;
-
-            ImGui::PushID(canvas);
-            if (ImGui::MenuItem(canvas->GetName().c_str()))
-            {
-                canvases.push_back(canvas);
-                SyncCanvasIDs();
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::PopID();
-        }
-
-        // CREATE NEW
-        if (ImGui::MenuItem("New Canvas"))
-        {
-            std::string newName =
-                "Canvas_" + std::to_string(available.size());
-
-            auto newCanvas = std::make_unique<UICanvas>(instance);
-            newCanvas->SetName(newName);
-
-            UICanvas* ptr = newCanvas.get();
-
-            uiRegistry.Register(std::move(newCanvas));
-
-            canvases.push_back(ptr);
-            SyncCanvasIDs();
-
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-
-    ImGui::Separator();
-
-    // INSPECTOR
-    if (activeCanvas)
-    {
-        if (ImGui::CollapsingHeader("Canvas Inspector"))
-        {
-            activeCanvas->DrawImGui();
-        }
-    }
+		ImGui::PushID(canvas);
+		if (ImGui::Checkbox(canvas->GetName().c_str(), &shown)) {
+			if (shown) state.canvases.push_back(canvas);
+			else state.canvases.erase(found);
+			StackChanged();
+		}
+		ImGui::PopID();
+	}
 }
 
 void UIManager::Reset() {
-	activeCanvasID = UUID();
-	activeCanvas = nullptr;
+	states.clear();
+	stack.clear();
+	SyncStates();
 }

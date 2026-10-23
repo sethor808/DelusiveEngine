@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-class UIManager;
-
 //Live canvases built from the library's .canvas recipes, keyed by UUID
 class DelusiveUIRegistry {
 public:
@@ -15,9 +13,6 @@ public:
 	DelusiveUIRegistry() = delete;
 	DelusiveUIRegistry(DelusiveInstance&);
     ~DelusiveUIRegistry() = default;
-
-    void LinkManager(UIManager* manager) { owner = manager; }
-    UIManager* GetManager() { return owner; }
 
     //Rebuilds every canvas the library has indexed. Replaces what was registered,
     //so any UICanvas* handed out before is invalid afterwards.
@@ -33,9 +28,9 @@ public:
 	std::vector<UICanvas*> List() const;
 
 	void Register(std::unique_ptr<UICanvas> canvas);
+	void Remove(const UUID&);
 
 private:
     DelusiveInstance& instance;
-    UIManager* owner;
 	std::unordered_map<UUID, std::unique_ptr<UICanvas>, UUID::Hash> canvases;
 };
