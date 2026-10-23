@@ -110,7 +110,10 @@ id=7934088a5410ef61-df9144333410de0c
 name="NewPathfindingSystem"
 
 [System UIManager d66b6ef10065bc1c-5d8c20680f155f49]
-activeCanvas=cec166525b6c2213-2a952ce32c0334f3
-canvases=1 "cec166525b6c2213-2a952ce32c0334f3"
 id=d66b6ef10065bc1c-5d8c20680f155f49
 name="NewUIManager"
+startState="Gameplay"
+stateCanvases=2 "" "cec166525b6c2213-2a952ce32c0334f3"
+stateKeys=2 "" "Tab"
+stateNames=2 "Gameplay" "Equip"
+statePauses=2 0 1

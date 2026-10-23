@@ -33,6 +33,15 @@ void UILabel::RegisterProperties() {
 	registry->Register("font", &fontData);
 	registry->Register("text", &text);
 	registry->Register("color", &color);
+	registry->Register("bindText", &bindText);
+}
+
+void UILabel::ApplyBinding(const UIBindItem& item) {
+	if (const std::string* value = DelusiveUI::FetchBindField(item, bindText)) {
+		text = *value;
+	}
+
+	UIElement::ApplyBinding(item);
 }
 
 void UILabel::LoadFont(const std::string& ttfPath, float pixelHeight) {

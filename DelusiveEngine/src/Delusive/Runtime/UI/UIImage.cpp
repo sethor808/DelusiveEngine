@@ -26,6 +26,7 @@ void UIImage::Init() {
 void UIImage::RegisterProperties() {
 	UIElement::RegisterProperties();
 	registry->Register("textureData", &textureData);
+	registry->Register("bindTexture", &bindTexture);
 }
 
 void UIImage::Update(float deltaTime) {
@@ -41,6 +42,14 @@ void UIImage::DrawImGui() {
 void UIImage::SetTexturePath(const std::string& path) {
 	textureData.texturePath = path;
 	textureData.textureID = instance.renderer.GetTexture(textureData.texturePath);
+}
+
+void UIImage::ApplyBinding(const UIBindItem& item) {
+	if (const std::string* value = DelusiveUI::FetchBindField(item, bindTexture)) {
+		SetTexturePath(*value);
+	}
+
+	UIElement::ApplyBinding(item);
 }
 
 void UIImage::Draw(const glm::mat4& projection) {

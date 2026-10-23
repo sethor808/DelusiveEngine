@@ -26,6 +26,7 @@ void UICanvas::RegisterProperties()
     registry->category = "UICanvas";
 	registry->Register("id", &id);
 	registry->Register("name", &name);
+	registry->Register("capturesInput", &capturesInput);
 }
 
 #pragma region File IO

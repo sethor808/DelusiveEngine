@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/UI/UIScriptContainer.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
 #include <Delusive/Runtime/Agents/PlayerAgent.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
@@ -82,7 +83,10 @@ void EquipScreen::OnUpdate(float) {
 	if (closeRequested) {
 		closeRequested = false;
 		player->LoadFromInventory();
-		rootElement->SetEnabled(false);
+		//Inside a UI state the screen closes by popping it; otherwise it just hides
+		UIManager* manager = rootElement->GetCanvas()->GetManager();
+		if (manager) manager->PopState();
+		else rootElement->SetEnabled(false);
 		return;
 	}
 
@@ -151,8 +155,6 @@ void EquipScreen::BuildAvailableList() {
 
     availableContainer->SetCount((int)talismans.size());
     availableContainer->RegenerateChildren();
-	//SetCount clamps to one
-	if (talismans.empty()) availableContainer->ClearChildren();
 
     auto children = availableContainer->GetChildren();
 	for (size_t i = 0; i < children.size() && i < talismans.size(); ++i) {

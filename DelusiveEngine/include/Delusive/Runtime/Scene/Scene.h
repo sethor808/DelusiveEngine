@@ -60,7 +60,8 @@ public:
 	void Update(float deltaTime);
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
-	void HandleMouse(const glm::vec2&, bool);
+	//UI elements are placed in their own space, so the UI gets its own mouse position
+	void HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool);
 	void CloneInto(Scene&) const;
 	void Clear();
 	std::string GetName() { return name; }

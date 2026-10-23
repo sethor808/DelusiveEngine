@@ -13,6 +13,7 @@ public:
 
 	void Init();
 	void SetTexturePath(const std::string&);
+	void ApplyBinding(const UIBindItem&) override;
 
 	void Draw(const glm::mat4& proj) override;
 	void HandleMouse(const glm::vec2&, bool) override {}
@@ -20,4 +21,5 @@ public:
 	const std::string GetType() const override;
 private:
 	DelusiveTexture textureData;
+	std::string bindTexture;
 };

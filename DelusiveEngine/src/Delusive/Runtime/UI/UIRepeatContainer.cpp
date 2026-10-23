@@ -21,19 +21,46 @@ void UIRepeatContainer::RegisterProperties() {
 	registry->Register("spacing", &spacing);
 	registry->Register("prototype", &prototype);
 	registry->Hide("prototype"); //Edited in the Prototype section below
+	registry->Register("source", &source);
+	registry->Hide("source");
+	registry->Register("bindCount", &bindCount);
 }
 
-void UIRepeatContainer::Draw(const glm::mat4& projection) {
-	UIElement::Draw(projection);
+void UIRepeatContainer::Update(float deltaTime) {
+	if (!source.empty() && parentCanvas) {
+		std::vector<UIBindItem> items = DelusiveUI::FetchBindSource(source, *parentCanvas);
 
-	for(auto& child : children){
-		if (child) {
-			child->Draw(projection);
+		//Only rebuild when the data changed, e.g. a talisman took a hit
+		if (items != boundItems) {
+			boundItems = std::move(items);
+			SetCount(static_cast<int>(boundItems.size()));
+			RegenerateChildren();
+
+			for (size_t i = 0; i < children.size() && i < boundItems.size(); ++i) {
+				children[i]->ApplyBinding(boundItems[i]);
+			}
 		}
 	}
 
+	UIElement::Update(deltaTime);
+}
+
+void UIRepeatContainer::ApplyBinding(const UIBindItem& item) {
+	if (const std::string* value = DelusiveUI::FetchBindField(item, bindCount)) {
+		SetCount(std::atoi(value->c_str()));
+		RegenerateChildren();
+	}
+
+	UIElement::ApplyBinding(item);
+}
+
+void UIRepeatContainer::Draw(const glm::mat4& projection) {
+	if (!enabled) return;
+	UIElement::Draw(projection);
+
 #ifdef DELUSIVE_EDITOR_MODE
-	if (prototype) {
+	//Bound containers fill themselves, so their prototype ghost would show in game
+	if (prototype && source.empty() && bindCount.empty()) {
 		instance.renderer.PushAlpha(0.3f);
 		prototype->Draw(projection);
 		instance.renderer.PopAlpha();
@@ -43,6 +70,16 @@ void UIRepeatContainer::Draw(const glm::mat4& projection) {
 
 void UIRepeatContainer::DrawImGui() {
 	UIElement::DrawImGui();
+
+	ImGui::SeparatorText("Binding");
+	if (ImGui::BeginCombo("source", source.empty() ? "<None>" : source.c_str())) {
+		if (ImGui::Selectable("<None>", source.empty())) source.clear();
+		for (const std::string& option : DelusiveUI::ListBindSources()) {
+			if (ImGui::Selectable(option.c_str(), option == source)) source = option;
+		}
+		ImGui::EndCombo();
+	}
+
 	// --- Prototype editing section ---
 	// --- Prototype Management Section ---
 	ImGui::SeparatorText("Prototype");
@@ -117,7 +154,7 @@ void UIRepeatContainer::RegenerateChildren() {
 		int c = (rowsToUse == 1) ? idx : (idx % cols); // column index
 
 		glm::vec2 offset = glm::vec2(spacing * float(c), spacing * float(r)); //TODO: change spacing to a vec2 for x and y spacing
-		item->SetPosition(position + offset);
+		item->Move(position + offset - item->GetPosition());
 
 		// AddChild should take ownership and set parent properly
 		AddChild(std::move(item));
