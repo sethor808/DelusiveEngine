@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -107,6 +108,15 @@ namespace {
         return static_cast<bool>(out);
     }
 
+    //First run on a fresh clone - folders with no tracked files yet are missing
+    void CreateAssetFolders() {
+        for (const char* folder : { SCENE_PATH, AGENT_PATH, ANIM_PATH, CANVAS_PATH, SPRITE_FOLDER }) {
+            std::error_code ec;
+            std::filesystem::create_directories(folder, ec);
+            if (ec) std::cerr << "[DelusiveEngine] Failed to create " << folder << ": " << ec.message() << "\n";
+        }
+    }
+
     bool ParseEditorMode(const std::string& name, EditorMode& mode) {
         if (name == "scene")    { mode = EditorMode::SceneEditor; return true; }
         if (name == "agent")    { mode = EditorMode::AgentEditor; return true; }
@@ -185,6 +195,8 @@ namespace DelusiveEngine {
             std::cerr << "glewInit failed: " << glewGetErrorString(glewStatus) << "\n";
             return -1;
         }
+
+        CreateAssetFolders();
 
         DelusiveRenderer renderer;
         renderer.Init();
