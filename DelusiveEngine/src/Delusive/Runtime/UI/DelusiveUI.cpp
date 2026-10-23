@@ -61,6 +61,18 @@ const std::vector<std::string>& DelusiveUI::ListBindSources() {
 	return sources;
 }
 
+const std::vector<UIBindField>& DelusiveUI::ListBindFields() {
+	static const std::vector<UIBindField> fields = {
+		{ "base", "texture of the talisman" },
+		{ "glyph", "texture of the talisman's glyph" },
+		{ "string", "texture of one string" },
+		{ "hp", "strings left on the talisman (a number)" },
+		{ "maxHP", "strings the talisman starts with (a number)" },
+		{ "active", "1 for the talisman the next hit damages, otherwise 0" }
+	};
+	return fields;
+}
+
 //Fetched every update, so a source should stay cheap. Items that compare equal skip the rebuild.
 std::vector<UIBindItem> DelusiveUI::FetchBindSource(const std::string& source, UICanvas& canvas) {
 	std::vector<UIBindItem> items;
@@ -73,13 +85,15 @@ std::vector<UIBindItem> DelusiveUI::FetchBindSource(const std::string& source, U
 		Talisman* active = player->GetActiveTalisman();
 
 		for (const auto& talisman : player->GetTalismans()) {
+			//A broken talisman is gone from the display
+			if (talisman->GetIsBroken()) continue;
+
 			items.push_back({
 				{ "base", talisman->GetBaseTexture() },
 				{ "glyph", talisman->GetGlyphTexture() },
 				{ "string", talisman->GetStringTexture() },
 				{ "hp", std::to_string(talisman->GetCurrentHP()) },
 				{ "maxHP", std::to_string(talisman->GetMaxHP()) },
-				{ "intact", talisman->GetIsBroken() ? "0" : "1" },
 				{ "active", talisman.get() == active ? "1" : "0" }
 			});
 		}

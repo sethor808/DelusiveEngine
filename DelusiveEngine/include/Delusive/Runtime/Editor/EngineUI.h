@@ -80,8 +80,13 @@ private:
 	//UI builder specifics - the scene holds a preview player and a UIManager showing the canvas
 	UICanvas* editingCanvas = nullptr;
 	UIElement* selectedUIElement = nullptr;
+	//Deletion waits until the hierarchy has been drawn
+	UIElement* uiDeleteTarget = nullptr;
+	UIElement* uiDeleteParent = nullptr;
+	bool uiWasInteracting = false;
 
-	void DrawUIElementNode(UIElement* element);
+	void DrawUIElementNode(UIElement* element, UIElement* parent);
+	void DeleteUIElement();
 	void BuildUIPreview(Scene&);
 	void OpenCanvas(Scene&, UICanvas*);
 

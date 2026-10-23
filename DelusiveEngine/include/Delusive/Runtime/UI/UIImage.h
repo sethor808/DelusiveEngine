@@ -19,6 +19,8 @@ public:
 	void HandleMouse(const glm::vec2&, bool) override {}
 
 	const std::string GetType() const override;
+protected:
+	void DrawBindingImGui() override;
 private:
 	DelusiveTexture textureData;
 	std::string bindTexture;

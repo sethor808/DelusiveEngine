@@ -40,8 +40,8 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 		return;
 	}
 
-	// Hierarchy
-	if (ImGui::BeginChild("UIHierarchy", ImVec2(ImGui::GetContentRegionAvail().x * 0.25f, 0), true)) {
+	//Hierarchy
+	if (ImGui::BeginChild("UIHierarchy", ImVec2(ImGui::GetContentRegionAvail().x * 0.35f, 0), true)) {
 		ImGui::Text("%s", editingCanvas->GetName().c_str());
 		bool captures = editingCanvas->CapturesInput();
 		if (ImGui::Checkbox("Captures input", &captures)) editingCanvas->SetCapturesInput(captures);
@@ -54,6 +54,7 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 				if (element) {
 					element->LinkCanvas(editingCanvas);
 					editingCanvas->AddElement(std::move(element));
+					editingCanvas->NotifyEdited();
 				}
 			}
 			ImGui::EndPopup();
@@ -61,23 +62,15 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 
 		ImGui::Separator();
 		for (UIElement* element : editingCanvas->GetElements()) {
-			DrawUIElementNode(element);
+			DrawUIElementNode(element, nullptr);
 		}
+		DeleteUIElement();
 	}
 	ImGui::EndChild();
 
 	ImGui::SameLine();
 
-	// Viewport (Stage 2: render canvas to framebuffer + spatial drag/resize)
-	if (ImGui::BeginChild("UIViewport", ImVec2(ImGui::GetContentRegionAvail().x * 0.55f, 0), true)) {
-		ImGui::TextDisabled("Viewport");
-		ImGui::TextDisabled("Spatial editing lands in Stage 2.");
-	}
-	ImGui::EndChild();
-
-	ImGui::SameLine();
-
-	// Inspector (reuses the registered-property DrawImGui path)
+	//Inspector (reuses the registered-property DrawImGui path)
 	if (ImGui::BeginChild("UIInspector", ImVec2(0, 0), true)) {
 		if (selectedUIElement) {
 			selectedUIElement->DrawImGui();
@@ -88,22 +81,30 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	}
 	ImGui::EndChild();
 
+	//Copies built from prototypes catch up once an edit is finished
+	const bool interacting = ImGui::IsAnyItemActive();
+	if (uiWasInteracting && !interacting) editingCanvas->NotifyEdited();
+	uiWasInteracting = interacting;
+
 	ImGui::End();
 }
 
-void EngineUI::DrawUIElementNode(UIElement* element) {
+void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	if (!element) return;
 
-	std::vector<UIElement*> children = element->GetChildren();
+	std::vector<UIElement*> children = element->GetEditorChildren();
 
 	ImGuiTreeNodeFlags flags =
 		ImGuiTreeNodeFlags_OpenOnArrow |
 		ImGuiTreeNodeFlags_OpenOnDoubleClick |
 		ImGuiTreeNodeFlags_SpanAvailWidth |
+		ImGuiTreeNodeFlags_DefaultOpen |
 		(children.empty() ? ImGuiTreeNodeFlags_Leaf : 0) |
 		(selectedUIElement == element ? ImGuiTreeNodeFlags_Selected : 0);
 
 	std::string label = element->GetName().empty() ? element->GetType() : element->GetName();
+	//A repeat container's only child is its prototype
+	if (parent && !parent->AcceptsEditorChild()) label = "Prototype: " + label;
 
 	ImGui::PushID(element);
 	bool open = ImGui::TreeNodeEx(label.c_str(), flags);
@@ -113,25 +114,45 @@ void EngineUI::DrawUIElementNode(UIElement* element) {
 	}
 
 	if (ImGui::BeginPopupContextItem("ElementRightClick", ImGuiPopupFlags_MouseButtonRight)) {
-		std::string type = DelusiveUI::DrawUIElementAddMenu();
-		if (!type.empty()) {
-			auto child = DelusiveUI::CreateUIElementByType(type, instance);
-			if (child) {
-				child->LinkCanvas(editingCanvas);
-				element->AddChild(std::move(child));
+		if (element->AcceptsEditorChild()) {
+			std::string type = DelusiveUI::DrawUIElementAddMenu();
+			if (!type.empty()) {
+				auto child = DelusiveUI::CreateUIElementByType(type, instance);
+				if (child) {
+					element->AddEditorChild(std::move(child));
+					editingCanvas->NotifyEdited();
+				}
 			}
+			ImGui::Separator();
+		}
+
+		if (ImGui::MenuItem("Delete")) {
+			uiDeleteTarget = element;
+			uiDeleteParent = parent;
 		}
 		ImGui::EndPopup();
 	}
 
 	if (open) {
 		for (UIElement* child : children) {
-			DrawUIElementNode(child);
+			DrawUIElementNode(child, element);
 		}
 		ImGui::TreePop();
 	}
 
 	ImGui::PopID();
+}
+
+void EngineUI::DeleteUIElement() {
+	if (!uiDeleteTarget) return;
+
+	if (uiDeleteParent) uiDeleteParent->RemoveEditorChild(uiDeleteTarget);
+	else editingCanvas->RemoveElement(uiDeleteTarget);
+
+	uiDeleteTarget = nullptr;
+	uiDeleteParent = nullptr;
+	selectedUIElement = nullptr;
+	editingCanvas->NotifyEdited();
 }
 
 void EngineUI::BuildUIPreview(Scene& scene) {
@@ -147,6 +168,7 @@ void EngineUI::OpenCanvas(Scene& scene, UICanvas* canvas) {
 	editingCanvas = canvas;
 	selectedUIElement = nullptr;
 	selectedAsset = canvas ? canvas->GetName() : "None";
+	if (canvas) canvas->NotifyEdited();
 
 	UIManager* ui = scene.GetSystem<UIManager>();
 	if (!ui) return;

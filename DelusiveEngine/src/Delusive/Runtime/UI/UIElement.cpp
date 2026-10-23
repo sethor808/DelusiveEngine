@@ -8,6 +8,7 @@
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -49,6 +50,7 @@ void UIElement::RegisterProperties(){
 	registry->Register("position", &position);
 	registry->Register("size", &size);
 	registry->Register("bindEnabled", &bindEnabled);
+	registry->Hide("bindEnabled"); //Drawn in the Data binding section
 }
 
 void UIElement::Move(const glm::vec2& delta) {
@@ -68,6 +70,15 @@ void UIElement::ApplyBinding(const UIBindItem& item) {
 	}
 }
 
+bool UIElement::RemoveChild(UIElement* target) {
+	auto found = std::find_if(children.begin(), children.end(),
+		[target](const std::unique_ptr<UIElement>& child) { return child.get() == target; });
+	if (found == children.end()) return false;
+
+	children.erase(found);
+	return true;
+}
+
 std::vector<UIElement*> UIElement::GetChildren() {
     std::vector<UIElement*> refs;
     refs.reserve(children.size());
@@ -80,96 +91,89 @@ std::vector<UIElement*> UIElement::GetChildren() {
 }
 
 void UIElement::DrawImGui() {
-    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-        UUID payload = id;
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+		UUID payload = id;
 
-        ImGui::SetDragDropPayload(
-            "UI_ELEMENT_UUID",
-            &payload,
-            sizeof(UUID)
-        );
+		ImGui::SetDragDropPayload(
+			"UI_ELEMENT_UUID",
+			&payload,
+			sizeof(UUID)
+		);
 
-        ImGui::Text("UI Element");
-        ImGui::Text("Type: %s", GetType().c_str());
-        ImGui::Text("ID: %s", id.ToString().c_str());
+		ImGui::Text("UI Element");
+		ImGui::Text("Type: %s", GetType().c_str());
+		ImGui::Text("ID: %s", id.ToString().c_str());
 
-        ImGui::EndDragDropSource();
-    }
+		ImGui::EndDragDropSource();
+	}
 
-    // --- Base Properties ---
-    registry->DrawImGui();
-
-    ImGui::SeparatorText("Children");
-
-    // Handle child removal outside the loop to avoid iterator invalidation
-    int removeIndex = -1;
-
-    // --- Draw Each Child ---
-    for (size_t i = 0; i < children.size(); ++i) {
-        auto& child = children[i];
-        if (!child) continue;
-
-        // Unique ID scope for ImGui elements
-        ImGui::PushID(static_cast<int>(i));
-
-        // A bordered area for each child (gives a visual boundary)
-        ImGui::BeginChild(
-            "ChildElement",
-            ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 10), // height scales to content
-            true,
-            ImGuiWindowFlags_MenuBar
-        );
-
-        // Optional header bar inside each child block
-        if (ImGui::BeginMenuBar()) {
-            ImGui::TextUnformatted(child->GetType().c_str());
-            ImGui::SameLine(ImGui::GetContentRegionAvail().x - 60);
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.25f, 0.25f, 1.0f));
-            if (ImGui::Button("Remove")) {
-                removeIndex = static_cast<int>(i);
-            }
-            ImGui::PopStyleColor();
-            ImGui::EndMenuBar();
-        }
-
-        // Add padding to separate header from content
-        ImGui::Dummy(ImVec2(0, 4));
-
-        // Draw the child�s own inspector
-        child->DrawImGui();
-
-        ImGui::EndChild();
-        ImGui::PopID();
-
-        // Add spacing between child blocks
-        ImGui::Dummy(ImVec2(0, 5));
-    }
-
-    // --- Handle Child Removal ---
-    if (removeIndex >= 0 && removeIndex < (int)children.size()) {
-        children.erase(children.begin() + removeIndex);
-    }
-
-    // --- Add Child Button ---
-    ImGui::Separator();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-    if (ImGui::Button("+ Add Child Element", ImVec2(-FLT_MIN, 0))) {
-        ImGui::OpenPopup("AddUIElementPopup");
-    }
-
-    if (ImGui::BeginPopup("AddUIElementPopup")) {
-        std::string type = DelusiveUI::DrawUIElementAddMenu();
-        if (!type.empty()) {
-            auto newElement = DelusiveUI::CreateUIElementByType(type, instance);
-            if (newElement) {
-                newElement->LinkCanvas(parentCanvas);
-                children.push_back(std::move(newElement));
-            }
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
+	registry->DrawImGui();
+	DrawBindingImGui();
+	DrawChildrenImGui();
 }
+
+void UIElement::DrawBindField(const char* label, std::string& field, const char* help) {
+	ImGui::PushID(label);
+	if (ImGui::BeginCombo(label, field.empty() ? "<None>" : field.c_str())) {
+		if (ImGui::Selectable("<None>", field.empty())) field.clear();
+
+		for (const UIBindField& option : DelusiveUI::ListBindFields()) {
+			if (ImGui::Selectable(option.name, field == option.name)) field = option.name;
+			ImGui::SameLine();
+			ImGui::TextDisabled("%s", option.help);
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::SetItemTooltip("%s", help);
+	ImGui::PopID();
+}
+
+void UIElement::DrawBindingImGui() {
+	//Only means something inside a repeat container that has a data source
+	ImGui::SeparatorText("Data binding");
+	DrawBindField("Show only when", bindEnabled, "Shown while this field is not 0. Leave empty to always show.");
+}
+
+void UIElement::DrawChildrenImGui() {
+	ImGui::SeparatorText("Children");
+
+	//Removal waits until the loop is done so the list stays valid
+	UIElement* toRemove = nullptr;
+
+	for (auto& child : children) {
+		if (!child) continue;
+
+		ImGui::PushID(child.get());
+		const std::string label = "[" + child->GetType() + "] " + child->GetName();
+		const bool open = ImGui::TreeNodeEx("##child", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, "%s", label.c_str());
+
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 40.0f);
+		if (ImGui::SmallButton("Remove")) toRemove = child.get();
+
+		if (open) {
+			child->DrawImGui();
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
+
+	if (toRemove) RemoveChild(toRemove);
+
+	if (ImGui::Button("+ Add Child Element", ImVec2(-FLT_MIN, 0))) {
+		ImGui::OpenPopup("AddUIElementPopup");
+	}
+
+	if (ImGui::BeginPopup("AddUIElementPopup")) {
+		std::string type = DelusiveUI::DrawUIElementAddMenu();
+		if (!type.empty()) {
+			auto newElement = DelusiveUI::CreateUIElementByType(type, instance);
+			if (newElement) AddChild(std::move(newElement));
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 void UIElement::Deserialize(DelusiveParser::DataBlock& in) {
 	registry->Deserialize(in);
 	//Owned objects pull their recipes from the library, which is already populated

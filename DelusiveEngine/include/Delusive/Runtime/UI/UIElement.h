@@ -79,6 +79,13 @@ public:
 	}
 
 	std::vector<UIElement*> GetChildren();
+	bool RemoveChild(UIElement*);
+
+	//What the UI Builder hierarchy shows and edits; a repeat container shows its prototype
+	virtual std::vector<UIElement*> GetEditorChildren() { return GetChildren(); }
+	virtual bool AcceptsEditorChild() const { return true; }
+	virtual void AddEditorChild(std::unique_ptr<UIElement> child) { AddChild(std::move(child)); }
+	virtual bool RemoveEditorChild(UIElement* child) { return RemoveChild(child); }
     void ClearChildren() { children.clear(); }
 	
 	UUID GetID() const { return id; }
@@ -104,13 +111,26 @@ public:
 	const glm::vec2& GetPosition() const { return position; }
 	void SetPosition(const glm::vec2& pos) { position = pos; }
 	//Shifts this element and its whole subtree
-	void Move(const glm::vec2& delta);
+	virtual void Move(const glm::vec2& delta);
 
 	//Data binding - a repeat container hands each item one entry of its source
 	virtual void ApplyBinding(const UIBindItem&);
 	
 	virtual void DrawImGui();
+
+	//The UI Builder calls this after an edit, so copies built from prototypes catch up
+	virtual void NotifyEdited() {
+		for (auto& child : children) {
+			child->NotifyEdited();
+		}
+	}
 protected:
+	//Inspector sections, so a subclass can change one without redrawing the rest
+	virtual void DrawBindingImGui();
+	virtual void DrawChildrenImGui();
+	//A drop-down of the item fields this element can read, with a tooltip saying what it does
+	void DrawBindField(const char* label, std::string& field, const char* help);
+
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
 	DelusiveInstance& instance;
