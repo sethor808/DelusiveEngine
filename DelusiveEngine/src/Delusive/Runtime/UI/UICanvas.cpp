@@ -199,12 +199,6 @@ bool UICanvas::RemoveElement(UIElement* target) {
 	return true;
 }
 
-void UICanvas::NotifyEdited() {
-	for (auto& element : elements) {
-		element->NotifyEdited();
-	}
-}
-
 PlayerAgent* UICanvas::FetchPlayer() const {
 	return uiManager ? uiManager->FetchPlayer() : nullptr;
 }

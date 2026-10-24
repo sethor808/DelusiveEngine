@@ -83,7 +83,6 @@ private:
 	//Deletion waits until the hierarchy has been drawn
 	UIElement* uiDeleteTarget = nullptr;
 	UIElement* uiDeleteParent = nullptr;
-	bool uiWasInteracting = false;
 
 	void DrawUIElementNode(UIElement* element, UIElement* parent);
 	void DeleteUIElement();

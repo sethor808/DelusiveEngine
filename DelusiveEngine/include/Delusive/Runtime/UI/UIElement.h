@@ -81,11 +81,6 @@ public:
 	std::vector<UIElement*> GetChildren();
 	bool RemoveChild(UIElement*);
 
-	//What the UI Builder hierarchy shows and edits; a repeat container shows its prototype
-	virtual std::vector<UIElement*> GetEditorChildren() { return GetChildren(); }
-	virtual bool AcceptsEditorChild() const { return true; }
-	virtual void AddEditorChild(std::unique_ptr<UIElement> child) { AddChild(std::move(child)); }
-	virtual bool RemoveEditorChild(UIElement* child) { return RemoveChild(child); }
     void ClearChildren() { children.clear(); }
 	
 	UUID GetID() const { return id; }
@@ -98,7 +93,7 @@ public:
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
 	//Emits this element, its owned objects and its children, flat
 	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
-	//False when children are rebuilt at runtime (repeat containers) and must not be saved
+	//False when children are rebuilt at runtime and must not be saved
 	virtual bool SavesChildren() const { return true; }
 
 	void SetName(const std::string& _name) { name = _name; }
@@ -114,13 +109,6 @@ public:
 	virtual void Move(const glm::vec2& delta);
 
 	virtual void DrawImGui();
-
-	//The UI Builder calls this after an edit, so copies built from prototypes catch up
-	virtual void NotifyEdited() {
-		for (auto& child : children) {
-			child->NotifyEdited();
-		}
-	}
 protected:
 	//Inspector sections, so a subclass can change one without redrawing the rest
 	virtual void DrawChildrenImGui();

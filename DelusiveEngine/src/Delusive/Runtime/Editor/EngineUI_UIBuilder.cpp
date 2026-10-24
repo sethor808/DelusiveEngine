@@ -54,7 +54,6 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 				if (element) {
 					element->LinkCanvas(editingCanvas);
 					editingCanvas->AddElement(std::move(element));
-					editingCanvas->NotifyEdited();
 				}
 			}
 			ImGui::EndPopup();
@@ -81,18 +80,13 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	}
 	ImGui::EndChild();
 
-	//Copies built from prototypes catch up once an edit is finished
-	const bool interacting = ImGui::IsAnyItemActive();
-	if (uiWasInteracting && !interacting) editingCanvas->NotifyEdited();
-	uiWasInteracting = interacting;
-
 	ImGui::End();
 }
 
 void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	if (!element) return;
 
-	std::vector<UIElement*> children = element->GetEditorChildren();
+	std::vector<UIElement*> children = element->GetChildren();
 
 	ImGuiTreeNodeFlags flags =
 		ImGuiTreeNodeFlags_OpenOnArrow |
@@ -103,8 +97,6 @@ void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 		(selectedUIElement == element ? ImGuiTreeNodeFlags_Selected : 0);
 
 	std::string label = element->GetName().empty() ? element->GetType() : element->GetName();
-	//A repeat container's only child is its prototype
-	if (parent && !parent->AcceptsEditorChild()) label = "Prototype: " + label;
 
 	ImGui::PushID(element);
 	bool open = ImGui::TreeNodeEx(label.c_str(), flags);
@@ -114,17 +106,12 @@ void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	}
 
 	if (ImGui::BeginPopupContextItem("ElementRightClick", ImGuiPopupFlags_MouseButtonRight)) {
-		if (element->AcceptsEditorChild()) {
-			std::string type = DelusiveUI::DrawUIElementAddMenu();
-			if (!type.empty()) {
-				auto child = DelusiveUI::CreateUIElementByType(type, instance);
-				if (child) {
-					element->AddEditorChild(std::move(child));
-					editingCanvas->NotifyEdited();
-				}
-			}
-			ImGui::Separator();
+		std::string type = DelusiveUI::DrawUIElementAddMenu();
+		if (!type.empty()) {
+			auto child = DelusiveUI::CreateUIElementByType(type, instance);
+			if (child) element->AddChild(std::move(child));
 		}
+		ImGui::Separator();
 
 		if (ImGui::MenuItem("Delete")) {
 			uiDeleteTarget = element;
@@ -146,13 +133,12 @@ void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 void EngineUI::DeleteUIElement() {
 	if (!uiDeleteTarget) return;
 
-	if (uiDeleteParent) uiDeleteParent->RemoveEditorChild(uiDeleteTarget);
+	if (uiDeleteParent) uiDeleteParent->RemoveChild(uiDeleteTarget);
 	else editingCanvas->RemoveElement(uiDeleteTarget);
 
 	uiDeleteTarget = nullptr;
 	uiDeleteParent = nullptr;
 	selectedUIElement = nullptr;
-	editingCanvas->NotifyEdited();
 }
 
 void EngineUI::BuildUIPreview(Scene& scene) {
@@ -168,7 +154,6 @@ void EngineUI::OpenCanvas(Scene& scene, UICanvas* canvas) {
 	editingCanvas = canvas;
 	selectedUIElement = nullptr;
 	selectedAsset = canvas ? canvas->GetName() : "None";
-	if (canvas) canvas->NotifyEdited();
 
 	UIManager* ui = scene.GetSystem<UIManager>();
 	if (!ui) return;
