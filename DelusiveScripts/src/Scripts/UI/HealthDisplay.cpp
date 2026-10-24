@@ -3,6 +3,8 @@
 #include <Delusive/Runtime/UI/UIScriptContainer.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Agents/PlayerAgent.h>
+#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Runtime/Talismans/Talisman.h>
 
 HealthDisplay::HealthDisplay()
@@ -14,6 +16,9 @@ void HealthDisplay::RegisterProperties() {
 	UIScript::RegisterProperties();
 
 	registry->Register("spacing", &spacing);
+	registry->Register("anchorTopLeft", &anchorTopLeft);
+	registry->Register("leftOffset", &leftOffset);
+	registry->Register("topOffset", &topOffset);
 	registry->Register("iconSize", &style.iconSize);
 	registry->Register("stringSize", &style.stringSize);
 	registry->Register("stringSpacing", &style.stringSpacing);
@@ -34,7 +39,8 @@ void HealthDisplay::OnUpdate(float) {
 	if (!player && canvas) player = canvas->FetchPlayer();
 	if (!player) return;
 
-	std::string current = Describe();
+	const glm::vec2 origin = FetchOrigin();
+	std::string current = Describe(origin);
 	if (current == builtFrom) return;
 	builtFrom = std::move(current);
 
@@ -45,14 +51,22 @@ void HealthDisplay::OnUpdate(float) {
 	for (const auto& talisman : player->GetTalismans()) {
 		if (talisman->GetIsBroken()) continue;
 
-		BuildTalismanVisual(rootElement, talisman.get(), rootElement->GetPosition() + glm::vec2(x, 0.0f), style);
+		BuildTalismanVisual(rootElement, talisman.get(), origin + glm::vec2(x, 0.0f), style);
 		x += spacing;
 	}
 }
 
+glm::vec2 HealthDisplay::FetchOrigin() const {
+	if (!anchorTopLeft) return rootElement->GetPosition();
+
+	int windowW, windowH;
+	rootElement->GetInstance().renderer.GetWindowSize(windowW, windowH);
+	return { (-windowW / 2.0f + leftOffset) / DELUSIVE_PIXEL_SCALE, (windowH / 2.0f - topOffset) / DELUSIVE_PIXEL_SCALE };
+}
+
 //Everything the visuals depend on, so equal text means nothing needs rebuilding
-std::string HealthDisplay::Describe() const {
-	std::string text = std::to_string(rootElement->GetPosition().x) + "," + std::to_string(rootElement->GetPosition().y);
+std::string HealthDisplay::Describe(const glm::vec2& origin) const {
+	std::string text = std::to_string(origin.x) + "," + std::to_string(origin.y);
 
 	for (const auto& talisman : player->GetTalismans()) {
 		if (talisman->GetIsBroken()) continue;
