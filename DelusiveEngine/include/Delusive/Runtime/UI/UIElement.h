@@ -113,9 +113,6 @@ public:
 	//Shifts this element and its whole subtree
 	virtual void Move(const glm::vec2& delta);
 
-	//Data binding - a repeat container hands each item one entry of its source
-	virtual void ApplyBinding(const UIBindItem&);
-	
 	virtual void DrawImGui();
 
 	//The UI Builder calls this after an edit, so copies built from prototypes catch up
@@ -126,10 +123,7 @@ public:
 	}
 protected:
 	//Inspector sections, so a subclass can change one without redrawing the rest
-	virtual void DrawBindingImGui();
 	virtual void DrawChildrenImGui();
-	//A drop-down of the item fields this element can read, with a tooltip saying what it does
-	void DrawBindField(const char* label, std::string& field, const char* help);
 
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
@@ -139,7 +133,5 @@ protected:
 	bool enabled = true;
 	glm::vec2 position = { 0,0 };
 	glm::vec2 size = { 1,1 };
-	//Bound field that switches this element on ("1") or off ("0")
-	std::string bindEnabled;
 	std::vector<std::unique_ptr<UIElement>> children;
 };

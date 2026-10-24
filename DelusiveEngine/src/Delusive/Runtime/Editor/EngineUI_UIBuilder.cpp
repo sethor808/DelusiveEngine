@@ -156,7 +156,7 @@ void EngineUI::DeleteUIElement() {
 }
 
 void EngineUI::BuildUIPreview(Scene& scene) {
-	//Canvases bind to game data, so the builder keeps a stand-in player
+	//Scripts look for the player, so the builder keeps a stand-in
 	auto player = std::make_unique<PlayerAgent>(instance);
 	player->SetName("Preview Player");
 	scene.AddAgent(std::move(player));
