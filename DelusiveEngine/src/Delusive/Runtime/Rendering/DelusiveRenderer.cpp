@@ -142,34 +142,21 @@ Shader* DelusiveRenderer::GetDefaultShader() {
 void DelusiveRenderer::PushAlpha(float alpha) {
 	alphaStack.push(currentAlpha);
 	currentAlpha *= alpha;  // multiply for cumulative fade (e.g. parent and child transparency)
-	SetAlpha(currentAlpha);
 }
 
 void DelusiveRenderer::PopAlpha() {
-	if (!alphaStack.empty()) {
-		currentAlpha = alphaStack.top();
-		alphaStack.pop();
-		SetAlpha(currentAlpha);
-	}
-	else {
-		// Safety fallback
+	if (alphaStack.empty()) {
 		currentAlpha = 1.0f;
-		SetAlpha(currentAlpha);
+		return;
 	}
-}
-
-// Example of how SetAlpha might work depending on your renderer
-void DelusiveRenderer::SetAlpha(float alpha) {
-	// If you have a current color or shader uniform for tint:
-	// color.a = baseColor.a * alpha;
-	// shader->SetUniform("u_Alpha", alpha);
-
-	// If you use OpenGL directly:
-	glColor4f(1.0f, 1.0f, 1.0f, alpha);
+	currentAlpha = alphaStack.top();
+	alphaStack.pop();
 }
 
 void DelusiveRenderer::Submit(const RenderCommand& cmd) {
+	//Commands draw later in Flush, so the alpha active now is baked into each one
 	commands.push_back(cmd);
+	commands.back().color.a *= currentAlpha;
 }
 
 void DelusiveRenderer::Flush() {
@@ -182,7 +169,6 @@ void DelusiveRenderer::Flush() {
 
 	Shader* shader = GetDefaultShader();
 	shader->Use();
-	shader->SetFloat("uAlpha", currentAlpha); // initialize base alpha
 	GLint loc = glGetUniformLocation(shader->GetID(), "tex");
 	if (loc >= 0) glUniform1i(loc, 0);
 
@@ -194,6 +180,7 @@ void DelusiveRenderer::Flush() {
 		shader->SetMat4("projection", cmd.isUI ? GetUIProjection() : projection);
 		shader->SetMat4("view", cmd.isUI ? glm::mat4(1.0f) : view);
 		shader->SetMat4("model", glm::value_ptr(cmd.modelMatrix));
+		shader->SetFloat("uAlpha", cmd.color.a);
 
 		//shader->SetVec4("uColor", cmd.color);
 
