@@ -3,10 +3,12 @@
 #include <Scripts/EnemyLogic/BasicFollow.h>
 #include <Scripts/EnemyLogic/BasicRanged.h>
 #include <Scripts/UI/EquipScreen.h>
+#include <Scripts/UI/HealthDisplay.h>
 void InitializeScripts(ScriptRegistry& registry) {
     registry.RegisterBehaviour("BasicFollow", []() { return std::make_unique<BasicFollow>(); });
     registry.RegisterBehaviour("BasicRanged", []() { return std::make_unique<BasicRanged>(); });
     registry.RegisterUIScript("EquipScreen", []() { return std::make_unique<EquipScreen>(); });
+    registry.RegisterUIScript("HealthDisplay", []() { return std::make_unique<HealthDisplay>(); });
 }
 
 void UpdateScripts(float deltaTime) {}

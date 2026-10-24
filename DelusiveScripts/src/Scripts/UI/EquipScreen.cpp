@@ -22,11 +22,11 @@ void EquipScreen::RegisterProperties() {
     registry->Register("equippedContainerID", &equippedContainerID);
 	registry->Register("confirmButtonID", &confirmButtonID);
 
-	registry->Register("iconSize", &iconSize);
-	registry->Register("stringSpacing", &stringSpacing);
-	registry->Register("stringSize", &stringSize);
-	registry->Register("stringXOffset", &stringXOffset);
-	registry->Register("stringYOffset", &stringYOffset);
+	registry->Register("iconSize", &style.iconSize);
+	registry->Register("stringSpacing", &style.stringSpacing);
+	registry->Register("stringSize", &style.stringSize);
+	registry->Register("stringXOffset", &style.stringXOffset);
+	registry->Register("stringYOffset", &style.stringYOffset);
 }
 
 void EquipScreen::Link(UIScriptContainer* root) {
@@ -106,50 +106,6 @@ void EquipScreen::Rebuild() {
 	}
 }
 
-void EquipScreen::BuildTalismanVisual(UIElement* root, Talisman* talisman) {
-    if (!root || !talisman) return;
-
-    root->ClearChildren();
-    
-
-    //Build base
-    auto* base = root->AddChild<UIImage>();
-    base->SetName("TalismanBase");
-    base->SetTexturePath(talisman->GetBaseTexture());
-    base->SetSize({ iconSize, iconSize });
-    base->SetPosition({ 0.0f, 0.0f });
-
-    //Build glyph
-    auto* glyph = base->AddChild<UIImage>();
-    glyph->SetName("TalismanGlyph");
-    glyph->SetTexturePath(talisman->GetGlyphTexture());
-    glyph->SetSize({ iconSize, iconSize });
-    glyph->SetPosition({ 0.0f, 0.0f }); // centered relative to base
-
-    //Build strings
-    int currentHP = talisman->GetCurrentHP();
-    int maxHP = talisman->GetMaxHP();
-
-    if (currentHP <= 0 || maxHP <= 0)
-        return;
-
-    float stringXStart = (stringSpacing * 2.0f) / maxHP;
-
-    for (int i = 0; i < currentHP; ++i)
-    {
-        auto* stringImg = base->AddChild<UIImage>();
-
-        stringImg->SetName("TalismanString_" + std::to_string(i));
-        stringImg->SetTexturePath(talisman->GetStringTexture());
-        stringImg->SetSize({ stringSize, stringSize });
-
-        float offsetX = -stringXStart + (stringSpacing * i + stringXOffset);
-        float offsetY = stringYOffset;
-
-        stringImg->SetPosition({ offsetX, offsetY });
-    }
-}
-
 void EquipScreen::BuildAvailableList() {
     auto talismans = inventoryData->GetAvailableTalismans();
 
@@ -161,7 +117,8 @@ void EquipScreen::BuildAvailableList() {
         Talisman* talisman = talismans[i];
         UIElement* child = children[i];
 
-        BuildTalismanVisual(child, talisman);
+        child->ClearChildren();
+        BuildTalismanVisual(child, talisman, child->GetPosition(), style);
 
         if (child->SupportsClick()) {
 			child->SetOnClick([this, talisman]() { EquipToFirstOpenSlot(talisman); });
@@ -184,7 +141,8 @@ void EquipScreen::BuildEquippedSlots() {
 		UIElement* child = children[i];
 		if (!equipped[i]) continue;
 
-		BuildTalismanVisual(child, equipped[i]);
+		child->ClearChildren();
+		BuildTalismanVisual(child, equipped[i], child->GetPosition(), style);
 		if (child->SupportsClick()) {
 			child->SetOnClick([this, i]() {
 				inventoryData->UnequipTalisman(i);
