@@ -81,11 +81,6 @@ public:
 	std::vector<UIElement*> GetChildren();
 	bool RemoveChild(UIElement*);
 
-	//What the UI Builder hierarchy shows and edits; a repeat container shows its prototype
-	virtual std::vector<UIElement*> GetEditorChildren() { return GetChildren(); }
-	virtual bool AcceptsEditorChild() const { return true; }
-	virtual void AddEditorChild(std::unique_ptr<UIElement> child) { AddChild(std::move(child)); }
-	virtual bool RemoveEditorChild(UIElement* child) { return RemoveChild(child); }
     void ClearChildren() { children.clear(); }
 	
 	UUID GetID() const { return id; }
@@ -98,7 +93,7 @@ public:
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
 	//Emits this element, its owned objects and its children, flat
 	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
-	//False when children are rebuilt at runtime (repeat containers) and must not be saved
+	//False when children are rebuilt at runtime and must not be saved
 	virtual bool SavesChildren() const { return true; }
 
 	void SetName(const std::string& _name) { name = _name; }
@@ -113,23 +108,10 @@ public:
 	//Shifts this element and its whole subtree
 	virtual void Move(const glm::vec2& delta);
 
-	//Data binding - a repeat container hands each item one entry of its source
-	virtual void ApplyBinding(const UIBindItem&);
-	
 	virtual void DrawImGui();
-
-	//The UI Builder calls this after an edit, so copies built from prototypes catch up
-	virtual void NotifyEdited() {
-		for (auto& child : children) {
-			child->NotifyEdited();
-		}
-	}
 protected:
 	//Inspector sections, so a subclass can change one without redrawing the rest
-	virtual void DrawBindingImGui();
 	virtual void DrawChildrenImGui();
-	//A drop-down of the item fields this element can read, with a tooltip saying what it does
-	void DrawBindField(const char* label, std::string& field, const char* help);
 
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
@@ -139,7 +121,5 @@ protected:
 	bool enabled = true;
 	glm::vec2 position = { 0,0 };
 	glm::vec2 size = { 1,1 };
-	//Bound field that switches this element on ("1") or off ("0")
-	std::string bindEnabled;
 	std::vector<std::unique_ptr<UIElement>> children;
 };

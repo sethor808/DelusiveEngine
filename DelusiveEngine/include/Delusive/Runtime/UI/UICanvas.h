@@ -64,8 +64,6 @@ public:
 
 	void AddElement(std::unique_ptr<UIElement>);
 	bool RemoveElement(UIElement*);
-	//See UIElement::NotifyEdited
-	void NotifyEdited();
     UIElement* FindElementByUUID(const UUID& id) { return idManager.Find(id); }
 	std::vector<UIElement*> GetElements() const;
 
