@@ -1,6 +1,7 @@
 #pragma once
 #include <Delusive/Scripting/UIScript.h>
 #include <Delusive/Runtime/Core/IDLink.h>
+#include <Scripts/UI/TalismanVisual.h>
 
 class Talisman;
 class UIElement;
@@ -33,11 +34,7 @@ private:
     DelusiveInventory* inventoryData = nullptr;
 	PlayerAgent* player = nullptr;
 
-	//Display settings
-    float iconSize = 1.0f;
-    float stringSpacing = 1.0f;
-    float stringSize = 1.0f;
-    float stringXOffset = 1.0f, stringYOffset = 1.0f;
+	TalismanVisualStyle style;
 
 	//Rebuilding inside a click would delete the clicked button
 	bool needsRebuild = true;
@@ -45,7 +42,6 @@ private:
 
     bool ReadyCheck();
 	void Rebuild();
-    void BuildTalismanVisual(UIElement*, Talisman*);
     void BuildAvailableList();
     void BuildEquippedSlots();
     void EquipToFirstOpenSlot(Talisman*);
