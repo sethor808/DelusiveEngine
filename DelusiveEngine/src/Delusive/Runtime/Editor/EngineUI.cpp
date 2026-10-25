@@ -416,6 +416,9 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 }
             }
         }
+        else if (currentMode == EditorMode::UIBuilder) {
+            if (ImGui::Button(showUIBuilderPanel ? "Hide Panel" : "Show Panel")) showUIBuilderPanel = !showUIBuilderPanel;
+        }
 
         ImGui::EndMainMenuBar();
 

@@ -83,6 +83,8 @@ private:
 	//Deletion waits until the hierarchy has been drawn
 	UIElement* uiDeleteTarget = nullptr;
 	UIElement* uiDeleteParent = nullptr;
+	//Hiding the panel uncovers the canvas behind it
+	bool showUIBuilderPanel = true;
 
 	void DrawUIElementNode(UIElement* element, UIElement* parent);
 	void DeleteUIElement();

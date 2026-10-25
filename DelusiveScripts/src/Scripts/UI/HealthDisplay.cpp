@@ -61,7 +61,9 @@ glm::vec2 HealthDisplay::FetchOrigin() const {
 
 	int windowW, windowH;
 	rootElement->GetInstance().renderer.GetWindowSize(windowW, windowH);
-	return { (-windowW / 2.0f + leftOffset) / DELUSIVE_PIXEL_SCALE, (windowH / 2.0f - topOffset) / DELUSIVE_PIXEL_SCALE };
+	const glm::vec2 corner = { (-windowW / 2.0f + leftOffset) / DELUSIVE_PIXEL_SCALE, (windowH / 2.0f - topOffset) / DELUSIVE_PIXEL_SCALE };
+	//Talismans are drawn centred, so step in by half of one to keep the first fully on screen
+	return corner + glm::vec2(style.iconSize, -style.iconSize) * 0.5f;
 }
 
 //Everything the visuals depend on, so equal text means nothing needs rebuilding
