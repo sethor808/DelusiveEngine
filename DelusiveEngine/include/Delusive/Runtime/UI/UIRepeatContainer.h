@@ -14,6 +14,8 @@ public:
 	void Update(float) override;
 
 	void SetCount(int);
+	//Only the template is saved; copies come from SetCount
+	size_t SavedChildCount() const override { return children.empty() ? 0 : 1; }
 	void SetRows(int newRows) { if (newRows < 1) newRows = 1; rows = newRows; }
 	void SetSpacing(float newSpacing) { spacing = newSpacing; }
 		int GetRows() const { return rows; }
@@ -21,4 +23,6 @@ public:
 private:
 	int rows = 1;
 	float spacing = 0.0f;
+
+	void DrawChildrenImGui() override;
 };

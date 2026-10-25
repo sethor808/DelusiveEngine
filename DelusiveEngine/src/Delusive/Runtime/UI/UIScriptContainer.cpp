@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Scripting/UIScript.h>
+#include <imgui/imgui.h>
 
 UIScriptContainer::UIScriptContainer(DelusiveInstance& instance)
 	: UIElement(instance)
@@ -53,4 +54,9 @@ void UIScriptContainer::DrawImGui() {
         AttachScript();
     }
     */
+}
+
+void UIScriptContainer::DrawChildrenImGui() {
+	ImGui::SeparatorText("Children");
+	ImGui::TextDisabled("Built by the script while it runs");
 }

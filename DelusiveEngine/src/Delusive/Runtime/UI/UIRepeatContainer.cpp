@@ -1,6 +1,7 @@
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Core/DelusiveClone.h>
+#include <imgui/imgui.h>
 
 UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
 	: UIElement(instance)
@@ -46,4 +47,9 @@ void UIRepeatContainer::SetCount(int count) {
 	for (int i = 1; i < static_cast<int>(children.size()); ++i) {
 		children[i]->SetEnabled(i < count);
 	}
+}
+
+void UIRepeatContainer::DrawChildrenImGui() {
+	UIElement::DrawChildrenImGui();
+	ImGui::TextDisabled("The first child is the template, copied for each item");
 }

@@ -93,8 +93,8 @@ public:
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
 	//Emits this element, its owned objects and its children, flat
 	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
-	//False when children are rebuilt at runtime and must not be saved
-	virtual bool SavesChildren() const { return true; }
+	//Children saved and shown in the editor, from the front - the rest are built at runtime
+	virtual size_t SavedChildCount() const { return children.size(); }
 
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }

@@ -87,7 +87,9 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	if (!element) return;
 
+	//Runtime-built children (repeat copies, script output) stay out of the tree
 	std::vector<UIElement*> children = element->GetChildren();
+	children.resize(element->SavedChildCount());
 
 	ImGuiTreeNodeFlags flags =
 		ImGuiTreeNodeFlags_OpenOnArrow |

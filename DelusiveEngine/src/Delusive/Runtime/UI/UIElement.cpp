@@ -105,7 +105,8 @@ void UIElement::DrawChildrenImGui() {
 	//Removal waits until the loop is done so the list stays valid
 	UIElement* toRemove = nullptr;
 
-	for (auto& child : children) {
+	for (size_t i = 0; i < SavedChildCount(); ++i) {
+		auto& child = children[i];
 		if (!child) continue;
 
 		ImGui::PushID(child.get());
@@ -144,8 +145,6 @@ void UIElement::Deserialize(DelusiveParser::DataBlock& in) {
 	//Owned objects pull their recipes from the library, which is already populated
 	registry->Resolve(instance);
 
-	if (!SavesChildren()) return;
-
 	children.clear();
 
 	auto list = in.properties.find("children");
@@ -175,12 +174,10 @@ void UIElement::Deserialize(DelusiveParser::DataBlock& in) {
 void UIElement::Serialize(DelusiveParser::DataBlock& out) const {
 	registry->Serialize(out);
 
-	if (!SavesChildren()) return;
-
 	//Ownership is a UUID list - each child writes its own block
 	std::ostringstream ids;
-	for (const auto& child : children) {
-		if (child) ids << child->GetID().ToString() << " ";
+	for (size_t i = 0; i < SavedChildCount(); ++i) {
+		if (children[i]) ids << children[i]->GetID().ToString() << " ";
 	}
 	out.properties["children"] = ids.str();
 }
@@ -197,10 +194,8 @@ void UIElement::CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const
 
 	CollectOwned(out);
 
-	if (!SavesChildren()) return;
-
-	for (const auto& child : children) {
-		if (child) child->CollectBlocks(out);
+	for (size_t i = 0; i < SavedChildCount(); ++i) {
+		if (children[i]) children[i]->CollectBlocks(out);
 	}
 }
 

@@ -35,7 +35,8 @@ void HealthDisplay::OnUpdate(float) {
 	if (!rootElement || !rootElement->GetEnabled()) return;
 
 	UICanvas* canvas = rootElement->GetCanvas();
-	if (!player && canvas) player = canvas->FetchPlayer();
+	//Looked up every frame: the canvas is shared, so the player changes between the builder and play
+	player = canvas ? canvas->FetchPlayer() : nullptr;
 	if (!player) return;
 
 	const glm::vec2 origin = FetchOrigin();

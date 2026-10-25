@@ -38,32 +38,22 @@ void EquipScreen::Link(UIScriptContainer* root) {
 
 void EquipScreen::RelocateReferences() {
 	UIScript::RelocateReferences();
-
-	availableContainer = nullptr;
-	equippedContainer = nullptr;
-	player = nullptr;
-	inventoryData = nullptr;
-	needsRebuild = true; //ReadyCheck resolves everything again
+	builtFrom.clear();
 }
 
+//Looked up every frame: the canvas is shared, so the player changes between the builder and play
 bool EquipScreen::ReadyCheck() {
 	if (!rootElement) return false;
 
 	UICanvas* canvas = rootElement->GetCanvas();
 	if (!canvas) return false;
-	if (!player) player = canvas->FetchPlayer();
-	if (!player) return false;
-
-	if (!inventoryData) inventoryData = player->GetInventory();
+	player = canvas->FetchPlayer();
+	inventoryData = player ? player->GetInventory() : nullptr;
 	if (!inventoryData) return false;
 
-	if (!availableContainer) availableContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID.id));
-	if (!equippedContainer) equippedContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID.id));
+	availableContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(availableContainerID.id));
+	equippedContainer = dynamic_cast<UIRepeatContainer*>(canvas->FindElementByUUID(equippedContainerID.id));
 	return availableContainer && equippedContainer;
-}
-
-void EquipScreen::OnInit() {
-	needsRebuild = true;
 }
 
 void EquipScreen::OnUpdate(float) {
@@ -79,15 +69,29 @@ void EquipScreen::OnUpdate(float) {
 		return;
 	}
 
-	if (needsRebuild) Rebuild();
-}
-
-void EquipScreen::Rebuild() {
-	needsRebuild = false;
 	EnsureTemplate(availableContainer);
 	EnsureTemplate(equippedContainer);
-	BuildAvailableList();
-	BuildEquippedSlots();
+
+	auto available = inventoryData->GetAvailableTalismans();
+	auto equipped = inventoryData->GetEquippedTalismans();
+	availableContainer->SetCount(static_cast<int>(available.size()));
+	equippedContainer->SetCount(static_cast<int>(equipped.size()));
+
+	//Rebuilds only when something shown changes, including slots moved in the builder
+	std::string current = std::to_string(style.iconSize) + "," + std::to_string(style.stringSpacing) + ","
+		+ std::to_string(style.stringXOffset) + "," + std::to_string(style.stringYOffset);
+	Describe(current, availableContainer, available);
+	Describe(current, equippedContainer, equipped);
+	if (current == builtFrom) return;
+	builtFrom = std::move(current);
+
+	rootElement->ClearChildren();
+	BuildSlots(availableContainer, available, [this](int, Talisman* talisman) { EquipToSlot(talisman); });
+	BuildSlots(equippedContainer, equipped, [this](int slot, Talisman*) {
+		inventoryData->UnequipTalisman(slot);
+		targetSlot = slot;
+		player->LoadFromInventory();
+	});
 
 	//Optional, so it never blocks ReadyCheck
 	UIElement* confirm = rootElement->GetCanvas()->FindElementByUUID(confirmButtonID.id);
@@ -96,7 +100,7 @@ void EquipScreen::Rebuild() {
 	}
 }
 
-//An empty container gets a plain button to copy, so the screen works before any styling
+//An empty container gets a plain button as its template, which the builder can then restyle
 void EquipScreen::EnsureTemplate(UIRepeatContainer* container) {
 	if (!container->GetChildren().empty()) return;
 
@@ -107,40 +111,32 @@ void EquipScreen::EnsureTemplate(UIRepeatContainer* container) {
 	if (container->GetSpacing() <= 0.0f) container->SetSpacing(style.iconSize * 1.5f);
 }
 
-void EquipScreen::BuildAvailableList() {
-	auto talismans = inventoryData->GetAvailableTalismans();
-	availableContainer->SetCount(static_cast<int>(talismans.size()));
+void EquipScreen::Describe(std::string& text, UIRepeatContainer* container, const std::vector<Talisman*>& talismans) {
+	auto slots = container->GetChildren();
+	const glm::vec2& size = slots.front()->GetSize();
+	text += "|" + std::to_string(size.x) + "," + std::to_string(size.y);
 
-	auto children = availableContainer->GetChildren();
-	for (size_t i = 0; i < children.size(); ++i) {
-		UIElement* child = children[i];
-		child->ClearChildren();
-		if (i >= talismans.size()) continue;
-
-		Talisman* talisman = talismans[i];
-		BuildTalismanVisual(child, talisman, child->GetPosition(), style);
-		if (child->SupportsClick()) child->SetOnClick([this, talisman]() { EquipToSlot(talisman); });
-		else std::cerr << "[EquipScreen] " << child->GetName() << " can't be clicked - use a UIButton" << std::endl;
+	for (size_t i = 0; i < talismans.size() && i < slots.size(); ++i) {
+		const glm::vec2& position = slots[i]->GetPosition();
+		text += ";" + std::to_string(position.x) + "," + std::to_string(position.y) + ":"
+			+ (talismans[i] ? talismans[i]->GetID().ToString() : "-");
 	}
 }
 
-void EquipScreen::BuildEquippedSlots() {
-	auto equipped = inventoryData->GetEquippedTalismans();
-	const int slots = static_cast<int>(equipped.size());
-	equippedContainer->SetCount(slots);
+void EquipScreen::BuildSlots(UIRepeatContainer* container, const std::vector<Talisman*>& talismans, const std::function<void(int, Talisman*)>& onClick) {
+	auto slots = container->GetChildren();
+	//Copies keep up with size changes made to the template
+	const glm::vec2 size = slots.front()->GetSize();
 
-	auto children = equippedContainer->GetChildren();
-	for (int i = 0; i < slots && i < static_cast<int>(children.size()); ++i) {
-		UIElement* child = children[i];
-		child->ClearChildren();
-		if (equipped[i]) BuildTalismanVisual(child, equipped[i], child->GetPosition(), style);
+	for (int i = 0; i < static_cast<int>(talismans.size()) && i < static_cast<int>(slots.size()); ++i) {
+		UIElement* slot = slots[i];
+		Talisman* talisman = talismans[i];
 
-		//Empty slots are clickable too, to pick where the next talisman goes
-		child->SetOnClick([this, i]() {
-			inventoryData->UnequipTalisman(i);
-			targetSlot = i;
-			LoadoutChanged();
-		});
+		slot->SetSize(size);
+		if (talisman) BuildTalismanVisual(rootElement, talisman, slot->GetPosition(), style);
+
+		if (slot->SupportsClick()) slot->SetOnClick([onClick, i, talisman]() { onClick(i, talisman); });
+		else std::cerr << "[EquipScreen] " << slot->GetName() << " can't be clicked - use a UIButton" << std::endl;
 	}
 }
 
@@ -156,10 +152,5 @@ void EquipScreen::EquipToSlot(Talisman* talisman) {
 
 	inventoryData->EquipTalisman(slot, talisman);
 	targetSlot = -1;
-	LoadoutChanged();
-}
-
-void EquipScreen::LoadoutChanged() {
 	player->LoadFromInventory();
-	needsRebuild = true;
 }
