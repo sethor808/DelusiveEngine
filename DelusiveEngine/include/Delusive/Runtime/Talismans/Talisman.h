@@ -41,16 +41,22 @@ public:
 	virtual bool GetIsBroken() { return isBroken; }
 	virtual void SetIsBroken(bool broken) { isBroken = broken; }
 
-	//Hooks: Passive while equipped and unbroken, WhileActive only on the top unbroken talisman
+	//Stat hooks: Passive while unbroken, WhileActive only on the top unbroken talisman, WhileBroken after it breaks
 	virtual void ApplyPassive(PlayerStats&) const {}
 	virtual void ApplyWhileActive(PlayerStats&) const {}
+	virtual void ApplyWhileBroken(PlayerStats&) const {}
+	//Fires once, the moment the talisman breaks
 	virtual void OnConsume(PlayerAgent&) {}
+	//Fire on every unbroken talisman; while-active effects check IsActive first
 	virtual void HitEvent(PlayerAgent&, const HitData&) {}
 	virtual void LandHitEvent(PlayerAgent&, const HitData&) {}
 
     virtual std::string ConstantPassiveDesc() { return ""; }
     virtual std::string WhileActiveDesc() { return ""; }
     virtual std::string OnConsumeDesc() { return ""; }
+	virtual std::string WhileBrokenDesc() { return ""; }
+
+	bool IsActive(const PlayerAgent&) const;
 
 	virtual std::string GetBaseTexture() const;
 	virtual std::string GetGlyphTexture() const;

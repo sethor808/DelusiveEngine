@@ -186,6 +186,10 @@ public:
 	//HitEvent on the agent hit, LandHitEvent on the attacker
 	virtual void HitEvent(const HitData&) {}
 	virtual void LandHitEvent(const HitData&) {}
+	//Attacker's last say on a hit before the target takes it
+	virtual void ModifyOutgoingHit(HitData&) const {}
+	//Scales this agent's hitboxes only
+	virtual float GetHitboxScale() const { return 1.0f; }
 
 protected:
     TransformComponent transform;

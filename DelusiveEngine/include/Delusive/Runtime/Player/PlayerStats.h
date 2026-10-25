@@ -8,6 +8,13 @@ struct PlayerStats {
 	float deceleration = 8.0f;
 	float damping = 0.9f;
 
-	float dodgeStrength = moveSpeed * 2.0f; //TESTING ONLY
+	//Dodge speed is a multiple of moveSpeed, so speed boosts also dodge further
+	float dodgeSpeedScale = 2.0f;
 	float dodgeDuration = .10f;
+
+	//Combat
+	float invulDuration = 0.0f; //Granted after every hit taken
+	float hitboxScale = 1.0f;
+	float damageMultiplier = 1.0f;
+	float statusStackMultiplier = 1.0f; //TODO: Read once status effects exist
 };

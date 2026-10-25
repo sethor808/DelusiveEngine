@@ -1,4 +1,5 @@
 #include <Delusive/Runtime/Talismans/Talisman.h>
+#include <Delusive/Runtime/Agents/PlayerAgent.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 
@@ -40,6 +41,10 @@ bool Talisman::TakeDamage(int damage) {
 		isBroken = false;
 		return isBroken;
 	}
+}
+
+bool Talisman::IsActive(const PlayerAgent& player) const {
+	return player.GetActiveTalisman() == this;
 }
 
 std::string Talisman::GetBaseTexture() const {
