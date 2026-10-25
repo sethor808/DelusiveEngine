@@ -4,45 +4,46 @@
 #include <Scripts/UI/TalismanVisual.h>
 
 class Talisman;
-class UIElement;
 class UIRepeatContainer;
 class DelusiveInventory;
 class PlayerAgent;
 
+//Equipped slots in one container, available talismans in the other. Clicking an available
+//talisman equips a copy; clicking a slot empties it and makes it the next one filled.
 class EquipScreen : public UIScript {
 public:
-    EquipScreen();
-    void RegisterProperties() override;
+	EquipScreen();
+	void RegisterProperties() override;
 
-    void RelocateReferences() override;
-    std::string GetType() const override { return "EquipScreen"; }
-    virtual void Link(UIScriptContainer*) override;
+	std::string GetType() const override { return "EquipScreen"; }
+	void RelocateReferences() override;
+	void Link(UIScriptContainer*) override;
 
-    void OnInit() override;
+	void OnInit() override;
 	void OnUpdate(float) override;
-    void OnDraw() override {};
-    void OnEvent() override {};
-    void OnClick(UIScriptContainer* clicked) override {}; //idk what this is supposed to be
-
 private:
-    DelusiveUILink availableContainerID;
-    UIRepeatContainer* availableContainer = nullptr;
-    DelusiveUILink equippedContainerID;
-    UIRepeatContainer* equippedContainer = nullptr;
-	//Optional - clicking it hides the screen
+	DelusiveUILink availableContainerID;
+	DelusiveUILink equippedContainerID;
+	//Optional - clicking it closes the screen
 	DelusiveUILink confirmButtonID;
-    DelusiveInventory* inventoryData = nullptr;
-	PlayerAgent* player = nullptr;
-
 	TalismanVisualStyle style;
 
-	//Rebuilding inside a click would delete the clicked button
+	UIRepeatContainer* availableContainer = nullptr;
+	UIRepeatContainer* equippedContainer = nullptr;
+	DelusiveInventory* inventoryData = nullptr;
+	PlayerAgent* player = nullptr;
+
+	//Slot the next pick goes into, -1 for the first empty one
+	int targetSlot = -1;
+	//Rebuilding inside a click would clear the clicked button mid-call
 	bool needsRebuild = true;
 	bool closeRequested = false;
 
-    bool ReadyCheck();
+	bool ReadyCheck();
 	void Rebuild();
-    void BuildAvailableList();
-    void BuildEquippedSlots();
-    void EquipToFirstOpenSlot(Talisman*);
+	void EnsureTemplate(UIRepeatContainer*);
+	void BuildAvailableList();
+	void BuildEquippedSlots();
+	void EquipToSlot(Talisman*);
+	void LoadoutChanged();
 };

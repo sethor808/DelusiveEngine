@@ -20,11 +20,15 @@ void GameManager::Init() {
     inventory.Link(this);
 
 	//Test unlocks until the inventory is saved between sessions
-	for (int i = 0; i < inventory.GetSlotCount(); ++i) {
-		inventory.AddTalisman("BasicTalisman");
-	}
+	inventory.AddTalisman("BasicTalisman");
 	inventory.AddTalisman("SpeedTalisman");
 	inventory.AddTalisman("MajorSpeedTalisman");
+
+	//Starts with the player's default loadout of basic talismans
+	auto available = inventory.GetAvailableTalismans();
+	if (!available.empty()) {
+		for (int i = 0; i < inventory.GetSlotCount(); ++i) inventory.EquipTalisman(i, available.front());
+	}
 }
 
 void GameManager::Play() {
