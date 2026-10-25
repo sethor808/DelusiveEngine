@@ -20,7 +20,6 @@ void HealthDisplay::RegisterProperties() {
 	registry->Register("leftOffset", &leftOffset);
 	registry->Register("topOffset", &topOffset);
 	registry->Register("iconSize", &style.iconSize);
-	registry->Register("stringSize", &style.stringSize);
 	registry->Register("stringSpacing", &style.stringSpacing);
 	registry->Register("stringXOffset", &style.stringXOffset);
 	registry->Register("stringYOffset", &style.stringYOffset);

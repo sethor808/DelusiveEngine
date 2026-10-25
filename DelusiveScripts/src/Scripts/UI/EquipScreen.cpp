@@ -24,7 +24,6 @@ void EquipScreen::RegisterProperties() {
 
 	registry->Register("iconSize", &style.iconSize);
 	registry->Register("stringSpacing", &style.stringSpacing);
-	registry->Register("stringSize", &style.stringSize);
 	registry->Register("stringXOffset", &style.stringXOffset);
 	registry->Register("stringYOffset", &style.stringYOffset);
 }

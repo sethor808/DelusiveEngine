@@ -12,23 +12,26 @@ void BuildTalismanVisual(UIElement* parent, Talisman* talisman, const glm::vec2&
 	base->SetSize({ style.iconSize, style.iconSize });
 	base->SetPosition(origin);
 
-	auto* glyph = base->AddChild<UIImage>();
-	glyph->SetName("TalismanGlyph");
-	glyph->SetTexturePath(talisman->GetGlyphTexture());
-	glyph->SetSize({ style.iconSize, style.iconSize });
-	glyph->SetPosition(origin);
+	if (!talisman->GetGlyphTexture().empty()) {
+		auto* glyph = base->AddChild<UIImage>();
+		glyph->SetName("TalismanGlyph");
+		glyph->SetTexturePath(talisman->GetGlyphTexture());
+		glyph->SetSize({ style.iconSize, style.iconSize });
+		glyph->SetPosition(origin);
+	}
 
 	int currentHP = talisman->GetCurrentHP();
 	int maxHP = talisman->GetMaxHP();
 	if (currentHP <= 0 || maxHP <= 0) return;
 
-	float stringXStart = (style.stringSpacing * 2.0f) / maxHP;
+	//Each string keeps its slot, centred on the talisman, so lost strings leave their gap
+	const float firstX = -(maxHP - 1) * 0.5f * style.stringSpacing;
 
 	for (int i = 0; i < currentHP; ++i) {
 		auto* stringImage = base->AddChild<UIImage>();
 		stringImage->SetName("TalismanString_" + std::to_string(i));
 		stringImage->SetTexturePath(talisman->GetStringTexture());
-		stringImage->SetSize({ style.stringSize, style.stringSize });
-		stringImage->SetPosition(origin + glm::vec2(-stringXStart + style.stringSpacing * i + style.stringXOffset, style.stringYOffset));
+		stringImage->SetSize({ style.iconSize, style.iconSize });
+		stringImage->SetPosition(origin + glm::vec2(firstX + style.stringSpacing * i + style.stringXOffset, style.stringYOffset));
 	}
 }

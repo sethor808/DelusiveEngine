@@ -23,7 +23,7 @@ private:
 	bool anchorTopLeft = false;
 	float leftOffset = 32.0f;
 	float topOffset = 32.0f;
-	TalismanVisualStyle style = { 0.75f, 0.15f, 0.2f, 0.0f, -0.55f };
+	TalismanVisualStyle style;
 
 	PlayerAgent* player = nullptr;
 	std::string builtFrom;

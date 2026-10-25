@@ -66,6 +66,7 @@ protected:
 	bool isBroken = false;
 	std::unique_ptr<PropertyRegistry> registry;
 	std::string talismanBase = DEFAULT_TALISMAN;
-	std::string talismanGlyph = TALISMAN_STRING;
+	//Empty for a talisman without a glyph
+	std::string talismanGlyph;
 	std::string talismanString = TALISMAN_STRING;
 };
