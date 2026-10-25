@@ -110,7 +110,6 @@ void EquipScreen::BuildAvailableList() {
     auto talismans = inventoryData->GetAvailableTalismans();
 
     availableContainer->SetCount((int)talismans.size());
-    availableContainer->RegenerateChildren();
 
     auto children = availableContainer->GetChildren();
 	for (size_t i = 0; i < children.size() && i < talismans.size(); ++i) {
@@ -134,7 +133,6 @@ void EquipScreen::BuildEquippedSlots() {
     auto equipped = inventoryData->GetEquippedTalismans();
 
     equippedContainer->SetCount(slots);
-    equippedContainer->RegenerateChildren();
 
     auto children = equippedContainer->GetChildren();
 	for (int i = 0; i < slots && i < static_cast<int>(children.size()); ++i) {

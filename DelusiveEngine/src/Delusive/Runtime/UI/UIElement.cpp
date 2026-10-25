@@ -49,24 +49,12 @@ void UIElement::RegisterProperties(){
 	registry->Register("enabled", &enabled);
 	registry->Register("position", &position);
 	registry->Register("size", &size);
-	registry->Register("bindEnabled", &bindEnabled);
-	registry->Hide("bindEnabled"); //Drawn in the Data binding section
 }
 
 void UIElement::Move(const glm::vec2& delta) {
 	position += delta;
 	for (auto& child : children) {
 		child->Move(delta);
-	}
-}
-
-void UIElement::ApplyBinding(const UIBindItem& item) {
-	if (const std::string* value = DelusiveUI::FetchBindField(item, bindEnabled)) {
-		enabled = *value != "0";
-	}
-
-	for (auto& child : children) {
-		child->ApplyBinding(item);
 	}
 }
 
@@ -108,30 +96,7 @@ void UIElement::DrawImGui() {
 	}
 
 	registry->DrawImGui();
-	DrawBindingImGui();
 	DrawChildrenImGui();
-}
-
-void UIElement::DrawBindField(const char* label, std::string& field, const char* help) {
-	ImGui::PushID(label);
-	if (ImGui::BeginCombo(label, field.empty() ? "<None>" : field.c_str())) {
-		if (ImGui::Selectable("<None>", field.empty())) field.clear();
-
-		for (const UIBindField& option : DelusiveUI::ListBindFields()) {
-			if (ImGui::Selectable(option.name, field == option.name)) field = option.name;
-			ImGui::SameLine();
-			ImGui::TextDisabled("%s", option.help);
-		}
-		ImGui::EndCombo();
-	}
-	ImGui::SetItemTooltip("%s", help);
-	ImGui::PopID();
-}
-
-void UIElement::DrawBindingImGui() {
-	//Only means something inside a repeat container that has a data source
-	ImGui::SeparatorText("Data binding");
-	DrawBindField("Show only when", bindEnabled, "Shown while this field is not 0. Leave empty to always show.");
 }
 
 void UIElement::DrawChildrenImGui() {
