@@ -25,7 +25,14 @@ void UIScriptContainer::RegisterProperties() {
 
 void UIScriptContainer::Update(float deltaTime) {
     UIElement::Update(deltaTime);
-    if (script) script->OnUpdate(deltaTime);
+	if (!script) return;
+
+	//A script picked in the inspector arrives unlinked
+	if (script->GetRoot() != this) {
+		script->Link(this);
+		script->OnInit();
+	}
+	script->OnUpdate(deltaTime);
 }
 
 void UIScriptContainer::SetScript(std::unique_ptr<UIScript> newScript) {
