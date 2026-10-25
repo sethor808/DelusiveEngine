@@ -21,8 +21,8 @@ private:
 	float spacing = 1.0f;
 	//Pinned to the corner of the window, offset in pixels, instead of the container's position
 	bool anchorTopLeft = false;
-	float leftOffset = 0.0f;
-	float topOffset = 0.0f;
+	float leftOffset = 32.0f;
+	float topOffset = 32.0f;
 	TalismanVisualStyle style = { 0.75f, 0.15f, 0.2f, 0.0f, -0.55f };
 
 	PlayerAgent* player = nullptr;

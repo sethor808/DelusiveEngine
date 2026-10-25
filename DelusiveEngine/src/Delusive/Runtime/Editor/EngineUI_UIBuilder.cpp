@@ -9,11 +9,12 @@
 #include <imgui/imgui.h>
 
 void EngineUI::RenderUIBuilder(Scene& scene) {
-	ImGui::Begin(UIBuilderPanelWindow);
-
 	//Nothing updates the scene outside play, so the preview ticks here
 	UIManager* ui = scene.GetSystem<UIManager>();
 	if (ui) ui->Update(ImGui::GetIO().DeltaTime);
+
+	if (!showUIBuilderPanel) return;
+	ImGui::Begin(UIBuilderPanelWindow, &showUIBuilderPanel);
 
 	//The preview player feeds bound elements, e.g. the talisman stack
 	PlayerAgent* preview = scene.FetchPlayer();
