@@ -45,7 +45,6 @@ public:
 	//Drawing tools
 	void PushAlpha(float);
 	void PopAlpha();
-	void SetAlpha(float alpha);
 	float GetAlpha() const { return currentAlpha; }
 
 	void DebugDrawLine(glm::vec2, glm::vec2, glm::vec4);
