@@ -190,6 +190,9 @@ public:
 	virtual void ModifyOutgoingHit(HitData&) const {}
 	//Scales this agent's hitboxes only
 	virtual float GetHitboxScale() const { return 1.0f; }
+	//The scene removes destroyed agents at the end of its update
+	void Destroy() { toDelete = true; }
+	bool IsDestroyed() const { return toDelete; }
 
 protected:
     TransformComponent transform;
@@ -199,6 +202,7 @@ protected:
     UUID id;
 
     bool editorMode = false;
+	bool toDelete = false;
 	int team = 0;
     InteractionState interaction;
 
