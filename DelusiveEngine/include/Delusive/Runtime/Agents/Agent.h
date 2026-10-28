@@ -186,6 +186,13 @@ public:
 	//HitEvent on the agent hit, LandHitEvent on the attacker
 	virtual void HitEvent(const HitData&) {}
 	virtual void LandHitEvent(const HitData&) {}
+	//Attacker's last say on a hit before the target takes it
+	virtual void ModifyOutgoingHit(HitData&) const {}
+	//Scales this agent's hitboxes only
+	virtual float GetHitboxScale() const { return 1.0f; }
+	//The scene removes destroyed agents at the end of its update
+	void Destroy() { toDelete = true; }
+	bool IsDestroyed() const { return toDelete; }
 
 protected:
     TransformComponent transform;
@@ -195,6 +202,7 @@ protected:
     UUID id;
 
     bool editorMode = false;
+	bool toDelete = false;
 	int team = 0;
     InteractionState interaction;
 

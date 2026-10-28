@@ -53,6 +53,7 @@ public:
 
 	void LinkManager(UIManager* manager) { uiManager = manager; }
 	void DelinkManager() { uiManager = nullptr; }
+	UIManager* GetManager() const { return uiManager; }
     ScriptManager& GetScriptManager() const;
 	PlayerAgent* FetchPlayer() const;
 	void Update(float);
@@ -62,6 +63,7 @@ public:
 	void DrawImGui();
 
 	void AddElement(std::unique_ptr<UIElement>);
+	bool RemoveElement(UIElement*);
     UIElement* FindElementByUUID(const UUID& id) { return idManager.Find(id); }
 	std::vector<UIElement*> GetElements() const;
 
@@ -69,6 +71,9 @@ public:
 	void SetName(const std::string& _name) { name = _name; }
 	const std::string& GetName() const { return name; }
 	bool IsActive() const {return active;}
+	//Menus capture input; display-only canvases (a HUD) leave it to the game
+	bool CapturesInput() const { return capturesInput; }
+	void SetCapturesInput(bool _capturesInput) { capturesInput = _capturesInput; }
 	void SetActive(bool);
 private:
 	UIManager* uiManager = nullptr;
@@ -77,6 +82,7 @@ private:
 	UUID id;
 	std::string name;
 	bool active = false;
+	bool capturesInput = false;
 
 	std::vector<std::unique_ptr<UIElement>> elements;
 };

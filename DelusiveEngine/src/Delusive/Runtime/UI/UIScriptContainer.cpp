@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Scripting/UIScript.h>
+#include <imgui/imgui.h>
 
 UIScriptContainer::UIScriptContainer(DelusiveInstance& instance)
 	: UIElement(instance)
@@ -25,7 +26,14 @@ void UIScriptContainer::RegisterProperties() {
 
 void UIScriptContainer::Update(float deltaTime) {
     UIElement::Update(deltaTime);
-    if (script) script->OnUpdate(deltaTime);
+	if (!script) return;
+
+	//A script picked in the inspector arrives unlinked
+	if (script->GetRoot() != this) {
+		script->Link(this);
+		script->OnInit();
+	}
+	script->OnUpdate(deltaTime);
 }
 
 void UIScriptContainer::SetScript(std::unique_ptr<UIScript> newScript) {
@@ -46,4 +54,9 @@ void UIScriptContainer::DrawImGui() {
         AttachScript();
     }
     */
+}
+
+void UIScriptContainer::DrawChildrenImGui() {
+	ImGui::SeparatorText("Children");
+	ImGui::TextDisabled("Built by the script while it runs");
 }

@@ -1,5 +1,6 @@
 #include <Delusive/Runtime/Agents/EnemyAgent.h>
 #include <Delusive/Runtime/Components/DelusiveComponents.h>
+#include <Delusive/Runtime/Collision/HitData.h>
 
 EnemyAgent::EnemyAgent(DelusiveInstance& instance)
     : Agent(instance)
@@ -16,6 +17,7 @@ void EnemyAgent::RegisterProperties() {
 
     registry->Register("moveSpeed", &moveSpeed);
     registry->Register("damping", &damping);
+    registry->Register("maxHealth", &maxHealth);
 }
 
 std::string EnemyAgent::GetType() const{
@@ -61,4 +63,11 @@ void EnemyAgent::DrawImGui() {
 
 void EnemyAgent::SetTarget(Agent* target) {
     this->target = target;
+}
+
+void EnemyAgent::HitEvent(const HitData& hit) {
+	if (IsDestroyed()) return;
+
+	damageTaken += hit.damage;
+	if (GetHealth() <= 0) Destroy();
 }

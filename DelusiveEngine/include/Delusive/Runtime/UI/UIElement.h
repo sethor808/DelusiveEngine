@@ -10,6 +10,7 @@
 #include <Delusive/Runtime/Player/PlayerInputState.h>
 #include <imgui/imgui.h>
 #include <Delusive/Runtime/Core/UUID.h>
+#include <Delusive/Runtime/UI/DelusiveUI.h>
 
 class PropertyRegistry;
 class UICanvas;
@@ -78,6 +79,8 @@ public:
 	}
 
 	std::vector<UIElement*> GetChildren();
+	bool RemoveChild(UIElement*);
+
     void ClearChildren() { children.clear(); }
 	
 	UUID GetID() const { return id; }
@@ -90,8 +93,8 @@ public:
 	void CollectOwned(std::vector<DelusiveParser::DataBlock>& out) const;
 	//Emits this element, its owned objects and its children, flat
 	void CollectBlocks(std::vector<DelusiveParser::DataBlock>& out) const;
-	//False when children are rebuilt at runtime (repeat containers) and must not be saved
-	virtual bool SavesChildren() const { return true; }
+	//Children saved and shown in the editor, from the front - the rest are built at runtime
+	virtual size_t SavedChildCount() const { return children.size(); }
 
 	void SetName(const std::string& _name) { name = _name; }
 	void SetEnabled(bool _enabled) { enabled = _enabled; }
@@ -102,9 +105,14 @@ public:
 	const std::string& GetName() const { return name; }
 	const glm::vec2& GetPosition() const { return position; }
 	void SetPosition(const glm::vec2& pos) { position = pos; }
-	
+	//Shifts this element and its whole subtree
+	virtual void Move(const glm::vec2& delta);
+
 	virtual void DrawImGui();
 protected:
+	//Inspector sections, so a subclass can change one without redrawing the rest
+	virtual void DrawChildrenImGui();
+
 	UUID id;
 	UICanvas* parentCanvas = nullptr; //Shallow copy
 	DelusiveInstance& instance;

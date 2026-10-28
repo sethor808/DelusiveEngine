@@ -6,6 +6,7 @@
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <iostream>
+#include <cmath>
 #include <Delusive/Runtime/Collision/HitData.h>
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
@@ -64,6 +65,10 @@ void PlayerAgent::Update(float deltaTime) {
 
 	if (swapLockTimer > 0.0f) {
 		swapLockTimer -= deltaTime;
+	}
+
+	if (invulTimer > 0.0f) {
+		invulTimer -= deltaTime;
 	}
 
     // Input lock countdown
@@ -132,7 +137,7 @@ void PlayerAgent::StartDodge(const glm::vec2& dir) {
     dodgeTimer = modified.dodgeDuration;
 
     velocity = velocity * 0.5f;
-    impulse = dir * modified.dodgeStrength;
+    impulse = dir * modified.moveSpeed * modified.dodgeSpeedScale;
 
     inputLockTimer = modified.dodgeDuration;
 }
@@ -152,7 +157,7 @@ void PlayerAgent::HandleDodge(float deltaTime) {
 
 void PlayerAgent::HitEvent(const HitData& hit) {
 	Talisman* active = GetActiveTalisman();
-	if (!active) return;
+	if (!active || IsInvulnerable()) return;
 
 	for (auto& talisman : talismans) {
 		if (!talisman->GetIsBroken()) talisman->HitEvent(*this, hit);
@@ -163,11 +168,37 @@ void PlayerAgent::HitEvent(const HitData& hit) {
 		active->OnConsume(*this);
 		RecalculateStats();
 	}
+
+	TriggerInvul(modified.invulDuration);
 }
 
 void PlayerAgent::LandHitEvent(const HitData& hit) {
 	for (auto& talisman : talismans) {
 		if (!talisman->GetIsBroken()) talisman->LandHitEvent(*this, hit);
+	}
+}
+
+void PlayerAgent::ModifyOutgoingHit(HitData& hit) const {
+	hit.damage = static_cast<int>(std::lround(hit.damage * modified.damageMultiplier));
+}
+
+void PlayerAgent::HitAround(float radius, int damage) {
+	if (!sceneLink) return;
+
+	for (auto& agent : sceneLink->GetAgents()) {
+		if (agent.get() == this || (team != 0 && agent->GetTeam() == team)) continue;
+
+		const glm::vec2 offset = agent->GetTransform().position - transform.position;
+		const float distance = glm::length(offset);
+		if (distance > radius) continue;
+
+		HitData hit;
+		hit.attacker = this;
+		hit.target = agent.get();
+		hit.damage = damage;
+		hit.parryable = false;
+		if (distance > 0.0f) hit.direction = offset / distance;
+		agent->HitEvent(hit);
 	}
 }
 
@@ -195,14 +226,15 @@ void PlayerAgent::ApplyKnockback(const glm::vec2& dir, float strength) {
 }
 
 void PlayerAgent::TriggerInvul(float duration) {
-	invulTimer = duration; //TODO: Add more effects to make this really feel like an invul
+	invulTimer = std::max(invulTimer, duration); //TODO: Add more effects to make this really feel like an invul
 }
 
 void PlayerAgent::RecalculateStats() {
 	modified = base;
 
 	for (const auto& talisman : talismans) {
-		if (!talisman->GetIsBroken()) talisman->ApplyPassive(modified);
+		if (talisman->GetIsBroken()) talisman->ApplyWhileBroken(modified);
+		else talisman->ApplyPassive(modified);
 	}
 
 	if (Talisman* active = GetActiveTalisman()) active->ApplyWhileActive(modified);

@@ -77,12 +77,14 @@ WorldShape PhysicsSystem::BuildShape(const ColliderComponent& collider) {
 	const Transform& agent = out.owner->GetTransform();
 	const Transform& local = *collider.transform;
 	const glm::vec2 center = agent.position + agent.scale * local.position;
-	const glm::vec2 size = glm::abs(agent.scale * local.scale);
+	//Hitboxes grow around their own center
+	const float reach = out.type == ColliderType::Hitbox ? out.owner->GetHitboxScale() : 1.0f;
+	const glm::vec2 size = glm::abs(agent.scale * local.scale) * reach;
 
 	switch (out.shape) {
 	case ShapeType::Circle: {
 		out.center = center;
-		out.radius = 0.5f * std::abs(local.scale.x) * std::max(std::abs(agent.scale.x), std::abs(agent.scale.y));
+		out.radius = 0.5f * reach * std::abs(local.scale.x) * std::max(std::abs(agent.scale.x), std::abs(agent.scale.y));
 		out.min = center - glm::vec2(out.radius);
 		out.max = center + glm::vec2(out.radius);
 		break;
@@ -91,7 +93,7 @@ WorldShape PhysicsSystem::BuildShape(const ColliderComponent& collider) {
 		//A line is the one shape with a direction: local rotation, length scale.x
 		const glm::vec2 dir = { std::cos(local.rotation), std::sin(local.rotation) };
 		out.center = center;
-		out.end = center + agent.scale * (dir * local.scale.x);
+		out.end = center + agent.scale * (dir * local.scale.x * reach);
 		out.min = glm::min(out.center, out.end);
 		out.max = glm::max(out.center, out.end);
 		break;

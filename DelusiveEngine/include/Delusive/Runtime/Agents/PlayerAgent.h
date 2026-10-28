@@ -24,11 +24,18 @@ public:
 
 	void HitEvent(const HitData&) override;
 	void LandHitEvent(const HitData&) override;
+	void ModifyOutgoingHit(HitData&) const override;
+	float GetHitboxScale() const override { return modified.hitboxScale; }
+	//Hits every agent off the player's team within radius, e.g. talisman explosions
+	void HitAround(float radius, int damage);
 	const std::vector<std::unique_ptr<Talisman>>& GetTalismans() { return talismans; }
 	//First unbroken talisman: the one the next hit damages
 	Talisman* GetActiveTalisman() const;
 
+	//Keeps the longer of the current and new window
 	void TriggerInvul(float);
+	bool IsInvulnerable() const { return invulTimer > 0.0f; }
+	const PlayerStats& GetStats() const { return modified; }
 	//Base stats plus talisman hooks; call whenever the stack changes
 	void RecalculateStats();
 

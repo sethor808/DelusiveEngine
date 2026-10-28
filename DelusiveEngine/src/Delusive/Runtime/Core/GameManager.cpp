@@ -3,7 +3,7 @@
 
 
 GameManager::GameManager(DelusiveRenderer& renderer)
-	: instance(renderer, idManager, scriptManager, assetLibrary), editorScene(instance), playScene(instance)
+	: instance(renderer, idManager, scriptManager, assetLibrary), uiRegistry(instance), editorScene(instance), playScene(instance)
 {
     Init();
 }
@@ -11,6 +11,8 @@ GameManager::GameManager(DelusiveRenderer& renderer)
 void GameManager::Init() {
     assetLibrary.LoadAll();
     scriptManager.Init();
+    //Canvases build their UI scripts, so scripts are registered first
+    uiRegistry.LoadAll();
     isPlaying = false;
     activeScene = &editorScene;
     editorScene.LinkGameManager(this);
@@ -18,11 +20,15 @@ void GameManager::Init() {
     inventory.Link(this);
 
 	//Test unlocks until the inventory is saved between sessions
-	for (int i = 0; i < inventory.GetSlotCount(); ++i) {
-		inventory.AddTalisman("BasicTalisman");
-	}
+	inventory.AddTalisman("BasicTalisman");
 	inventory.AddTalisman("SpeedTalisman");
 	inventory.AddTalisman("MajorSpeedTalisman");
+
+	//Starts with the player's default loadout of basic talismans
+	auto available = inventory.GetAvailableTalismans();
+	if (!available.empty()) {
+		for (int i = 0; i < inventory.GetSlotCount(); ++i) inventory.EquipTalisman(i, available.front());
+	}
 }
 
 void GameManager::Play() {
@@ -68,6 +74,6 @@ void GameManager::HandleInput(const PlayerInputState& input) {
     activeScene->HandleInput(input);
 }
 
-void GameManager::HandleMouse(const glm::vec2& pos, bool leftClick) {
-    activeScene->HandleMouse(pos, leftClick);
+void GameManager::HandleMouse(const glm::vec2& pos, const glm::vec2& uiPos, bool leftClick) {
+    activeScene->HandleMouse(pos, uiPos, leftClick);
 }

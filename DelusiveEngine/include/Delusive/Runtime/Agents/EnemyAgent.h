@@ -18,9 +18,15 @@ public:
 	//EnemyAgent logic
 	void SetTarget(Agent*);
 
+	//Combat
+	void HitEvent(const HitData&) override;
+	int GetHealth() const { return maxHealth - damageTaken; }
+
 private:
 	Agent* target = nullptr;
-	
+
+	int maxHealth = 3;
+	int damageTaken = 0;
 
 	glm::vec2 velocity = { 0.0f, 0.0f };
 	glm::vec2 acceleration = { 0.0f, 0.0f };

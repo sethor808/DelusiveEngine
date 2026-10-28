@@ -3,9 +3,9 @@
 #include <Delusive/Runtime/UI/UIButton.h>
 #include <Delusive/Runtime/UI/UIImage.h>
 #include <Delusive/Runtime/UI/UIPanel.h>
-#include <Delusive/Runtime/UI/UITalismanDisplay.h>
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/UI/UIScriptContainer.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
 #include <imgui/imgui.h>
 
@@ -21,8 +21,6 @@ std::string DelusiveUI::DrawUIElementAddMenu() {
     }
 
     if (ImGui::BeginMenu("Advanced")) {
-        if (ImGui::MenuItem("UITalismanDisplay")) selectedType = "UITalismanDisplay";
-        if (ImGui::MenuItem("UITalismanButton")) selectedType = "UITalismanButton";
         //if (ImGui::MenuItem("UIEquipScreen")) selectedType = "UIEquipScreen";
         if (ImGui::MenuItem("UIRepeatContainer")) selectedType = "UIRepeatContainer";
         if (ImGui::MenuItem("UIScriptContainer")) selectedType = "UIScriptContainer";
@@ -44,9 +42,6 @@ std::unique_ptr<UIElement> DelusiveUI::CreateUIElementByType(const std::string& 
      }
      else if (type == "UIPanel") {
          return std::make_unique<UIPanel>(instance);
-     }
-     else if (type == "UITalismanDisplay") {
-         return std::make_unique<UITalismanDisplay>(instance);
      }
      else if (type == "UIRepeatContainer") {
          return std::make_unique<UIRepeatContainer>(instance);

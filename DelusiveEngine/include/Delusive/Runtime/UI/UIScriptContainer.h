@@ -23,6 +23,10 @@ public:
 
 	const std::string GetType() const { return "UIScriptContainer"; }
     void DrawImGui() override;
+	//The script builds its children each run, so none are saved
+	size_t SavedChildCount() const override { return 0; }
 private:
     DelusiveObject<UIScript> script;
+
+	void DrawChildrenImGui() override;
 };
