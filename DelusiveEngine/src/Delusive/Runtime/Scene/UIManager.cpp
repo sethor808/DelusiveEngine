@@ -1,15 +1,88 @@
 #include <Delusive/Runtime/Scene/UIManager.h>
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/UI/UIElement.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
 #include <SDL3/SDL_keyboard.h>
+#include <SDL3/SDL_gamepad.h>
 #include <algorithm>
+#include <cfloat>
 #include <iostream>
 #include <imgui/imgui.h>
 #include <sstream>
+
+namespace {
+	bool KeyDown(const PlayerInputState& input, const std::string& keyName) {
+		if (!input.keys || keyName.empty()) return false;
+		SDL_Scancode code = SDL_GetScancodeFromName(keyName.c_str());
+		return code != SDL_SCANCODE_UNKNOWN && input.keys[code];
+	}
+
+	bool ButtonDown(const PlayerInputState& input, const std::string& buttonName) {
+		if (buttonName.empty()) return false;
+		SDL_GamepadButton button = SDL_GetGamepadButtonFromString(buttonName.c_str());
+		return button != SDL_GAMEPAD_BUTTON_INVALID && (input.padButtons & (1u << button));
+	}
+
+	void CollectFocusTargets(UIElement* element, std::vector<UIElement*>& out) {
+		if (!element->GetEnabled()) return;
+		if (element->SupportsClick()) out.push_back(element);
+		for (UIElement* child : element->GetChildren()) CollectFocusTargets(child, out);
+	}
+
+	void ClearFocusTree(UIElement* element) {
+		element->SetFocused(false);
+		for (UIElement* child : element->GetChildren()) ClearFocusTree(child);
+	}
+
+	UIElement* Nearest(const std::vector<UIElement*>& targets, const glm::vec2& pos) {
+		UIElement* best = nullptr;
+		float bestDistance = FLT_MAX;
+		for (UIElement* target : targets) {
+			glm::vec2 offset = target->GetPosition() - pos;
+			float distance = glm::dot(offset, offset);
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				best = target;
+			}
+		}
+		return best;
+	}
+
+	UIElement* TopLeft(const std::vector<UIElement*>& targets) {
+		UIElement* best = targets.front();
+		for (UIElement* target : targets) {
+			const glm::vec2& pos = target->GetPosition();
+			const glm::vec2& bestPos = best->GetPosition();
+			bool higher = pos.y > bestPos.y + 0.01f;
+			bool sameRowLeft = std::abs(pos.y - bestPos.y) <= 0.01f && pos.x < bestPos.x;
+			if (higher || sameRowLeft) best = target;
+		}
+		return best;
+	}
+
+	//Closest target ahead in the direction, favouring ones in line with the current
+	UIElement* Step(const std::vector<UIElement*>& targets, UIElement* from, const glm::vec2& dir) {
+		glm::vec2 heading = glm::normalize(dir);
+		UIElement* best = from;
+		float bestScore = FLT_MAX;
+		for (UIElement* target : targets) {
+			glm::vec2 offset = target->GetPosition() - from->GetPosition();
+			float along = glm::dot(offset, heading);
+			if (target == from || along <= 0.01f) continue;
+
+			float score = along + glm::length(offset - heading * along) * 2.0f;
+			if (score < bestScore) {
+				bestScore = score;
+				best = target;
+			}
+		}
+		return best;
+	}
+}
 
 UIManager::UIManager(DelusiveInstance& instance)
 	: SceneSystem(instance)
@@ -52,12 +125,14 @@ void UIManager::RegisterProperties() {
 	registry->Register("stateCanvases", &stateCanvases);
 	registry->Register("statePauses", &statePauses);
 	registry->Register("stateKeys", &stateKeys);
+	registry->Register("stateButtons", &stateButtons);
 	registry->Register("startState", &startState);
 	//Edited through the States section of DrawImGui
 	registry->Hide("stateNames");
 	registry->Hide("stateCanvases");
 	registry->Hide("statePauses");
 	registry->Hide("stateKeys");
+	registry->Hide("stateButtons");
 	registry->Hide("startState");
 }
 
@@ -87,6 +162,7 @@ void UIManager::ResolveStates() {
 		state.name = stateNames[i];
 		state.pausesGame = i < statePauses.size() && statePauses[i] != 0;
 		state.toggleKey = i < stateKeys.size() ? stateKeys[i] : "";
+		state.toggleButton = i < stateButtons.size() ? stateButtons[i] : "";
 
 		std::istringstream ids(i < stateCanvases.size() ? stateCanvases[i] : "");
 		std::string idText;
@@ -114,6 +190,7 @@ void UIManager::SyncStates() {
 	stateCanvases.clear();
 	statePauses.clear();
 	stateKeys.clear();
+	stateButtons.clear();
 
 	for (const UIState& state : states) {
 		std::ostringstream ids;
@@ -124,6 +201,7 @@ void UIManager::SyncStates() {
 		stateCanvases.push_back(ids.str());
 		statePauses.push_back(state.pausesGame ? 1 : 0);
 		stateKeys.push_back(state.toggleKey);
+		stateButtons.push_back(state.toggleButton);
 	}
 }
 
@@ -136,6 +214,8 @@ void UIManager::StackChanged() {
 	}
 
 	waitForRelease = true;
+	hasFocus = false;
+	ClearFocus();
 }
 
 void UIManager::SetState(const std::string& stateName) {
@@ -249,6 +329,14 @@ void UIManager::Draw(const glm::mat4& projection) {
 }
 
 void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
+	if (mousePos != lastMouse || mouseDown) {
+		lastMouse = mousePos;
+		if (padFocus) {
+			padFocus = false;
+			ClearFocus();
+		}
+	}
+
 	if (waitForRelease) {
 		if (mouseDown) return;
 		waitForRelease = false;
@@ -263,28 +351,68 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 }
 
 void UIManager::HandleInput(const PlayerInputState& input) {
-	if (input.keys) {
-		int toggled = -1;
-		for (size_t i = 0; i < states.size(); ++i) {
-			UIState& state = states[i];
-			if (state.toggleKey.empty()) continue;
-
-			SDL_Scancode code = SDL_GetScancodeFromName(state.toggleKey.c_str());
-			if (code == SDL_SCANCODE_UNKNOWN) continue;
-
-			bool down = input.keys[code];
-			if (down && !state.keyWasDown) toggled = static_cast<int>(i);
-			state.keyWasDown = down;
+	int toggled = -1;
+	for (size_t i = 0; i < states.size(); ++i) {
+		UIState& state = states[i];
+		bool padDown = ButtonDown(input, state.toggleButton);
+		bool down = padDown || KeyDown(input, state.toggleKey);
+		if (down && !state.toggleWasDown) {
+			toggled = static_cast<int>(i);
+			//Opened from the gamepad, so focus shows straight away
+			padFocus = padDown;
 		}
+		state.toggleWasDown = down;
+	}
 
-		if (toggled >= 0) {
-			if (!stack.empty() && stack.back() == toggled) PopState();
-			else PushState(states[toggled].name);
-		}
+	if (toggled >= 0) {
+		if (!stack.empty() && stack.back() == toggled) PopState();
+		else PushState(states[toggled].name);
+	}
+	else {
+		Navigate(input);
 	}
 
 	for (UICanvas* canvas : LinkInputCanvases()) {
 		canvas->HandleInput(input);
+	}
+}
+
+void UIManager::Navigate(const PlayerInputState& input) {
+	std::vector<UICanvas*> canvases = LinkInputCanvases();
+	if (canvases.empty()) return;
+
+	if (input.backPressed) {
+		PopState();
+		return;
+	}
+
+	std::vector<UIElement*> targets;
+	for (UICanvas* canvas : canvases) {
+		for (UIElement* element : canvas->GetElements()) CollectFocusTargets(element, targets);
+	}
+	if (targets.empty()) return;
+
+	const bool navigated = input.navDir != glm::vec2(0.0f);
+	//The first press only shows where focus is
+	const bool shown = padFocus && hasFocus;
+	if (navigated || input.confirmPressed) padFocus = true;
+	if (!padFocus) return;
+
+	UIElement* focus = hasFocus ? Nearest(targets, focusPos) : TopLeft(targets);
+	if (navigated && shown) focus = Step(targets, focus, input.navDir);
+	focusPos = focus->GetPosition();
+	hasFocus = true;
+
+	for (UIElement* target : targets) target->SetFocused(target == focus);
+
+	if (input.confirmPressed && shown) focus->Click();
+}
+
+void UIManager::ClearFocus() {
+	for (const UIState& state : states) {
+		for (UICanvas* canvas : state.canvases) {
+			for (UIElement* element : canvas->GetElements()) ClearFocusTree(element);
+		}
 	}
 }
 
@@ -365,6 +493,14 @@ void UIManager::DrawStateImGui(UIState& state, DelusiveUIRegistry& uiRegistry) {
 	}
 	if (!state.toggleKey.empty() && SDL_GetScancodeFromName(state.toggleKey.c_str()) == SDL_SCANCODE_UNKNOWN) {
 		ImGui::TextDisabled("Unknown key name");
+	}
+
+	std::snprintf(buffer, sizeof(buffer), "%s", state.toggleButton.c_str());
+	if (ImGui::InputTextWithHint("Toggle button", "Gamepad, e.g. back, start", buffer, sizeof(buffer))) {
+		state.toggleButton = buffer;
+	}
+	if (!state.toggleButton.empty() && SDL_GetGamepadButtonFromString(state.toggleButton.c_str()) == SDL_GAMEPAD_BUTTON_INVALID) {
+		ImGui::TextDisabled("Unknown button name");
 	}
 
 	//Every canvas, ticked when this state shows it

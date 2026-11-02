@@ -5,6 +5,7 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Internal/Rendering/ColliderRenderer.h>
 #include <Delusive/Runtime/Core/GameManager.h>
+#include <Delusive/Runtime/Core/DelusiveInput.h>
 #include <Delusive/Runtime/Editor/EngineUI.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <imgui/imgui.h>
@@ -134,7 +135,7 @@ namespace DelusiveEngine {
 #endif
 
         // --- SDL / OpenGL Setup ---
-        if (!SDL_Init(SDL_INIT_VIDEO)) {
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
             std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
             return -1;
         }
@@ -237,6 +238,7 @@ namespace DelusiveEngine {
         auto editorCamera = std::make_unique<CameraAgent>(game.GetInstance());
         CameraAgent* editorCamPtr = editorCamera.get();
 
+        DelusiveInput input;
         float scrollDelta = 0.0f;
         bool running = true;
         SDL_Event e;
@@ -263,6 +265,7 @@ namespace DelusiveEngine {
             Uint32 mainWindowID = SDL_GetWindowID(window);
             while (SDL_PollEvent(&e)) {
                 ImGui_ImplSDL3_ProcessEvent(&e);
+                input.ProcessEvent(e);
                 if (e.type == SDL_EVENT_QUIT) running = false;
                 if (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
                     if (e.window.windowID == mainWindowID) {
@@ -287,24 +290,10 @@ namespace DelusiveEngine {
             ImGuiIO& io = ImGui::GetIO();
             const bool gameMouse = !io.WantCaptureMouse;
 
-            PlayerInputState inputState;
-            const bool* keys = SDL_GetKeyboardState(nullptr);
-            //Typing in an editor field must not toggle game UI
-            inputState.keys = io.WantCaptureKeyboard ? nullptr : keys;
-            inputState.moveDir.y += keys[SDL_SCANCODE_W];
-            inputState.moveDir.y -= keys[SDL_SCANCODE_S];
-            inputState.moveDir.x += keys[SDL_SCANCODE_D];
-            inputState.moveDir.x -= keys[SDL_SCANCODE_A];
-
-            if (glm::length(inputState.moveDir) > 0.0f)
-                inputState.moveDir = glm::normalize(inputState.moveDir);
-
-            inputState.lightAttackPressed = keys[SDL_SCANCODE_J] || (gameMouse && (mouseState & SDL_BUTTON_LMASK));
-            inputState.heavyAttackPressed = keys[SDL_SCANCODE_K] || (gameMouse && (mouseState & SDL_BUTTON_RMASK));
+            PlayerInputState inputState = input.Poll(gameMouse ? mouseState : 0, !io.WantCaptureKeyboard);
             if (gameMouse && game.IsPlaying() && scrollDelta != 0.0f) {
                 inputState.swapDir = scrollDelta > 0.0f ? 1 : -1;
             }
-            inputState.dodgePressed = keys[SDL_SCANCODE_LSHIFT];
 
             game.HandleInput(inputState);
 

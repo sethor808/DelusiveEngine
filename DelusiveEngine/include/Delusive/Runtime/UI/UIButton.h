@@ -19,6 +19,8 @@ public:
 
     void SetLabel(std::string& label) { this->label = label; }
 	void SetOnClick(std::function<void()>) override;
+	void Click() override;
+	void SetFocused(bool _focused) override { focused = _focused; }
 
 	const std::string GetType() const override;
 	void Deserialize(DelusiveParser::DataBlock& in) override;
@@ -30,6 +32,7 @@ private:
 	bool popState = false;
 
 	bool wasDown = false;
+	bool focused = false;
 	std::function<void()> onClick;
 
 	DelusiveTexture buttonTexture;

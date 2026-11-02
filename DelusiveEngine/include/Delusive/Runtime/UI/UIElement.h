@@ -36,6 +36,9 @@ public:
 	virtual void LinkCanvas(UICanvas* canvas);
     virtual bool SupportsClick() const { return false; }
     virtual void SetOnClick(std::function<void()>) {}
+	//Gamepad menu navigation: a focused element shows it and confirm clicks it
+	virtual void Click() {}
+	virtual void SetFocused(bool) {}
 
 	virtual void Update(float deltaTime) {
 		for (auto& child : children) {

@@ -6,6 +6,7 @@
 
 class ScriptManager;
 class UICanvas;
+class UIElement;
 class DelusiveUIRegistry;
 
 //UI states form a stack: a base state with overlays pushed on top (pause, equip).
@@ -51,9 +52,10 @@ private:
 		std::string name;
 		std::vector<UICanvas*> canvases;
 		bool pausesGame = false;
-		//SDL key name that pushes or pops this state, empty for none
+		//SDL key and gamepad button names that push or pop this state, empty for none
 		std::string toggleKey;
-		bool keyWasDown = false;
+		std::string toggleButton;
+		bool toggleWasDown = false;
 	};
 
 	//Saved as parallel lists, one entry per state; canvases are space separated ids
@@ -61,6 +63,7 @@ private:
 	std::vector<std::string> stateCanvases;
 	std::vector<int> statePauses;
 	std::vector<std::string> stateKeys;
+	std::vector<std::string> stateButtons;
 	std::string startState;
 
 	std::vector<UIState> states;
@@ -68,6 +71,13 @@ private:
 	std::vector<int> stack;
 	//A click that changed the stack must be released before the new top sees the mouse
 	bool waitForRelease = false;
+
+	//Gamepad focus is kept as a position so it survives buttons being rebuilt
+	glm::vec2 focusPos{ 0.0f, 0.0f };
+	bool hasFocus = false;
+	//Focus only shows once the gamepad navigates, and hides again when the mouse moves
+	bool padFocus = false;
+	glm::vec2 lastMouse{ 0.0f, 0.0f };
 
 	DelusiveUIRegistry* FetchRegistry() const;
 	int FindState(const std::string&) const;
@@ -79,5 +89,7 @@ private:
 	//Canvases of every stacked state, linked to this manager
 	std::vector<UICanvas*> LinkCanvases();
 	std::vector<UICanvas*> LinkInputCanvases();
+	void Navigate(const PlayerInputState&);
+	void ClearFocus();
 	void DrawStateImGui(UIState&, DelusiveUIRegistry&);
 };

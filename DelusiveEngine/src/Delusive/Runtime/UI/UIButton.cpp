@@ -73,7 +73,7 @@ void UIButton::Draw(const glm::mat4& projection) {
 	// Build render command and submit to the renderer (batched)
 	RenderCommand cmd;
 	cmd.modelMatrix = model;
-	cmd.color = glm::vec4(1.0f); // could become a property/tint
+	cmd.color = focused ? glm::vec4(1.0f, 0.85f, 0.4f, 1.0f) : glm::vec4(1.0f);
 	cmd.textureID = buttonTexture.textureID ? buttonTexture.textureID : instance.renderer.CreateFallbackWhiteTexture();
 	cmd.layer = 0; // UI layer ordering -- feel free to expose as a member
 	cmd.isUI = true;
@@ -110,6 +110,10 @@ void UIButton::HandleMouse(const glm::vec2& mouse, bool mouseDown) {
 		return;
 	}
 
+	Click();
+}
+
+void UIButton::Click() {
 	if (onClick) onClick();
 
 	UIManager* manager = parentCanvas ? parentCanvas->GetManager() : nullptr;

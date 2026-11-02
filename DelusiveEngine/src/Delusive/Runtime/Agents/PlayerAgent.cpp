@@ -42,10 +42,7 @@ void PlayerAgent::RegisterProperties() {
 }
 
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
-    // Movement logic
-    bool dodgePressed = (input.dodgePressed && !prevInput.dodgePressed);
-
-    if (dodgePressed) {
+    if (input.dodgePressed) {
         dodgeBufferTimer = 0.15f;
         dodgeDir = input.moveDir;
     }
