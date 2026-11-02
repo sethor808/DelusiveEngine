@@ -127,8 +127,11 @@ Talismans take damage as a stack: a hit damages only the first unbroken talisman
 | --- | --- | --- |
 | Passive | Always while equipped and unbroken | Stat changes folded into `modified` |
 | While-Active | Only for the top unbroken talisman (the one the next hit breaks) | Stronger stat changes or on-hit effects that move down the stack |
+| While-Broken | Always once the talisman has broken | Payoffs for losing it: speed, bigger hitboxes, status stacks |
 | OnConsume | Once, the moment the talisman breaks | Burst effects: shockwave, heal the next talisman, brief invulnerability |
-| HitEvent / LandHitEvent | When the player takes or lands a hit | Talismans reacting to combat |
+| HitEvent / LandHitEvent | When the player takes or lands a hit, on every unbroken talisman (`IsActive` narrows it to the top one) | Talismans reacting to combat |
+
+Stats talismans can change (`PlayerStats`): `moveSpeed` (dodge speed follows it through `dodgeSpeedScale`), `invulDuration` (granted after every hit taken), `hitboxScale`, `damageMultiplier` (applied to outgoing hits through `ModifyOutgoingHit`) and `statusStackMultiplier` (no status effects read it yet). `HitData` carries `target`, so a LandHitEvent can strike the enemy again (lightning), and `PlayerAgent::HitAround(radius, damage)` hits everything nearby (explosions).
 
 Stat hooks are not per-frame calls. The player rebuilds `modified` whenever the stack changes (construction, `LoadFromInventory`, a break):
 
@@ -137,6 +140,7 @@ class Talisman {
 public:
 	virtual void ApplyPassive(PlayerStats&) const {}
 	virtual void ApplyWhileActive(PlayerStats&) const {}
+	virtual void ApplyWhileBroken(PlayerStats&) const {}
 	virtual void OnConsume(PlayerAgent&) {}
 	virtual void HitEvent(PlayerAgent&, const HitData&) {}
 	virtual void LandHitEvent(PlayerAgent&, const HitData&) {}
@@ -146,7 +150,8 @@ void PlayerAgent::RecalculateStats() {
 	modified = base;
 
 	for (const auto& talisman : talismans) {
-		if (!talisman->GetIsBroken()) talisman->ApplyPassive(modified);
+		if (talisman->GetIsBroken()) talisman->ApplyWhileBroken(modified);
+		else talisman->ApplyPassive(modified);
 	}
 
 	if (Talisman* active = GetActiveTalisman()) active->ApplyWhileActive(modified);
@@ -265,7 +270,7 @@ The rule everywhere: behaviour is code, numbers and art are data. This is the pa
 
 ## Open questions
 
-- [ ] Talisman Passive: does it keep applying after that talisman breaks, or only while unbroken (built as unbroken only)?
+- [x] Talisman Passive: only while unbroken; effects that stay after a break use While-Broken.
 - [ ] Talisman unlocks: does one unlock fill one slot (move, as built) or every slot (copy)?
 - [ ] Shadowstep: does taking a hit reset the 20-hit count, or only spending it?
 - [ ] Retribution: how many parries, how many seconds of invulnerability, and does the explosion use raw negated damage or a multiplier?

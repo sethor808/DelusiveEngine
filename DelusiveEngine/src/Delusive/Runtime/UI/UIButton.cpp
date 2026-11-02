@@ -2,6 +2,8 @@
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/UI/UICanvas.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
 #include <imgui/imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -48,6 +50,9 @@ void UIButton::RegisterProperties() {
 	registry->Register("Font", &buttonFont);
 	registry->Register("FontColor", &fontColor);
 	registry->Register("TextOffset", &textOffset);
+	registry->Register("GotoState", &gotoState);
+	registry->Register("PushState", &pushState);
+	registry->Register("PopState", &popState);
 }
 
 void UIButton::SetOnClick(std::function<void()> callback) {
@@ -68,7 +73,7 @@ void UIButton::Draw(const glm::mat4& projection) {
 	// Build render command and submit to the renderer (batched)
 	RenderCommand cmd;
 	cmd.modelMatrix = model;
-	cmd.color = glm::vec4(1.0f); // could become a property/tint
+	cmd.color = focused ? glm::vec4(1.0f, 0.85f, 0.4f, 1.0f) : glm::vec4(1.0f);
 	cmd.textureID = buttonTexture.textureID ? buttonTexture.textureID : instance.renderer.CreateFallbackWhiteTexture();
 	cmd.layer = 0; // UI layer ordering -- feel free to expose as a member
 	cmd.isUI = true;
@@ -92,13 +97,31 @@ void UIButton::SetTexturePath(const std::string& path) {
 }
 
 void UIButton::HandleMouse(const glm::vec2& mouse, bool mouseDown) {
-	bool inside = mouse.x >= position.x && mouse.x <= position.x + size.x &&
-		mouse.y >= position.y && mouse.y <= position.y + size.y;
+	if (!enabled) return;
 
-	if (inside && !wasDown && mouseDown && onClick) {
-		onClick();
-	}
+	//Quads are drawn centred on their position
+	glm::vec2 offset = glm::abs(mouse - position);
+	bool inside = offset.x <= size.x * 0.5f && offset.y <= size.y * 0.5f;
+	bool clicked = inside && !wasDown && mouseDown;
 	wasDown = mouseDown;
+
+	if (!clicked) {
+		UIElement::HandleMouse(mouse, mouseDown);
+		return;
+	}
+
+	Click();
+}
+
+void UIButton::Click() {
+	if (onClick) onClick();
+
+	UIManager* manager = parentCanvas ? parentCanvas->GetManager() : nullptr;
+	if (!manager) return;
+
+	if (popState) manager->PopState();
+	if (!gotoState.empty()) manager->SetState(gotoState);
+	if (!pushState.empty()) manager->PushState(pushState);
 }
 
 const std::string UIButton::GetType() const {

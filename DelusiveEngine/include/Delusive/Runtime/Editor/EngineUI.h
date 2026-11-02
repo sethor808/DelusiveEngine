@@ -17,7 +17,6 @@ enum class EditorMode {
 	GameView
 };
 
-class DelusiveUIRegistry;
 class AnimatorEditor;
 class SceneEditor;
 class UICanvas;
@@ -78,13 +77,19 @@ private:
 	//Animator mode lives in its own class
 	std::unique_ptr<AnimatorEditor> animatorEditor;
 
-	//UI builder specifics
-	std::unique_ptr<DelusiveUIRegistry> uiRegistry;
+	//UI builder specifics - the scene holds a preview player and a UIManager showing the canvas
 	UICanvas* editingCanvas = nullptr;
 	UIElement* selectedUIElement = nullptr;
-	char uiCanvasNameBuffer[64] = "";
+	//Deletion waits until the hierarchy has been drawn
+	UIElement* uiDeleteTarget = nullptr;
+	UIElement* uiDeleteParent = nullptr;
+	//Hiding the panel uncovers the canvas behind it
+	bool showUIBuilderPanel = true;
 
-	void DrawUIElementNode(UIElement* element);
+	void DrawUIElementNode(UIElement* element, UIElement* parent);
+	void DeleteUIElement();
+	void BuildUIPreview(Scene&);
+	void OpenCanvas(Scene&, UICanvas*);
 
 	//Helper functions
 	//Each mode has its own dock space, so each keeps its own arrangement of panels

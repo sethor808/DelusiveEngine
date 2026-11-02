@@ -270,9 +270,6 @@
     <ClCompile Include="src\Delusive\Runtime\Core\DelusiveRegistry.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\UI\UITalismanDisplay.cpp">
-      <Filter>engine\ui\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Rendering\TextureManager.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
@@ -370,7 +367,6 @@
     <ClInclude Include="include\Delusive\Runtime\UI\UIPanel.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIRepeatContainer.h" />
     <ClInclude Include="include\Delusive\Runtime\UI\UIScriptContainer.h" />
-    <ClInclude Include="include\Delusive\Runtime\UI\UITalismanDisplay.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveMacros.h" />
     <ClInclude Include="include\Delusive\Runtime\Utils\DelusiveUtils.h" />
     <ClInclude Include="include\Delusive\Runtime\Core\UUID.h" />

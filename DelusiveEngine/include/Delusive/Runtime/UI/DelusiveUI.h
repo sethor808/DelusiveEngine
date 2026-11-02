@@ -2,8 +2,11 @@
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <string>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 class UIElement;
+class UICanvas;
 class DelusiveRenderer;
 class ScriptManager;
 

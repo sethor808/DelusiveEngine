@@ -7,6 +7,7 @@
 #include <Delusive/Runtime/Scripting/ScriptManager.h>
 #include <Delusive/Runtime/Player/DelusiveInventory.h>
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
+#include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 
 class Scene;
 
@@ -20,7 +21,7 @@ public:
     void Update(float deltaTime);
     void Draw(const ColliderRenderer& renderer, const glm::mat4& projection);
     void HandleInput(const PlayerInputState& input);
-    void HandleMouse(const glm::vec2& worldMouse, bool leftClick);
+    void HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool leftClick);
 
     void Play();
     void Stop();
@@ -32,6 +33,8 @@ public:
     void SetEditorScene(const Scene&);
 
     ScriptManager& GetScriptManager() { return scriptManager; }
+    //One set of canvases, shared by the UI Builder and every scene's UIManager
+    DelusiveUIRegistry& GetUIRegistry() { return uiRegistry; }
 private:
     //Declaration order is construction order - everything instance references must precede it
     UUIDManager idManager;
@@ -39,6 +42,7 @@ private:
     DelusiveInventory inventory;
     DelusiveLibrary assetLibrary;
     DelusiveInstance instance;
+    DelusiveUIRegistry uiRegistry;
     Scene editorScene;
     Scene playScene;
     Scene* activeScene = nullptr;

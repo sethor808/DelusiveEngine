@@ -3,7 +3,7 @@
 #include <algorithm>
 
 DelusiveUIRegistry::DelusiveUIRegistry(DelusiveInstance& instance)
-    : instance(instance), owner(nullptr)
+    : instance(instance)
 {
 
 }
@@ -60,4 +60,8 @@ void DelusiveUIRegistry::Register(std::unique_ptr<UICanvas> canvas) {
 
 	UUID id = canvas->GetID();
 	canvases[id] = std::move(canvas);
+}
+
+void DelusiveUIRegistry::Remove(const UUID& id) {
+	canvases.erase(id);
 }

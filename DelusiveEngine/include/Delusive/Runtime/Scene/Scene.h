@@ -43,6 +43,8 @@ public:
 
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
+	//Places a fresh copy of an agent file; it joins the agent list after this update
+	UUID SpawnAgent(const std::string& path, const glm::vec2& position);
     std::vector<std::unique_ptr<Agent>>& GetAgents();
     Agent* FindAgentByUUID(UUID targetID);
 	PlayerAgent* FetchPlayer();
@@ -60,7 +62,8 @@ public:
 	void Update(float deltaTime);
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
-	void HandleMouse(const glm::vec2&, bool);
+	//UI elements are placed in their own space, so the UI gets its own mouse position
+	void HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool);
 	void CloneInto(Scene&) const;
 	void Clear();
 	std::string GetName() { return name; }
@@ -85,6 +88,9 @@ public:
     bool ResolveID(DelusiveLink<T>&);
 private:
 	bool Build(const DelusiveParser::DataBlock& sceneBlock);
+	void LinkAgent(Agent&);
+	//Drops destroyed agents and adds spawned ones once nothing is iterating the list
+	void FlushAgents();
 
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
@@ -96,5 +102,6 @@ private:
 	//Per scene - contact state must not leak between the editor and play scenes
 	PhysicsSystem physics;
 	std::vector<std::unique_ptr<Agent>> agents;
+	std::vector<std::unique_ptr<Agent>> spawnedAgents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 };

@@ -173,9 +173,11 @@ void DelusiveRenderer::Submit(const RenderCommand& cmd) {
 }
 
 void DelusiveRenderer::Flush() {
-	std::sort(commands.begin(), commands.end(),
+	std::stable_sort(commands.begin(), commands.end(),
 		[](const RenderCommand& a, const RenderCommand& b) {
 			if (a.isUI != b.isUI) return a.isUI < b.isUI;
+			//UI draws in submission order within a layer, so children land on top of their parents
+			if (a.isUI) return a.layer < b.layer;
 			if (a.textureID != b.textureID) return a.textureID < b.textureID;
 			return a.layer < b.layer;
 		});

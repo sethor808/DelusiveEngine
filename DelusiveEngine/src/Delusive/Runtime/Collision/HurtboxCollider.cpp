@@ -18,12 +18,14 @@ void HurtboxCollider::OnCollision(ColliderComponent* col) {
 
 	HitData hit;
 	hit.attacker = attacker;
+	hit.target = target;
 	hit.damage = hitbox->GetDamage();
 	hit.parryable = hitbox->IsParryable();
 
 	glm::vec2 offset = target->GetTransform().position - attacker->GetTransform().position;
 	if (glm::length(offset) > 0.0f) hit.direction = glm::normalize(offset);
 
+	attacker->ModifyOutgoingHit(hit);
 	target->HitEvent(hit);
 	attacker->LandHitEvent(hit);
 }

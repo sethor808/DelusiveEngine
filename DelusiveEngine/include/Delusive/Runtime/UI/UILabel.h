@@ -32,6 +32,7 @@ public:
 
 	const std::string GetType() const override;
 	void Deserialize(DelusiveParser::DataBlock& in) override;
+protected:
 private:
 	std::string text;
 	glm::vec4 color;
