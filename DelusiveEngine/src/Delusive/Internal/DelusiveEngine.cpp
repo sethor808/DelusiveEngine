@@ -332,10 +332,14 @@ namespace DelusiveEngine {
 
             //Each editor mode submits its own dock space - see EngineUI::DockSpace
 
+            FrameStats stats;
+            stats.frameMs = static_cast<float>(frameSeconds * 1000.0);
+            const uint64_t updateStart = SDL_GetTicksNS();
             while (tickAccumulator >= DELUSIVE_TICK_SECONDS) {
                 game.Update(DELUSIVE_TICK_SECONDS);
                 tickAccumulator -= DELUSIVE_TICK_SECONDS;
             }
+            stats.updateMs = (SDL_GetTicksNS() - updateStart) / 1e6f;
 
             int width, height;
             renderer.GetWindowSize(width, height);
@@ -352,7 +356,10 @@ namespace DelusiveEngine {
             //In the editor the mode being shown owns the mouse until Play
             if (!context.editorMode || game.IsPlaying())
                 game.HandleMouse(worldMouse, uiMouse, mouseState & SDL_BUTTON_LEFT);
+            const uint64_t drawStart = SDL_GetTicksNS();
             game.Draw(colliderRenderer, projection);
+            stats.drawMs = (SDL_GetTicksNS() - drawStart) / 1e6f;
+            stats.batches = renderer.GetBatchCount();
 
             if (context.editorMode) {
                 ui.Render(game.GetActiveScene());
@@ -373,6 +380,9 @@ namespace DelusiveEngine {
                 if (!dev.capturePath.empty()) CaptureWindow(window, dev.capturePath);
                 running = false;
             }
+
+            stats.workMs = (SDL_GetTicksNS() - frameStart) / 1e6f;
+            if (context.editorMode) ui.SetFrameStats(stats);
 
             SDL_GL_SwapWindow(window);
 

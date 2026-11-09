@@ -18,6 +18,15 @@ enum class EditorMode {
 	GameView
 };
 
+//One frame's timings in milliseconds, for the status bar
+struct FrameStats {
+	float frameMs = 0.0f;   //Start to start, frame cap and vsync included
+	float workMs = 0.0f;    //Everything before the swap
+	float updateMs = 0.0f;  //Gameplay ticks
+	float drawMs = 0.0f;    //Scene draw and sprite flush, CPU side
+	int batches = 0;        //Sprite draw calls
+};
+
 class AnimatorEditor;
 class SceneEditor;
 class UICanvas;
@@ -50,6 +59,8 @@ public:
 	//Main window close - true when nothing is unsaved, otherwise asks first and approves later
 	bool RequestClose();
 	bool CloseApproved() const { return closeApproved; }
+	//Smoothed so the numbers stay readable at a high frame rate
+	void SetFrameStats(const FrameStats&);
 private:
 	GameManager& gameManager;
 	DelusiveInstance& instance;
@@ -87,6 +98,7 @@ private:
 	std::function<void(Scene&)> pendingAction;
 	bool unsavedPrompt = false;
 	bool closeApproved = false;
+	FrameStats frameStats;
 
 	//Last action's result, shown in the status bar for a few seconds
 	std::string statusMessage;

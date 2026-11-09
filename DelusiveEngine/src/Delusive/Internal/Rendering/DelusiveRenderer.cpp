@@ -214,6 +214,7 @@ void DelusiveRenderer::Flush() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(batchVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	batchCount = 0;
 
 	//Neighbouring commands that share a texture and pass go out as one draw
 	for (size_t i = 0; i < commands.size(); ++i) {
@@ -253,6 +254,7 @@ void DelusiveRenderer::DrawBatch(const Shader& shader, GLuint textureID, bool is
 	glBufferData(GL_ARRAY_BUFFER, MAX_BATCH_QUADS * 4 * sizeof(BatchVertex), nullptr, GL_STREAM_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, batchVertices.size() * sizeof(BatchVertex), batchVertices.data());
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(batchVertices.size() / 4 * 6), GL_UNSIGNED_INT, nullptr);
+	++batchCount;
 
 	batchVertices.clear();
 }

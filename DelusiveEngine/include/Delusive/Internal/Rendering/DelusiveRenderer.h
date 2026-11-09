@@ -34,6 +34,8 @@ public:
 	Shader* GetDefaultShader();
 	void Submit(const RenderCommand&);
 	void Flush();
+	//Draw calls the last Flush made
+	int GetBatchCount() const { return batchCount; }
 
 	GLuint CreateFallbackWhiteTexture();
 	glm::mat4 GetUIProjection();
@@ -77,6 +79,7 @@ private:
 	std::unique_ptr<TextureManager> textureManager;
 	std::vector<RenderCommand> commands;
 	std::vector<BatchVertex> batchVertices;
+	int batchCount = 0;
 
 	glm::mat4 projection;
 	glm::mat4 view;

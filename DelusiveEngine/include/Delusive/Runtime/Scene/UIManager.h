@@ -79,6 +79,11 @@ private:
 	bool padFocus = false;
 	glm::vec2 lastMouse{ 0.0f, 0.0f };
 
+	//Per tick scratch, kept so input and drawing do not allocate
+	std::vector<UICanvas*> linkedCanvases;
+	std::vector<UIElement*> focusTargets;
+	std::vector<int> stackBefore;
+
 	DelusiveUIRegistry* FetchRegistry() const;
 	int FindState(const std::string&) const;
 	//Canvas pointers are rebuilt from the saved ids in Init
@@ -86,9 +91,10 @@ private:
 	void SyncStates();
 	//Marks stacked canvases active, the rest inactive, after the stack changes
 	void StackChanged();
-	//Canvases of every stacked state, linked to this manager
-	std::vector<UICanvas*> LinkCanvases();
-	std::vector<UICanvas*> LinkInputCanvases();
+	//Canvases of every stacked state, linked to this manager. Both refill one reused
+	//list, valid until the next call
+	const std::vector<UICanvas*>& LinkCanvases();
+	const std::vector<UICanvas*>& LinkInputCanvases();
 	void Navigate(const PlayerInputState&);
 	void ClearFocus();
 	void DrawStateImGui(UIState&, DelusiveUIRegistry&);

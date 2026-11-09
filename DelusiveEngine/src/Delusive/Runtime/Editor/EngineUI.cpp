@@ -13,6 +13,8 @@
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
+#include <cstdio>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
@@ -548,11 +550,29 @@ void EngineUI::RenderStatusBar(Scene& scene) {
 			}
 
 			if (currentMode == EditorMode::SceneEditor) sceneEditor->DrawStatusItems(scene);
+
+			//Frame timer, right aligned
+			char timing[160];
+			std::snprintf(timing, sizeof(timing), "%.0f fps | %.2f ms work (update %.2f, draw %.2f) | %d batches",
+				frameStats.frameMs > 0.0f ? 1000.0f / frameStats.frameMs : 0.0f,
+				frameStats.workMs, frameStats.updateMs, frameStats.drawMs, frameStats.batches);
+			const float timingWidth = ImGui::CalcTextSize(timing).x + ImGui::GetStyle().ItemSpacing.x * 2.0f;
+			ImGui::SameLine(std::max(ImGui::GetCursorPosX(), ImGui::GetWindowWidth() - timingWidth));
+			ImGui::TextDisabled("%s", timing);
 			ImGui::EndMenuBar();
 		}
 	}
 	ImGui::End();
 	if (playing) ImGui::PopStyleColor();
+}
+
+void EngineUI::SetFrameStats(const FrameStats& latest) {
+	const float blend = 0.05f;
+	frameStats.frameMs += (latest.frameMs - frameStats.frameMs) * blend;
+	frameStats.workMs += (latest.workMs - frameStats.workMs) * blend;
+	frameStats.updateMs += (latest.updateMs - frameStats.updateMs) * blend;
+	frameStats.drawMs += (latest.drawMs - frameStats.drawMs) * blend;
+	frameStats.batches = latest.batches;
 }
 
 void EngineUI::RenderTopBar(Scene& scene) {

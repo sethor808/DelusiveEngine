@@ -277,32 +277,32 @@ void UIManager::SetStateCanvases(const std::string& stateName, const std::vector
 	SyncStates();
 }
 
-std::vector<UICanvas*> UIManager::LinkCanvases() {
-	std::vector<UICanvas*> canvases;
+const std::vector<UICanvas*>& UIManager::LinkCanvases() {
+	linkedCanvases.clear();
 
 	for (int index : stack) {
 		for (UICanvas* canvas : states[index].canvases) {
 			canvas->LinkManager(this);
-			canvases.push_back(canvas);
+			linkedCanvases.push_back(canvas);
 		}
 	}
 
-	return canvases;
+	return linkedCanvases;
 }
 
-std::vector<UICanvas*> UIManager::LinkInputCanvases() {
-	std::vector<UICanvas*> canvases;
+const std::vector<UICanvas*>& UIManager::LinkInputCanvases() {
+	linkedCanvases.clear();
 
 	//Display-only canvases (a HUD) let input fall through to the states below
-	for (auto index = stack.rbegin(); index != stack.rend() && canvases.empty(); ++index) {
+	for (auto index = stack.rbegin(); index != stack.rend() && linkedCanvases.empty(); ++index) {
 		for (UICanvas* canvas : states[*index].canvases) {
 			if (!canvas->CapturesInput()) continue;
 			canvas->LinkManager(this);
-			canvases.push_back(canvas);
+			linkedCanvases.push_back(canvas);
 		}
 	}
 
-	return canvases;
+	return linkedCanvases;
 }
 
 bool UIManager::CapturesInput() const {
@@ -342,11 +342,11 @@ void UIManager::HandleMouse(const glm::vec2& mousePos, bool mouseDown) {
 		waitForRelease = false;
 	}
 
-	const std::vector<int> before = stack;
+	stackBefore = stack;
 	for (UICanvas* canvas : LinkInputCanvases()) {
 		canvas->HandleMouse(mousePos, mouseDown);
 		//A button changed the stack - the old canvases are done
-		if (stack != before) return;
+		if (stack != stackBefore) return;
 	}
 }
 
@@ -378,7 +378,7 @@ void UIManager::HandleInput(const PlayerInputState& input) {
 }
 
 void UIManager::Navigate(const PlayerInputState& input) {
-	std::vector<UICanvas*> canvases = LinkInputCanvases();
+	const std::vector<UICanvas*>& canvases = LinkInputCanvases();
 	if (canvases.empty()) return;
 
 	if (input.backPressed) {
@@ -386,11 +386,11 @@ void UIManager::Navigate(const PlayerInputState& input) {
 		return;
 	}
 
-	std::vector<UIElement*> targets;
+	focusTargets.clear();
 	for (UICanvas* canvas : canvases) {
-		for (UIElement* element : canvas->GetElements()) CollectFocusTargets(element, targets);
+		for (UIElement* element : canvas->GetElements()) CollectFocusTargets(element, focusTargets);
 	}
-	if (targets.empty()) return;
+	if (focusTargets.empty()) return;
 
 	const bool navigated = input.navDir != glm::vec2(0.0f);
 	//The first press only shows where focus is
@@ -398,12 +398,12 @@ void UIManager::Navigate(const PlayerInputState& input) {
 	if (navigated || input.confirmPressed) padFocus = true;
 	if (!padFocus) return;
 
-	UIElement* focus = hasFocus ? Nearest(targets, focusPos) : TopLeft(targets);
-	if (navigated && shown) focus = Step(targets, focus, input.navDir);
+	UIElement* focus = hasFocus ? Nearest(focusTargets, focusPos) : TopLeft(focusTargets);
+	if (navigated && shown) focus = Step(focusTargets, focus, input.navDir);
 	focusPos = focus->GetPosition();
 	hasFocus = true;
 
-	for (UIElement* target : targets) target->SetFocused(target == focus);
+	for (UIElement* target : focusTargets) target->SetFocused(target == focus);
 
 	if (input.confirmPressed && shown) focus->Click();
 }
