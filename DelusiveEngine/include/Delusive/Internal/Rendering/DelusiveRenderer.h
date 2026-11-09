@@ -45,7 +45,6 @@ public:
 	//Drawing tools
 	void PushAlpha(float);
 	void PopAlpha();
-	void SetAlpha(float alpha);
 	float GetAlpha() const { return currentAlpha; }
 
 	void DebugDrawLine(glm::vec2, glm::vec2, glm::vec4);
@@ -66,8 +65,18 @@ public:
     //Thumbnail generation
     GLuint RenderAgentToTexture(Agent&, int, int);
 private:
+	//One corner of a batched quad, already in world (or UI) space
+	struct BatchVertex {
+		glm::vec2 position;
+		glm::vec2 uv;
+		glm::vec4 color;
+		float flash;
+	};
+	static constexpr int MAX_BATCH_QUADS = 1024;
+
 	std::unique_ptr<TextureManager> textureManager;
 	std::vector<RenderCommand> commands;
+	std::vector<BatchVertex> batchVertices;
 
 	glm::mat4 projection;
 	glm::mat4 view;
@@ -85,8 +94,17 @@ private:
 	GLuint quadVAO = 0;
 	GLuint quadVBO = 0;
 
+	//Sprite batch
+	GLuint batchVAO = 0;
+	GLuint batchVBO = 0;
+	GLuint batchEBO = 0;
+
 	std::unique_ptr<Shader> defaultShader;
 	std::unique_ptr<Shader> textShader; // Make sure Shader is included
 	std::unique_ptr<Shader> uiShader;
 	std::unique_ptr<Font> defaultFont;
+
+	void InitBatch();
+	void AddQuad(const RenderCommand&);
+	void DrawBatch(const Shader&, GLuint textureID, bool isUI);
 };

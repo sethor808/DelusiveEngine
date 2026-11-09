@@ -15,6 +15,7 @@
 class Agent;
 class PlayerAgent;
 class CameraAgent;
+class SpriteComponent;
 class GameManager;
 class ScriptManager;
 class DelusiveInventory;
@@ -110,4 +111,13 @@ private:
 
 	//Ticks the world stays frozen after a hit
 	int hitStopTicks = 0;
+
+	//Draw scratch, cleared and refilled each frame so drawing does not allocate
+	struct RenderEntry {
+		SpriteComponent* sprite;
+		float sortY;
+		bool isForeground;
+	};
+	mutable std::vector<RenderEntry> renderQueue;
+	mutable std::vector<SpriteComponent*> agentSprites;
 };

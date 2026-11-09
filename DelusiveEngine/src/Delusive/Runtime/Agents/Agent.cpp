@@ -47,9 +47,11 @@ void Agent::Draw(const glm::mat4& projection) const{
     }
 }
 
-std::vector<ColliderComponent*> Agent::GetColliders() {
-	std::vector<ColliderComponent*> colliders = GetComponentsOfType<ColliderComponent>();
-	for (AnimatorComponent* animator : GetComponentsOfType<AnimatorComponent>()) {
+const std::vector<ColliderComponent*>& Agent::GetColliders() {
+	GetComponentsOfType(colliders);
+	for (auto& comp : components) {
+		AnimatorComponent* animator = dynamic_cast<AnimatorComponent*>(comp.get());
+		if (!animator) continue;
 		for (const auto& collider : animator->GetFrameColliders()) colliders.push_back(collider.get());
 	}
 	return colliders;

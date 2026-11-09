@@ -278,20 +278,14 @@ void Scene::PlayHitEffects(const HitData& hit) {
 }
 
 void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {
-	struct RenderEntry {
-		SpriteComponent* sprite;
-		float sortY;
-		bool isForeground;
-	};
-
-	std::vector<RenderEntry> renderQueue;
-	renderQueue.reserve(agents.size() * 2); // Conservative estimate, avoids reallocations
+	renderQueue.clear();
 
 	for (const auto& agent : agents) {
 		const glm::vec2 agentPos = agent->GetTransform().position;
 
 		// Collect enabled sprites
-		for (SpriteComponent* sprite : agent->GetComponentsOfType<SpriteComponent>()) {
+		agent->GetComponentsOfType(agentSprites);
+		for (SpriteComponent* sprite : agentSprites) {
 			if (sprite->IsEnabled()) {
 				renderQueue.push_back({ sprite, agentPos.y, sprite->isForeground });
 			}

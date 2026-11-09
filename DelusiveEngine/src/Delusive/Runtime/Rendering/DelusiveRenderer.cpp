@@ -6,6 +6,7 @@
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <algorithm>
+#include <cstddef>
 
 DelusiveRenderer::DelusiveRenderer() 
 	: textureManager(std::make_unique<TextureManager>())
@@ -58,7 +59,41 @@ void DelusiveRenderer::Init() {
 
 	glBindVertexArray(0);
 
+	InitBatch();
 	InitTextRenderer();
+}
+
+void DelusiveRenderer::InitBatch() {
+	glGenVertexArrays(1, &batchVAO);
+	glGenBuffers(1, &batchVBO);
+	glGenBuffers(1, &batchEBO);
+
+	glBindVertexArray(batchVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	glBufferData(GL_ARRAY_BUFFER, MAX_BATCH_QUADS * 4 * sizeof(BatchVertex), nullptr, GL_STREAM_DRAW);
+
+	//Every quad uses the same two triangles over its own four corners
+	std::vector<GLuint> indices;
+	indices.reserve(MAX_BATCH_QUADS * 6);
+	for (GLuint quad = 0; quad < MAX_BATCH_QUADS; ++quad) {
+		const GLuint first = quad * 4;
+		indices.insert(indices.end(), { first, first + 1, first + 2, first + 2, first + 3, first });
+	}
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batchEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+
+	const GLsizei stride = sizeof(BatchVertex);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(BatchVertex, position));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(BatchVertex, uv));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(BatchVertex, color));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(BatchVertex, flash));
+	glEnableVertexAttribArray(3);
+
+	glBindVertexArray(0);
+	batchVertices.reserve(MAX_BATCH_QUADS * 4);
 }
 
 void DelusiveRenderer::Clear() {
@@ -111,6 +146,11 @@ void DelusiveRenderer::Shutdown() {
 	if (quadVAO) glDeleteVertexArrays(1, &quadVAO);
 	quadVBO = quadVAO = 0;
 
+	if (batchEBO) glDeleteBuffers(1, &batchEBO);
+	if (batchVBO) glDeleteBuffers(1, &batchVBO);
+	if (batchVAO) glDeleteVertexArrays(1, &batchVAO);
+	batchEBO = batchVBO = batchVAO = 0;
+
 	if (textVBO) glDeleteBuffers(1, &textVBO);
 	if (textVAO) glDeleteVertexArrays(1, &textVAO);
 	textVBO = textVAO = 0;
@@ -142,34 +182,21 @@ Shader* DelusiveRenderer::GetDefaultShader() {
 void DelusiveRenderer::PushAlpha(float alpha) {
 	alphaStack.push(currentAlpha);
 	currentAlpha *= alpha;  // multiply for cumulative fade (e.g. parent and child transparency)
-	SetAlpha(currentAlpha);
 }
 
 void DelusiveRenderer::PopAlpha() {
-	if (!alphaStack.empty()) {
-		currentAlpha = alphaStack.top();
-		alphaStack.pop();
-		SetAlpha(currentAlpha);
-	}
-	else {
-		// Safety fallback
+	if (alphaStack.empty()) {
 		currentAlpha = 1.0f;
-		SetAlpha(currentAlpha);
+		return;
 	}
-}
-
-// Example of how SetAlpha might work depending on your renderer
-void DelusiveRenderer::SetAlpha(float alpha) {
-	// If you have a current color or shader uniform for tint:
-	// color.a = baseColor.a * alpha;
-	// shader->SetUniform("u_Alpha", alpha);
-
-	// If you use OpenGL directly:
-	glColor4f(1.0f, 1.0f, 1.0f, alpha);
+	currentAlpha = alphaStack.top();
+	alphaStack.pop();
 }
 
 void DelusiveRenderer::Submit(const RenderCommand& cmd) {
+	//Commands draw later in Flush, so the alpha active now is baked into each one
 	commands.push_back(cmd);
+	commands.back().color.a *= currentAlpha;
 }
 
 void DelusiveRenderer::Flush() {
@@ -183,33 +210,51 @@ void DelusiveRenderer::Flush() {
 
 	Shader* shader = GetDefaultShader();
 	shader->Use();
-	shader->SetFloat("uAlpha", currentAlpha); // initialize base alpha
-	GLint loc = glGetUniformLocation(shader->GetID(), "tex");
-	if (loc >= 0) glUniform1i(loc, 0);
+	shader->SetInt("tex", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(batchVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
 
-	GLuint currentTex = 0;
-	glBindVertexArray(quadVAO);
+	//Neighbouring commands that share a texture and pass go out as one draw
+	for (size_t i = 0; i < commands.size(); ++i) {
+		const RenderCommand& cmd = commands[i];
+		AddQuad(cmd);
 
-	for (auto& cmd : commands) {
-		// Per-pass uniforms
-		shader->SetMat4("projection", cmd.isUI ? GetUIProjection() : projection);
-		shader->SetMat4("view", cmd.isUI ? glm::mat4(1.0f) : view);
-		shader->SetMat4("model", glm::value_ptr(cmd.modelMatrix));
-
-		shader->SetFloat("uFlash", cmd.flash);
-
-		// Bind texture if it changed
-		if (cmd.textureID != currentTex) {
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, cmd.textureID);
-			currentTex = cmd.textureID;
+		const bool last = i + 1 == commands.size();
+		if (last || commands[i + 1].textureID != cmd.textureID || commands[i + 1].isUI != cmd.isUI ||
+			batchVertices.size() >= MAX_BATCH_QUADS * 4) {
+			DrawBatch(*shader, cmd.textureID, cmd.isUI);
 		}
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
 	glBindVertexArray(0);
 	commands.clear();
+}
+
+void DelusiveRenderer::AddQuad(const RenderCommand& cmd) {
+	//Unit quad corners (x, y) with their uvs (z, w), moved to world space on the CPU
+	static const glm::vec4 corners[4] = {
+		{ -0.5f, -0.5f, 0.0f, 0.0f },
+		{ 0.5f, -0.5f, 1.0f, 0.0f },
+		{ 0.5f, 0.5f, 1.0f, 1.0f },
+		{ -0.5f, 0.5f, 0.0f, 1.0f },
+	};
+	for (const glm::vec4& corner : corners) {
+		const glm::vec4 position = cmd.modelMatrix * glm::vec4(corner.x, corner.y, 0.0f, 1.0f);
+		batchVertices.push_back({ glm::vec2(position), glm::vec2(corner.z, corner.w), cmd.color, cmd.flash });
+	}
+}
+
+void DelusiveRenderer::DrawBatch(const Shader& shader, GLuint textureID, bool isUI) {
+	shader.SetMat4("viewProjection", isUI ? GetUIProjection() : projection * view);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	//Orphan the old buffer so the driver never waits on the previous draw
+	glBufferData(GL_ARRAY_BUFFER, MAX_BATCH_QUADS * 4 * sizeof(BatchVertex), nullptr, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, batchVertices.size() * sizeof(BatchVertex), batchVertices.data());
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(batchVertices.size() / 4 * 6), GL_UNSIGNED_INT, nullptr);
+
+	batchVertices.clear();
 }
 
 const glm::mat4& DelusiveRenderer::GetProjection() const{

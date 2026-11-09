@@ -72,8 +72,9 @@ public:
 
     // Component Handling
     void AddRawComponent(std::unique_ptr<Component> component);
-	//Collider components plus the animator's current frame boxes - what physics sees
-	std::vector<ColliderComponent*> GetColliders();
+	//Collider components plus the animator's current frame boxes - what physics sees.
+	//Refilled on every call; the list stays valid until the next call
+	const std::vector<ColliderComponent*>& GetColliders();
 
     template<typename T>
     T* GetComponentOfType() {
@@ -86,17 +87,22 @@ public:
 
     template<typename T>
     std::vector<T*> GetComponentsOfType() {
+        std::vector<T*> result;
+        GetComponentsOfType(result);
+        return result;
+    }
+
+    //Fills a caller owned list, so per-frame callers can reuse one vector
+    template<typename T>
+    void GetComponentsOfType(std::vector<T*>& result) {
         static_assert(std::is_base_of<Component, T>::value, "T must be derived from Component");
 
-        std::vector<T*> result;
-
+        result.clear();
         for (auto& comp : components) {
             if (T* casted = dynamic_cast<T*>(comp.get())) {
                 result.push_back(casted);
             }
         }
-
-        return result;
     }
 
     template<typename T, typename... Args>
@@ -218,6 +224,7 @@ protected:
 
     std::vector<std::unique_ptr<Component>> components;
     std::unordered_map<UUID, Component*, UUID::Hash> componentLookup;
+	std::vector<ColliderComponent*> colliders;
 
     //std::string name;
     std::string name;
