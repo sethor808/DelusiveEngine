@@ -344,9 +344,6 @@ namespace DelusiveEngine {
             int width, height;
             renderer.GetWindowSize(width, height);
             glm::mat4 projection = cam->GetViewProjectionFromWindow(window);
-            //Playing in the editor views through the editor camera, so it borrows the scene camera's shake
-            CameraAgent* sceneCam = game.IsPlaying() ? game.GetActiveScene().GetMainCamera() : nullptr;
-            if (sceneCam && sceneCam != cam) projection = glm::translate(projection, glm::vec3(-sceneCam->GetShakeOffset(), 0.0f));
             glm::mat4 view = glm::inverse(cam->GetTransform().ToMatrix());
             renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);

@@ -264,15 +264,12 @@ void Scene::Update(float deltaTime) {
 
 namespace {
 	constexpr float FLASH_SECONDS = 0.1f;
-	constexpr float SHAKE_PER_DAMAGE = 0.06f;
-	constexpr float SHAKE_SECONDS = 0.15f;
 }
 
 void Scene::PlayHitEffects(const HitData& hit) {
 	clock.Freeze(hit.hitStop);
 
 	if (hit.target) hit.target->Flash(FLASH_SECONDS);
-	if (camera) camera->Shake(SHAKE_PER_DAMAGE * hit.damage, hit.hitStop + SHAKE_SECONDS);
 }
 
 void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {

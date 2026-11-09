@@ -63,7 +63,7 @@ public:
 	CameraAgent* GetMainCamera() const;
 
 	void Update(float deltaTime);
-	//Hit stop, target flash and camera shake
+	//Hit stop and target flash
 	void PlayHitEffects(const HitData&);
 	//Pause and hit stop both stop the world through the clock
 	WorldClock& GetClock() { return clock; }

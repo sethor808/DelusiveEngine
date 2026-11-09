@@ -1,8 +1,6 @@
 #include <Delusive/Runtime/Agents/CameraAgent.h>
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
 #include <imgui/imgui.h>
-#include <cmath>
-#include <random>
 
 CameraAgent::CameraAgent(DelusiveInstance& instance)
 	: Agent(instance)
@@ -23,25 +21,7 @@ void CameraAgent::RegisterProperties() {
 }
 
 void CameraAgent::Update(float deltaTime) {
-	if (shakeTimer <= 0.0f) {
-		shakeOffset = glm::vec2(0.0f);
-		return;
-	}
 
-	//A fresh direction every tick, shrinking as the shake runs out
-	static std::mt19937 rng{ std::random_device{}() };
-	std::uniform_real_distribution<float> angle(0.0f, 6.2831853f);
-	const float a = angle(rng);
-	shakeOffset = glm::vec2(std::cos(a), std::sin(a)) * shakeStrength * (shakeTimer / shakeDuration);
-	shakeTimer -= deltaTime;
-}
-
-void CameraAgent::Shake(float strength, float seconds) {
-	if (seconds <= 0.0f) return;
-	//A weaker shake never cuts a stronger one short
-	if (shakeTimer > 0.0f && strength < shakeStrength * (shakeTimer / shakeDuration)) return;
-	shakeStrength = strength;
-	shakeTimer = shakeDuration = seconds;
 }
 
 void CameraAgent::DrawImGui() {
@@ -98,12 +78,11 @@ glm::mat4 CameraAgent::GetViewProjection(int width, int height) const {
 	float halfWidthUnits = width / (2.0f * pixelsPerUnit);
 	float halfHeightUnits = height / (2.0f * pixelsPerUnit);
 
-	const glm::vec2 centre = panOffset + shakeOffset;
 	return glm::ortho(
-		-halfWidthUnits + centre.x,
-		halfWidthUnits + centre.x,
-		-halfHeightUnits + centre.y,
-		halfHeightUnits + centre.y,
+		-halfWidthUnits + panOffset.x,
+		halfWidthUnits + panOffset.x,
+		-halfHeightUnits + panOffset.y,
+		halfHeightUnits + panOffset.y,
 		-1.0f, 1.0f
 	);
 }
