@@ -11,10 +11,12 @@ HurtboxCollider::HurtboxCollider(DelusiveInstance& instance)
 void HurtboxCollider::OnCollision(ColliderComponent* col) {
 	if (col->GetColliderType() != ColliderType::Hitbox) return;
 
-	const auto* hitbox = static_cast<const HitboxCollider*>(col);
+	auto* hitbox = static_cast<HitboxCollider*>(col);
 	Agent* attacker = hitbox->GetOwner();
 	Agent* target = GetOwner();
 	if (!attacker || !target) return;
+	//An agent with several hurtboxes still takes one hit per strike
+	if (!hitbox->Strike(target)) return;
 
 	HitData hit;
 	hit.attacker = attacker;

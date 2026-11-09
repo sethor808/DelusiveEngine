@@ -5,30 +5,26 @@
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
-#include <Delusive/Runtime/Agents/EnemyAgent.h>
-#include <Delusive/Runtime/Components/SpriteComponent.h>
-#include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Components/AnimatorComponent.h>
 #include <iostream>
 #include <cmath>
 #include <Delusive/Runtime/Collision/HitData.h>
 
 namespace {
 	struct ChainStep {
-		float windup;
 		float hold;
 		float recovery;
 		int damage;
 	};
 
-	//Seconds. Lights never wind up - they land the tick they are pressed. The third hit
-	//lingers so a weapon swap has room to cancel it
+	//Seconds. Lights never wind up; a chunky attack gets one from hitbox-free frames in its
+	//branch. The third hit lingers so a weapon swap has room to cancel it
 	constexpr ChainStep LIGHT_CHAIN[] = {
-		{ 0.0f, 0.12f, 0.15f, 1 },
-		{ 0.0f, 0.12f, 0.15f, 1 },
-		{ 0.0f, 0.15f, 0.45f, 2 },
+		{ 0.12f, 0.15f, 1 },
+		{ 0.12f, 0.15f, 1 },
+		{ 0.15f, 0.45f, 2 },
 	};
 	constexpr int LIGHT_CHAIN_LENGTH = 3;
-	constexpr float ATTACK_REACH = 0.8f;
 	constexpr float ATTACK_BUFFER = 0.2f;
 }
 
@@ -38,11 +34,7 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});
 	velocity = { 0.0f, 0.0f };
-	lightChainSprites = {
-		SPRITE_FOLDER "BasicDude/BasicDude2.png",
-		SPRITE_FOLDER "BasicDude/BasicDude3.png",
-		SPRITE_FOLDER "BasicDude/BasicDude4.png"
-	};
+	lightChainBranches = { "guy1", "guy2", "guy3" };
 
 	int numTalismans = 5; // Experimental control variable
     for (int i = 0; i < numTalismans; ++i) {
@@ -67,7 +59,7 @@ void PlayerAgent::RegisterProperties() {
 	Agent::RegisterProperties();
 	registry->Register("weaponSlots", &weaponSlots);
 	registry->Register("swapCooldown", &swapCooldown);
-	registry->Register("lightChainSprites", &lightChainSprites);
+	registry->Register("lightChainBranches", &lightChainBranches);
 }
 
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
@@ -76,7 +68,6 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
         dodgeDir = input.moveDir;
     }
 
-	if (glm::length(input.moveDir) > 0.0f) facing = glm::normalize(input.moveDir);
 	if (input.lightAttackPressed) attackBufferTimer = ATTACK_BUFFER;
 
 	//Ticks during the lock are dropped, not queued, so a fast flick can't slide past a slot
@@ -118,6 +109,11 @@ void PlayerAgent::Update(float deltaTime) {
             dodgeBufferTimer = 0.0f; // consume buffer
         }
     }
+
+	//Faces the way it moves; the sprite and every collider mirror with the scale
+	if (chainStep < 0 && prevInput.moveDir.x != 0.0f) {
+		transform.scale.x = std::copysign(std::abs(transform.scale.x), prevInput.moveDir.x);
+	}
 
 	if (chainStep >= 0) {
 		UpdateAttack(deltaTime);
@@ -175,46 +171,29 @@ void PlayerAgent::SwapWeapon(int dir) {
 }
 
 void PlayerAgent::StartAttackStep(int step) {
-	SpriteComponent* sprite = GetComponentOfType<SpriteComponent>();
-	if (sprite && chainStep < 0) idleSprite = sprite->GetTexturePath();
-	if (sprite && step < static_cast<int>(lightChainSprites.size())) sprite->SetTexturePath(lightChainSprites[step]);
+	AnimatorComponent* animator = GetComponentOfType<AnimatorComponent>();
+	if (animator && chainStep < 0) idleBranch = animator->GetBranchName();
 
 	chainStep = step;
 	attackTimer = 0.0f;
 	attackBufferTimer = 0.0f;
-	hitLanded = false;
-	if (LIGHT_CHAIN[step].windup <= 0.0f) LandAttack();
-}
 
-void PlayerAgent::LandAttack() {
-	hitLanded = true;
-	for (Agent* target : FetchTargetsWithin(transform.position + facing * ATTACK_REACH, ATTACK_REACH)) {
-		//Walls and cameras sit in range too; only enemies count as a landed hit
-		if (!dynamic_cast<EnemyAgent*>(target)) continue;
-
-		HitData hit;
-		hit.attacker = this;
-		hit.target = target;
-		hit.damage = LIGHT_CHAIN[chainStep].damage;
-		hit.direction = facing;
-		ModifyOutgoingHit(hit);
-		target->HitEvent(hit);
-		LandHitEvent(hit);
+	//The branch's frames carry the hitboxes, so the hit comes out with the first one
+	if (!animator) return;
+	if (step >= static_cast<int>(lightChainBranches.size()) || !animator->PlayBranch(lightChainBranches[step])) {
+		std::cerr << "[PlayerAgent] Animation set has no light chain branch " << step + 1 << std::endl;
 	}
 }
 
 void PlayerAgent::UpdateAttack(float deltaTime) {
 	const ChainStep& step = LIGHT_CHAIN[chainStep];
 	attackTimer += deltaTime;
-
-	if (!hitLanded && attackTimer >= step.windup) LandAttack();
-
 	if (!IsAttackRecovering()) return;
 
 	if (attackBufferTimer > 0.0f && chainStep + 1 < LIGHT_CHAIN_LENGTH) {
 		StartAttackStep(chainStep + 1);
 	}
-	else if (attackTimer >= step.windup + step.hold + step.recovery) {
+	else if (attackTimer >= step.hold + step.recovery) {
 		EndAttack();
 	}
 }
@@ -223,14 +202,12 @@ void PlayerAgent::EndAttack() {
 	if (chainStep < 0) return;
 	chainStep = -1;
 
-	SpriteComponent* sprite = GetComponentOfType<SpriteComponent>();
-	if (sprite && !idleSprite.empty()) sprite->SetTexturePath(idleSprite);
+	AnimatorComponent* animator = GetComponentOfType<AnimatorComponent>();
+	if (animator && !idleBranch.empty()) animator->PlayBranch(idleBranch);
 }
 
 bool PlayerAgent::IsAttackRecovering() const {
-	if (chainStep < 0) return false;
-	const ChainStep& step = LIGHT_CHAIN[chainStep];
-	return attackTimer >= step.windup + step.hold;
+	return chainStep >= 0 && attackTimer >= LIGHT_CHAIN[chainStep].hold;
 }
 
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
@@ -281,6 +258,7 @@ void PlayerAgent::LandHitEvent(const HitData& hit) {
 }
 
 void PlayerAgent::ModifyOutgoingHit(HitData& hit) const {
+	if (chainStep >= 0) hit.damage = LIGHT_CHAIN[chainStep].damage;
 	hit.damage = static_cast<int>(std::lround(hit.damage * modified.damageMultiplier));
 }
 

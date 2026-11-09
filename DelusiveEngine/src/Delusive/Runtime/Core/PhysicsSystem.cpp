@@ -153,7 +153,7 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 	//1. Gather - every enabled collider resolved to world space once
 	shapes.clear();
 	for (const auto& agent : agents) {
-		for (ColliderComponent* collider : agent->GetComponentsOfType<ColliderComponent>()) {
+		for (ColliderComponent* collider : agent->GetColliders()) {
 			if (collider->IsEnabled()) shapes.push_back(BuildShape(*collider));
 		}
 	}
@@ -179,7 +179,8 @@ void PhysicsSystem::Step(const std::vector<std::unique_ptr<Agent>>& agents) {
 	for (const Contact& contact : contacts) {
 		ColliderComponent* a = shapes[contact.a].collider;
 		ColliderComponent* b = shapes[contact.b].collider;
-		const ColliderPair pair = a < b ? ColliderPair(a, b) : ColliderPair(b, a);
+		const int strike = a->GetStrike() + b->GetStrike();
+		const ColliderPair pair = a < b ? ColliderPair(a, b, strike) : ColliderPair(b, a, strike);
 		nowTouching.push_back(pair);
 		if (std::binary_search(touching.begin(), touching.end(), pair)) continue;
 

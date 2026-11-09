@@ -12,6 +12,7 @@
 #include <Delusive/Runtime/Core/UUID.h>
 
 class Component;
+class ColliderComponent;
 class PropertyRegistry;
 class Scene;
 struct HitData;
@@ -71,6 +72,8 @@ public:
 
     // Component Handling
     void AddRawComponent(std::unique_ptr<Component> component);
+	//Collider components plus the animator's current frame boxes - what physics sees
+	std::vector<ColliderComponent*> GetColliders();
 
     template<typename T>
     T* GetComponentOfType() {

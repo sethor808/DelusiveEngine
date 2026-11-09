@@ -275,7 +275,7 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 		}
 
 		// Immediately draw enabled colliders (no sorting needed)
-		for (const ColliderComponent* collider : agent->GetComponentsOfType<ColliderComponent>()) {
+		for (const ColliderComponent* collider : agent->GetColliders()) {
 			if (collider->IsEnabled()) {
 				collider->Draw(colRenderer, projection);
 			}

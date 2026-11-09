@@ -2,7 +2,11 @@
 #include <Delusive/Runtime/Components/Component.h>
 #include <Delusive/Runtime/Core/DelusiveInstance.h>
 #include <Delusive/Runtime/Animation/AnimationSet.h>
+#include <memory>
 #include <unordered_map>
+
+class ColliderComponent;
+enum class ColliderType;
 
 //Plays the owner's AnimationSet, linked by UUID and resolved through the library.
 //Update advances one tick - gameplay runs at a fixed DELUSIVE_TICKS_PER_SECOND - then
@@ -11,6 +15,7 @@ class AnimatorComponent : public Component {
 public:
     AnimatorComponent(DelusiveInstance&);
     AnimatorComponent() = delete;
+    ~AnimatorComponent();
 
     void Update(float deltaTime) override;
     void DrawImGui() override;
@@ -22,10 +27,12 @@ public:
     void Deserialize(DelusiveParser::DataBlock& in) override;
     //Applies the current frame once there is a sprite to apply it to
     void SetOwner(Agent*) override;
+    void SetEditorMode(bool) override;
 
     //Rebuilds the set from the library, which is also how saved .anim edits show up
     bool LinkSet(const UUID& setID);
-    void PlayBranch(const std::string&);
+    //False when the set has no branch by that name
+    bool PlayBranch(const std::string&);
     void PlayBranch(const UUID&);
     void ApplyFrame();
 
@@ -56,6 +63,8 @@ public:
     int GetTickInFrame() const { return tickInFrame; }
     UUID GetSetID() const { return setID; }
     const DelusiveAnimation::Set& GetSet() const { return set; }
+    //The current frame's hit and hurt boxes as live colliders - owned here, so never saved
+    const std::vector<std::unique_ptr<ColliderComponent>>& GetFrameColliders() const { return frameColliders; }
 
 private:
     const DelusiveAnimation::Branch* CurrentBranch() const;
@@ -63,12 +72,16 @@ private:
     void FollowTransitions(bool finished);
     bool Matches(const DelusiveAnimation::Transition&, bool finished, bool fromAny) const;
     void Fire(const DelusiveAnimation::Transition&);
+    void EnterBranch(int);
+    //A disabled pooled collider of the type, or a new one
+    ColliderComponent* FetchFreeCollider(ColliderType);
 
     std::unordered_map<std::string, bool> flagValues;
 
     UUID setID;
     DelusiveAnimation::Set set;
     //Index, not pointer - relinking rebuilds the branch list
+    std::vector<std::unique_ptr<ColliderComponent>> frameColliders;
     int currentBranch = -1;
     int currentFrame = 0;
     int tickInFrame = 0;
