@@ -61,7 +61,7 @@ public:
 	CameraAgent* GetMainCamera() const;
 
 	void Update(float deltaTime);
-	//Hit stop, target flash, camera shake and a spark where the hit landed
+	//Hit stop, target flash and camera shake
 	void PlayHitEffects(const HitData&);
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
@@ -94,16 +94,6 @@ private:
 	void LinkAgent(Agent&);
 	//Drops destroyed agents and adds spawned ones once nothing is iterating the list
 	void FlushAgents();
-	void UpdateSparks(float deltaTime);
-	void DrawSparks() const;
-
-	//Two white streaks crossed at the hit point, shrinking away
-	struct HitSpark {
-		glm::vec2 position;
-		float angle;
-		float size;
-		float timer;
-	};
 
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
@@ -120,5 +110,4 @@ private:
 
 	//Ticks the world stays frozen after a hit
 	int hitStopTicks = 0;
-	std::vector<HitSpark> sparks;
 };
