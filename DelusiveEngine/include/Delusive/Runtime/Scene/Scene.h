@@ -8,6 +8,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
+#include <Delusive/Runtime/Core/WorldClock.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
 #include <Delusive/Runtime/Core/UUID.h>
 
@@ -64,6 +65,8 @@ public:
 	void Update(float deltaTime);
 	//Hit stop, target flash and camera shake
 	void PlayHitEffects(const HitData&);
+	//Pause and hit stop both stop the world through the clock
+	WorldClock& GetClock() { return clock; }
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
 	//UI elements are placed in their own space, so the UI gets its own mouse position
@@ -109,8 +112,7 @@ private:
 	std::vector<std::unique_ptr<Agent>> spawnedAgents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
 
-	//Ticks the world stays frozen after a hit
-	int hitStopTicks = 0;
+	WorldClock clock;
 
 	//Draw scratch, cleared and refilled each frame so drawing does not allocate
 	struct RenderEntry {

@@ -8,7 +8,6 @@
 #include <Delusive/Runtime/Scene/UIManager.h>
 #include <Delusive/Runtime/Collision/HitData.h>
 #include <algorithm>
-#include <cmath>
 #include <iomanip>
 #include <sstream>
 
@@ -246,11 +245,11 @@ void Scene::Update(float deltaTime) {
 
 	//A pause menu keeps the UI running but stops the world
 	UIManager* ui = GetSystem<UIManager>();
-	if (ui && ui->IsPaused()) return;
+	clock.SetHold("UIPause", ui && ui->IsPaused());
 
-	//Hit stop holds everything but the camera; a kill stays on screen until it ends
-	if (hitStopTicks > 0) {
-		if (--hitStopTicks == 0) FlushAgents();
+	//A kill stays on screen until the world moves again
+	if (!clock.Advance()) {
+		if (!clock.IsStopped()) FlushAgents();
 		return;
 	}
 
@@ -260,7 +259,7 @@ void Scene::Update(float deltaTime) {
 	}
 
 	physics.Step(agents);
-	if (hitStopTicks == 0) FlushAgents();
+	if (!clock.IsStopped()) FlushAgents();
 }
 
 namespace {
@@ -270,8 +269,7 @@ namespace {
 }
 
 void Scene::PlayHitEffects(const HitData& hit) {
-	const int stopTicks = static_cast<int>(std::lround(hit.hitStop * DELUSIVE_TICKS_PER_SECOND));
-	hitStopTicks = std::max(hitStopTicks, stopTicks);
+	clock.Freeze(hit.hitStop);
 
 	if (hit.target) hit.target->Flash(FLASH_SECONDS);
 	if (camera) camera->Shake(SHAKE_PER_DAMAGE * hit.damage, hit.hitStop + SHAKE_SECONDS);
@@ -345,7 +343,7 @@ void Scene::Clear() {
 	systems.clear();
     agentLookup.clear();
 	camera = nullptr;
-	hitStopTicks = 0;
+	clock.Reset();
 	name = "New Scene";
 	//A cleared scene is a new scene - it must not save over the old one's ids
 	id = UUID();
