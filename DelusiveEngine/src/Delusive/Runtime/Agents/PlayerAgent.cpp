@@ -15,14 +15,15 @@ namespace {
 		float hold;
 		float recovery;
 		int damage;
+		float hitStop;
 	};
 
 	//Seconds. Lights never wind up; a chunky attack gets one from hitbox-free frames in its
 	//branch. The third hit lingers so a weapon swap has room to cancel it
 	constexpr ChainStep LIGHT_CHAIN[] = {
-		{ 0.12f, 0.15f, 1 },
-		{ 0.12f, 0.15f, 1 },
-		{ 0.15f, 0.45f, 2 },
+		{ 0.12f, 0.15f, 1, 0.05f },
+		{ 0.12f, 0.15f, 1, 0.05f },
+		{ 0.15f, 0.45f, 2, 0.1f },
 	};
 	constexpr int LIGHT_CHAIN_LENGTH = 3;
 	constexpr float ATTACK_BUFFER = 0.2f;
@@ -234,9 +235,9 @@ void PlayerAgent::HandleDodge(float deltaTime) {
     }
 }
 
-void PlayerAgent::HitEvent(const HitData& hit) {
+bool PlayerAgent::HitEvent(const HitData& hit) {
 	Talisman* active = GetActiveTalisman();
-	if (!active || IsInvulnerable()) return;
+	if (!active || IsInvulnerable()) return false;
 
 	for (auto& talisman : talismans) {
 		if (!talisman->GetIsBroken()) talisman->HitEvent(*this, hit);
@@ -249,6 +250,7 @@ void PlayerAgent::HitEvent(const HitData& hit) {
 	}
 
 	TriggerInvul(modified.invulDuration);
+	return true;
 }
 
 void PlayerAgent::LandHitEvent(const HitData& hit) {
@@ -258,7 +260,10 @@ void PlayerAgent::LandHitEvent(const HitData& hit) {
 }
 
 void PlayerAgent::ModifyOutgoingHit(HitData& hit) const {
-	if (chainStep >= 0) hit.damage = LIGHT_CHAIN[chainStep].damage;
+	if (chainStep >= 0) {
+		hit.damage = LIGHT_CHAIN[chainStep].damage;
+		hit.hitStop = LIGHT_CHAIN[chainStep].hitStop;
+	}
 	hit.damage = static_cast<int>(std::lround(hit.damage * modified.damageMultiplier));
 }
 

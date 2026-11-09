@@ -65,9 +65,10 @@ void EnemyAgent::SetTarget(Agent* target) {
     this->target = target;
 }
 
-void EnemyAgent::HitEvent(const HitData& hit) {
-	if (IsDestroyed()) return;
+bool EnemyAgent::HitEvent(const HitData& hit) {
+	if (IsDestroyed()) return false;
 
 	damageTaken += hit.damage;
 	if (GetHealth() <= 0) Destroy();
+	return true;
 }

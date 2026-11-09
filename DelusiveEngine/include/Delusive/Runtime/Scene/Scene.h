@@ -18,6 +18,7 @@ class CameraAgent;
 class GameManager;
 class ScriptManager;
 class DelusiveInventory;
+struct HitData;
 
 class Scene {
 public:
@@ -60,6 +61,8 @@ public:
 	CameraAgent* GetMainCamera() const;
 
 	void Update(float deltaTime);
+	//Hit stop, target flash, camera shake and a spark where the hit landed
+	void PlayHitEffects(const HitData&);
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
 	//UI elements are placed in their own space, so the UI gets its own mouse position
@@ -91,6 +94,16 @@ private:
 	void LinkAgent(Agent&);
 	//Drops destroyed agents and adds spawned ones once nothing is iterating the list
 	void FlushAgents();
+	void UpdateSparks(float deltaTime);
+	void DrawSparks() const;
+
+	//Two white streaks crossed at the hit point, shrinking away
+	struct HitSpark {
+		glm::vec2 position;
+		float angle;
+		float size;
+		float timer;
+	};
 
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
@@ -104,4 +117,8 @@ private:
 	std::vector<std::unique_ptr<Agent>> agents;
 	std::vector<std::unique_ptr<Agent>> spawnedAgents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
+
+	//Ticks the world stays frozen after a hit
+	int hitStopTicks = 0;
+	std::vector<HitSpark> sparks;
 };

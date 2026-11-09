@@ -25,6 +25,8 @@ public:
 	//moving the view goes through the pan rather than the agent's position
 	void SetPan(const glm::vec2& pan) { panOffset = pan; }
 	glm::vec2 GetPan() const { return panOffset; }
+	//Jolts the view by up to strength units, easing out over the seconds given
+	void Shake(float strength, float seconds);
 
 	glm::mat4 GetViewProjection(int, int) const;
 	glm::mat4 GetViewProjectionFromWindow(SDL_Window* window) const;
@@ -32,6 +34,12 @@ private:
 	float zoom = 1.0f;
 	glm::vec2 panOffset = glm::vec2(0.0f);
 	Agent* followTarget = nullptr;
+
+	//Runtime only, never saved
+	float shakeStrength = 0.0f;
+	float shakeTimer = 0.0f;
+	float shakeDuration = 0.0f;
+	glm::vec2 shakeOffset = glm::vec2(0.0f);
 
 	bool dragging = false;
 	glm::vec2 lastMousePos = glm::vec2(0.0f);

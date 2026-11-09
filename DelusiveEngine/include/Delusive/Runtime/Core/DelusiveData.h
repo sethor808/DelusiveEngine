@@ -21,6 +21,8 @@ struct RenderCommand {
     uint32_t textureID;
     int layer;
     bool isUI;
+    //0-1 blend toward white, for hit flashes
+    float flash = 0.0f;
 };
 
 struct DelusiveTexture {

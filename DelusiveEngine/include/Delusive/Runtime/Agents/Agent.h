@@ -186,8 +186,8 @@ public:
     virtual bool IsStatic() const { return false; }
 	//0 = no team; hit/hurt boxes on the same team ignore each other
 	int GetTeam() const { return team; }
-	//HitEvent on the agent hit, LandHitEvent on the attacker
-	virtual void HitEvent(const HitData&) {}
+	//HitEvent on the agent hit (false if it ignored the hit), LandHitEvent on the attacker
+	virtual bool HitEvent(const HitData&) { return false; }
 	virtual void LandHitEvent(const HitData&) {}
 	//Attacker's last say on a hit before the target takes it
 	virtual void ModifyOutgoingHit(HitData&) const {}
@@ -196,6 +196,11 @@ public:
 	//The scene removes destroyed agents at the end of its update
 	void Destroy() { toDelete = true; }
 	bool IsDestroyed() const { return toDelete; }
+
+	//Hit flash: sprites blend toward white, fading over the given seconds
+	void Flash(float seconds) { flashTimer = flashDuration = seconds; }
+	float GetFlash() const { return flashDuration > 0.0f ? flashTimer / flashDuration : 0.0f; }
+	void TickFlash(float deltaTime) { flashTimer = std::max(flashTimer - deltaTime, 0.0f); }
 
 protected:
     TransformComponent transform;
@@ -207,6 +212,8 @@ protected:
     bool editorMode = false;
 	bool toDelete = false;
 	int team = 0;
+	float flashTimer = 0.0f;
+	float flashDuration = 0.0f;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;

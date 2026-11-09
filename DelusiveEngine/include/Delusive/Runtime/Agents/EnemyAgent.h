@@ -19,7 +19,7 @@ public:
 	void SetTarget(Agent*);
 
 	//Combat
-	void HitEvent(const HitData&) override;
+	bool HitEvent(const HitData&) override;
 	int GetHealth() const { return maxHealth - damageTaken; }
 
 private:

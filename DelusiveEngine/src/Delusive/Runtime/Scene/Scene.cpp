@@ -6,7 +6,9 @@
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Scene/UIManager.h>
+#include <Delusive/Runtime/Collision/HitData.h>
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 
@@ -246,12 +248,71 @@ void Scene::Update(float deltaTime) {
 	UIManager* ui = GetSystem<UIManager>();
 	if (ui && ui->IsPaused()) return;
 
-	for (auto& agent : agents) {
-		agent->Update(deltaTime);
+	//Hit stop holds everything but the camera; a kill stays on screen until it ends
+	if (hitStopTicks > 0) {
+		if (--hitStopTicks == 0) FlushAgents();
+		return;
 	}
 
+	for (auto& agent : agents) {
+		agent->TickFlash(deltaTime);
+		agent->Update(deltaTime);
+	}
+	UpdateSparks(deltaTime);
+
 	physics.Step(agents);
-	FlushAgents();
+	if (hitStopTicks == 0) FlushAgents();
+}
+
+namespace {
+	constexpr float FLASH_SECONDS = 0.1f;
+	constexpr float SHAKE_PER_DAMAGE = 0.06f;
+	constexpr float SHAKE_SECONDS = 0.15f;
+	constexpr float SPARK_SECONDS = 0.12f;
+	constexpr float SPARK_SIZE = 0.6f;
+}
+
+void Scene::PlayHitEffects(const HitData& hit) {
+	const int stopTicks = static_cast<int>(std::lround(hit.hitStop * DELUSIVE_TICKS_PER_SECOND));
+	hitStopTicks = std::max(hitStopTicks, stopTicks);
+
+	if (hit.target) hit.target->Flash(FLASH_SECONDS);
+	if (camera) camera->Shake(SHAKE_PER_DAMAGE * hit.damage, hit.hitStop + SHAKE_SECONDS);
+
+	const float angle = (hit.direction.x == 0.0f && hit.direction.y == 0.0f) ? 0.0f : std::atan2(hit.direction.y, hit.direction.x);
+	const float size = SPARK_SIZE * (1.0f + 0.5f * (hit.damage - 1));
+	sparks.push_back({ hit.point, angle, size, SPARK_SECONDS });
+}
+
+void Scene::UpdateSparks(float deltaTime) {
+	for (HitSpark& spark : sparks) spark.timer -= deltaTime;
+	std::erase_if(sparks, [](const HitSpark& spark) { return spark.timer <= 0.0f; });
+}
+
+void Scene::DrawSparks() const {
+	const GLuint white = instance.renderer.CreateFallbackWhiteTexture();
+	for (const HitSpark& spark : sparks) {
+		const float life = spark.timer / SPARK_SECONDS;
+		//Long streak along the hit, short one across it; both thin out as the spark dies
+		const glm::vec2 streaks[] = {
+			{ spark.size * (1.5f - 0.5f * life), 0.12f * spark.size * life },
+			{ 0.4f * spark.size, 0.08f * spark.size * life },
+		};
+		for (int i = 0; i < 2; ++i) {
+			Transform shape;
+			shape.position = spark.position;
+			shape.rotation = spark.angle + i * 1.5707963f;
+			shape.scale = streaks[i];
+			instance.renderer.Submit({
+				.modelMatrix = shape.ToMatrix(),
+				.color = glm::vec4(1.0f),
+				.textureID = white,
+				.layer = 100,
+				.isUI = false,
+				.flash = 1.0f
+				});
+		}
+	}
 }
 
 void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {
@@ -293,6 +354,7 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 	for (const RenderEntry& entry : renderQueue) {
 		entry.sprite->Draw(projection);
 	}
+	DrawSparks();
 
 	//Renderer::BeginUIRenderPass();
 	for (auto& system : systems) {
@@ -328,6 +390,8 @@ void Scene::Clear() {
 	systems.clear();
     agentLookup.clear();
 	camera = nullptr;
+	hitStopTicks = 0;
+	sparks.clear();
 	name = "New Scene";
 	//A cleared scene is a new scene - it must not save over the old one's ids
 	id = UUID();

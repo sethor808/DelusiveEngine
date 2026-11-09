@@ -22,7 +22,7 @@ public:
 
 	void ApplyKnockback(const glm::vec2&, float);
 
-	void HitEvent(const HitData&) override;
+	bool HitEvent(const HitData&) override;
 	void LandHitEvent(const HitData&) override;
 	void ModifyOutgoingHit(HitData&) const override;
 	float GetHitboxScale() const override { return modified.hitboxScale; }

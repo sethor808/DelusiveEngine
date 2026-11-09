@@ -176,9 +176,8 @@ void DelusiveRenderer::Flush() {
 	std::stable_sort(commands.begin(), commands.end(),
 		[](const RenderCommand& a, const RenderCommand& b) {
 			if (a.isUI != b.isUI) return a.isUI < b.isUI;
-			//UI draws in submission order within a layer, so children land on top of their parents
-			if (a.isUI) return a.layer < b.layer;
-			if (a.textureID != b.textureID) return a.textureID < b.textureID;
+			//Submission order within a layer: children land on their UI parents and the scene's
+			//depth sort holds across textures
 			return a.layer < b.layer;
 		});
 
@@ -197,7 +196,7 @@ void DelusiveRenderer::Flush() {
 		shader->SetMat4("view", cmd.isUI ? glm::mat4(1.0f) : view);
 		shader->SetMat4("model", glm::value_ptr(cmd.modelMatrix));
 
-		//shader->SetVec4("uColor", cmd.color);
+		shader->SetFloat("uFlash", cmd.flash);
 
 		// Bind texture if it changed
 		if (cmd.textureID != currentTex) {
