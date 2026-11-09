@@ -9,41 +9,67 @@
 #include <functional>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 //==== [ZONE: PropertyDraw — extracted from Property.inl DrawImGui] ====
 
-void DrawTextureUI(DelusiveTexture& texture, const std::string& name)
-{
-    ImGui::Text("Texture: %s", std::filesystem::path(texture.texturePath).filename().string().c_str());
-    if (ImGui::Button(("Change Texture##" + name).c_str())) {
-        ImGui::OpenPopup(("TextureBrowser##" + name).c_str());
-    }
-    if (ImGui::BeginPopup(("TextureBrowser##" + name).c_str())) {
-        std::function<void(const std::filesystem::path&)> DrawDirectory;
-        DrawDirectory = [&](const std::filesystem::path& path) {
-            for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                if (entry.is_directory()) {
-                    if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
-                        DrawDirectory(entry.path());
-                        ImGui::EndMenu();
-                    }
-                }
-                else if (entry.is_regular_file()) {
-                    std::string ext = entry.path().extension().string();
-                    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-                        std::string filename = entry.path().filename().string();
-                        if (ImGui::Selectable(filename.c_str())) {
-                            texture.texturePath = entry.path().string();
-                            ImGui::CloseCurrentPopup();
-                        }
-                    }
-                }
-            }
-            };
-        DrawDirectory(SPRITE_FOLDER);
-        ImGui::EndPopup();
-    }
+namespace {
+	//Only one picker is open at a time, so they share the list and filter
+	std::vector<std::string> imageFiles;
+	char imageFilter[64] = "";
+
+	std::string Lowered(std::string text) {
+		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+		return text;
+	}
+}
+
+bool DrawImagePicker(const char* popupID, std::string& path) {
+	if (!ImGui::BeginPopup(popupID)) return false;
+
+	if (ImGui::IsWindowAppearing()) {
+		imageFiles.clear();
+		imageFilter[0] = '\0';
+		std::error_code ec;
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(SPRITE_FOLDER, ec)) {
+			if (!entry.is_regular_file()) continue;
+			const std::string extension = Lowered(entry.path().extension().string());
+			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga") {
+				imageFiles.push_back(entry.path().generic_string());
+			}
+		}
+		std::sort(imageFiles.begin(), imageFiles.end());
+		ImGui::SetKeyboardFocusHere();
+	}
+
+	ImGui::InputText("Filter", imageFilter, sizeof(imageFilter));
+	const std::string filter = Lowered(imageFilter);
+
+	bool picked = false;
+	ImGui::BeginChild("files", ImVec2(420.0f, 300.0f), ImGuiChildFlags_Borders);
+	const std::string root = std::filesystem::path(SPRITE_FOLDER).generic_string();
+	for (const std::string& file : imageFiles) {
+		const std::string shown = file.rfind(root, 0) == 0 ? file.substr(root.size()) : file;
+		if (!filter.empty() && Lowered(shown).find(filter) == std::string::npos) continue;
+
+		if (ImGui::Selectable(shown.c_str(), file == path)) {
+			path = file;
+			picked = true;
+			ImGui::CloseCurrentPopup();
+		}
+	}
+	if (imageFiles.empty()) ImGui::TextDisabled("No images in %s", SPRITE_FOLDER);
+	ImGui::EndChild();
+
+	ImGui::EndPopup();
+	return picked;
+}
+
+void DrawTextureUI(DelusiveTexture& texture, const std::string& name) {
+	ImGui::Text("Texture: %s", std::filesystem::path(texture.texturePath).filename().string().c_str());
+	const std::string popupID = "TextureBrowser##" + name;
+	if (ImGui::Button(("Change Texture##" + name).c_str())) ImGui::OpenPopup(popupID.c_str());
+	DrawImagePicker(popupID.c_str(), texture.texturePath);
 }
 
 void DrawFontUI(DelusiveFont& font, const std::string& name)

@@ -20,6 +20,8 @@ namespace DelusiveEditorContext {
     DelusiveInstance* GetInstance();
 }
 
+//Popup listing the images under SPRITE_FOLDER with a filter - true on the frame one is picked
+bool DrawImagePicker(const char* popupID, std::string& path);
 void DrawTextureUI(DelusiveTexture&, const std::string& name);
 void DrawFontUI(DelusiveFont&, const std::string& name);
 void DrawLinkUI(DelusiveLink<Agent>&, const std::string& name);

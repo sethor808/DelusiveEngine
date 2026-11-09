@@ -348,7 +348,8 @@ bool EngineUI::SaveCurrent(Scene& scene) {
 		saved = animatorEditor->Save(savePath);
 		break;
 	case EditorMode::UIBuilder:
-		saved = editingCanvas->Save();
+		//Every canvas goes back to its own .canvas file; new ones get CANVAS_PATH/<name>
+		saved = gameManager.GetUIRegistry().SaveAll();
 		break;
 	default:
 		break;

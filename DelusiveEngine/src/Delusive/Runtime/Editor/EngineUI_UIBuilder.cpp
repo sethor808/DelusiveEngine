@@ -7,6 +7,7 @@
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/UI/UIElement.h>
 #include <imgui/imgui.h>
+#include <functional>
 
 void EngineUI::RenderUIBuilder(Scene& scene) {
 	//Nothing updates the scene outside play, so the preview ticks here
@@ -26,13 +27,6 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 		preview->RecalculateStats();
 	}
 	ImGui::EndDisabled();
-
-	ImGui::SameLine();
-	//Each canvas goes back to its own .canvas file; new ones get CANVAS_PATH/<name>
-	if (ImGui::Button("Save All")) {
-		gameManager.GetUIRegistry().SaveAll();
-	}
-
 	ImGui::Separator();
 
 	if (!editingCanvas) {
@@ -48,16 +42,22 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 		if (ImGui::Checkbox("Captures input", &captures)) editingCanvas->SetCapturesInput(captures);
 		ImGui::SetItemTooltip("Menus take clicks and keys from the game; leave off for HUDs");
 
-		if (ImGui::BeginPopupContextWindow("CanvasRightClick", ImGuiPopupFlags_MouseButtonRight)) {
-			std::string type = DelusiveUI::DrawUIElementAddMenu();
-			if (!type.empty()) {
-				auto element = DelusiveUI::CreateUIElementByType(type, instance);
-				if (element) {
-					element->LinkCanvas(editingCanvas);
-					editingCanvas->AddElement(std::move(element));
-				}
-			}
+		if (ImGui::Button("+ Add")) ImGui::OpenPopup("AddElement");
+		ImGui::SetItemTooltip("Adds inside the selected element, or to the canvas when nothing is selected");
+		if (ImGui::BeginPopup("AddElement")) {
+			AddUIElement(DelusiveUI::DrawUIElementAddMenu(), selectedUIElement);
 			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopupContextWindow("CanvasRightClick", ImGuiPopupFlags_MouseButtonRight)) {
+			AddUIElement(DelusiveUI::DrawUIElementAddMenu(), nullptr);
+			ImGui::EndPopup();
+		}
+
+		if (selectedUIElement && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && !ImGui::GetIO().WantTextInput
+			&& ImGui::IsKeyPressed(ImGuiKey_Delete, false)) {
+			uiDeleteTarget = selectedUIElement;
+			uiDeleteParent = FindUIParent(selectedUIElement);
 		}
 
 		ImGui::Separator();
@@ -109,14 +109,10 @@ void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	}
 
 	if (ImGui::BeginPopupContextItem("ElementRightClick", ImGuiPopupFlags_MouseButtonRight)) {
-		std::string type = DelusiveUI::DrawUIElementAddMenu();
-		if (!type.empty()) {
-			auto child = DelusiveUI::CreateUIElementByType(type, instance);
-			if (child) element->AddChild(std::move(child));
-		}
+		AddUIElement(DelusiveUI::DrawUIElementAddMenu(), element);
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Delete")) {
+		if (ImGui::MenuItem("Delete", "Del")) {
 			uiDeleteTarget = element;
 			uiDeleteParent = parent;
 		}
@@ -131,6 +127,34 @@ void EngineUI::DrawUIElementNode(UIElement* element, UIElement* parent) {
 	}
 
 	ImGui::PopID();
+}
+
+void EngineUI::AddUIElement(const std::string& type, UIElement* parent) {
+	if (type.empty()) return;
+	auto element = DelusiveUI::CreateUIElementByType(type, instance);
+	if (!element) return;
+
+	UIElement* added = element.get();
+	if (parent) parent->AddChild(std::move(element));
+	else editingCanvas->AddElement(std::move(element));
+	selectedUIElement = added;
+}
+
+UIElement* EngineUI::FindUIParent(UIElement* target) {
+	//Depth-first through the saved children, the ones the hierarchy shows
+	std::function<UIElement*(UIElement*)> Search = [&](UIElement* node) -> UIElement* {
+		std::vector<UIElement*> children = node->GetChildren();
+		children.resize(node->SavedChildCount());
+		for (UIElement* child : children) {
+			if (child == target) return node;
+			if (UIElement* found = Search(child)) return found;
+		}
+		return nullptr;
+	};
+	for (UIElement* element : editingCanvas->GetElements()) {
+		if (UIElement* found = Search(element)) return found;
+	}
+	return nullptr;
 }
 
 void EngineUI::DeleteUIElement() {

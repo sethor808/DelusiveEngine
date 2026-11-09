@@ -99,6 +99,9 @@ private:
 	bool showUIBuilderPanel = true;
 
 	void DrawUIElementNode(UIElement* element, UIElement* parent);
+	//Adds a new element of type inside parent, or to the canvas when parent is null
+	void AddUIElement(const std::string& type, UIElement* parent);
+	UIElement* FindUIParent(UIElement*);
 	void DeleteUIElement();
 	void BuildUIPreview(Scene&);
 	void OpenCanvas(Scene&, UICanvas*);

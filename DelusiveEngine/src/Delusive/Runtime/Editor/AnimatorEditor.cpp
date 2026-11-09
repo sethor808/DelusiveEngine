@@ -5,6 +5,7 @@
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
+#include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <imgui/imgui.h>
 #include <algorithm>
 #include <cmath>
@@ -449,10 +450,36 @@ void AnimatorEditor::AdvancePreview() {
     }
 }
 
+void AnimatorEditor::TogglePlay() {
+	if (!playing && playTick >= BranchTicks() - 1) playTick = 0;
+	playing = !playing;
+	tickAccumulator = 0.0f;
+}
+
+void AnimatorEditor::StepFrame(int delta) {
+	const Branch* b = CurrentBranch();
+	if (!b || b->frames.empty()) return;
+	const int count = static_cast<int>(b->frames.size());
+	playing = false;
+	SelectFrame(((frame + delta) % count + count) % count);
+}
+
+void AnimatorEditor::Shortcuts() {
+	if (ImGui::GetIO().WantTextInput || ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId) || drag != Drag::None) return;
+	if (!CurrentBranch()) return;
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Space, false)) TogglePlay();
+	if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) StepFrame(-1);
+	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) StepFrame(1);
+}
+
 #pragma endregion
 
 void AnimatorEditor::Render() {
-    if (set) AdvancePreview();
+    if (set) {
+        Shortcuts();
+        AdvancePreview();
+    }
 
     //Four dockable windows - EngineUI arranges them the first time the animator opens
     auto Panel = [this](const char* name, ImGuiWindowFlags flags, void (AnimatorEditor::*draw)(), bool sidePanel) {
@@ -1116,7 +1143,7 @@ void AnimatorEditor::InspectorPanel() {
             ? std::string("Choose image...")
             : std::filesystem::path(f->texturePath).filename().string();
         if (ImGui::Button(imageLabel.c_str(), ImVec2(-1.0f, 0.0f))) ImGui::OpenPopup("FrameImage");
-        if (ImagePicker("FrameImage", f->texturePath)) {
+        if (DrawImagePicker("FrameImage", f->texturePath)) {
             fitPending = true;
             Touch();
         }
@@ -1224,11 +1251,8 @@ void AnimatorEditor::TimelinePanel() {
     }
 
     const int total = BranchTicks();
-    if (ImGui::Button(playing ? "Pause" : "Play")) {
-        if (!playing && playTick >= total - 1) playTick = 0;
-        playing = !playing;
-        tickAccumulator = 0.0f;
-    }
+    if (ImGui::Button(playing ? "Pause" : "Play")) TogglePlay();
+    ImGui::SetItemTooltip("Space");
     ImGui::SameLine();
     if (ImGui::Button("Step") && total > 0) {
         playing = false;
@@ -1236,6 +1260,7 @@ void AnimatorEditor::TimelinePanel() {
         frame = FrameAtTick(playTick);
         box = -1;
     }
+    ImGui::SetItemTooltip("One tick - Left/Right arrows step whole frames");
     ImGui::SameLine();
     ImGui::Checkbox("Loop preview", &loopPreview);
     ImGui::SameLine();
@@ -1267,6 +1292,7 @@ void AnimatorEditor::TimelinePanel() {
             playing = false;
             SelectFrame(i);
         }
+        ImGui::SetItemTooltip("Drag to reorder, Delete removes the selected frame");
 
         //Drag a tile onto another to move it there
         if (ImGui::BeginDragDropSource()) {
@@ -1314,7 +1340,7 @@ void AnimatorEditor::TimelinePanel() {
 
     if (ImGui::Button("+##addFrame", ImVec2(tileHeight, tileHeight))) ImGui::OpenPopup("AddFrame");
     std::string addedImage;
-    if (ImagePicker("AddFrame", addedImage)) {
+    if (DrawImagePicker("AddFrame", addedImage)) {
         Frame added;
         added.texturePath = addedImage;
         b->frames.push_back(added);
@@ -1334,6 +1360,10 @@ void AnimatorEditor::TimelinePanel() {
     }
 
     ImGui::EndChild();
+
+    //Delete removes the selected frame while the timeline is under the mouse
+    if (erase < 0 && frame >= 0 && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && !ImGui::GetIO().WantTextInput
+        && ImGui::IsKeyPressed(ImGuiKey_Delete, false)) erase = frame;
 
     //Frame edits wait until the strip is drawn
     if (moveFrom >= 0 && moveTo >= 0 && moveFrom != moveTo) {
@@ -1358,48 +1388,3 @@ void AnimatorEditor::TimelinePanel() {
 }
 
 #pragma endregion
-
-bool AnimatorEditor::ImagePicker(const char* popupID, std::string& path) {
-    bool picked = false;
-    if (!ImGui::BeginPopup(popupID)) return false;
-
-    if (ImGui::IsWindowAppearing()) {
-        imageFiles.clear();
-        imageFilter[0] = '\0';
-        std::error_code ec;
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(SPRITE_FOLDER, ec)) {
-            if (!entry.is_regular_file()) continue;
-            std::string extension = entry.path().extension().string();
-            std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-            if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga") {
-                imageFiles.push_back(entry.path().generic_string());
-            }
-        }
-        std::sort(imageFiles.begin(), imageFiles.end());
-        ImGui::SetKeyboardFocusHere();
-    }
-
-    ImGui::InputText("Filter", imageFilter, sizeof(imageFilter));
-    std::string filter = imageFilter;
-    std::transform(filter.begin(), filter.end(), filter.begin(), ::tolower);
-
-    ImGui::BeginChild("files", ImVec2(420.0f, 300.0f), ImGuiChildFlags_Borders);
-    const std::string root = std::filesystem::path(SPRITE_FOLDER).generic_string();
-    for (const std::string& file : imageFiles) {
-        std::string shown = file.rfind(root, 0) == 0 ? file.substr(root.size()) : file;
-        std::string lowered = shown;
-        std::transform(lowered.begin(), lowered.end(), lowered.begin(), ::tolower);
-        if (!filter.empty() && lowered.find(filter) == std::string::npos) continue;
-
-        if (ImGui::Selectable(shown.c_str(), file == path)) {
-            path = file;
-            picked = true;
-            ImGui::CloseCurrentPopup();
-        }
-    }
-    if (imageFiles.empty()) ImGui::TextDisabled("No images in %s", SPRITE_FOLDER);
-    ImGui::EndChild();
-
-    ImGui::EndPopup();
-    return picked;
-}
