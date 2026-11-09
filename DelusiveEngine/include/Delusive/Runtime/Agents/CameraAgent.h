@@ -27,6 +27,7 @@ public:
 	glm::vec2 GetPan() const { return panOffset; }
 	//Jolts the view by up to strength units, easing out over the seconds given
 	void Shake(float strength, float seconds);
+	glm::vec2 GetShakeOffset() const { return shakeOffset; }
 
 	glm::mat4 GetViewProjection(int, int) const;
 	glm::mat4 GetViewProjectionFromWindow(SDL_Window* window) const;
