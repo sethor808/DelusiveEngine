@@ -36,6 +36,8 @@ public:
 
 	void Render(Scene& scene);
 	void RenderTopBar(Scene& scene);
+	//Play state, saved state, the last action's result and the mode's own details
+	void RenderStatusBar(Scene& scene);
 	void RenderSceneEditor(Scene& scene);
 	void RenderAgentEditor(Scene& scene);
 	void RenderAnimatorEditor(Scene& scene);
@@ -86,6 +88,15 @@ private:
 	bool unsavedPrompt = false;
 	bool closeApproved = false;
 
+	//Last action's result, shown in the status bar for a few seconds
+	std::string statusMessage;
+	bool statusError = false;
+	double statusTime = 0.0;
+
+	//Rename / duplicate from the asset list
+	std::string assetNameSource;
+	bool duplicatingAsset = false;
+
 	//Animator mode lives in its own class
 	std::unique_ptr<AnimatorEditor> animatorEditor;
 
@@ -120,6 +131,13 @@ private:
 	//Runs the action now, or after the unsaved-changes prompt
 	void Guarded(std::function<void(Scene&)>);
 	void UnsavedPrompt();
+	void SetStatus(const std::string& message, bool error = false);
+	void BeginAssetName(const std::string& asset, bool duplicate);
+	//Why a new asset name can't be used, or empty when it can
+	std::string AssetNameProblem(const std::string& name);
+	void AssetNamePopup();
+	void RenameAsset(const std::string& from, const std::string& to);
+	void DuplicateAsset(const std::string& from, const std::string& to);
 	bool CanUndo() const;
 	bool CanRedo() const;
 	void Undo(Scene&);

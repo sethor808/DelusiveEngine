@@ -326,10 +326,6 @@ void AnimatorComponent::DrawImGui() {
         }
     }
 
-    if (ImGui::Button("Delete Component")) {
-        MarkToDelete();
-    }
-
     if (set.branches.empty()) {
         ImGui::TextDisabled("No branches");
         return;

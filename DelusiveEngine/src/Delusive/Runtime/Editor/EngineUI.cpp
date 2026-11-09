@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <Delusive/Runtime/Editor/EngineUI.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
@@ -11,8 +10,18 @@
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 #include <Delusive/Runtime/Editor/AnimatorEditor.h>
 #include <Delusive/Runtime/Editor/SceneEditor.h>
+#include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
+namespace {
+	const ImVec4 PlayingBarColour(0.12f, 0.32f, 0.16f, 1.0f);
+	const ImU32 PlayingFrameColour = IM_COL32(90, 220, 110, 255);
+}
 
 EngineUI::EngineUI(GameManager& game)
     : gameManager(game), instance(game.GetInstance())
@@ -88,7 +97,7 @@ void EngineUI::Render(Scene& topBarScene) {
     Scene& scene = gameManager.GetActiveScene();
     DelusiveEditorContext::SetScene(&scene);
 
-    if (currentMode == EditorMode::SceneEditor) sceneEditor->RenderStatusBar(scene, gameManager.IsPlaying());
+    RenderStatusBar(scene);
     DockSpace();
     Shortcuts(scene);
 
@@ -357,7 +366,101 @@ bool EngineUI::SaveCurrent(Scene& scene) {
 		break;
 	}
 	loadedAssets = LoadSceneList();
+	if (!saved) SetStatus("Save failed - see the console", true);
+	else if (currentMode == EditorMode::UIBuilder) SetStatus("Saved all canvases");
+	else SetStatus("Saved " + selectedAsset);
 	return saved;
+}
+
+void EngineUI::BeginAssetName(const std::string& asset, bool duplicate) {
+	assetNameSource = asset;
+	duplicatingAsset = duplicate;
+	std::snprintf(renameBuffer, sizeof(renameBuffer), "%s%s", asset.c_str(), duplicate ? " copy" : "");
+	openRenamePopup = true;
+}
+
+std::string EngineUI::AssetNameProblem(const std::string& name) {
+	if (name.empty()) return "Enter a name";
+	if (name.find_first_of("/\\:*?\"<>|") != std::string::npos) return "Names can't contain / \\ : * ? \" < > |";
+	if (std::filesystem::exists(GetPath(name))) return name + " already exists";
+	return "";
+}
+
+void EngineUI::AssetNamePopup() {
+	if (openRenamePopup) {
+		ImGui::OpenPopup("AssetNamePopup");
+		openRenamePopup = false;
+	}
+	if (!ImGui::BeginPopup("AssetNamePopup")) return;
+
+	ImGui::Text(duplicatingAsset ? "Duplicate %s as" : "Rename %s to", assetNameSource.c_str());
+	if (ImGui::IsWindowAppearing()) ImGui::SetKeyboardFocusHere();
+	const bool enter = ImGui::InputText("##assetName", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue);
+	const std::string name = renameBuffer;
+	const std::string problem = AssetNameProblem(name);
+	if (!problem.empty()) ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "%s", problem.c_str());
+
+	ImGui::BeginDisabled(!problem.empty());
+	const bool confirm = ImGui::Button(duplicatingAsset ? "Duplicate" : "Rename") || (enter && problem.empty());
+	ImGui::EndDisabled();
+	if (confirm) {
+		if (duplicatingAsset) DuplicateAsset(assetNameSource, name);
+		else RenameAsset(assetNameSource, name);
+		ImGui::CloseCurrentPopup();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
+	ImGui::EndPopup();
+}
+
+void EngineUI::RenameAsset(const std::string& from, const std::string& to) {
+	const std::string fromPath = GetPath(from);
+	const std::string toPath = GetPath(to);
+	std::error_code ec;
+	std::filesystem::rename(fromPath, toPath, ec);
+	if (ec) {
+		std::cerr << "[EngineUI] Rename failed: " << fromPath << " -> " << toPath << ": " << ec.message() << std::endl;
+		SetStatus("Rename failed - see the console", true);
+		return;
+	}
+
+	//Same blocks and ids, indexed under the new file - links to them still resolve
+	DelusiveLibrary& library = instance.delusiveLibrary;
+	library.RemoveFile(fromPath);
+	library.LoadFile(toPath);
+
+	if (selectedAsset == from) selectedAsset = to;
+	loadedAssets = LoadSceneList();
+	SetStatus("Renamed " + from + " to " + to);
+}
+
+void EngineUI::DuplicateAsset(const std::string& from, const std::string& to) {
+	const std::string fromPath = GetPath(from);
+	DelusiveLibrary& library = instance.delusiveLibrary;
+	if (library.ListFile(fromPath).empty()) library.LoadFile(fromPath);
+
+	std::vector<DelusiveParser::DataBlock> blocks;
+	for (const DelusiveParser::DataBlock* block : library.ListFile(fromPath)) blocks.push_back(*block);
+	if (blocks.empty()) {
+		SetStatus("Duplicate failed - nothing saved in " + from, true);
+		return;
+	}
+
+	//The file's own object (scene, agent, set) takes the new name
+	auto name = blocks.front().properties.find("name");
+	if (name != blocks.front().properties.end()) {
+		std::ostringstream quoted;
+		quoted << std::quoted(to);
+		name->second = quoted.str();
+	}
+
+	//Writing ids another file owns gives them fresh ones, so the copy stands on its own
+	if (!library.WriteFile(GetPath(to), std::move(blocks))) {
+		SetStatus("Duplicate failed - see the console", true);
+		return;
+	}
+	loadedAssets = LoadSceneList();
+	SetStatus("Duplicated " + from + " as " + to);
 }
 
 void EngineUI::Guarded(std::function<void(Scene&)> action) {
@@ -408,7 +511,53 @@ void EngineUI::UnsavedPrompt() {
 	ImGui::EndPopup();
 }
 
+void EngineUI::SetStatus(const std::string& message, bool error) {
+	statusMessage = message;
+	statusError = error;
+	statusTime = ImGui::GetTime();
+}
+
+void EngineUI::RenderStatusBar(Scene& scene) {
+	const bool playing = gameManager.IsPlaying();
+	//Play is tinted everywhere it shows - both bars and a frame round the window
+	if (playing) {
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		const ImVec2 max(viewport->WorkPos.x + viewport->WorkSize.x, viewport->WorkPos.y + viewport->WorkSize.y);
+		ImGui::GetForegroundDrawList(ImGui::GetMainViewport())->AddRect(viewport->WorkPos, max, PlayingFrameColour, 0.0f, 0, 3.0f);
+		ImGui::PushStyleColor(ImGuiCol_MenuBarBg, PlayingBarColour);
+	}
+
+	const ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+	if (ImGui::BeginViewportSideBar("##StatusBar", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), flags)) {
+		if (ImGui::BeginMenuBar()) {
+			if (playing) ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "PLAYING - changes made now are dropped on Stop");
+			else ImGui::TextDisabled("Editing");
+			ImGui::Separator();
+
+			if (HasOpenAsset()) {
+				if (HasUnsavedChanges()) ImGui::TextColored(ImVec4(1.0f, 0.75f, 0.3f, 1.0f), "Unsaved changes");
+				else ImGui::TextDisabled("Saved");
+				ImGui::Separator();
+			}
+
+			//Results of the last action stay up for a few seconds
+			if (!statusMessage.empty() && ImGui::GetTime() - statusTime < 4.0) {
+				const ImVec4 colour = statusError ? ImVec4(1.0f, 0.4f, 0.4f, 1.0f) : ImVec4(0.6f, 0.9f, 0.6f, 1.0f);
+				ImGui::TextColored(colour, "%s", statusMessage.c_str());
+				ImGui::Separator();
+			}
+
+			if (currentMode == EditorMode::SceneEditor) sceneEditor->DrawStatusItems(scene);
+			ImGui::EndMenuBar();
+		}
+	}
+	ImGui::End();
+	if (playing) ImGui::PopStyleColor();
+}
+
 void EngineUI::RenderTopBar(Scene& scene) {
+    const bool playTint = gameManager.IsPlaying();
+    if (playTint) ImGui::PushStyleColor(ImGuiCol_MenuBarBg, PlayingBarColour);
     if (ImGui::BeginMainMenuBar()) {
         ImGui::Text("View");
         ImGui::SameLine();
@@ -444,6 +593,12 @@ void EngineUI::RenderTopBar(Scene& scene) {
                     Guarded([this, asset](Scene& editing) { OpenAsset(editing, asset); });
                 }
                 if (ImGui::BeginPopupContextItem("SceneContextMenu")) {
+                    //Canvases are named inside the registry, so they are renamed there
+                    if (currentMode != EditorMode::UIBuilder) {
+                        if (ImGui::MenuItem("Rename...")) BeginAssetName(asset, false);
+                        if (ImGui::MenuItem("Duplicate...")) BeginAssetName(asset, true);
+                        ImGui::Separator();
+                    }
                     if (ImGui::MenuItem("Delete")) {
                         assetToDelete = asset;
                         showDeleteConfirm = true;
@@ -480,6 +635,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
         ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.x * 3.0f);
         if (currentMode == EditorMode::SceneEditor || currentMode == EditorMode::GameView) {
+            ImGui::PushStyleColor(ImGuiCol_Button, playing ? ImVec4(0.65f, 0.2f, 0.2f, 1.0f) : ImVec4(0.2f, 0.5f, 0.25f, 1.0f));
             if (ImGui::Button(playing ? "Stop" : "Play")) {
                 if (playing) StopPlaying(scene);
                 else {
@@ -487,125 +643,129 @@ void EngineUI::RenderTopBar(Scene& scene) {
                     gameManager.Play();
                 }
             }
+            ImGui::PopStyleColor();
         }
         else if (currentMode == EditorMode::UIBuilder) {
             if (ImGui::Button(showUIBuilderPanel ? "Hide Panel" : "Show Panel")) showUIBuilderPanel = !showUIBuilderPanel;
         }
 
         ImGui::EndMainMenuBar();
+    }
+    if (playTint) ImGui::PopStyleColor();
 
-        UnsavedPrompt();
+    UnsavedPrompt();
+    AssetNamePopup();
 
-        if (showDeleteConfirm) {
-            ImGui::OpenPopup("Confirm Delete Scene");
-        }
+    if (showDeleteConfirm) {
+        ImGui::OpenPopup("Confirm Delete Scene");
+    }
 
-        if (ImGui::BeginPopupModal("Confirm Delete Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Are you sure you want to delete: %s", assetToDelete.c_str());
+    if (ImGui::BeginPopupModal("Confirm Delete Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Are you sure you want to delete: %s", assetToDelete.c_str());
 
-            if (ImGui::Button("Yes, Delete")) {
-                StopPlaying(scene);
-                Scene& editing = gameManager.GetActiveScene();
-                std::string fullPath = GetPath(assetToDelete);
-                //A canvas lives in the registry and in the file it was loaded from, if any
-                if (currentMode == EditorMode::UIBuilder) {
-                    DelusiveUIRegistry& uiRegistry = gameManager.GetUIRegistry();
-                    if (UICanvas* canvas = uiRegistry.Get(assetToDelete)) {
-                        if (canvas == editingCanvas) OpenCanvas(editing, nullptr);
-                        fullPath = instance.delusiveLibrary.GetSourceFile(canvas->GetID());
-                        uiRegistry.Remove(canvas->GetID());
-                    }
-                }
-                //Its editor would still save back to the deleted file
-                else if (selectedAsset == assetToDelete) {
-                    SwitchMode(editing, currentMode);
-                }
-
-                std::remove(fullPath.c_str());
-                gameManager.GetInstance().delusiveLibrary.RemoveFile(fullPath);
-                assetToDelete.clear();
-                showDeleteConfirm = false;
-                ImGui::CloseCurrentPopup();
-                loadedAssets = LoadSceneList();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel")) {
-                assetToDelete.clear();
-                showDeleteConfirm = false;
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
-
-        if (newAssetPopup) {
-            ImGui::OpenPopup("NewAssetPopup");
-            newAssetPopup = false;
-        }
-
-        if (ImGui::BeginPopup("NewAssetPopup")) {
-            ImGui::InputText("Name", assetNameBuffer, sizeof(assetNameBuffer));
-            if (ImGui::Button("Create")) {
-                const std::string newName = assetNameBuffer;
+        if (ImGui::Button("Yes, Delete")) {
+            StopPlaying(scene);
+            Scene& editing = gameManager.GetActiveScene();
+            std::string fullPath = GetPath(assetToDelete);
+            //A canvas lives in the registry and in the file it was loaded from, if any
+            if (currentMode == EditorMode::UIBuilder) {
                 DelusiveUIRegistry& uiRegistry = gameManager.GetUIRegistry();
-                if (currentMode == EditorMode::UIBuilder) {
-                    if (!newName.empty() && !uiRegistry.Exists(newName)) {
-                        auto canvas = std::make_unique<UICanvas>(instance);
-                        canvas->SetName(newName);
-                        UICanvas* created = canvas.get();
-                        uiRegistry.Register(std::move(canvas));
-                        OpenCanvas(scene, created);
-
-                        assetNameBuffer[0] = '\0';
-                        loadedAssets = LoadSceneList();
-                        ImGui::CloseCurrentPopup();
-                    }
+                if (UICanvas* canvas = uiRegistry.Get(assetToDelete)) {
+                    if (canvas == editingCanvas) OpenCanvas(editing, nullptr);
+                    fullPath = instance.delusiveLibrary.GetSourceFile(canvas->GetID());
+                    uiRegistry.Remove(canvas->GetID());
                 }
-                else if (strlen(assetNameBuffer) > 0) {
-                    loadedAssets.push_back(assetNameBuffer);
-                    selectedAsset = assetNameBuffer;
-                    
-                    std::string sceneName = "New Asset";
-                    switch (currentMode) {
-                    case EditorMode::SceneEditor:
-                        sceneName = assetNameBuffer;
-                        break;
-                    case EditorMode::AgentEditor:
-                        sceneName = "Agent Editing View";
-                        break;
-                    case EditorMode::AnimatorEditor:
-                        sceneName = "Animator";
-                        break;
-                    }
+            }
+            //Its editor would still save back to the deleted file
+            else if (selectedAsset == assetToDelete) {
+                SwitchMode(editing, currentMode);
+            }
 
-                    scene.Clear();
-                    scene.SetName(sceneName);
+            std::remove(fullPath.c_str());
+            gameManager.GetInstance().delusiveLibrary.RemoveFile(fullPath);
+            SetStatus("Deleted " + assetToDelete);
+            assetToDelete.clear();
+            showDeleteConfirm = false;
+            ImGui::CloseCurrentPopup();
+            loadedAssets = LoadSceneList();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            assetToDelete.clear();
+            showDeleteConfirm = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 
-                    if (currentMode == EditorMode::SceneEditor) {
-                        scene.SaveToFile(GetPath(selectedAsset));
-                        sceneEditor->SceneLoaded(scene);
-                    }
-                    else if (currentMode == EditorMode::AgentEditor) {
-                        auto agent = std::make_unique<PlayerAgent>(instance);
-                        agent->SetName(selectedAsset);
-                        agent->SaveToFile(GetPath(selectedAsset));
-                        scene.AddAgent(std::move(agent));
-                        MarkAgentSaved(scene);
-                    }
-                    else if (currentMode == EditorMode::AnimatorEditor) {
-                        animatorEditor->Create(GetPath(selectedAsset), selectedAsset);
-                    }
+    if (newAssetPopup) {
+        ImGui::OpenPopup("NewAssetPopup");
+        newAssetPopup = false;
+    }
+
+    if (ImGui::BeginPopup("NewAssetPopup")) {
+        ImGui::InputText("Name", assetNameBuffer, sizeof(assetNameBuffer));
+        if (ImGui::Button("Create")) {
+            const std::string newName = assetNameBuffer;
+            DelusiveUIRegistry& uiRegistry = gameManager.GetUIRegistry();
+            if (currentMode == EditorMode::UIBuilder) {
+                if (!newName.empty() && !uiRegistry.Exists(newName)) {
+                    auto canvas = std::make_unique<UICanvas>(instance);
+                    canvas->SetName(newName);
+                    UICanvas* created = canvas.get();
+                    uiRegistry.Register(std::move(canvas));
+                    OpenCanvas(scene, created);
 
                     assetNameBuffer[0] = '\0';
                     loadedAssets = LoadSceneList();
                     ImGui::CloseCurrentPopup();
                 }
             }
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel")) {
+            else if (strlen(assetNameBuffer) > 0) {
+                loadedAssets.push_back(assetNameBuffer);
+                selectedAsset = assetNameBuffer;
+                
+                std::string sceneName = "New Asset";
+                switch (currentMode) {
+                case EditorMode::SceneEditor:
+                    sceneName = assetNameBuffer;
+                    break;
+                case EditorMode::AgentEditor:
+                    sceneName = "Agent Editing View";
+                    break;
+                case EditorMode::AnimatorEditor:
+                    sceneName = "Animator";
+                    break;
+                }
+
+                scene.Clear();
+                scene.SetName(sceneName);
+
+                if (currentMode == EditorMode::SceneEditor) {
+                    scene.SaveToFile(GetPath(selectedAsset));
+                    sceneEditor->SceneLoaded(scene);
+                }
+                else if (currentMode == EditorMode::AgentEditor) {
+                    auto agent = std::make_unique<PlayerAgent>(instance);
+                    agent->SetName(selectedAsset);
+                    agent->SaveToFile(GetPath(selectedAsset));
+                    scene.AddAgent(std::move(agent));
+                    MarkAgentSaved(scene);
+                }
+                else if (currentMode == EditorMode::AnimatorEditor) {
+                    animatorEditor->Create(GetPath(selectedAsset), selectedAsset);
+                }
+
+                assetNameBuffer[0] = '\0';
+                loadedAssets = LoadSceneList();
                 ImGui::CloseCurrentPopup();
             }
-            ImGui::EndPopup();
         }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
 }
 

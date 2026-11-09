@@ -774,26 +774,15 @@ void SceneEditor::InspectorPanel(Scene& scene, bool playing) {
 
 #pragma endregion
 
-void SceneEditor::RenderStatusBar(Scene& scene, bool playing) {
-    const ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
-    if (ImGui::BeginViewportSideBar("##SceneStatus", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), flags)) {
-        if (ImGui::BeginMenuBar()) {
-            if (playing) ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f), "Playing");
-            else if (IsDirty()) ImGui::TextColored(ImVec4(1.0f, 0.75f, 0.3f, 1.0f), "Unsaved changes");
-            else ImGui::TextDisabled("Saved");
-            ImGui::Separator();
-            ImGui::Text("%d agents, %d systems", (int)scene.GetAgents().size(), (int)scene.GetSystems().size());
-            ImGui::Separator();
-            const glm::vec2 world = MouseWorld(instance);
-            ImGui::Text("Cursor %.2f, %.2f", world.x, world.y);
-            if (editorCamera) {
-                ImGui::Separator();
-                ImGui::Text("Zoom %d%%", static_cast<int>(std::lround(editorCamera->GetZoom() * 100.0f)));
-            }
-            ImGui::Separator();
-            ImGui::TextDisabled("Middle/right-drag pan, wheel zoom, Home reset, arrows nudge (Shift = 1 unit)");
-            ImGui::EndMenuBar();
-        }
-    }
-    ImGui::End();
+void SceneEditor::DrawStatusItems(Scene& scene) {
+	ImGui::Text("%d agents, %d systems", (int)scene.GetAgents().size(), (int)scene.GetSystems().size());
+	ImGui::Separator();
+	const glm::vec2 world = MouseWorld(instance);
+	ImGui::Text("Cursor %.2f, %.2f", world.x, world.y);
+	if (editorCamera) {
+		ImGui::Separator();
+		ImGui::Text("Zoom %d%%", static_cast<int>(std::lround(editorCamera->GetZoom() * 100.0f)));
+	}
+	ImGui::Separator();
+	ImGui::TextDisabled("Middle/right-drag pan, wheel zoom, Home reset, arrows nudge (Shift = 1 unit)");
 }

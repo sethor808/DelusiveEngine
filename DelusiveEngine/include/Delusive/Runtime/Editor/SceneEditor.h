@@ -25,8 +25,8 @@ public:
 
     //playing: scene is the play copy - shown live, but not recorded or picked in the view
     void Render(Scene&, bool playing);
-    //Strip along the bottom of the window - saved state, counts, cursor position
-    void RenderStatusBar(Scene&, bool playing);
+    //Scene details for EngineUI's status bar - counts, cursor position, zoom, controls
+    void DrawStatusItems(Scene&);
 
     //The scene was replaced (opened, created, cleared) - history and the saved mark start over
     void SceneLoaded(Scene&);

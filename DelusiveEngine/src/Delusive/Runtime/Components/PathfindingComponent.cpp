@@ -33,10 +33,6 @@ void PathfindingComponent::DrawImGui() {
     if (ImGui::Button("Clear Path")) {
         currentPath.clear();
     }
-
-    if (ImGui::Button("Delete Component")) {
-        MarkToDelete();
-    }
 }
 
 void PathfindingComponent::RequestPath(glm::vec2 start, glm::vec2 end) {
