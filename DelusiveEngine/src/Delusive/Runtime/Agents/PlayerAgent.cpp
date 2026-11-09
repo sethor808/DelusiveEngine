@@ -20,11 +20,12 @@ namespace {
 		int damage;
 	};
 
-	//Seconds; the third hit lingers so a weapon swap has room to cancel it
+	//Seconds. Lights never wind up - they land the tick they are pressed. The third hit
+	//lingers so a weapon swap has room to cancel it
 	constexpr ChainStep LIGHT_CHAIN[] = {
-		{ 0.05f, 0.12f, 0.15f, 1 },
-		{ 0.05f, 0.12f, 0.15f, 1 },
-		{ 0.08f, 0.15f, 0.45f, 2 },
+		{ 0.0f, 0.12f, 0.15f, 1 },
+		{ 0.0f, 0.12f, 0.15f, 1 },
+		{ 0.0f, 0.15f, 0.45f, 2 },
 	};
 	constexpr int LIGHT_CHAIN_LENGTH = 3;
 	constexpr float ATTACK_REACH = 0.8f;
@@ -182,28 +183,31 @@ void PlayerAgent::StartAttackStep(int step) {
 	attackTimer = 0.0f;
 	attackBufferTimer = 0.0f;
 	hitLanded = false;
+	if (LIGHT_CHAIN[step].windup <= 0.0f) LandAttack();
+}
+
+void PlayerAgent::LandAttack() {
+	hitLanded = true;
+	for (Agent* target : FetchTargetsWithin(transform.position + facing * ATTACK_REACH, ATTACK_REACH)) {
+		//Walls and cameras sit in range too; only enemies count as a landed hit
+		if (!dynamic_cast<EnemyAgent*>(target)) continue;
+
+		HitData hit;
+		hit.attacker = this;
+		hit.target = target;
+		hit.damage = LIGHT_CHAIN[chainStep].damage;
+		hit.direction = facing;
+		ModifyOutgoingHit(hit);
+		target->HitEvent(hit);
+		LandHitEvent(hit);
+	}
 }
 
 void PlayerAgent::UpdateAttack(float deltaTime) {
 	const ChainStep& step = LIGHT_CHAIN[chainStep];
 	attackTimer += deltaTime;
 
-	if (!hitLanded && attackTimer >= step.windup) {
-		hitLanded = true;
-		for (Agent* target : FetchTargetsWithin(transform.position + facing * ATTACK_REACH, ATTACK_REACH)) {
-			//Walls and cameras sit in range too; only enemies count as a landed hit
-			if (!dynamic_cast<EnemyAgent*>(target)) continue;
-
-			HitData hit;
-			hit.attacker = this;
-			hit.target = target;
-			hit.damage = step.damage;
-			hit.direction = facing;
-			ModifyOutgoingHit(hit);
-			target->HitEvent(hit);
-			LandHitEvent(hit);
-		}
-	}
+	if (!hitLanded && attackTimer >= step.windup) LandAttack();
 
 	if (!IsAttackRecovering()) return;
 
