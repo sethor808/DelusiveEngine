@@ -10,6 +10,8 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Components/AnimatorComponent.h>
+#include <Delusive/Runtime/Components/ColliderComponent.h>
 #include <limits>
 #include <sstream>
 
@@ -43,6 +45,16 @@ void Agent::Draw(const glm::mat4& projection) const{
     for (auto& c : components) {
         c->Draw(projection);
     }
+}
+
+const std::vector<ColliderComponent*>& Agent::GetColliders() {
+	GetComponentsOfType(colliders);
+	for (auto& comp : components) {
+		AnimatorComponent* animator = dynamic_cast<AnimatorComponent*>(comp.get());
+		if (!animator) continue;
+		for (const auto& collider : animator->GetFrameColliders()) colliders.push_back(collider.get());
+	}
+	return colliders;
 }
 
 void Agent::SetEditorMode(bool selected) {

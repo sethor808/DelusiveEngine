@@ -9,7 +9,6 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <imgui/imgui.h>
 #include <sstream>
 
 Component::Component(DelusiveInstance& instance)
@@ -50,7 +49,6 @@ void Component::SetName(const std::string& newName) {
 }
 
 void Component::DrawImGui() {
-    ImGui::Text("%s", GetType());
 	registry->DrawImGui();
 }
 void Component::Deserialize(DelusiveParser::DataBlock& in) {

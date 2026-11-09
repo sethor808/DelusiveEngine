@@ -1,0 +1,77 @@
+[AnimationSet dd642a415d7eb1fe-dc249f1a316dcf80]
+anyTransitions=
+branches=38d612af2f9a55b8-3febab6279e5c642 b3fc355be08d871f-918da2bb69c87f21 bdb800ee9d237ea3-219201675c56c4fa de8f45167670383c-26588e388430999e
+character=
+defaultPivot=0.5 0.5
+flags=0
+id=dd642a415d7eb1fe-dc249f1a316dcf80
+name="Player"
+pixelsPerUnit=149
+
+[AnimationBranch 38d612af2f9a55b8-3febab6279e5c642]
+frames=d79352448ef38795-000cdeedfa041dfe
+id=38d612af2f9a55b8-3febab6279e5c642
+lockInput=0
+loop=1
+name="Idle"
+transitions=
+
+[AnimationFrame d79352448ef38795-000cdeedfa041dfe]
+boxes=0
+id=d79352448ef38795-000cdeedfa041dfe
+inputLock=0
+pivot=0 0
+pivotMode=default
+texture="../assets/sprites/BasicDude/BasicDude1.jpg"
+ticks=60
+
+[AnimationBranch b3fc355be08d871f-918da2bb69c87f21]
+frames=55a134cc32479ec9-1b6cb4bcca57bfd4
+id=b3fc355be08d871f-918da2bb69c87f21
+lockInput=0
+loop=0
+name="guy1"
+transitions=
+
+[AnimationFrame 55a134cc32479ec9-1b6cb4bcca57bfd4]
+boxes=1 hit 95 40 90 50
+id=55a134cc32479ec9-1b6cb4bcca57bfd4
+inputLock=0
+pivot=0 0
+pivotMode=default
+texture="../assets/sprites/BasicDude/BasicDude2.png"
+ticks=30
+
+[AnimationBranch bdb800ee9d237ea3-219201675c56c4fa]
+frames=087954f47513f3b2-7517ad9c2b3ae7b7
+id=bdb800ee9d237ea3-219201675c56c4fa
+lockInput=0
+loop=0
+name="guy2"
+transitions=
+
+[AnimationFrame 087954f47513f3b2-7517ad9c2b3ae7b7]
+boxes=1 hit 90 40 90 45
+id=087954f47513f3b2-7517ad9c2b3ae7b7
+inputLock=0
+pivot=0 0
+pivotMode=default
+texture="../assets/sprites/BasicDude/BasicDude3.png"
+ticks=30
+
+[AnimationBranch de8f45167670383c-26588e388430999e]
+frames=2da1e7281a61d606-97f962fc00b15b35
+id=de8f45167670383c-26588e388430999e
+lockInput=0
+loop=0
+name="guy3"
+transitions=
+
+[AnimationFrame 2da1e7281a61d606-97f962fc00b15b35]
+boxes=1 hit 80 0 90 80
+id=2da1e7281a61d606-97f962fc00b15b35
+inputLock=0
+pivot=0 0
+pivotMode=default
+texture="../assets/sprites/BasicDude/BasicDude4.png"
+ticks=40

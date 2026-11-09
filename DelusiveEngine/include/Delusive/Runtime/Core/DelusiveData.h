@@ -21,6 +21,8 @@ struct RenderCommand {
     uint32_t textureID;
     int layer;
     bool isUI;
+    //0-1 blend toward white, for hit flashes
+    float flash = 0.0f;
 };
 
 struct DelusiveTexture {
@@ -37,6 +39,7 @@ struct DelusiveFont {
     uint32_t VAO = 0, VBO = 0;
     Shader* shader = nullptr;
     std::unique_ptr<Font> font;        // your Font class (owns glyph textures/metrics)
+    std::vector<glm::vec4> vertices;   // reused each draw
 
     DelusiveFont() = default;
     ~DelusiveFont() { Cleanup(); }
@@ -143,42 +146,17 @@ struct DelusiveFont {
         glm::mat4 model(1.0f);
         shader->SetMat4("model", glm::value_ptr(model));
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(VAO);
-
-        float x = position.x;
-        float y = position.y;
+        //Whole string in one upload and one draw from the font atlas
         const float s = (loadedPixelHeight > 0.0f) ? (fontSize / loadedPixelHeight) : 1.0f;
+        vertices.clear();
+        font->AppendQuads(text, position, s, vertices);
 
-        for (unsigned char uc : text) {
-            const Character& ch = font->GetCharacter(uc);
-            // skip missing glyphs (Font should return empty Character)
-            if (ch.textureID == 0 && ch.size.x == 0 && ch.size.y == 0) continue;
-
-            float xpos = x + ch.bearing.x * s;
-            float ypos = y - (ch.size.y - ch.bearing.y) * s;
-            float w = ch.size.x * s;
-            float h = ch.size.y * s;
-
-            // match your previous vertex order/uvs
-            float verts[6][4] = {
-                { xpos,     ypos,     0.0f, 1.0f }, // bottom-left
-                { xpos,     ypos + h, 0.0f, 0.0f }, // top-left
-                { xpos + w, ypos + h, 1.0f, 0.0f }, // top-right
-
-                { xpos,     ypos,     0.0f, 1.0f }, // bottom-left
-                { xpos + w, ypos + h, 1.0f, 0.0f }, // top-right
-                { xpos + w, ypos,     1.0f, 1.0f }  // bottom-right
-            };
-
-            glBindTexture(GL_TEXTURE_2D, ch.textureID);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verts), verts);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            // advance is in pixels for the loaded font
-            x += ch.advance * s;
-        }
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, font->GetAtlas());
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec4), vertices.data(), GL_STREAM_DRAW);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size()));
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);

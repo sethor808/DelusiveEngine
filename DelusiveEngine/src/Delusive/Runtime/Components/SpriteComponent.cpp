@@ -81,7 +81,8 @@ void SpriteComponent::Draw(const glm::mat4& projection) const{
         .color = glm::vec4(1.0f), // could expose as property
         .textureID = textureData.textureID,
         .layer = renderOrder,
-        .isUI = false
+        .isUI = false,
+        .flash = owner->GetFlash()
         });
 }
 

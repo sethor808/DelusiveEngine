@@ -34,3 +34,4 @@
 #define ANIMS_FOLDER "../assets/animations/"
 #define SPRITE_FOLDER "../assets/sprites/"
 #define FONT_FOLDER "../assets/fonts/"
+#define SOUND_FOLDER "../assets/sounds/"

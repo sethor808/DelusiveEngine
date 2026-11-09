@@ -25,8 +25,10 @@ public:
 
     //playing: scene is the play copy - shown live, but not recorded or picked in the view
     void Render(Scene&, bool playing);
-    //Strip along the bottom of the window - saved state, counts, cursor position
-    void RenderStatusBar(Scene&, bool playing);
+    //Scene details for EngineUI's status bar - counts, cursor position, zoom, controls
+    void DrawStatusItems(Scene&);
+    //A new scene starts playable: a player (the first player agent file, if any) and a camera
+    void PopulateNewScene(Scene&);
 
     //The scene was replaced (opened, created, cleared) - history and the saved mark start over
     void SceneLoaded(Scene&);
@@ -81,6 +83,7 @@ private:
     //View mouse
     bool pressInView = false;
     bool movingAgent = false;
+    bool nudging = false;
     bool movedAgent = false;
     bool collidersWereDragging = false;
     glm::vec2 grabOffset{ 0.0f };
@@ -114,6 +117,8 @@ private:
     void InspectorPanel(Scene&, bool playing);
     void AddMenu(Scene&);
     void Shortcuts(Scene&);
+    //Arrow keys move the selected agent a pixel, or a unit with Shift
+    void Nudge(Scene&);
 
     //Structural edits - deferred, each ends with Touch
     void AddAgent(const std::string& type);

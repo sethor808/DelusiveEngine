@@ -1,5 +1,7 @@
 #include <Delusive/Runtime/Components/AnimatorComponent.h>
 #include <Delusive/Runtime/Components/SpriteComponent.h>
+#include <Delusive/Runtime/Collision/HitboxCollider.h>
+#include <Delusive/Runtime/Collision/HurtboxCollider.h>
 #include <Delusive/Runtime/Agents/Agent.h>
 #include <Delusive/Runtime/Core/DelusiveLibrary.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
@@ -29,8 +31,11 @@ void AnimatorComponent::Deserialize(DelusiveParser::DataBlock& in) {
     LinkSet(setID);
 }
 
+AnimatorComponent::~AnimatorComponent() = default;
+
 void AnimatorComponent::SetOwner(Agent* agent) {
     Component::SetOwner(agent);
+    for (auto& collider : frameColliders) collider->SetOwner(agent);
     ApplyFrame();
 }
 
@@ -62,14 +67,23 @@ void AnimatorComponent::PlayBranch(const UUID& branchID) {
     //By id, not name - names are labels and may repeat
     for (int i = 0; i < (int)set.branches.size(); ++i) {
         if (set.branches[i].id == branchID) {
-            currentBranch = i;
-            currentFrame = 0;
-            tickInFrame = 0;
-            playing = true;
-            ApplyFrame();
+            EnterBranch(i);
             return;
         }
     }
+}
+
+void AnimatorComponent::EnterBranch(int index) {
+    currentBranch = index;
+    currentFrame = 0;
+    tickInFrame = 0;
+    playing = true;
+
+    //Every branch entry is a new attack, even into the branch already playing
+    for (auto& collider : frameColliders) {
+        if (collider->GetColliderType() == ColliderType::Hitbox) static_cast<HitboxCollider*>(collider.get())->NewStrike();
+    }
+    ApplyFrame();
 }
 
 bool AnimatorComponent::SetFlag(const std::string& name, bool value) {
@@ -174,17 +188,14 @@ void AnimatorComponent::FollowTransitions(bool finished) {
     }
 }
 
-void AnimatorComponent::PlayBranch(const std::string& branchName) {
+bool AnimatorComponent::PlayBranch(const std::string& branchName) {
     for (int i = 0; i < (int)set.branches.size(); ++i) {
         if (set.branches[i].name == branchName) {
-            currentBranch = i;
-            currentFrame = 0;
-            tickInFrame = 0;
-            playing = true;
-            ApplyFrame();
-            return;
+            EnterBranch(i);
+            return true;
         }
     }
+    return false;
 }
 
 void AnimatorComponent::Update(float) {
@@ -222,27 +233,57 @@ void AnimatorComponent::Update(float) {
 }
 
 void AnimatorComponent::ApplyFrame() {
+    for (auto& collider : frameColliders) collider->SetEnabled(false);
+
     const Branch* branch = CurrentBranch();
     if (!branch || currentFrame >= (int)branch->frames.size() || !GetOwner()) return;
 
     const Frame& frame = branch->frames[currentFrame];
     if (frame.texturePath.empty()) return;
 
+    //Loads the texture so its size is known even without a sprite
+    instance.renderer.GetTexture(frame.texturePath);
+    const glm::ivec2 imageSize = instance.renderer.GetTextureSize(frame.texturePath);
+    if (imageSize.x <= 0 || imageSize.y <= 0) return;
+
     //The animator owns its sprite's placement: size comes from the image and the set's
     //pixels per unit, and the offset puts the frame's pivot on the agent's position. Image
     //pixels run top-down, world y runs up, hence the flipped y.
-    for (SpriteComponent* sprite : GetOwner()->GetComponentsOfType<SpriteComponent>()) {
+    const float ppu = set.pixelsPerUnit > 0.0f ? set.pixelsPerUnit : DELUSIVE_PIXEL_SCALE;
+    const glm::vec2 pivot = set.PivotFor(frame, imageSize);
+    if (SpriteComponent* sprite = GetOwner()->GetComponentOfType<SpriteComponent>()) {
         sprite->SetTexturePath(frame.texturePath);
-
-        const glm::ivec2 imageSize = instance.renderer.GetTextureSize(frame.texturePath);
-        if (imageSize.x > 0 && imageSize.y > 0) {
-            const float ppu = set.pixelsPerUnit > 0.0f ? set.pixelsPerUnit : DELUSIVE_PIXEL_SCALE;
-            const glm::vec2 pivot = set.PivotFor(frame, imageSize);
-            sprite->SetScale(imageSize.x / ppu, imageSize.y / ppu);
-            sprite->SetPosition((imageSize.x * 0.5f - pivot.x) / ppu, (pivot.y - imageSize.y * 0.5f) / ppu);
-        }
-        break;
+        sprite->SetScale(imageSize.x / ppu, imageSize.y / ppu);
+        sprite->SetPosition((imageSize.x * 0.5f - pivot.x) / ppu, (pivot.y - imageSize.y * 0.5f) / ppu);
     }
+
+    //Boxes become live colliders the same way, centred on the box
+    for (const Box& box : frame.boxes) {
+        ColliderComponent* collider = FetchFreeCollider(box.type == BoxType::Hit ? ColliderType::Hitbox : ColliderType::Hurtbox);
+        const glm::vec2 centre = box.position + box.size * 0.5f;
+        collider->transform->position = { (centre.x - pivot.x) / ppu, (pivot.y - centre.y) / ppu };
+        collider->transform->scale = box.size / ppu;
+        collider->SetEnabled(true);
+    }
+}
+
+ColliderComponent* AnimatorComponent::FetchFreeCollider(ColliderType type) {
+    for (auto& collider : frameColliders) {
+        if (!collider->IsEnabled() && collider->GetColliderType() == type) return collider.get();
+    }
+
+    std::unique_ptr<ColliderComponent> collider;
+    if (type == ColliderType::Hitbox) collider = std::make_unique<HitboxCollider>(instance);
+    else collider = std::make_unique<HurtboxCollider>(instance);
+    collider->SetOwner(GetOwner());
+    collider->SetEditorMode(editorMode);
+    frameColliders.push_back(std::move(collider));
+    return frameColliders.back().get();
+}
+
+void AnimatorComponent::SetEditorMode(bool editor) {
+    Component::SetEditorMode(editor);
+    for (auto& collider : frameColliders) collider->SetEditorMode(editor);
 }
 
 void AnimatorComponent::DrawImGui() {
@@ -283,10 +324,6 @@ void AnimatorComponent::DrawImGui() {
         if (ImGui::Button("Reload")) {
             LinkSet(setID);
         }
-    }
-
-    if (ImGui::Button("Delete Component")) {
-        MarkToDelete();
     }
 
     if (set.branches.empty()) {

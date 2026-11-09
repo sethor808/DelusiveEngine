@@ -11,6 +11,7 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <imgui/imgui_internal.h>
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <filesystem>
 
@@ -122,7 +123,7 @@ void SceneEditor::SceneSaved(Scene& scene) {
 }
 
 void SceneEditor::SettleEdits(Scene& scene) {
-    if (!checkPending || ImGui::IsAnyItemActive() || movingAgent || collidersWereDragging) return;
+    if (!checkPending || ImGui::IsAnyItemActive() || movingAgent || collidersWereDragging || nudging) return;
     checkPending = false;
     Blocks now = Capture(scene);
     if (now != history.Committed().blocks) history.Commit({ std::move(now), selection });
@@ -356,6 +357,7 @@ void SceneEditor::DrawSelectionOutline(Scene& scene) {
 }
 
 void SceneEditor::Shortcuts(Scene& scene) {
+    nudging = false;
     const ImGuiIO& io = ImGui::GetIO();
     if (io.WantTextInput || ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId)) return;
 
@@ -366,6 +368,32 @@ void SceneEditor::Shortcuts(Scene& scene) {
     }
     if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_D) && SelectedAgent(scene)) DuplicateAgent(selection.id);
     if (ImGui::IsKeyPressed(ImGuiKey_F, false) && SelectedAgent(scene)) Focus(scene, selection.id);
+    if (ImGui::IsKeyPressed(ImGuiKey_Home, false) && editorCamera) {
+        editorCamera->SetPan(glm::vec2(0.0f));
+        editorCamera->SetZoom(1.0f);
+    }
+    Nudge(scene);
+}
+
+void SceneEditor::Nudge(Scene& scene) {
+	Agent* agent = SelectedAgent(scene);
+	if (!agent || movingAgent) return;
+
+	glm::vec2 step(0.0f);
+	if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) step.x -= 1.0f;
+	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) step.x += 1.0f;
+	if (ImGui::IsKeyPressed(ImGuiKey_DownArrow)) step.y -= 1.0f;
+	if (ImGui::IsKeyPressed(ImGuiKey_UpArrow)) step.y += 1.0f;
+	//A pixel at a time, a whole unit with Shift
+	const float size = ImGui::GetIO().KeyShift ? 1.0f : 1.0f / DELUSIVE_PIXEL_SCALE;
+	if (step != glm::vec2(0.0f)) {
+		agent->SetPosition(agent->GetTransform().position + step * size);
+		Touch();
+	}
+
+	//Holding a key is one undo step
+	nudging = ImGui::IsKeyDown(ImGuiKey_LeftArrow) || ImGui::IsKeyDown(ImGuiKey_RightArrow)
+		|| ImGui::IsKeyDown(ImGuiKey_UpArrow) || ImGui::IsKeyDown(ImGuiKey_DownArrow);
 }
 
 void SceneEditor::Focus(Scene& scene, const UUID& agentID) {
@@ -746,20 +774,50 @@ void SceneEditor::InspectorPanel(Scene& scene, bool playing) {
 
 #pragma endregion
 
-void SceneEditor::RenderStatusBar(Scene& scene, bool playing) {
-    const ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
-    if (ImGui::BeginViewportSideBar("##SceneStatus", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), flags)) {
-        if (ImGui::BeginMenuBar()) {
-            if (playing) ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.4f, 1.0f), "Playing");
-            else if (IsDirty()) ImGui::TextColored(ImVec4(1.0f, 0.75f, 0.3f, 1.0f), "Unsaved changes");
-            else ImGui::TextDisabled("Saved");
-            ImGui::Separator();
-            ImGui::Text("%d agents, %d systems", (int)scene.GetAgents().size(), (int)scene.GetSystems().size());
-            ImGui::Separator();
-            const glm::vec2 world = MouseWorld(instance);
-            ImGui::Text("Cursor %.2f, %.2f", world.x, world.y);
-            ImGui::EndMenuBar();
-        }
-    }
-    ImGui::End();
+void SceneEditor::PopulateNewScene(Scene& scene) {
+	std::unique_ptr<Agent> player;
+	std::vector<std::filesystem::path> files;
+	std::error_code ec;
+	for (const auto& entry : std::filesystem::directory_iterator(AGENT_PATH, ec)) {
+		if (entry.is_regular_file() && entry.path().extension() == AGENT_EXT) files.push_back(entry.path());
+	}
+	std::sort(files.begin(), files.end());
+
+	//Placed as a copy, as the Add menu's Prefab does
+	for (const auto& file : files) {
+		std::unique_ptr<Agent> source = Agent::LoadFromFile(file.string(), instance, &scene);
+		if (!source || source->GetType() != "PlayerAgent") continue;
+		player = DelusiveInstantiate<Agent>(*source, instance, [&scene](Agent& a) { a.LinkScene(&scene); });
+		if (player) break;
+	}
+	if (!player) {
+		player = DelusiveFactory<Agent>::Create("PlayerAgent", instance);
+		if (player) {
+			player->SetID(UUID::GenerateRandom());
+			player->SetName("Player");
+		}
+	}
+	if (player) {
+		player->SetPosition(glm::vec2(0.0f));
+		scene.AddAgent(std::move(player));
+	}
+
+	if (std::unique_ptr<Agent> camera = DelusiveFactory<Agent>::Create("CameraAgent", instance)) {
+		camera->SetID(UUID::GenerateRandom());
+		camera->SetName("Camera");
+		scene.AddAgent(std::move(camera));
+	}
+}
+
+void SceneEditor::DrawStatusItems(Scene& scene) {
+	ImGui::Text("%d agents, %d systems", (int)scene.GetAgents().size(), (int)scene.GetSystems().size());
+	ImGui::Separator();
+	const glm::vec2 world = MouseWorld(instance);
+	ImGui::Text("Cursor %.2f, %.2f", world.x, world.y);
+	if (editorCamera) {
+		ImGui::Separator();
+		ImGui::Text("Zoom %d%%", static_cast<int>(std::lround(editorCamera->GetZoom() * 100.0f)));
+	}
+	ImGui::Separator();
+	ImGui::TextDisabled("Middle/right-drag pan, wheel zoom, Home reset, arrows nudge (Shift = 1 unit)");
 }

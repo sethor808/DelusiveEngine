@@ -14,7 +14,7 @@ std::string EnvironmentAgent::GetType() const{
 }
 
 void EnvironmentAgent::Update(float deltaTime) {
-
+	Agent::Update(deltaTime);
 }
 
 void EnvironmentAgent::Draw(const glm::mat4& projection) const {

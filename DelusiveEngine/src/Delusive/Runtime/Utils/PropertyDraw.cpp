@@ -2,6 +2,7 @@
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <Delusive/Runtime/Agents/Agent.h>
+#include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/UI/UICanvas.h>
 #include <Delusive/Runtime/UI/UIElement.h>
 #include <imgui/imgui.h>
@@ -9,155 +10,202 @@
 #include <functional>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 //==== [ZONE: PropertyDraw — extracted from Property.inl DrawImGui] ====
 
-void DrawTextureUI(DelusiveTexture& texture, const std::string& name)
-{
-    ImGui::Text("Texture: %s", std::filesystem::path(texture.texturePath).filename().string().c_str());
-    if (ImGui::Button(("Change Texture##" + name).c_str())) {
-        ImGui::OpenPopup(("TextureBrowser##" + name).c_str());
-    }
-    if (ImGui::BeginPopup(("TextureBrowser##" + name).c_str())) {
-        std::function<void(const std::filesystem::path&)> DrawDirectory;
-        DrawDirectory = [&](const std::filesystem::path& path) {
-            for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                if (entry.is_directory()) {
-                    if (ImGui::BeginMenu((entry.path().filename().string() + "/").c_str())) {
-                        DrawDirectory(entry.path());
-                        ImGui::EndMenu();
-                    }
-                }
-                else if (entry.is_regular_file()) {
-                    std::string ext = entry.path().extension().string();
-                    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-                        std::string filename = entry.path().filename().string();
-                        if (ImGui::Selectable(filename.c_str())) {
-                            texture.texturePath = entry.path().string();
-                            ImGui::CloseCurrentPopup();
-                        }
-                    }
-                }
-            }
-            };
-        DrawDirectory(SPRITE_FOLDER);
-        ImGui::EndPopup();
-    }
+namespace {
+	//Only one picker is open at a time, so they share the list and filter
+	std::vector<std::string> pickerFiles;
+	char pickerFilter[64] = "";
+
+	std::string Lowered(std::string text) {
+		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+		return text;
+	}
+
+	void SetAgentLink(DelusiveLink<Agent>& link, const UUID& id) {
+		link.id = id;
+		link.cached = nullptr;
+		link.dirty = true;
+	}
+
+	std::string ElementLabel(UIElement& element) {
+		return element.GetName().empty() ? std::string(element.GetType()) : element.GetName();
+	}
+
+	//Saved children only - the ones the UI Builder hierarchy shows
+	std::vector<UIElement*> SavedChildren(UIElement& element) {
+		std::vector<UIElement*> children = element.GetChildren();
+		children.resize(element.SavedChildCount());
+		return children;
+	}
 }
 
-void DrawFontUI(DelusiveFont& font, const std::string& name)
-{
-    ImGui::Text("Font: %s", std::filesystem::path(font.fontPath).filename().string().c_str());
-    ImGui::DragFloat(("Size##" + name).c_str(), &font.fontSize, 1.0f, 6.0f, 128.0f);
-    if (ImGui::Button(("Change Font##" + name).c_str())) {
-        ImGui::OpenPopup(("FontBrowser##" + name).c_str());
-    }
-    if (ImGui::BeginPopup(("FontBrowser##" + name).c_str())) {
-        for (auto& entry : std::filesystem::recursive_directory_iterator(FONT_FOLDER)) {
-            if (entry.is_regular_file()) {
-                std::string ext = entry.path().extension().string();
-                std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-                if (ext == ".ttf" || ext == ".otf") {
-                    std::string filename = entry.path().filename().string();
-                    if (ImGui::Selectable(filename.c_str())) {
-                        font.fontPath = entry.path().string();
-                        ImGui::CloseCurrentPopup();
-                    }
-                }
-            }
-        }
-        ImGui::EndPopup();
-    }
+bool DrawFilePicker(const char* popupID, const char* folder, std::initializer_list<const char*> extensions, std::string& path) {
+	if (!ImGui::BeginPopup(popupID)) return false;
+
+	if (ImGui::IsWindowAppearing()) {
+		pickerFiles.clear();
+		pickerFilter[0] = '\0';
+		std::error_code ec;
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(folder, ec)) {
+			if (!entry.is_regular_file()) continue;
+			const std::string extension = Lowered(entry.path().extension().string());
+			for (const char* wanted : extensions) {
+				if (extension == wanted) pickerFiles.push_back(entry.path().generic_string());
+			}
+		}
+		std::sort(pickerFiles.begin(), pickerFiles.end());
+		ImGui::SetKeyboardFocusHere();
+	}
+
+	ImGui::InputText("Filter", pickerFilter, sizeof(pickerFilter));
+	const std::string filter = Lowered(pickerFilter);
+
+	bool picked = false;
+	ImGui::BeginChild("files", ImVec2(420.0f, 300.0f), ImGuiChildFlags_Borders);
+	const std::string root = std::filesystem::path(folder).generic_string();
+	for (const std::string& file : pickerFiles) {
+		const std::string shown = file.rfind(root, 0) == 0 ? file.substr(root.size()) : file;
+		if (!filter.empty() && Lowered(shown).find(filter) == std::string::npos) continue;
+
+		if (ImGui::Selectable(shown.c_str(), file == path)) {
+			path = file;
+			picked = true;
+			ImGui::CloseCurrentPopup();
+		}
+	}
+	if (pickerFiles.empty()) ImGui::TextDisabled("No files in %s", folder);
+	ImGui::EndChild();
+
+	ImGui::EndPopup();
+	return picked;
 }
 
-void DrawLinkUI(DelusiveLink<Agent>& link, const std::string& name)
-{
-    std::string displayName;
-    if (!link.id.IsValid())
-        displayName = "<None>";
-    else if (link.cached)
-        displayName = link.cached->GetName();
-    else
-        displayName = link.id.ToString();
-
-    ImGui::Button((name + ": " + displayName).c_str());
-
-    //Allows drop payload
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload =
-            ImGui::AcceptDragDropPayload("DND_AGENT_UUID"))
-        {
-            UUID droppedUUID =
-                *reinterpret_cast<const UUID*>(payload->Data);
-
-            link.id = droppedUUID;
-            link.cached = nullptr;
-            link.dirty = true;
-        }
-
-        ImGui::EndDragDropTarget();
-    }
-
-    //Right-click to clear
-    if (ImGui::BeginPopupContextItem())
-    {
-        if (ImGui::MenuItem("Clear"))
-        {
-            link.id = UUID{};
-            link.cached = nullptr;
-            link.dirty = true;
-        }
-        ImGui::EndPopup();
-    }
+bool DrawImagePicker(const char* popupID, std::string& path) {
+	return DrawFilePicker(popupID, SPRITE_FOLDER, { ".png", ".jpg", ".jpeg", ".bmp", ".tga" }, path);
 }
 
-void DrawUILinkUI(DelusiveUILink& link, const std::string& name)
-{
-    UIElement* resolved = nullptr;
+void DrawTextureUI(DelusiveTexture& texture, const std::string& name) {
+	ImGui::Text("Texture: %s", std::filesystem::path(texture.texturePath).filename().string().c_str());
+	const std::string popupID = "TextureBrowser##" + name;
+	if (ImGui::Button(("Change Texture##" + name).c_str())) ImGui::OpenPopup(popupID.c_str());
+	DrawImagePicker(popupID.c_str(), texture.texturePath);
+}
 
-    if (link.id.IsValid() && link.canvasLink) {
-        resolved = link.canvasLink->FindElementByUUID(link.id);
-    }
+void DrawFontUI(DelusiveFont& font, const std::string& name) {
+	ImGui::Text("Font: %s", std::filesystem::path(font.fontPath).filename().string().c_str());
+	ImGui::DragFloat(("Size##" + name).c_str(), &font.fontSize, 1.0f, 6.0f, 128.0f);
+	const std::string popupID = "FontBrowser##" + name;
+	if (ImGui::Button(("Change Font##" + name).c_str())) ImGui::OpenPopup(popupID.c_str());
+	DrawFilePicker(popupID.c_str(), FONT_FOLDER, { ".ttf", ".otf" }, font.fontPath);
+}
 
-    std::string displayName;
-    if (!link.id.IsValid())
-        displayName = "<None>";
-    else if (!link.canvasLink)
-        displayName = "<Canvas Missing>";
-    else if (!resolved)
-        displayName = "<Missing UIElement>";
-    else
-        displayName = resolved->GetName();
+void DrawIDUI(const UUID& id, const std::string& name) {
+	//Collapsed by default - only wanted when debugging
+	if (!ImGui::TreeNode((name + "##idNode").c_str())) return;
+	ImGui::TextDisabled("%s", id.ToString().c_str());
+	ImGui::SameLine();
+	if (ImGui::SmallButton("Copy")) ImGui::SetClipboardText(id.ToString().c_str());
+	ImGui::TreePop();
+}
 
-    ImGui::Button((name + ": " + displayName).c_str());
+void DrawLinkUI(DelusiveLink<Agent>& link, const std::string& name) {
+	Scene* scene = DelusiveEditorContext::GetScene();
+	Agent* linked = link.cached;
+	if (!linked && link.id.IsValid() && scene) linked = scene->FindAgentByUUID(link.id);
+	const std::string shown = !link.id.IsValid() ? "<None>" : linked ? linked->GetName() : "(missing)";
 
-    //Allows drop payload
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload =
-            ImGui::AcceptDragDropPayload("UI_ELEMENT_UUID"))
-        {
-            UUID droppedUUID =
-                *reinterpret_cast<const UUID*>(payload->Data);
+	const std::string popupID = "LinkPicker##" + name;
+	if (ImGui::Button((name + ": " + shown + "##" + name).c_str())) ImGui::OpenPopup(popupID.c_str());
+	ImGui::SetItemTooltip("Click to pick, or drag an agent here from the hierarchy. Right-click to clear");
 
-            link.id = droppedUUID;
-            link.dirty = true;
-        }
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_AGENT_UUID")) {
+			SetAgentLink(link, *static_cast<const UUID*>(payload->Data));
+		}
+		ImGui::EndDragDropTarget();
+	}
 
-        ImGui::EndDragDropTarget();
-    }
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Clear")) SetAgentLink(link, UUID{});
+		ImGui::EndPopup();
+	}
 
-    //Right-click to clear
-    if (ImGui::BeginPopupContextItem())
-    {
-        if (ImGui::MenuItem("Clear"))
-        {
-            link.id = UUID{};
-        }
-        ImGui::EndPopup();
-    }
+	if (ImGui::BeginPopup(popupID.c_str())) {
+		if (ImGui::Selectable("<None>", !link.id.IsValid())) SetAgentLink(link, UUID{});
+		if (!scene) ImGui::TextDisabled("No scene open");
+		else {
+			for (auto& agent : scene->GetAgents()) {
+				if (!agent) continue;
+				ImGui::PushID(agent.get());
+				const std::string label = (agent->GetName().empty() ? std::string("(unnamed)") : agent->GetName())
+					+ "  [" + agent->GetType() + "]";
+				if (ImGui::Selectable(label.c_str(), agent->GetID() == link.id)) SetAgentLink(link, agent->GetID());
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void DrawUILinkUI(DelusiveUILink& link, const std::string& name) {
+	UIElement* resolved = nullptr;
+	if (link.id.IsValid() && link.canvasLink) {
+		resolved = link.canvasLink->FindElementByUUID(link.id);
+	}
+
+	std::string shown;
+	if (!link.id.IsValid()) shown = "<None>";
+	else if (!link.canvasLink) shown = "(no canvas)";
+	else if (!resolved) shown = "(missing)";
+	else shown = ElementLabel(*resolved);
+
+	const std::string popupID = "UILinkPicker##" + name;
+	if (ImGui::Button((name + ": " + shown + "##" + name).c_str())) ImGui::OpenPopup(popupID.c_str());
+	ImGui::SetItemTooltip("Click to pick, or drag an element here. Right-click to clear");
+
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("UI_ELEMENT_UUID")) {
+			link.id = *static_cast<const UUID*>(payload->Data);
+			link.dirty = true;
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Clear")) {
+			link.id = UUID{};
+			link.dirty = true;
+		}
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopup(popupID.c_str())) {
+		if (ImGui::Selectable("<None>", !link.id.IsValid())) {
+			link.id = UUID{};
+			link.dirty = true;
+		}
+		if (!link.canvasLink) ImGui::TextDisabled("Not on a canvas");
+
+		//Nested elements are indented under their parents
+		std::function<void(UIElement*)> List = [&](UIElement* element) {
+			ImGui::PushID(element);
+			if (ImGui::Selectable(ElementLabel(*element).c_str(), element->GetID() == link.id)) {
+				link.id = element->GetID();
+				link.dirty = true;
+			}
+			ImGui::Indent();
+			for (UIElement* child : SavedChildren(*element)) List(child);
+			ImGui::Unindent();
+			ImGui::PopID();
+		};
+		if (link.canvasLink) {
+			for (UIElement* element : link.canvasLink->GetElements()) List(element);
+		}
+		ImGui::EndPopup();
+	}
 }
 
 //==== [/ZONE: PropertyDraw] ====
@@ -174,6 +222,7 @@ void DrawUILinkUI(DelusiveUILink& link, const std::string& name)
 
 namespace {
     DelusiveInstance* editorInstance = nullptr;
+    Scene* editorScene = nullptr;
 
     //Combo over a flat name list - used where the factory has no ImGui menu of its own
     std::string DrawTypeCombo(const std::string& name, const std::vector<std::string>& types) {
@@ -221,7 +270,7 @@ namespace {
             return;
         }
 
-        ImGui::Text("UUID: %s", owned.getID().ToString().c_str());
+        DrawIDUI(owned.getID(), "ID");
 
         if (ImGui::Button("Remove")) {
             owned.object.reset();
@@ -243,6 +292,14 @@ void DelusiveEditorContext::SetInstance(DelusiveInstance* instance) {
 
 DelusiveInstance* DelusiveEditorContext::GetInstance() {
     return editorInstance;
+}
+
+void DelusiveEditorContext::SetScene(Scene* scene) {
+	editorScene = scene;
+}
+
+Scene* DelusiveEditorContext::GetScene() {
+	return editorScene;
 }
 
 void DrawObjectUI(DelusiveObject<Component>& owned, const std::string& name) {

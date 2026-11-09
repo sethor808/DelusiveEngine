@@ -8,6 +8,7 @@
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
 #include <Delusive/Runtime/Scene/SceneSystem.h>
 #include <Delusive/Runtime/Core/PhysicsSystem.h>
+#include <Delusive/Runtime/Core/WorldClock.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
 #include <Delusive/Runtime/Core/UUID.h>
 
@@ -15,9 +16,11 @@
 class Agent;
 class PlayerAgent;
 class CameraAgent;
+class SpriteComponent;
 class GameManager;
 class ScriptManager;
 class DelusiveInventory;
+struct HitData;
 
 class Scene {
 public:
@@ -43,6 +46,8 @@ public:
 
 	//Agent managmenet
 	void AddAgent(std::unique_ptr<Agent>);
+	//Places a fresh copy of an agent file; it joins the agent list after this update
+	UUID SpawnAgent(const std::string& path, const glm::vec2& position);
     std::vector<std::unique_ptr<Agent>>& GetAgents();
     Agent* FindAgentByUUID(UUID targetID);
 	PlayerAgent* FetchPlayer();
@@ -58,9 +63,14 @@ public:
 	CameraAgent* GetMainCamera() const;
 
 	void Update(float deltaTime);
+	//Hit stop and target flash
+	void PlayHitEffects(const HitData&);
+	//Pause and hit stop both stop the world through the clock
+	WorldClock& GetClock() { return clock; }
 	void Draw(const ColliderRenderer& renderer, const glm::mat4& projection) const;
 	void HandleInput(const PlayerInputState& input);
-	void HandleMouse(const glm::vec2&, bool);
+	//UI elements are placed in their own space, so the UI gets its own mouse position
+	void HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool);
 	void CloneInto(Scene&) const;
 	void Clear();
 	std::string GetName() { return name; }
@@ -85,6 +95,9 @@ public:
     bool ResolveID(DelusiveLink<T>&);
 private:
 	bool Build(const DelusiveParser::DataBlock& sceneBlock);
+	void LinkAgent(Agent&);
+	//Drops destroyed agents and adds spawned ones once nothing is iterating the list
+	void FlushAgents();
 
 	GameManager* gameManager = nullptr;
     DelusiveInventory* inventoryLink = nullptr;
@@ -96,5 +109,17 @@ private:
 	//Per scene - contact state must not leak between the editor and play scenes
 	PhysicsSystem physics;
 	std::vector<std::unique_ptr<Agent>> agents;
+	std::vector<std::unique_ptr<Agent>> spawnedAgents;
 	std::vector<std::unique_ptr<SceneSystem>> systems;
+
+	WorldClock clock;
+
+	//Draw scratch, cleared and refilled each frame so drawing does not allocate
+	struct RenderEntry {
+		SpriteComponent* sprite;
+		float sortY;
+		bool isForeground;
+	};
+	mutable std::vector<RenderEntry> renderQueue;
+	mutable std::vector<SpriteComponent*> agentSprites;
 };

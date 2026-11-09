@@ -5,6 +5,8 @@
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
+#include <Delusive/Runtime/Scene/UIManager.h>
+#include <Delusive/Runtime/Collision/HitData.h>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -106,12 +108,46 @@ ScriptManager& Scene::GetScriptManager() const {
 }
 
 void Scene::AddAgent(std::unique_ptr<Agent> _agent) {
-    if (!_agent->GetID().IsValid()) {
-        _agent->SetID(UUID::GenerateRandom());
-    }
-    _agent->LinkScene(this);
-    agentLookup[_agent->GetID()] = _agent.get();
-    agents.push_back(std::move(_agent));
+	LinkAgent(*_agent);
+	agents.push_back(std::move(_agent));
+}
+
+UUID Scene::SpawnAgent(const std::string& path, const glm::vec2& position) {
+	std::unique_ptr<Agent> source = Agent::LoadFromFile(path, instance, this);
+	if (!source) return UUID();
+
+	//Fresh ids - every copy belongs to the scene, the file keeps its own
+	std::unique_ptr<Agent> spawned = DelusiveInstantiate<Agent>(*source, instance,
+		[this](Agent& a) { a.LinkScene(this); });
+	if (!spawned) return UUID();
+
+	spawned->SetPosition(position);
+	LinkAgent(*spawned);
+	const UUID spawnedID = spawned->GetID();
+	spawnedAgents.push_back(std::move(spawned));
+	return spawnedID;
+}
+
+void Scene::LinkAgent(Agent& agent) {
+	if (!agent.GetID().IsValid()) {
+		agent.SetID(UUID::GenerateRandom());
+	}
+	agent.LinkScene(this);
+	agentLookup[agent.GetID()] = &agent;
+}
+
+void Scene::FlushAgents() {
+	std::erase_if(agents, [this](const std::unique_ptr<Agent>& agent) {
+		if (!agent->IsDestroyed()) return false;
+		if (camera == agent.get()) camera = nullptr;
+		agentLookup.erase(agent->GetID());
+		return true;
+	});
+
+	for (auto& agent : spawnedAgents) {
+		agents.push_back(std::move(agent));
+	}
+	spawnedAgents.clear();
 }
     
 
@@ -162,6 +198,7 @@ bool Scene::RemoveAgent(const UUID& agentID) {
 
 void Scene::ClearAgents() {
 	agents.clear();
+	spawnedAgents.clear();
     agentLookup.clear();
 	camera = nullptr;
 }
@@ -186,6 +223,7 @@ T* Scene::GetSystem() {
 	}
 	return nullptr;
 }
+template UIManager* Scene::GetSystem<UIManager>();
 
 void Scene::Update(float deltaTime) {
 	if (!camera) {
@@ -205,35 +243,51 @@ void Scene::Update(float deltaTime) {
 		sys->Update(deltaTime);
 	}
 
+	//A pause menu keeps the UI running but stops the world
+	UIManager* ui = GetSystem<UIManager>();
+	clock.SetHold("UIPause", ui && ui->IsPaused());
+
+	//A kill stays on screen until the world moves again
+	if (!clock.Advance()) {
+		if (!clock.IsStopped()) FlushAgents();
+		return;
+	}
+
 	for (auto& agent : agents) {
+		agent->TickFlash(deltaTime);
 		agent->Update(deltaTime);
 	}
 
 	physics.Step(agents);
+	if (!clock.IsStopped()) FlushAgents();
+}
+
+namespace {
+	constexpr float FLASH_SECONDS = 0.1f;
+}
+
+void Scene::PlayHitEffects(const HitData& hit) {
+	clock.Freeze(hit.hitStop);
+
+	if (hit.target) hit.target->Flash(FLASH_SECONDS);
 }
 
 void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projection) const {
-	struct RenderEntry {
-		SpriteComponent* sprite;
-		float sortY;
-		bool isForeground;
-	};
-
-	std::vector<RenderEntry> renderQueue;
-	renderQueue.reserve(agents.size() * 2); // Conservative estimate, avoids reallocations
+	renderQueue.clear();
 
 	for (const auto& agent : agents) {
 		const glm::vec2 agentPos = agent->GetTransform().position;
 
 		// Collect enabled sprites
-		for (SpriteComponent* sprite : agent->GetComponentsOfType<SpriteComponent>()) {
+		agent->GetComponentsOfType(agentSprites);
+		for (SpriteComponent* sprite : agentSprites) {
 			if (sprite->IsEnabled()) {
 				renderQueue.push_back({ sprite, agentPos.y, sprite->isForeground });
 			}
 		}
 
 		// Immediately draw enabled colliders (no sorting needed)
-		for (const ColliderComponent* collider : agent->GetComponentsOfType<ColliderComponent>()) {
+		for (const ColliderComponent* collider : agent->GetColliders()) {
 			if (collider->IsEnabled()) {
 				collider->Draw(colRenderer, projection);
 			}
@@ -259,13 +313,22 @@ void Scene::Draw(const ColliderRenderer& colRenderer, const glm::mat4& projectio
 	//Renderer::EndUIRenderPass();
 }
 
+//UI goes first: an open menu keeps clicks and keys from reaching the game
 void Scene::HandleInput(const PlayerInputState& input) {
+	UIManager* ui = GetSystem<UIManager>();
+	if (ui) ui->HandleInput(input);
+	if (ui && ui->CapturesInput()) return;
+
 	for (auto& agent : agents) {
 		agent->HandleInput(input);
 	}
 }
 
-void Scene::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
+void Scene::HandleMouse(const glm::vec2& worldMouse, const glm::vec2& uiMouse, bool mouseDown) {
+	UIManager* ui = GetSystem<UIManager>();
+	if (ui) ui->HandleMouse(uiMouse, mouseDown);
+	if (ui && ui->CapturesInput()) return;
+
 	for (auto& agent : agents) {
 		agent->HandleMouse(worldMouse, mouseDown);
 	}
@@ -273,9 +336,11 @@ void Scene::HandleMouse(const glm::vec2& worldMouse, bool mouseDown) {
 
 void Scene::Clear() {
 	agents.clear();
+	spawnedAgents.clear();
 	systems.clear();
     agentLookup.clear();
 	camera = nullptr;
+	clock.Reset();
 	name = "New Scene";
 	//A cleared scene is a new scene - it must not save over the old one's ids
 	id = UUID();

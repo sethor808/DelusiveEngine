@@ -85,9 +85,6 @@ private:
     glm::vec2 dragMax{ 0.0f };
     glm::vec2 dragOrigin{ 0.0f };
 
-    std::vector<std::string> imageFiles;
-    char imageFilter[64] = "";
-
     //Undo snapshots the whole set plus the character's collider shapes - both are small,
     //and copying them is simpler and safer than recording each kind of edit
     struct ColliderState {
@@ -117,10 +114,12 @@ private:
     void TimelinePanel();
     void TransitionList(std::vector<DelusiveAnimation::Transition>& list, bool fromAny);
     std::string Summary(const DelusiveAnimation::Transition&, bool fromAny);
-    //Popup listing the sprite folder; true when an image was picked
-    bool ImagePicker(const char* popupID, std::string& path);
     void LinkCharacter(const UUID& characterID);
     void AdvancePreview();
+    void TogglePlay();
+    //Whole frames, wrapping round the branch
+    void StepFrame(int delta);
+    void Shortcuts();
 
     DelusiveAnimation::Branch* CurrentBranch();
     DelusiveAnimation::Frame* CurrentFrame();

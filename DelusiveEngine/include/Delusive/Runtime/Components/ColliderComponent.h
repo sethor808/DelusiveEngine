@@ -56,6 +56,8 @@ public:
 	void HandleMouse(const glm::vec2&, bool) override;
 
 	virtual void OnCollision(ColliderComponent* other) = 0;
+	//Hitboxes count up once per attack; physics treats each count as a new contact
+	virtual int GetStrike() const { return 0; }
 
 	//Editor handles in world space, built from the same shape that collides and draws
 	struct Handle {

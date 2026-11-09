@@ -4,7 +4,9 @@
 #include <Delusive/Internal/DelusiveEngine.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Internal/Rendering/ColliderRenderer.h>
+#include <Delusive/Internal/Audio/DelusiveAudio.h>
 #include <Delusive/Runtime/Core/GameManager.h>
+#include <Delusive/Runtime/Core/DelusiveInput.h>
 #include <Delusive/Runtime/Editor/EngineUI.h>
 #include <Delusive/Runtime/Agents/DelusiveAgents.h>
 #include <imgui/imgui.h>
@@ -18,6 +20,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -107,6 +110,15 @@ namespace {
         return static_cast<bool>(out);
     }
 
+    //First run on a fresh clone - folders with no tracked files yet are missing
+    void CreateAssetFolders() {
+        for (const char* folder : { SCENE_PATH, AGENT_PATH, ANIM_PATH, CANVAS_PATH, SPRITE_FOLDER, SOUND_FOLDER }) {
+            std::error_code ec;
+            std::filesystem::create_directories(folder, ec);
+            if (ec) std::cerr << "[DelusiveEngine] Failed to create " << folder << ": " << ec.message() << "\n";
+        }
+    }
+
     bool ParseEditorMode(const std::string& name, EditorMode& mode) {
         if (name == "scene")    { mode = EditorMode::SceneEditor; return true; }
         if (name == "agent")    { mode = EditorMode::AgentEditor; return true; }
@@ -124,7 +136,7 @@ namespace DelusiveEngine {
 #endif
 
         // --- SDL / OpenGL Setup ---
-        if (!SDL_Init(SDL_INIT_VIDEO)) {
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
             std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
             return -1;
         }
@@ -177,6 +189,10 @@ namespace DelusiveEngine {
             return -1;
         }
         SDL_GL_MakeCurrent(window, glctx);
+        //Set explicitly so the driver's default never decides the pacing
+        if (!SDL_GL_SetSwapInterval(context.vsync ? 1 : 0)) {
+            std::cerr << "[DelusiveEngine] SDL_GL_SetSwapInterval failed: " << SDL_GetError() << "\n";
+        }
 
         glewExperimental = GL_TRUE;
         //A GLX built GLEW reports no GLX display on Wayland's EGL context after the GL functions already loaded
@@ -186,9 +202,13 @@ namespace DelusiveEngine {
             return -1;
         }
 
+        CreateAssetFolders();
+
         DelusiveRenderer renderer;
         renderer.Init();
-        GameManager game(renderer);
+        DelusiveAudio audio;
+        audio.Init();
+        GameManager game(renderer, audio);
 
         // --- ImGui Setup ---
         IMGUI_CHECKVERSION();
@@ -225,6 +245,7 @@ namespace DelusiveEngine {
         auto editorCamera = std::make_unique<CameraAgent>(game.GetInstance());
         CameraAgent* editorCamPtr = editorCamera.get();
 
+        DelusiveInput input;
         float scrollDelta = 0.0f;
         bool running = true;
         SDL_Event e;
@@ -251,13 +272,12 @@ namespace DelusiveEngine {
             Uint32 mainWindowID = SDL_GetWindowID(window);
             while (SDL_PollEvent(&e)) {
                 ImGui_ImplSDL3_ProcessEvent(&e);
-                if (e.type == SDL_EVENT_QUIT) running = false;
-                if (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
-                    if (e.window.windowID == mainWindowID) {
-                        running = false;
-                    }
-                }
-                else if (e.type == SDL_EVENT_WINDOW_RESIZED) {
+                input.ProcessEvent(e);
+                //The editor asks about unsaved changes before closing
+                const bool closing = e.type == SDL_EVENT_QUIT
+                    || (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && e.window.windowID == mainWindowID);
+                if (closing && (!context.editorMode || ui.RequestClose())) running = false;
+                if (e.type == SDL_EVENT_WINDOW_RESIZED) {
                     int newWidth = e.window.data1;
                     int newHeight = e.window.data2;
                     renderer.OnResize(newWidth, newHeight);
@@ -275,34 +295,24 @@ namespace DelusiveEngine {
             ImGuiIO& io = ImGui::GetIO();
             const bool gameMouse = !io.WantCaptureMouse;
 
-            PlayerInputState inputState;
-            const bool* keys = SDL_GetKeyboardState(nullptr);
-            inputState.moveDir.y += keys[SDL_SCANCODE_W];
-            inputState.moveDir.y -= keys[SDL_SCANCODE_S];
-            inputState.moveDir.x += keys[SDL_SCANCODE_D];
-            inputState.moveDir.x -= keys[SDL_SCANCODE_A];
-
-            if (glm::length(inputState.moveDir) > 0.0f)
-                inputState.moveDir = glm::normalize(inputState.moveDir);
-
-            inputState.lightAttackPressed = keys[SDL_SCANCODE_J] || (gameMouse && (mouseState & SDL_BUTTON_LMASK));
-            inputState.heavyAttackPressed = keys[SDL_SCANCODE_K] || (gameMouse && (mouseState & SDL_BUTTON_RMASK));
+            PlayerInputState inputState = input.Poll(gameMouse ? mouseState : 0, !io.WantCaptureKeyboard);
             if (gameMouse && game.IsPlaying() && scrollDelta != 0.0f) {
                 inputState.swapDir = scrollDelta > 0.0f ? 1 : -1;
             }
-            inputState.dodgePressed = keys[SDL_SCANCODE_LSHIFT];
 
             game.HandleInput(inputState);
 
             CameraAgent* cam = nullptr;
             if (!context.editorMode && game.IsPlaying())
                 cam = game.GetActiveScene().GetMainCamera();
-            else
-                cam = editorCamPtr;
+            //A game build with no camera in the scene still needs a view
+            if (!cam) cam = editorCamPtr;
 
             //While playing the wheel swaps weapons instead of zooming
             if (cam && gameMouse) {
-                cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, game.IsPlaying() ? 0.0f : scrollDelta);
+                //Right-drag pans too, as in the animator, except in play where it is heavy attack
+                const bool panning = (mouseState & SDL_BUTTON_MMASK) || (!game.IsPlaying() && (mouseState & SDL_BUTTON_RMASK));
+                cam->HandleInput({ mouseX, mouseY }, panning, game.IsPlaying() ? 0.0f : scrollDelta);
             }
 
             // --- Fixed Timestep ---
@@ -322,10 +332,14 @@ namespace DelusiveEngine {
 
             //Each editor mode submits its own dock space - see EngineUI::DockSpace
 
+            FrameStats stats;
+            stats.frameMs = static_cast<float>(frameSeconds * 1000.0);
+            const uint64_t updateStart = SDL_GetTicksNS();
             while (tickAccumulator >= DELUSIVE_TICK_SECONDS) {
                 game.Update(DELUSIVE_TICK_SECONDS);
                 tickAccumulator -= DELUSIVE_TICK_SECONDS;
             }
+            stats.updateMs = (SDL_GetTicksNS() - updateStart) / 1e6f;
 
             int width, height;
             renderer.GetWindowSize(width, height);
@@ -333,14 +347,20 @@ namespace DelusiveEngine {
             glm::mat4 view = glm::inverse(cam->GetTransform().ToMatrix());
             renderer.SetViewProjection(view, projection);
             glm::vec2 worldMouse = ScreenToWorld2D(static_cast<int>(mouseX), static_cast<int>(mouseY), projection);
+            //UI space: centred on the window, y up, in element units
+            glm::vec2 uiMouse = glm::vec2(mouseX - width / 2.0f, height / 2.0f - mouseY) / DELUSIVE_PIXEL_SCALE;
 
             //In the editor the mode being shown owns the mouse until Play
             if (!context.editorMode || game.IsPlaying())
-                game.HandleMouse(worldMouse, mouseState & SDL_BUTTON_LEFT);
+                game.HandleMouse(worldMouse, uiMouse, mouseState & SDL_BUTTON_LEFT);
+            const uint64_t drawStart = SDL_GetTicksNS();
             game.Draw(colliderRenderer, projection);
+            stats.drawMs = (SDL_GetTicksNS() - drawStart) / 1e6f;
+            stats.batches = renderer.GetBatchCount();
 
             if (context.editorMode) {
                 ui.Render(game.GetActiveScene());
+                if (ui.CloseApproved()) running = false;
             }
 
             ImGui::Render();
@@ -357,6 +377,9 @@ namespace DelusiveEngine {
                 if (!dev.capturePath.empty()) CaptureWindow(window, dev.capturePath);
                 running = false;
             }
+
+            stats.workMs = (SDL_GetTicksNS() - frameStart) / 1e6f;
+            if (context.editorMode) ui.SetFrameStats(stats);
 
             SDL_GL_SwapWindow(window);
 
@@ -377,6 +400,7 @@ namespace DelusiveEngine {
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
 
+        audio.Shutdown();
         SDL_GL_MakeCurrent(window, nullptr);
         SDL_GL_DestroyContext(glctx);
         SDL_DestroyWindow(window);

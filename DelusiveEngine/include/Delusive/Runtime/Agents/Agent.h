@@ -12,6 +12,7 @@
 #include <Delusive/Runtime/Core/UUID.h>
 
 class Component;
+class ColliderComponent;
 class PropertyRegistry;
 class Scene;
 struct HitData;
@@ -71,6 +72,9 @@ public:
 
     // Component Handling
     void AddRawComponent(std::unique_ptr<Component> component);
+	//Collider components plus the animator's current frame boxes - what physics sees.
+	//Refilled on every call; the list stays valid until the next call
+	const std::vector<ColliderComponent*>& GetColliders();
 
     template<typename T>
     T* GetComponentOfType() {
@@ -83,17 +87,22 @@ public:
 
     template<typename T>
     std::vector<T*> GetComponentsOfType() {
+        std::vector<T*> result;
+        GetComponentsOfType(result);
+        return result;
+    }
+
+    //Fills a caller owned list, so per-frame callers can reuse one vector
+    template<typename T>
+    void GetComponentsOfType(std::vector<T*>& result) {
         static_assert(std::is_base_of<Component, T>::value, "T must be derived from Component");
 
-        std::vector<T*> result;
-
+        result.clear();
         for (auto& comp : components) {
             if (T* casted = dynamic_cast<T*>(comp.get())) {
                 result.push_back(casted);
             }
         }
-
-        return result;
     }
 
     template<typename T, typename... Args>
@@ -183,9 +192,21 @@ public:
     virtual bool IsStatic() const { return false; }
 	//0 = no team; hit/hurt boxes on the same team ignore each other
 	int GetTeam() const { return team; }
-	//HitEvent on the agent hit, LandHitEvent on the attacker
-	virtual void HitEvent(const HitData&) {}
+	//HitEvent on the agent hit (false if it ignored the hit), LandHitEvent on the attacker
+	virtual bool HitEvent(const HitData&) { return false; }
 	virtual void LandHitEvent(const HitData&) {}
+	//Attacker's last say on a hit before the target takes it
+	virtual void ModifyOutgoingHit(HitData&) const {}
+	//Scales this agent's hitboxes only
+	virtual float GetHitboxScale() const { return 1.0f; }
+	//The scene removes destroyed agents at the end of its update
+	void Destroy() { toDelete = true; }
+	bool IsDestroyed() const { return toDelete; }
+
+	//Hit flash: sprites blend toward white, fading over the given seconds
+	void Flash(float seconds) { flashTimer = flashDuration = seconds; }
+	float GetFlash() const { return flashDuration > 0.0f ? flashTimer / flashDuration : 0.0f; }
+	void TickFlash(float deltaTime) { flashTimer = std::max(flashTimer - deltaTime, 0.0f); }
 
 protected:
     TransformComponent transform;
@@ -195,11 +216,15 @@ protected:
     UUID id;
 
     bool editorMode = false;
+	bool toDelete = false;
 	int team = 0;
+	float flashTimer = 0.0f;
+	float flashDuration = 0.0f;
     InteractionState interaction;
 
     std::vector<std::unique_ptr<Component>> components;
     std::unordered_map<UUID, Component*, UUID::Hash> componentLookup;
+	std::vector<ColliderComponent*> colliders;
 
     //std::string name;
     std::string name;

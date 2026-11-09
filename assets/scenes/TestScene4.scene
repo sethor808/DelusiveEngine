@@ -4,7 +4,7 @@ name="New Scene"
 systems=7934088a5410ef61-df9144333410de0c d66b6ef10065bc1c-5d8c20680f155f49
 
 [Agent PlayerAgent e6e7beb2389bcd7c-7b8b10f60726118f]
-components=40426b70523d61ad-9f8838c3ba89cd2d 86ab53b0f15f0a75-a569035c78b2c54c
+components=40426b70523d61ad-9f8838c3ba89cd2d 86ab53b0f15f0a75-a569035c78b2c54c 047dea58f032d85c-567372df6b1fc45c
 id=e6e7beb2389bcd7c-7b8b10f60726118f
 name="NewPlayer"
 position=2.5 0
@@ -29,6 +29,15 @@ rotation=0
 scale=1 1
 shape=0
 
+[Component AnimatorComponent 047dea58f032d85c-567372df6b1fc45c]
+animationSet=dd642a415d7eb1fe-dc249f1a316dcf80
+enabled=1
+id=047dea58f032d85c-567372df6b1fc45c
+name="Player Animator"
+position=0 0
+rotation=0
+scale=1 1
+
 [Agent CameraAgent bad71f303cd67b8b-6823bfa29a2742b2]
 components=
 id=bad71f303cd67b8b-6823bfa29a2742b2
@@ -38,7 +47,7 @@ rotation=0
 scale=1 1
 
 [Agent EnemyAgent e7f6bcb5761fb661-71d54f6eaa0256ee]
-components=c9a71978bd2b97b4-0f10ade0b9540cab 7094452399451d85-18e9c737471d9bd2 d369d0fce2bd4c00-e16ade55fc9744b6
+components=c9a71978bd2b97b4-0f10ade0b9540cab 7094452399451d85-18e9c737471d9bd2 d369d0fce2bd4c00-e16ade55fc9744b6 bd84ce4519f0c89d-7032e29bb3f8d99e
 damping=0.9
 id=e7f6bcb5761fb661-71d54f6eaa0256ee
 moveSpeed=10
@@ -60,6 +69,15 @@ textureData=../assets/sprites/BasicDude/BasicDude2.png
 enabled=1
 id=7094452399451d85-18e9c737471d9bd2
 name="NewSolidCollider"
+position=0 0
+rotation=0
+scale=1 1
+shape=0
+
+[Component HurtboxCollider bd84ce4519f0c89d-7032e29bb3f8d99e]
+enabled=1
+id=bd84ce4519f0c89d-7032e29bb3f8d99e
+name="Hurtbox"
 position=0 0
 rotation=0
 scale=1 1
@@ -110,7 +128,11 @@ id=7934088a5410ef61-df9144333410de0c
 name="NewPathfindingSystem"
 
 [System UIManager d66b6ef10065bc1c-5d8c20680f155f49]
-activeCanvas=cec166525b6c2213-2a952ce32c0334f3
-canvases=1 "cec166525b6c2213-2a952ce32c0334f3"
 id=d66b6ef10065bc1c-5d8c20680f155f49
 name="NewUIManager"
+startState="Gameplay"
+stateCanvases=2 "" "cec166525b6c2213-2a952ce32c0334f3"
+stateButtons=2 "" "back"
+stateKeys=2 "" "Tab"
+stateNames=2 "Gameplay" "Equip"
+statePauses=2 0 1

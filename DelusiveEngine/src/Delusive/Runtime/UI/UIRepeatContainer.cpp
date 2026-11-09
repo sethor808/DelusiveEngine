@@ -1,11 +1,7 @@
-#define DELUSIVE_EDITOR_MODE
 #include <Delusive/Runtime/UI/UIRepeatContainer.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
-#include <Delusive/Internal/Rendering/DelusiveRenderer.h>
-#include <Delusive/Runtime/UI/DelusiveUI.h>
-#include <Delusive/Runtime/UI/UICanvas.h>
-#include <Delusive/Runtime/Core/DelusiveData.h>
 #include <Delusive/Runtime/Core/DelusiveClone.h>
+#include <imgui/imgui.h>
 
 UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
 	: UIElement(instance)
@@ -16,110 +12,44 @@ UIRepeatContainer::UIRepeatContainer(DelusiveInstance& instance)
 
 void UIRepeatContainer::RegisterProperties() {
 	UIElement::RegisterProperties();
-	registry->Register("count", &count);
 	registry->Register("rows", &rows);
 	registry->Register("spacing", &spacing);
-	registry->Register("prototype", &prototype);
-	registry->Hide("prototype"); //Edited in the Prototype section below
 }
 
-void UIRepeatContainer::Draw(const glm::mat4& projection) {
-	UIElement::Draw(projection);
+void UIRepeatContainer::Update(float deltaTime) {
+	//Children sit on a grid from the container's position, so moving the container moves them
+	const int count = static_cast<int>(children.size());
+	const int cols = (count + rows - 1) / rows;
 
-	for(auto& child : children){
-		if (child) {
-			child->Draw(projection);
-		}
+	for (int i = 0; i < count; ++i) {
+		const int row = rows == 1 ? 0 : i / cols;
+		const int col = rows == 1 ? i : i % cols;
+
+		//TODO: change spacing to a vec2 for x and y spacing
+		const glm::vec2 target = position + glm::vec2(spacing * static_cast<float>(col), spacing * static_cast<float>(row));
+		children[i]->Move(target - children[i]->GetPosition());
 	}
 
-#ifdef DELUSIVE_EDITOR_MODE
-	if (prototype) {
-		instance.renderer.PushAlpha(0.3f);
-		prototype->Draw(projection);
-		instance.renderer.PopAlpha();
-	}
-#endif
+	UIElement::Update(deltaTime);
 }
 
-void UIRepeatContainer::DrawImGui() {
-	UIElement::DrawImGui();
-	// --- Prototype editing section ---
-	// --- Prototype Management Section ---
-	ImGui::SeparatorText("Prototype");
+void UIRepeatContainer::SetCount(int count) {
+	if (children.empty()) return;
 
-	if (!prototype) {
-		ImGui::TextDisabled("No prototype assigned.");
-
-		if (ImGui::Button("Create Prototype", ImVec2(-FLT_MIN, 0))) {
-			ImGui::OpenPopup("AddPrototypePopup");
-		}
-
-		if (ImGui::BeginPopup("AddPrototypePopup")) {
-			std::string type = DelusiveUI::DrawUIElementAddMenu();
-			if (!type.empty()) {
-				auto newProto = DelusiveUI::CreateUIElementByType(type, instance);
-				if (newProto) {
-					newProto->LinkCanvas(parentCanvas);
-					prototype = std::move(newProto);
-				}
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
+	//Each copy is its own element, so it needs its own ids
+	while (static_cast<int>(children.size()) < count) {
+		auto copy = DelusiveInstantiate<UIElement>(*children.front(), instance);
+		if (!copy) return;
+		AddChild(std::move(copy));
 	}
-	else {
-		// Collapsible framed region for the prototype
-		if (ImGui::TreeNodeEx("Prototype Details",
-			ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			// --- Inline prototype editing ---
-			ImGui::PushID("PrototypeEditor");
-			prototype->DrawImGui();
-			ImGui::PopID();
 
-			ImGui::Dummy(ImVec2(0, 4));
-
-			// --- Action Buttons ---
-			if (ImGui::Button("Regenerate Children", ImVec2(-FLT_MIN, 0))) {
-				RegenerateChildren();
-			}
-
-			if (ImGui::Button("Remove Prototype", ImVec2(-FLT_MIN, 0))) {
-				prototype = nullptr;
-				children.clear();
-			}
-
-			ImGui::TreePop();
-		}
+	//Extras are hidden rather than dropped so the template survives a count of 0
+	for (int i = 1; i < static_cast<int>(children.size()); ++i) {
+		children[i]->SetEnabled(i < count);
 	}
 }
 
-void UIRepeatContainer::SetPrototype(std::unique_ptr<UIElement> element) {
-	prototype = std::move(element);
-}
-
-void UIRepeatContainer::RegenerateChildren() {
-	children.clear();
-	if (!prototype) return;
-	if (count <= 0) return;
-
-	// Basic layout: if rows <= 1 -> single row
-	int rowsToUse = (rows <= 1) ? 1 : rows;
-	int cols = (rowsToUse == 1) ? count : ((count + rowsToUse - 1) / rowsToUse);
-
-	// Use spacing.x for horizontal, spacing.y for vertical
-	for (int idx = 0; idx < count; ++idx) {
-		//Each item is its own element, so it needs its own ids
-		auto item = DelusiveInstantiate<UIElement>(*prototype.get(), instance);
-		if (!item) continue;
-
-		int r = (rowsToUse == 1) ? 0 : (idx / cols);   // row index
-		int c = (rowsToUse == 1) ? idx : (idx % cols); // column index
-
-		glm::vec2 offset = glm::vec2(spacing * float(c), spacing * float(r)); //TODO: change spacing to a vec2 for x and y spacing
-		item->SetPosition(position + offset);
-
-		// AddChild should take ownership and set parent properly
-		AddChild(std::move(item));
-	}
+void UIRepeatContainer::DrawChildrenImGui() {
+	UIElement::DrawChildrenImGui();
+	ImGui::TextDisabled("The first child is the template, copied for each item");
 }
