@@ -188,6 +188,10 @@ namespace DelusiveEngine {
             return -1;
         }
         SDL_GL_MakeCurrent(window, glctx);
+        //Set explicitly so the driver's default never decides the pacing
+        if (!SDL_GL_SetSwapInterval(context.vsync ? 1 : 0)) {
+            std::cerr << "[DelusiveEngine] SDL_GL_SetSwapInterval failed: " << SDL_GetError() << "\n";
+        }
 
         glewExperimental = GL_TRUE;
         //A GLX built GLEW reports no GLX display on Wayland's EGL context after the GL functions already loaded

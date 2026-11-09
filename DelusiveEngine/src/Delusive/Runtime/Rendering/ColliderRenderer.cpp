@@ -56,19 +56,18 @@ void ColliderRenderer::Draw(const ColliderComponent& collider, const glm::mat4& 
 
     shader->Use();
 
-    GLint colorLoc = glGetUniformLocation(shader->GetID(), "color");
     switch (collider.GetColliderType()) {
     case ColliderType::Solid:
-        glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f); // Red
+        shader->SetVec4("color", { 1.0f, 0.0f, 0.0f, 1.0f }); // Red
         break;
     case ColliderType::Hitbox:
-        glUniform4f(colorLoc, 1.0f, 0.0f, 1.0f, 1.0f); // Magenta
+        shader->SetVec4("color", { 1.0f, 0.0f, 1.0f, 1.0f }); // Magenta
         break;
     case ColliderType::Hurtbox:
-        glUniform4f(colorLoc, 0.0f, 0.5f, 1.0f, 1.0f); // Blue-ish
+        shader->SetVec4("color", { 0.0f, 0.5f, 1.0f, 1.0f }); // Blue-ish
         break;
     case ColliderType::Trigger:
-        glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f); // Yellow
+        shader->SetVec4("color", { 1.0f, 1.0f, 0.0f, 1.0f }); // Yellow
         break;
     }
 
@@ -142,9 +141,7 @@ void ColliderRenderer::DrawHandle(const glm::vec2& center, const glm::mat4& proj
     shader->SetMat4("model", glm::value_ptr(model));
     shader->SetMat4("projection", glm::value_ptr(projection));
 
-    GLint colorLoc = glGetUniformLocation(shader->GetID(), "color");
-    if (colorLoc != -1)
-        glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
+    shader->SetVec4("color", { 1.0f, 1.0f, 0.0f, 1.0f });
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,4 +24,8 @@ public:
     void CheckLinkErrors(GLuint);
 private:
     GLuint shaderProgram = 0;
+    //Looked up once per name instead of on every set
+    mutable std::unordered_map<std::string, GLint> uniformLocations;
+
+    GLint GetUniformLocation(const std::string&) const;
 };

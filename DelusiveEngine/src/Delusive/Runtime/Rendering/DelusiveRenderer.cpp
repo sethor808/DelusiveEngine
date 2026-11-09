@@ -341,42 +341,20 @@ void DelusiveRenderer::InitTextRenderer() {
 void DelusiveRenderer::DrawText(const std::string& text, glm::vec2 position, float size, glm::vec4 color, const glm::mat4& proj) {
 	if (!defaultFont || !textShader) return;
 
-	float scale = size;
-	float x = position.x;
-	float y = position.y;
+	textVertices.clear();
+	defaultFont->AppendQuads(text, position, size, textVertices);
 
-	glActiveTexture(GL_TEXTURE0);
 	textShader->Use();
-	textShader->SetMat4("uProjection", proj);
+	textShader->SetMat4("projection", proj);
+	textShader->SetMat4("model", glm::mat4(1.0f));
 	textShader->SetVec4("uColor", color);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, defaultFont->GetAtlas());
 	glBindVertexArray(textVAO);
-
-	for (char c : text) {
-		const Character& ch = defaultFont->GetCharacter(c);
-		float xpos = x + ch.bearing.x * scale;
-		float ypos = y - (ch.size.y - ch.bearing.y) * scale;
-
-		float w = ch.size.x * scale;
-		float h = ch.size.y * scale;
-
-		float vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }
-		};
-
-		glBindTexture(GL_TEXTURE_2D, ch.textureID);
-		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		x += (ch.advance >> 6) * scale; // Advance is in 1/64 pixels
-	}
+	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+	glBufferData(GL_ARRAY_BUFFER, textVertices.size() * sizeof(glm::vec4), textVertices.data(), GL_STREAM_DRAW);
+	glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(textVertices.size()));
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

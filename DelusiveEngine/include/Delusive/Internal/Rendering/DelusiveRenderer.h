@@ -89,6 +89,7 @@ private:
 	//Text stuff
 	GLuint textVAO = 0;
 	GLuint textVBO = 0;
+	std::vector<glm::vec4> textVertices;
 
 	//Rect stuff
 	GLuint quadVAO = 0;

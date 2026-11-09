@@ -58,35 +58,44 @@ GLuint Shader::GetID() {
     return shaderProgram;
 }
 
+GLint Shader::GetUniformLocation(const std::string& name) const {
+    auto it = uniformLocations.find(name);
+    if (it != uniformLocations.end()) return it->second;
+
+    const GLint location = glGetUniformLocation(shaderProgram, name.c_str());
+    uniformLocations[name] = location;
+    return location;
+}
+
 void Shader::Use() const {
     glUseProgram(shaderProgram);
     //std::cout << "[Shader] Using program ID: " << shaderProgram << "\n";
 }
 
 void Shader::SetMat4(const std::string& name, const float* value) const {
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, value);
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, value);
 }
 
 void Shader::SetMat4(const std::string& name, const glm::mat4& mat) const {
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 void Shader::SetVec4(const std::string& name, const glm::vec4& value) const {
-    glUniform4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]);
+    glUniform4fv(GetUniformLocation(name), 1, &value[0]);
 }
 
 void Shader::SetInt(const std::string& name, int value) const {
-    GLint location = glGetUniformLocation(shaderProgram, name.c_str());
+    GLint location = GetUniformLocation(name);
     glUniform1i(location, value);
 }
 
 void Shader::SetVec2(const std::string& name, const glm::vec2& value) const {
-    GLint location = glGetUniformLocation(shaderProgram, name.c_str());
+    GLint location = GetUniformLocation(name);
     glUniform2fv(location, 1, glm::value_ptr(value));
 }
 
 void Shader::SetFloat(const std::string& name, float value) const {
-    GLint location = glGetUniformLocation(shaderProgram, name.c_str());
+    GLint location = GetUniformLocation(name);
 	glUniform1f(location, value);
 }
 

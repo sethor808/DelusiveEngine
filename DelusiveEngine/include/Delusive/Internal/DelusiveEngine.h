@@ -10,6 +10,8 @@ namespace DelusiveEngine
 		const char* windowTitle = "Delusive Editor";
 		//Render rate cap, 0 = uncapped. Gameplay ticks stay at DELUSIVE_TICKS_PER_SECOND either way.
 		int maxFPS = 120;
+		//Off leaves frame pacing to maxFPS
+		bool vsync = false;
 	};
 
 	int Run(const DelusiveContext&);
