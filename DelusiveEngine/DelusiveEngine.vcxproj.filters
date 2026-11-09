@@ -136,19 +136,19 @@
     <ClCompile Include="src\Delusive\Runtime\Scene\Scene.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\DelusiveRenderer.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\DelusiveRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\ColliderRenderer.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\ColliderRenderer.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\Shader.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\Shader.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\SpriteData.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\SpriteData.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\Texture.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\Texture.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Agents\PlayerAgent.cpp">
@@ -226,7 +226,7 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UICanvas.cpp">
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\Font.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\Font.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Scene\UIManager.cpp">
@@ -254,7 +254,7 @@
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Editor\EditorRegistry.cpp" />
-    <ClCompile Include="src\Delusive\Runtime\DelusiveEngine.cpp" />
+    <ClCompile Include="src\Delusive\Internal\DelusiveEngine.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Editor\EditorInterface.cpp">
       <Filter>engine\editor\Source Files</Filter>
     </ClCompile>
@@ -270,7 +270,7 @@
     <ClCompile Include="src\Delusive\Runtime\Core\DelusiveRegistry.cpp">
       <Filter>engine\core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Delusive\Runtime\Rendering\TextureManager.cpp">
+    <ClCompile Include="src\Delusive\Internal\Rendering\TextureManager.cpp">
       <Filter>engine\render\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\UI\UIRepeatContainer.cpp">
