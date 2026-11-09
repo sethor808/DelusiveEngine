@@ -23,6 +23,7 @@ public:
     void RegisterProperties() override;
 
     void SetTexturePath(const std::string&);
+    const std::string& GetTexturePath() const { return textureData.texturePath; }
     //Loading only sets the path - this turns it into a texture
     void Deserialize(DelusiveParser::DataBlock& in) override;
     void SetPosition(float x, float y);

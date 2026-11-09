@@ -70,6 +70,17 @@ private:
 	float swapCooldown = 0.12f;
 	float swapLockTimer = 0.0f;
 
+	//Light attack chain: each step shows one sprite and lands its hit after a windup, then
+	//holds. A press buffered by the hold's end chains on; otherwise recovery plays out.
+	//The last step lingers, which is where a weapon swap or dodge cancels in
+	std::vector<std::string> lightChainSprites;
+	int chainStep = -1;
+	float attackTimer = 0.0f;
+	float attackBufferTimer = 0.0f;
+	bool hitLanded = false;
+	std::string idleSprite;
+	glm::vec2 facing = { 1.0f, 0.0f };
+
 	//For input control tracking
 	PlayerInputState prevInput;
 
@@ -82,6 +93,12 @@ private:
 	//Player Control Functions
 	void StartDodge(const glm::vec2&);
 	void HandleDodge(float);
-	void HandleMovement(float deltaTime);
+	void HandleMovement(const glm::vec2& moveDir, float deltaTime);
 	void SwapWeapon(int);
+	void StartAttackStep(int);
+	void UpdateAttack(float);
+	void EndAttack();
+	//Past the hold, so dodges and swaps may cancel the rest
+	bool IsAttackRecovering() const;
+	std::vector<Agent*> FetchTargetsWithin(const glm::vec2& centre, float radius) const;
 };

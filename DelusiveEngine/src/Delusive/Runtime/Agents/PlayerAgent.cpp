@@ -5,9 +5,31 @@
 #include <Delusive/Runtime/Scene/Scene.h>
 #include <Delusive/Runtime/Core/DelusiveFactory.h>
 #include <Delusive/Runtime/Core/DelusiveRegistry.h>
+#include <Delusive/Runtime/Agents/EnemyAgent.h>
+#include <Delusive/Runtime/Components/SpriteComponent.h>
+#include <Delusive/Runtime/Utils/DelusiveMacros.h>
 #include <iostream>
 #include <cmath>
 #include <Delusive/Runtime/Collision/HitData.h>
+
+namespace {
+	struct ChainStep {
+		float windup;
+		float hold;
+		float recovery;
+		int damage;
+	};
+
+	//Seconds; the third hit lingers so a weapon swap has room to cancel it
+	constexpr ChainStep LIGHT_CHAIN[] = {
+		{ 0.05f, 0.12f, 0.15f, 1 },
+		{ 0.05f, 0.12f, 0.15f, 1 },
+		{ 0.08f, 0.15f, 0.45f, 2 },
+	};
+	constexpr int LIGHT_CHAIN_LENGTH = 3;
+	constexpr float ATTACK_REACH = 0.8f;
+	constexpr float ATTACK_BUFFER = 0.2f;
+}
 
 PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     : Agent(instance)
@@ -15,6 +37,11 @@ PlayerAgent::PlayerAgent(DelusiveInstance& instance)
     SetName("New PlayerAgent");
 	SetScale({1.0f, 1.0f});
 	velocity = { 0.0f, 0.0f };
+	lightChainSprites = {
+		SPRITE_FOLDER "BasicDude/BasicDude2.png",
+		SPRITE_FOLDER "BasicDude/BasicDude3.png",
+		SPRITE_FOLDER "BasicDude/BasicDude4.png"
+	};
 
 	int numTalismans = 5; // Experimental control variable
     for (int i = 0; i < numTalismans; ++i) {
@@ -39,6 +66,7 @@ void PlayerAgent::RegisterProperties() {
 	Agent::RegisterProperties();
 	registry->Register("weaponSlots", &weaponSlots);
 	registry->Register("swapCooldown", &swapCooldown);
+	registry->Register("lightChainSprites", &lightChainSprites);
 }
 
 void PlayerAgent::HandleInput(const PlayerInputState& input) {
@@ -46,6 +74,9 @@ void PlayerAgent::HandleInput(const PlayerInputState& input) {
         dodgeBufferTimer = 0.15f;
         dodgeDir = input.moveDir;
     }
+
+	if (glm::length(input.moveDir) > 0.0f) facing = glm::normalize(input.moveDir);
+	if (input.lightAttackPressed) attackBufferTimer = ATTACK_BUFFER;
 
 	//Ticks during the lock are dropped, not queued, so a fast flick can't slide past a slot
 	if (input.swapDir != 0 && swapLockTimer <= 0.0f) {
@@ -68,6 +99,10 @@ void PlayerAgent::Update(float deltaTime) {
 		invulTimer -= deltaTime;
 	}
 
+	if (attackBufferTimer > 0.0f) {
+		attackBufferTimer -= deltaTime;
+	}
+
     // Input lock countdown
     if (inputLockTimer > 0.0f) {
         inputLockTimer -= deltaTime;
@@ -75,19 +110,27 @@ void PlayerAgent::Update(float deltaTime) {
 
     // Input buffers
     // TODO: Streamline this to its own code
-    if (!dodging && dodgeBufferTimer > 0.0f && inputLockTimer <= 0.0f)
-    {
+	const bool attackLocked = chainStep >= 0 && !IsAttackRecovering();
+	if (!dodging && dodgeBufferTimer > 0.0f && inputLockTimer <= 0.0f && !attackLocked) {
         if (glm::length(dodgeDir) > 0.0f) {
             StartDodge(glm::normalize(dodgeDir));
             dodgeBufferTimer = 0.0f; // consume buffer
         }
     }
 
+	if (chainStep >= 0) {
+		UpdateAttack(deltaTime);
+	}
+	else if (!dodging && attackBufferTimer > 0.0f && inputLockTimer <= 0.0f) {
+		StartAttackStep(0);
+	}
+
     if (dodging) {
         HandleDodge(deltaTime);
     }
     else {
-        HandleMovement(deltaTime);
+		//Attacks root the player in place
+		HandleMovement(chainStep >= 0 ? glm::vec2(0.0f) : prevInput.moveDir, deltaTime);
     }
 
     //std::cout << "[PlayerAgent] Current Position: " << transform.position.x << ", " << transform.position.y << std::endl;
@@ -101,12 +144,12 @@ void PlayerAgent::Update(float deltaTime) {
     Agent::Update(deltaTime);
 }
 
-void PlayerAgent::HandleMovement(float deltaTime) {
+void PlayerAgent::HandleMovement(const glm::vec2& moveDir, float deltaTime) {
     glm::vec2 targetVel = glm::vec2(0.0f);
 
     // Normal WASD movement
-    if (glm::length(prevInput.moveDir) > 0.0f) {
-        glm::vec2 dir = glm::normalize(prevInput.moveDir);
+    if (glm::length(moveDir) > 0.0f) {
+        glm::vec2 dir = glm::normalize(moveDir);
         velocity = dir * modified.moveSpeed;
     }
 
@@ -126,10 +169,68 @@ void PlayerAgent::SwapWeapon(int dir) {
 
 	weaponIndex = (weaponIndex + dir + weaponSlots) % weaponSlots;
 	swapLockTimer = swapCooldown;
+	if (IsAttackRecovering()) EndAttack();
 	std::cout << "[PlayerAgent] Weapon slot " << weaponIndex << std::endl; //TODO: Equip the slot's weapon once weapons exist
 }
 
+void PlayerAgent::StartAttackStep(int step) {
+	SpriteComponent* sprite = GetComponentOfType<SpriteComponent>();
+	if (sprite && chainStep < 0) idleSprite = sprite->GetTexturePath();
+	if (sprite && step < static_cast<int>(lightChainSprites.size())) sprite->SetTexturePath(lightChainSprites[step]);
+
+	chainStep = step;
+	attackTimer = 0.0f;
+	attackBufferTimer = 0.0f;
+	hitLanded = false;
+}
+
+void PlayerAgent::UpdateAttack(float deltaTime) {
+	const ChainStep& step = LIGHT_CHAIN[chainStep];
+	attackTimer += deltaTime;
+
+	if (!hitLanded && attackTimer >= step.windup) {
+		hitLanded = true;
+		for (Agent* target : FetchTargetsWithin(transform.position + facing * ATTACK_REACH, ATTACK_REACH)) {
+			//Walls and cameras sit in range too; only enemies count as a landed hit
+			if (!dynamic_cast<EnemyAgent*>(target)) continue;
+
+			HitData hit;
+			hit.attacker = this;
+			hit.target = target;
+			hit.damage = step.damage;
+			hit.direction = facing;
+			ModifyOutgoingHit(hit);
+			target->HitEvent(hit);
+			LandHitEvent(hit);
+		}
+	}
+
+	if (!IsAttackRecovering()) return;
+
+	if (attackBufferTimer > 0.0f && chainStep + 1 < LIGHT_CHAIN_LENGTH) {
+		StartAttackStep(chainStep + 1);
+	}
+	else if (attackTimer >= step.windup + step.hold + step.recovery) {
+		EndAttack();
+	}
+}
+
+void PlayerAgent::EndAttack() {
+	if (chainStep < 0) return;
+	chainStep = -1;
+
+	SpriteComponent* sprite = GetComponentOfType<SpriteComponent>();
+	if (sprite && !idleSprite.empty()) sprite->SetTexturePath(idleSprite);
+}
+
+bool PlayerAgent::IsAttackRecovering() const {
+	if (chainStep < 0) return false;
+	const ChainStep& step = LIGHT_CHAIN[chainStep];
+	return attackTimer >= step.windup + step.hold;
+}
+
 void PlayerAgent::StartDodge(const glm::vec2& dir) {
+	EndAttack();
     dodging = true;
     dodgeTimer = modified.dodgeDuration;
 
@@ -180,23 +281,29 @@ void PlayerAgent::ModifyOutgoingHit(HitData& hit) const {
 }
 
 void PlayerAgent::HitAround(float radius, int damage) {
-	if (!sceneLink) return;
-
-	for (auto& agent : sceneLink->GetAgents()) {
-		if (agent.get() == this || (team != 0 && agent->GetTeam() == team)) continue;
-
-		const glm::vec2 offset = agent->GetTransform().position - transform.position;
+	for (Agent* target : FetchTargetsWithin(transform.position, radius)) {
+		const glm::vec2 offset = target->GetTransform().position - transform.position;
 		const float distance = glm::length(offset);
-		if (distance > radius) continue;
 
 		HitData hit;
 		hit.attacker = this;
-		hit.target = agent.get();
+		hit.target = target;
 		hit.damage = damage;
 		hit.parryable = false;
 		if (distance > 0.0f) hit.direction = offset / distance;
-		agent->HitEvent(hit);
+		target->HitEvent(hit);
 	}
+}
+
+std::vector<Agent*> PlayerAgent::FetchTargetsWithin(const glm::vec2& centre, float radius) const {
+	std::vector<Agent*> targets;
+	if (!sceneLink) return targets;
+
+	for (auto& agent : sceneLink->GetAgents()) {
+		if (agent.get() == this || (team != 0 && agent->GetTeam() == team)) continue;
+		if (glm::length(agent->GetTransform().position - centre) <= radius) targets.push_back(agent.get());
+	}
+	return targets;
 }
 
 Talisman* PlayerAgent::GetActiveTalisman() const {
