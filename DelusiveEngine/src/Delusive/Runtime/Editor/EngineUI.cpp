@@ -5,6 +5,7 @@
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Runtime/Components/DelusiveComponents.h>
 #include <Delusive/Runtime/Utils/DelusiveUtils.h>
+#include <Delusive/Runtime/Utils/PropertyDraw.h>
 #include <Delusive/Runtime/Scene/DelusiveSystems.h>
 #include <Delusive/Runtime/Components/TransformComponent.h>
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
@@ -85,6 +86,7 @@ void EngineUI::Render(Scene& topBarScene) {
     RenderTopBar(topBarScene);
     //The top bar may have stopped play - from here on edit whichever scene is live now
     Scene& scene = gameManager.GetActiveScene();
+    DelusiveEditorContext::SetScene(&scene);
 
     if (currentMode == EditorMode::SceneEditor) sceneEditor->RenderStatusBar(scene, gameManager.IsPlaying());
     DockSpace();

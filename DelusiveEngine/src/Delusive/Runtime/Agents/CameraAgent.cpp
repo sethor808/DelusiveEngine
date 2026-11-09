@@ -75,7 +75,8 @@ void CameraAgent::HandleInput(const glm::vec2& mousePos, bool middleMouseDown, f
 	}
 
 	if (scrollDelta != 0.0f) {
-		zoom *= (scrollDelta > 0) ? 0.9f : 1.1f;
+		//Wheel up zooms in, as in the animator
+		zoom *= (scrollDelta > 0) ? 1.1f : 0.9f;
 		zoom = std::clamp(zoom, 0.1f, 10.0f);
 	}
 }

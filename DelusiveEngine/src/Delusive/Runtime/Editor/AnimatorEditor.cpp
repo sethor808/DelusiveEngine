@@ -466,6 +466,7 @@ void AnimatorEditor::StepFrame(int delta) {
 
 void AnimatorEditor::Shortcuts() {
 	if (ImGui::GetIO().WantTextInput || ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId) || drag != Drag::None) return;
+	if (ImGui::IsKeyPressed(ImGuiKey_Home, false)) fitPending = true;
 	if (!CurrentBranch()) return;
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Space, false)) TogglePlay();
@@ -829,6 +830,7 @@ void AnimatorEditor::CanvasPanel() {
     ImGui::Checkbox("Flip", &flip);
     ImGui::SameLine();
     if (ImGui::Button("Fit")) fitPending = true;
+    ImGui::SetItemTooltip("Home");
     ImGui::SameLine();
     ImGui::TextDisabled("%d%%", static_cast<int>(std::lround(zoom * 100.0f)));
 

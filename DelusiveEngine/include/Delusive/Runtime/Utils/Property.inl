@@ -342,7 +342,7 @@ public:
                 DrawUILinkUI(*value, name);
             }
             else if constexpr (std::is_same_v<T, UUID>) {
-                ImGui::Text("UUID: %s", value->ToString().c_str());
+                DrawIDUI(*value, name);
             }
             else if constexpr (is_delusive_object_v<T>) {
                 DrawObjectUI(*value, name);

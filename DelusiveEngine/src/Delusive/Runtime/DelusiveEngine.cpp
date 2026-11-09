@@ -303,7 +303,9 @@ namespace DelusiveEngine {
 
             //While playing the wheel swaps weapons instead of zooming
             if (cam && gameMouse) {
-                cam->HandleInput({ mouseX, mouseY }, mouseState & SDL_BUTTON_MIDDLE, game.IsPlaying() ? 0.0f : scrollDelta);
+                //Right-drag pans too, as in the animator, except in play where it is heavy attack
+                const bool panning = (mouseState & SDL_BUTTON_MMASK) || (!game.IsPlaying() && (mouseState & SDL_BUTTON_RMASK));
+                cam->HandleInput({ mouseX, mouseY }, panning, game.IsPlaying() ? 0.0f : scrollDelta);
             }
 
             // --- Fixed Timestep ---

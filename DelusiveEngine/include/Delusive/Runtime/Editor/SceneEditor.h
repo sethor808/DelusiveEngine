@@ -81,6 +81,7 @@ private:
     //View mouse
     bool pressInView = false;
     bool movingAgent = false;
+    bool nudging = false;
     bool movedAgent = false;
     bool collidersWereDragging = false;
     glm::vec2 grabOffset{ 0.0f };
@@ -114,6 +115,8 @@ private:
     void InspectorPanel(Scene&, bool playing);
     void AddMenu(Scene&);
     void Shortcuts(Scene&);
+    //Arrow keys move the selected agent a pixel, or a unit with Shift
+    void Nudge(Scene&);
 
     //Structural edits - deferred, each ends with Touch
     void AddAgent(const std::string& type);
