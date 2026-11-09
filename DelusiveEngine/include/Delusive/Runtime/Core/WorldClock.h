@@ -4,7 +4,8 @@
 
 //Decides whether a scene's world advances each tick. Every stop goes through here:
 //holds (pause menus, cutscenes) last until their source releases them; freezes (hit
-//stop) last a number of ticks. The camera and UI keep running either way.
+//stop) last a number of ticks. Time scale slows the world by skipping ticks, so frame
+//data plays exactly as authored, just stretched. The camera and UI keep running either way.
 class WorldClock {
 public:
 	//Held stops - one per source name, so two sources never release each other
@@ -17,11 +18,24 @@ public:
 
 	bool IsStopped() const { return IsHeld() || IsFrozen(); }
 
-	//Once per tick: true if the world advances. A held clock keeps its freeze for later
+	//Slow motion per source, 0-1; sources multiply and 1 removes the source
+	void SetTimeScale(const std::string& source, float scale);
+	float GetTimeScale() const;
+
+	//Once per tick: true if the world advances. A held clock keeps its freeze for later;
+	//freezes count real ticks, so slow motion never stretches a hit stop
 	bool Advance();
 	void Reset();
 
 private:
+	struct Scale {
+		std::string source;
+		float scale;
+	};
+
 	std::vector<std::string> holds;
+	std::vector<Scale> scales;
 	int freezeTicks = 0;
+	//Builds up by the time scale each tick; the world steps when it reaches one
+	float scaledTicks = 0.0f;
 };
