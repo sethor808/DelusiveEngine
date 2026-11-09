@@ -8,6 +8,7 @@
 #include <imgui/backend/imgui_impl_sdl3.h>
 #include <imgui/backend/imgui_impl_opengl3.h>
 #include <filesystem>
+#include <functional>
 
 enum class EditorMode {
 	SceneEditor,
@@ -44,6 +45,9 @@ public:
     void LinkEditorCamera(CameraAgent* cam);
     //Switches mode and opens an asset as if picked from the asset list
     void StartIn(Scene&, EditorMode, const std::string& asset);
+	//Main window close - true when nothing is unsaved, otherwise asks first and approves later
+	bool RequestClose();
+	bool CloseApproved() const { return closeApproved; }
 private:
 	GameManager& gameManager;
 	DelusiveInstance& instance;
@@ -74,6 +78,14 @@ private:
 	Component* selectedComponent = nullptr;
 	bool agentSelected = true;
 
+	//Agent editor state as last saved, to tell when it has changed
+	std::vector<DelusiveParser::DataBlock> agentSaved;
+
+	//Unsaved-changes prompt - what to do once the user saves or drops the changes
+	std::function<void(Scene&)> pendingAction;
+	bool unsavedPrompt = false;
+	bool closeApproved = false;
+
 	//Animator mode lives in its own class
 	std::unique_ptr<AnimatorEditor> animatorEditor;
 
@@ -98,6 +110,13 @@ private:
 	//Leaves play mode, if playing - pickers and asset switches act on the scene being edited
 	void StopPlaying(Scene&);
 	void Shortcuts(Scene&);
+	bool HasOpenAsset() const;
+	bool HasUnsavedChanges();
+	void MarkAgentSaved(Scene&);
+	bool SaveCurrent(Scene&);
+	//Runs the action now, or after the unsaved-changes prompt
+	void Guarded(std::function<void(Scene&)>);
+	void UnsavedPrompt();
 	bool CanUndo() const;
 	bool CanRedo() const;
 	void Undo(Scene&);

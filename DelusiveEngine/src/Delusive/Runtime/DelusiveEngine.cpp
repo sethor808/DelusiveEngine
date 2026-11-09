@@ -266,13 +266,11 @@ namespace DelusiveEngine {
             while (SDL_PollEvent(&e)) {
                 ImGui_ImplSDL3_ProcessEvent(&e);
                 input.ProcessEvent(e);
-                if (e.type == SDL_EVENT_QUIT) running = false;
-                if (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
-                    if (e.window.windowID == mainWindowID) {
-                        running = false;
-                    }
-                }
-                else if (e.type == SDL_EVENT_WINDOW_RESIZED) {
+                //The editor asks about unsaved changes before closing
+                const bool closing = e.type == SDL_EVENT_QUIT
+                    || (e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && e.window.windowID == mainWindowID);
+                if (closing && (!context.editorMode || ui.RequestClose())) running = false;
+                if (e.type == SDL_EVENT_WINDOW_RESIZED) {
                     int newWidth = e.window.data1;
                     int newHeight = e.window.data2;
                     renderer.OnResize(newWidth, newHeight);
@@ -349,6 +347,7 @@ namespace DelusiveEngine {
 
             if (context.editorMode) {
                 ui.Render(game.GetActiveScene());
+                if (ui.CloseApproved()) running = false;
             }
 
             ImGui::Render();

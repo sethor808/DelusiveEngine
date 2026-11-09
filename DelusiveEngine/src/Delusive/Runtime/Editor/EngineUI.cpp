@@ -188,6 +188,7 @@ void EngineUI::Redo(Scene& scene) {
 }
 
 void EngineUI::Shortcuts(Scene& scene) {
+    if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S) && !ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId)) SaveCurrent(scene);
     //Text fields keep their own Ctrl+Z
     if (ImGui::GetIO().WantTextInput) return;
     if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_Y) || ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Z)) Redo(scene);
@@ -266,6 +267,7 @@ void EngineUI::LoadAgentAsset(Scene& scene, const std::string& path) {
     if (auto agent = Agent::LoadFromFile(path, instance, &scene)) {
         scene.AddAgent(std::move(agent));
     }
+    MarkAgentSaved(scene);
     //On failure RenderAgentEditor falls back to a blank PlayerAgent
 }
 
@@ -289,25 +291,131 @@ void EngineUI::MoveEditorCameraTo(Agent* agent) {
     editorCamera->SetPan(agent->GetTransform().position);
 }
 
+bool EngineUI::HasOpenAsset() const {
+	switch (currentMode) {
+	case EditorMode::AnimatorEditor: return animatorEditor->HasSet();
+	case EditorMode::UIBuilder: return editingCanvas != nullptr;
+	case EditorMode::GameView: return false;
+	default: return !selectedAsset.empty() && selectedAsset != "None";
+	}
+}
+
+bool EngineUI::HasUnsavedChanges() {
+	if (!HasOpenAsset()) return false;
+	switch (currentMode) {
+	case EditorMode::SceneEditor: return sceneEditor->IsDirty();
+	case EditorMode::AnimatorEditor: return animatorEditor->IsDirty();
+	case EditorMode::AgentEditor: {
+		std::vector<DelusiveParser::DataBlock> now;
+		gameManager.GetActiveScene().CollectBlocks(now);
+		return now != agentSaved;
+	}
+	default: return false;
+	}
+}
+
+void EngineUI::MarkAgentSaved(Scene& scene) {
+	agentSaved.clear();
+	scene.CollectBlocks(agentSaved);
+}
+
+bool EngineUI::SaveCurrent(Scene& scene) {
+	if (!HasOpenAsset() || gameManager.IsPlaying()) return false;
+
+	bool saved = false;
+	const std::string savePath = GetPath(selectedAsset);
+	switch (currentMode) {
+	case EditorMode::SceneEditor: {
+		bool reloaded = false;
+		saved = scene.SaveToFile(savePath, &reloaded);
+		if (saved) {
+			//A copy saved under a new name carries fresh ids - its history starts here
+			if (reloaded) sceneEditor->SceneLoaded(scene);
+			else sceneEditor->SceneSaved(scene);
+		}
+		break;
+	}
+	case EditorMode::AgentEditor: {
+		if (scene.GetAgents().empty()) break;
+		bool remapped = false;
+		saved = scene.GetAgents().front()->SaveToFile(savePath, &remapped);
+		//Saved as a copy - reload so the live agent carries the copy's fresh ids
+		if (saved && remapped) LoadAgentAsset(scene, savePath);
+		else if (saved) MarkAgentSaved(scene);
+		break;
+	}
+	case EditorMode::AnimatorEditor:
+		saved = animatorEditor->Save(savePath);
+		break;
+	case EditorMode::UIBuilder:
+		saved = editingCanvas->Save();
+		break;
+	default:
+		break;
+	}
+	loadedAssets = LoadSceneList();
+	return saved;
+}
+
+void EngineUI::Guarded(std::function<void(Scene&)> action) {
+	StopPlaying(gameManager.GetActiveScene());
+	if (HasUnsavedChanges()) {
+		pendingAction = std::move(action);
+		unsavedPrompt = true;
+		return;
+	}
+	action(gameManager.GetActiveScene());
+}
+
+bool EngineUI::RequestClose() {
+	if (closeApproved || !HasUnsavedChanges()) return true;
+	pendingAction = [this](Scene&) { closeApproved = true; };
+	unsavedPrompt = true;
+	return false;
+}
+
+void EngineUI::UnsavedPrompt() {
+	if (unsavedPrompt) {
+		ImGui::OpenPopup("Unsaved changes");
+		unsavedPrompt = false;
+	}
+	if (!ImGui::BeginPopupModal("Unsaved changes", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) return;
+
+	ImGui::Text("%s has unsaved changes.", selectedAsset.c_str());
+	Scene& editing = gameManager.GetActiveScene();
+	bool proceed = false;
+	if (ImGui::Button("Save")) {
+		StopPlaying(editing);
+		proceed = SaveCurrent(gameManager.GetActiveScene());
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Don't save")) proceed = true;
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		pendingAction = nullptr;
+		ImGui::CloseCurrentPopup();
+	}
+
+	if (proceed) {
+		auto action = std::move(pendingAction);
+		pendingAction = nullptr;
+		ImGui::CloseCurrentPopup();
+		if (action) action(gameManager.GetActiveScene());
+	}
+	ImGui::EndPopup();
+}
+
 void EngineUI::RenderTopBar(Scene& scene) {
     if (ImGui::BeginMainMenuBar()) {
         ImGui::Text("View");
         ImGui::SameLine();
         ImGui::SetNextItemWidth(175.0f);
+        //Only a pick leaves play - opening the list to look leaves it running
         if (ImGui::BeginCombo("##ViewModeSelector", ViewModeToString(currentMode))) {
-            StopPlaying(scene);
-            Scene& editing = gameManager.GetActiveScene();
-            if (ImGui::Selectable("Scene Editor", currentMode == EditorMode::SceneEditor)) {
-                SwitchMode(editing, EditorMode::SceneEditor);
-            }
-            if (ImGui::Selectable("Agent Editor", currentMode == EditorMode::AgentEditor)) {
-                SwitchMode(editing, EditorMode::AgentEditor);
-            }
-            if (ImGui::Selectable("Animator", currentMode == EditorMode::AnimatorEditor)) {
-                SwitchMode(editing, EditorMode::AnimatorEditor);
-            }
-            if (ImGui::Selectable("UI Builder", currentMode == EditorMode::UIBuilder)) {
-                SwitchMode(editing, EditorMode::UIBuilder);
+            for (EditorMode mode : { EditorMode::SceneEditor, EditorMode::AgentEditor, EditorMode::AnimatorEditor, EditorMode::UIBuilder }) {
+                if (ImGui::Selectable(ViewModeToString(mode), currentMode == mode)) {
+                    Guarded([this, mode](Scene& editing) { SwitchMode(editing, mode); });
+                }
             }
             if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
                 currentMode = EditorMode::GameView;
@@ -320,19 +428,17 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
         ImGui::SetNextItemWidth(200.0f);
         ImGui::SameLine();
-        if (ImGui::BeginCombo("##AssetSelector", selectedAsset.c_str())) {
-            StopPlaying(scene);
-            Scene& editing = gameManager.GetActiveScene();
-
+        const std::string preview = selectedAsset + (HasUnsavedChanges() ? " *" : "");
+        if (ImGui::BeginCombo("##AssetSelector", preview.c_str())) {
             if (ImGui::Selectable("Add New...")) {
-                newAssetPopup = true;
+                Guarded([this](Scene&) { newAssetPopup = true; });
             }
 
             for (const auto& asset : loadedAssets) {
                 bool isSelected = (selectedAsset == asset);
                 ImGui::PushID(asset.c_str());
                 if (ImGui::Selectable(asset.c_str(), isSelected)) {
-                    OpenAsset(editing, asset);
+                    Guarded([this, asset](Scene& editing) { OpenAsset(editing, asset); });
                 }
                 if (ImGui::BeginPopupContextItem("SceneContextMenu")) {
                     if (ImGui::MenuItem("Delete")) {
@@ -346,53 +452,16 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
             ImGui::EndCombo();
         }
+        ImGui::SetItemTooltip("Right-click an asset in the list to delete it");
 
         //The play copy is never saved or undone - Stop returns to the scene being edited
         const bool playing = gameManager.IsPlaying();
         ImGui::SameLine();
         ImGui::BeginDisabled(playing);
-        if (ImGui::Button("Save")) {
-            std::string path;
-            std::string name = selectedAsset.empty() ? "Unnamed" : selectedAsset;
-
-            std::string savePath = GetPath(selectedAsset);
-            switch (currentMode) {
-            case EditorMode::SceneEditor: {
-                bool reloaded = false;
-                if (scene.SaveToFile(savePath, &reloaded)) {
-                    //A copy saved under a new name carries fresh ids - its history starts here
-                    if (reloaded) sceneEditor->SceneLoaded(scene);
-                    else sceneEditor->SceneSaved(scene);
-                }
-                break;
-            }
-            case EditorMode::AgentEditor: {
-                if (!scene.GetAgents().empty()) {
-                    bool remapped = false;
-                    //Saved as a copy - reload so the live agent carries the copy's fresh ids
-                    if (scene.GetAgents().front()->SaveToFile(savePath, &remapped) && remapped) {
-                        LoadAgentAsset(scene, savePath);
-                    }
-                }
-                break;
-            }
-            case EditorMode::AnimatorEditor: {
-                animatorEditor->Save(savePath);
-                break;
-            }
-            case EditorMode::UIBuilder: {
-                if (editingCanvas) editingCanvas->Save();
-                break;
-            }
-            }
-            loadedAssets = LoadSceneList();
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Delete")) {
-            showDeleteConfirm = true;
-            assetToDelete = selectedAsset;
-        }
+        ImGui::BeginDisabled(!HasOpenAsset());
+        if (ImGui::Button("Save")) SaveCurrent(scene);
+        ImGui::SetItemTooltip("Ctrl+S");
+        ImGui::EndDisabled();
 
         ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.x * 3.0f);
         ImGui::BeginDisabled(!CanUndo());
@@ -422,6 +491,8 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
         ImGui::EndMainMenuBar();
 
+        UnsavedPrompt();
+
         if (showDeleteConfirm) {
             ImGui::OpenPopup("Confirm Delete Scene");
         }
@@ -430,21 +501,25 @@ void EngineUI::RenderTopBar(Scene& scene) {
             ImGui::Text("Are you sure you want to delete: %s", assetToDelete.c_str());
 
             if (ImGui::Button("Yes, Delete")) {
+                StopPlaying(scene);
+                Scene& editing = gameManager.GetActiveScene();
                 std::string fullPath = GetPath(assetToDelete);
                 //A canvas lives in the registry and in the file it was loaded from, if any
                 if (currentMode == EditorMode::UIBuilder) {
                     DelusiveUIRegistry& uiRegistry = gameManager.GetUIRegistry();
                     if (UICanvas* canvas = uiRegistry.Get(assetToDelete)) {
-                        if (canvas == editingCanvas) OpenCanvas(scene, nullptr);
+                        if (canvas == editingCanvas) OpenCanvas(editing, nullptr);
                         fullPath = instance.delusiveLibrary.GetSourceFile(canvas->GetID());
                         uiRegistry.Remove(canvas->GetID());
                     }
                 }
+                //Its editor would still save back to the deleted file
+                else if (selectedAsset == assetToDelete) {
+                    SwitchMode(editing, currentMode);
+                }
 
                 std::remove(fullPath.c_str());
                 gameManager.GetInstance().delusiveLibrary.RemoveFile(fullPath);
-                loadedAssets = LoadSceneList();
-                if (selectedAsset == assetToDelete) selectedAsset = "";
                 assetToDelete.clear();
                 showDeleteConfirm = false;
                 ImGui::CloseCurrentPopup();
@@ -511,6 +586,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                         agent->SetName(selectedAsset);
                         agent->SaveToFile(GetPath(selectedAsset));
                         scene.AddAgent(std::move(agent));
+                        MarkAgentSaved(scene);
                     }
                     else if (currentMode == EditorMode::AnimatorEditor) {
                         animatorEditor->Create(GetPath(selectedAsset), selectedAsset);
@@ -618,7 +694,7 @@ void EngineUI::RenderAgentEditor(Scene& scene) {
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::MenuItem("Add AnimatorComponent")) {
+                if (ImGui::MenuItem("Animator")) {
                     selectedComponent = agent.AddComponent<AnimatorComponent>();
                     agentSelected = false;
                 }

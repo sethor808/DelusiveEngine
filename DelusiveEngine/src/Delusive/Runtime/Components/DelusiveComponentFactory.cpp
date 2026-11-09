@@ -14,58 +14,34 @@
 #include <imgui/imgui.h>
 
 std::string DelusiveComponentFactory::DrawComponentAddMenu() {
-    std::string selected;
+	std::string selected;
+	//Menus show plain names; the factory still takes the type
+	auto Item = [&selected](const char* label, const char* type) {
+		if (ImGui::MenuItem(label)) selected = type;
+	};
 
-        if (ImGui::BeginMenu("Rendering"))
-        {
-            if (ImGui::MenuItem("SpriteComponent")) {
-                selected = "SpriteComponent";
-            }
-            if (ImGui::MenuItem("AnimatorComponent")) {
-                selected = "AnimatorComponent";
-            }
-            ImGui::EndMenu();
-        }
+	if (ImGui::BeginMenu("Rendering")) {
+		Item("Sprite", "SpriteComponent");
+		Item("Animator", "AnimatorComponent");
+		ImGui::EndMenu();
+	}
 
-        if (ImGui::BeginMenu("Gameplay"))
-        {
-            if (ImGui::MenuItem("StatsComponent")) {
-                selected = "StatsComponent";
-            }
+	if (ImGui::BeginMenu("Gameplay")) {
+		Item("Stats", "StatsComponent");
+		Item("Script", "ScriptComponent");
+		Item("Pathfinding", "PathfindingComponent");
+		ImGui::EndMenu();
+	}
 
-            if (ImGui::MenuItem("ScriptComponent")) {
-                selected = "ScriptComponent";
-            }
+	if (ImGui::BeginMenu("Collision")) {
+		Item("Solid", "SolidCollider");
+		Item("Trigger", "TriggerCollider");
+		Item("Hitbox", "HitboxCollider");
+		Item("Hurtbox", "HurtboxCollider");
+		ImGui::EndMenu();
+	}
 
-            if (ImGui::MenuItem("PathfindingComponent")) {
-                selected = "PathfindingComponent";
-            }
-
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("Collision"))
-        {
-            if (ImGui::MenuItem("SolidCollider")) {
-                selected = "SolidCollider";
-            }
-
-            if (ImGui::MenuItem("TriggerCollider")) {
-                selected = "TriggerCollider";
-            }
-
-            if (ImGui::MenuItem("HitboxCollider")) {
-                selected = "HitboxCollider";
-            }
-
-            if (ImGui::MenuItem("HurtboxCollider")) {
-                selected = "HurtboxCollider";
-            }
-
-            ImGui::EndMenu();
-        }
-
-        return selected;
+	return selected;
 }
 
 std::unique_ptr<Component> DelusiveComponentFactory::CreateComponentByType(const std::string& type, DelusiveInstance& instance)
