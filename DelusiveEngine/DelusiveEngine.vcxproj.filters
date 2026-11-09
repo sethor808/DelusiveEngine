@@ -254,6 +254,7 @@
       <Filter>engine\ui\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Delusive\Runtime\Editor\EditorRegistry.cpp" />
+    <ClCompile Include="src\Delusive\Internal\Audio\DelusiveAudio.cpp" />
     <ClCompile Include="src\Delusive\Internal\DelusiveEngine.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Editor\EditorInterface.cpp">
       <Filter>engine\editor\Source Files</Filter>
@@ -307,6 +308,7 @@
     <ClInclude Include="include\Delusive\Internal\Rendering\SpriteData.h" />
     <ClInclude Include="include\Delusive\Internal\Rendering\Texture.h" />
     <ClInclude Include="include\Delusive\Internal\Rendering\TextureManager.h" />
+    <ClInclude Include="include\Delusive\Internal\Audio\DelusiveAudio.h" />
     <ClInclude Include="include\Delusive\Internal\DelusiveEngine.h" />
     <ClInclude Include="include\Delusive\Runtime\Agents\Agent.h" />
     <ClInclude Include="include\Delusive\Runtime\Agents\AgentTypes.h" />

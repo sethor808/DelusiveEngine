@@ -168,6 +168,7 @@
     <ClCompile Include="src\Delusive\Runtime\Components\ColliderComponent.cpp" />
     <ClCompile Include="src\Delusive\Internal\Rendering\ColliderRenderer.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Components\Component.cpp" />
+    <ClCompile Include="src\Delusive\Internal\Audio\DelusiveAudio.cpp" />
     <ClCompile Include="src\Delusive\Internal\DelusiveEngine.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Player\DelusiveInventory.cpp" />
     <ClCompile Include="src\Delusive\Runtime\Core\DelusiveRegistry.cpp" />
@@ -215,6 +216,7 @@
     <ClCompile Include="src\Delusive\Runtime\UI\UIScriptContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Delusive\Internal\Audio\DelusiveAudio.h" />
     <ClInclude Include="include\Delusive\Internal\DelusiveEngine.h" />
     <ClInclude Include="include\Delusive\Internal\Rendering\ColliderRenderer.h" />
     <ClInclude Include="include\Delusive\Internal\Rendering\DelusiveRenderer.h" />

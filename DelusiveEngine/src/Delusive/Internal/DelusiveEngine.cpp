@@ -4,6 +4,7 @@
 #include <Delusive/Internal/DelusiveEngine.h>
 #include <Delusive/Internal/Rendering/DelusiveRenderer.h>
 #include <Delusive/Internal/Rendering/ColliderRenderer.h>
+#include <Delusive/Internal/Audio/DelusiveAudio.h>
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Core/DelusiveInput.h>
 #include <Delusive/Runtime/Editor/EngineUI.h>
@@ -111,7 +112,7 @@ namespace {
 
     //First run on a fresh clone - folders with no tracked files yet are missing
     void CreateAssetFolders() {
-        for (const char* folder : { SCENE_PATH, AGENT_PATH, ANIM_PATH, CANVAS_PATH, SPRITE_FOLDER }) {
+        for (const char* folder : { SCENE_PATH, AGENT_PATH, ANIM_PATH, CANVAS_PATH, SPRITE_FOLDER, SOUND_FOLDER }) {
             std::error_code ec;
             std::filesystem::create_directories(folder, ec);
             if (ec) std::cerr << "[DelusiveEngine] Failed to create " << folder << ": " << ec.message() << "\n";
@@ -205,7 +206,9 @@ namespace DelusiveEngine {
 
         DelusiveRenderer renderer;
         renderer.Init();
-        GameManager game(renderer);
+        DelusiveAudio audio;
+        audio.Init();
+        GameManager game(renderer, audio);
 
         // --- ImGui Setup ---
         IMGUI_CHECKVERSION();
@@ -390,6 +393,7 @@ namespace DelusiveEngine {
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
 
+        audio.Shutdown();
         SDL_GL_MakeCurrent(window, nullptr);
         SDL_GL_DestroyContext(glctx);
         SDL_DestroyWindow(window);

@@ -10,10 +10,11 @@
 #include <Delusive/Runtime/UI/DelusiveUIRegistry.h>
 
 class Scene;
+class DelusiveAudio;
 
 class GameManager {
 public:
-	GameManager(DelusiveRenderer&);
+	GameManager(DelusiveRenderer&, DelusiveAudio&);
 
     DelusiveInstance& GetInstance() { return instance; }
 

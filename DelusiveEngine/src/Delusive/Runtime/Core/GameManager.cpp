@@ -1,9 +1,10 @@
 #include <Delusive/Runtime/Core/GameManager.h>
 #include <Delusive/Runtime/Core/DelusiveCoreIncludes.h>
+#include <Delusive/Internal/Audio/DelusiveAudio.h>
 
 
-GameManager::GameManager(DelusiveRenderer& renderer)
-	: instance(renderer, idManager, scriptManager, assetLibrary), uiRegistry(instance), editorScene(instance), playScene(instance)
+GameManager::GameManager(DelusiveRenderer& renderer, DelusiveAudio& audio)
+	: instance(renderer, audio, idManager, scriptManager, assetLibrary), uiRegistry(instance), editorScene(instance), playScene(instance)
 {
     Init();
 }
@@ -40,6 +41,7 @@ void GameManager::Play() {
 }
 
 void GameManager::Stop() {
+    instance.audio.StopAll();
     activeScene = &editorScene;
     playScene.Clear();
     isPlaying = false;
