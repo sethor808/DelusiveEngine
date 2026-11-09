@@ -143,6 +143,13 @@ private:
 	//Runs the action now, or after the unsaved-changes prompt
 	void Guarded(std::function<void(Scene&)>);
 	void UnsavedPrompt();
+	void ShortcutsPopup();
+	//Where the current mode's asset files live, or empty for modes without any
+	const char* AssetFolder() const;
+	//Why the asset list is empty and what to do about it
+	std::string EmptyAssetsHint() const;
+	//Centre-of-view guidance while nothing is open
+	void EmptyStateHint();
 	void SetStatus(const std::string& message, bool error = false);
 	void BeginAssetName(const std::string& asset, bool duplicate);
 	//Why a new asset name can't be used, or empty when it can

@@ -23,6 +23,52 @@
 namespace {
 	const ImVec4 PlayingBarColour(0.12f, 0.32f, 0.16f, 1.0f);
 	const ImU32 PlayingFrameColour = IM_COL32(90, 220, 110, 255);
+
+	struct ModeTab {
+		EditorMode mode;
+		const char* label;
+		const char* tip;
+	};
+	const ModeTab ModeTabs[] = {
+		{ EditorMode::SceneEditor, "Scene", "Lay out a level: place agents and systems, then Play" },
+		{ EditorMode::AgentEditor, "Agent", "Build one reusable agent (a character or prop), saved as an .agent file" },
+		{ EditorMode::AnimatorEditor, "Animator", "Frames, hit/hurt boxes and transitions for a character's animation set" },
+		{ EditorMode::UIBuilder, "UI", "Menus and HUD canvases" },
+		{ EditorMode::GameView, "Game", "Placeholder - not built yet" },
+	};
+
+	//An entry without keys starts a new group
+	struct Shortcut {
+		const char* keys;
+		const char* action;
+	};
+	const Shortcut ShortcutSheet[] = {
+		{ "", "Everywhere" },
+		{ "Ctrl+S", "Save" },
+		{ "Ctrl+Z", "Undo (scene and animator)" },
+		{ "Ctrl+Y / Ctrl+Shift+Z", "Redo" },
+		{ "Right-click an asset", "Rename, duplicate or delete it" },
+		{ "", "Scene" },
+		{ "Click / drag", "Select / move an agent" },
+		{ "Arrows", "Nudge the selected agent a pixel (Shift: a unit)" },
+		{ "Delete", "Remove the selected agent, component or system" },
+		{ "Ctrl+D", "Duplicate the selected agent" },
+		{ "F / double-click", "Focus the selected agent" },
+		{ "Middle or right drag", "Pan" },
+		{ "Wheel", "Zoom" },
+		{ "Home", "Reset the view" },
+		{ "", "Animator" },
+		{ "Space", "Play / pause" },
+		{ "Left / Right", "Previous / next frame" },
+		{ "Delete", "Remove the selected box (over the canvas) or frame (over the timeline)" },
+		{ "Drag a frame tile", "Reorder frames" },
+		{ "Middle or right drag", "Pan" },
+		{ "Wheel", "Zoom at the cursor" },
+		{ "Home", "Fit the frame" },
+		{ "", "UI Builder" },
+		{ "Delete", "Remove the selected element (over the hierarchy)" },
+		{ "Right-click", "Add inside or delete an element" },
+	};
 }
 
 EngineUI::EngineUI(GameManager& game)
@@ -65,22 +111,9 @@ std::vector<std::string> EngineUI::LoadSceneList() {
         return sceneNames;
     }
 
-    std::string path;
-    switch (currentMode) {
-    case EditorMode::SceneEditor:
-        path = SCENE_PATH;
-        break;
-    case EditorMode::AgentEditor:
-        path = AGENT_PATH;
-        break;
-    case EditorMode::AnimatorEditor:
-        path = ANIM_PATH;
-        break;
-    }
-
     //Modes without an asset folder (UI Builder, Game View) just list nothing
     std::error_code ec;
-    for (const auto& entry : std::filesystem::directory_iterator(path, ec)) {
+    for (const auto& entry : std::filesystem::directory_iterator(AssetFolder(), ec)) {
         if (entry.is_regular_file()) {
             std::string filename = entry.path().stem().string();
             //filter by extension code
@@ -102,6 +135,8 @@ void EngineUI::Render(Scene& topBarScene) {
     RenderStatusBar(scene);
     DockSpace();
     Shortcuts(scene);
+
+    EmptyStateHint();
 
     switch (currentMode) {
     case EditorMode::SceneEditor:
@@ -575,36 +610,93 @@ void EngineUI::SetFrameStats(const FrameStats& latest) {
 	frameStats.batches = latest.batches;
 }
 
+void EngineUI::ShortcutsPopup() {
+	if (!ImGui::BeginPopup("Shortcuts")) return;
+	if (ImGui::BeginTable("ShortcutTable", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg)) {
+		for (const Shortcut& shortcut : ShortcutSheet) {
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			if (shortcut.keys[0] == '\0') {
+				ImGui::SeparatorText(shortcut.action);
+				ImGui::TableNextColumn();
+				continue;
+			}
+			ImGui::TextUnformatted(shortcut.keys);
+			ImGui::TableNextColumn();
+			ImGui::TextDisabled("%s", shortcut.action);
+		}
+		ImGui::EndTable();
+	}
+	ImGui::EndPopup();
+}
+
+const char* EngineUI::AssetFolder() const {
+	switch (currentMode) {
+	case EditorMode::SceneEditor: return SCENE_PATH;
+	case EditorMode::AgentEditor: return AGENT_PATH;
+	case EditorMode::AnimatorEditor: return ANIM_PATH;
+	default: return "";
+	}
+}
+
+std::string EngineUI::EmptyAssetsHint() const {
+	if (currentMode == EditorMode::UIBuilder) return "No canvases yet - click New";
+	const std::string folder = AssetFolder();
+	if (folder.empty()) return "Nothing to open here";
+	if (!std::filesystem::exists(folder)) {
+		return "Folder " + folder + " not found - assets are looked for next to the launch folder ("
+			+ std::filesystem::current_path().string() + ")";
+	}
+	return "Nothing in " + folder + " yet - click New";
+}
+
+void EngineUI::EmptyStateHint() {
+	if (HasOpenAsset() || gameManager.IsPlaying()) return;
+	if (currentMode != EditorMode::SceneEditor && currentMode != EditorMode::AgentEditor) return;
+
+	const char* title = currentMode == EditorMode::SceneEditor ? "No scene open" : "No agent open";
+	const char* hint = currentMode == EditorMode::SceneEditor
+		? "Pick one from the list at the top, or click New"
+		: "Pick one from the list at the top, or click New - the agent shown here can't be saved";
+	const std::string missing = loadedAssets.empty() ? EmptyAssetsHint() : "";
+
+	//Drawn behind the panels, in the middle of the view
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+	const ImVec2 centre(viewport->WorkPos.x + viewport->WorkSize.x * 0.5f, viewport->WorkPos.y + viewport->WorkSize.y * 0.4f);
+	ImDrawList* draw = ImGui::GetBackgroundDrawList(ImGui::GetMainViewport());
+	float y = centre.y;
+	auto Line = [&](const std::string& text, float scale, ImU32 colour) {
+		const float size = ImGui::GetFontSize() * scale;
+		const ImVec2 extent = ImGui::GetFont()->CalcTextSizeA(size, FLT_MAX, 0.0f, text.c_str());
+		draw->AddText(ImGui::GetFont(), size, ImVec2(centre.x - extent.x * 0.5f, y), colour, text.c_str());
+		y += extent.y + 6.0f;
+	};
+	Line(title, 1.4f, IM_COL32(230, 230, 230, 255));
+	Line(hint, 1.0f, IM_COL32(170, 170, 170, 255));
+	if (!missing.empty()) Line(missing, 1.0f, IM_COL32(255, 170, 90, 255));
+}
+
 void EngineUI::RenderTopBar(Scene& scene) {
     const bool playTint = gameManager.IsPlaying();
     if (playTint) ImGui::PushStyleColor(ImGuiCol_MenuBarBg, PlayingBarColour);
     if (ImGui::BeginMainMenuBar()) {
-        ImGui::Text("View");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(175.0f);
-        //Only a pick leaves play - opening the list to look leaves it running
-        if (ImGui::BeginCombo("##ViewModeSelector", ViewModeToString(currentMode))) {
-            for (EditorMode mode : { EditorMode::SceneEditor, EditorMode::AgentEditor, EditorMode::AnimatorEditor, EditorMode::UIBuilder }) {
-                if (ImGui::Selectable(ViewModeToString(mode), currentMode == mode)) {
-                    Guarded([this, mode](Scene& editing) { SwitchMode(editing, mode); });
-                }
+        //Modes as tabs - one click, always in view
+        for (const ModeTab& tab : ModeTabs) {
+            const ImVec2 size(ImGui::CalcTextSize(tab.label).x, 0.0f);
+            if (ImGui::Selectable(tab.label, currentMode == tab.mode, ImGuiSelectableFlags_None, size) && currentMode != tab.mode) {
+                const EditorMode mode = tab.mode;
+                if (mode == EditorMode::GameView) currentMode = mode;
+                else Guarded([this, mode](Scene& editing) { SwitchMode(editing, mode); });
             }
-            if (ImGui::Selectable("Game View", currentMode == EditorMode::GameView)) {
-                currentMode = EditorMode::GameView;
-            }
-            ImGui::EndCombo();
+            ImGui::SetItemTooltip("%s", tab.tip);
+            ImGui::SameLine();
         }
-        ImGui::SameLine(0.0f, 10.0f);
-        const char* assetLabel = (currentMode == EditorMode::SceneEditor) ? "Loaded Scene: " : "Loaded Asset: ";
-        ImGui::Text("%s", assetLabel);
+        ImGui::Separator();
 
-        ImGui::SetNextItemWidth(200.0f);
-        ImGui::SameLine();
-        const std::string preview = selectedAsset + (HasUnsavedChanges() ? " *" : "");
+        ImGui::SetNextItemWidth(220.0f);
+        const std::string preview = HasOpenAsset() ? selectedAsset + (HasUnsavedChanges() ? " *" : "") : "(nothing open)";
         if (ImGui::BeginCombo("##AssetSelector", preview.c_str())) {
-            if (ImGui::Selectable("Add New...")) {
-                Guarded([this](Scene&) { newAssetPopup = true; });
-            }
+            if (loadedAssets.empty()) ImGui::TextDisabled("%s", EmptyAssetsHint().c_str());
 
             for (const auto& asset : loadedAssets) {
                 bool isSelected = (selectedAsset == asset);
@@ -630,7 +722,12 @@ void EngineUI::RenderTopBar(Scene& scene) {
 
             ImGui::EndCombo();
         }
-        ImGui::SetItemTooltip("Right-click an asset in the list to delete it");
+        ImGui::SetItemTooltip("Open an asset. Right-click one in the list to rename, duplicate or delete it");
+
+        ImGui::SameLine();
+        ImGui::BeginDisabled(currentMode == EditorMode::GameView);
+        if (ImGui::Button("New")) Guarded([this](Scene&) { newAssetPopup = true; });
+        ImGui::EndDisabled();
 
         //The play copy is never saved or undone - Stop returns to the scene being edited
         const bool playing = gameManager.IsPlaying();
@@ -661,6 +758,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 else {
                     sceneEditor->ClearSelection(scene);
                     gameManager.Play();
+                    if (!gameManager.GetActiveScene().HasCamera()) SetStatus("No camera in this scene - showing the editor view; the built game needs a CameraAgent");
                 }
             }
             ImGui::PopStyleColor();
@@ -668,6 +766,13 @@ void EngineUI::RenderTopBar(Scene& scene) {
         else if (currentMode == EditorMode::UIBuilder) {
             if (ImGui::Button(showUIBuilderPanel ? "Hide Panel" : "Show Panel")) showUIBuilderPanel = !showUIBuilderPanel;
         }
+
+        //Shortcut sheet at the far right
+        const float helpWidth = ImGui::CalcTextSize("?").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+        ImGui::SameLine(ImGui::GetWindowWidth() - helpWidth - ImGui::GetStyle().WindowPadding.x);
+        if (ImGui::Button("?")) ImGui::OpenPopup("Shortcuts");
+        ImGui::SetItemTooltip("Keyboard and mouse shortcuts");
+        ShortcutsPopup();
 
         ImGui::EndMainMenuBar();
     }
@@ -762,6 +867,7 @@ void EngineUI::RenderTopBar(Scene& scene) {
                 scene.SetName(sceneName);
 
                 if (currentMode == EditorMode::SceneEditor) {
+                    sceneEditor->PopulateNewScene(scene);
                     scene.SaveToFile(GetPath(selectedAsset));
                     sceneEditor->SceneLoaded(scene);
                 }

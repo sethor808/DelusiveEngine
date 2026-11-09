@@ -27,6 +27,8 @@ public:
     void Render(Scene&, bool playing);
     //Scene details for EngineUI's status bar - counts, cursor position, zoom, controls
     void DrawStatusItems(Scene&);
+    //A new scene starts playable: a player (the first player agent file, if any) and a camera
+    void PopulateNewScene(Scene&);
 
     //The scene was replaced (opened, created, cleared) - history and the saved mark start over
     void SceneLoaded(Scene&);

@@ -774,6 +774,41 @@ void SceneEditor::InspectorPanel(Scene& scene, bool playing) {
 
 #pragma endregion
 
+void SceneEditor::PopulateNewScene(Scene& scene) {
+	std::unique_ptr<Agent> player;
+	std::vector<std::filesystem::path> files;
+	std::error_code ec;
+	for (const auto& entry : std::filesystem::directory_iterator(AGENT_PATH, ec)) {
+		if (entry.is_regular_file() && entry.path().extension() == AGENT_EXT) files.push_back(entry.path());
+	}
+	std::sort(files.begin(), files.end());
+
+	//Placed as a copy, as the Add menu's Prefab does
+	for (const auto& file : files) {
+		std::unique_ptr<Agent> source = Agent::LoadFromFile(file.string(), instance, &scene);
+		if (!source || source->GetType() != "PlayerAgent") continue;
+		player = DelusiveInstantiate<Agent>(*source, instance, [&scene](Agent& a) { a.LinkScene(&scene); });
+		if (player) break;
+	}
+	if (!player) {
+		player = DelusiveFactory<Agent>::Create("PlayerAgent", instance);
+		if (player) {
+			player->SetID(UUID::GenerateRandom());
+			player->SetName("Player");
+		}
+	}
+	if (player) {
+		player->SetPosition(glm::vec2(0.0f));
+		scene.AddAgent(std::move(player));
+	}
+
+	if (std::unique_ptr<Agent> camera = DelusiveFactory<Agent>::Create("CameraAgent", instance)) {
+		camera->SetID(UUID::GenerateRandom());
+		camera->SetName("Camera");
+		scene.AddAgent(std::move(camera));
+	}
+}
+
 void SceneEditor::DrawStatusItems(Scene& scene) {
 	ImGui::Text("%d agents, %d systems", (int)scene.GetAgents().size(), (int)scene.GetSystems().size());
 	ImGui::Separator();

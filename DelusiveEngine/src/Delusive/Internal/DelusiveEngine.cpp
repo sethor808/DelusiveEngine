@@ -305,8 +305,8 @@ namespace DelusiveEngine {
             CameraAgent* cam = nullptr;
             if (!context.editorMode && game.IsPlaying())
                 cam = game.GetActiveScene().GetMainCamera();
-            else
-                cam = editorCamPtr;
+            //A game build with no camera in the scene still needs a view
+            if (!cam) cam = editorCamPtr;
 
             //While playing the wheel swaps weapons instead of zooming
             if (cam && gameMouse) {

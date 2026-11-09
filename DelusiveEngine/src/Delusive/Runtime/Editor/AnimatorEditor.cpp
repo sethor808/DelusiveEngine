@@ -486,7 +486,7 @@ void AnimatorEditor::Render() {
     auto Panel = [this](const char* name, ImGuiWindowFlags flags, void (AnimatorEditor::*draw)(), bool sidePanel) {
         if (!ImGui::Begin(name, nullptr, flags) || !set) {
             if (!set && draw == &AnimatorEditor::CanvasPanel)
-                ImGui::TextDisabled("Pick an animation set from the list above, or make one with Add New...");
+                ImGui::TextDisabled("Pick an animation set from the list at the top, or click New");
             ImGui::End();
             return;
         }

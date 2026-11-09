@@ -30,7 +30,7 @@ void EngineUI::RenderUIBuilder(Scene& scene) {
 	ImGui::Separator();
 
 	if (!editingCanvas) {
-		ImGui::TextDisabled("Pick or add a canvas from Loaded Asset.");
+		ImGui::TextDisabled("Pick a canvas from the list at the top, or click New");
 		ImGui::End();
 		return;
 	}

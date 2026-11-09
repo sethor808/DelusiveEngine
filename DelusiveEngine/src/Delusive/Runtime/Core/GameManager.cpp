@@ -33,11 +33,10 @@ void GameManager::Init() {
 }
 
 void GameManager::Play() {
+    //The editor views play through its own camera, so a scene without one still plays
     editorScene.CloneInto(playScene);
-    if (playScene.HasCamera()) {
-        activeScene = &playScene;
-        isPlaying = true;
-    }
+    activeScene = &playScene;
+    isPlaying = true;
 }
 
 void GameManager::Stop() {
